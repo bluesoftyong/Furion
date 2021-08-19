@@ -7,26 +7,24 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.IPCChannel;
-using System.Threading.Tasks;
 
-namespace Furion.TaskScheduler
+namespace Furion.TaskScheduler;
+
+/// <summary>
+/// 定时器监听管道处理程序
+/// </summary>
+internal sealed class SpareTimeListenerChannelHandler : ChannelHandler<SpareTimerExecuter>
 {
     /// <summary>
-    /// 定时器监听管道处理程序
+    /// 触发程序
     /// </summary>
-    internal sealed class SpareTimeListenerChannelHandler : ChannelHandler<SpareTimerExecuter>
+    /// <param name="executer"></param>
+    /// <returns></returns>
+    public async override Task InvokeAsync(SpareTimerExecuter executer)
     {
-        /// <summary>
-        /// 触发程序
-        /// </summary>
-        /// <param name="executer"></param>
-        /// <returns></returns>
-        public async override Task InvokeAsync(SpareTimerExecuter executer)
-        {
-            var spareTimeListener = App.GetService<ISpareTimeListener>(App.RootServices);
-            if (spareTimeListener == null) return;
+        var spareTimeListener = App.GetService<ISpareTimeListener>(App.RootServices);
+        if (spareTimeListener == null) return;
 
-            await spareTimeListener.OnListener(executer);
-        }
+        await spareTimeListener.OnListener(executer);
     }
 }

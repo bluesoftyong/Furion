@@ -7,55 +7,52 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 
-namespace Furion.EventBus
+namespace Furion.EventBus;
+
+/// <summary>
+/// 轻量级消息中心（进程内）
+/// </summary>
+[SuppressSniffer]
+public static class MessageCenter
 {
     /// <summary>
-    /// 轻量级消息中心（进程内）
+    /// 订阅消息
     /// </summary>
-    [SuppressSniffer]
-    public static class MessageCenter
+    /// <param name="messageId"></param>
+    /// <param name="messageHandlers"></param>
+    public static void Subscribe<T>(string messageId, params Action<string, object>[] messageHandlers)
     {
-        /// <summary>
-        /// 订阅消息
-        /// </summary>
-        /// <param name="messageId"></param>
-        /// <param name="messageHandlers"></param>
-        public static void Subscribe<T>(string messageId, params Action<string, object>[] messageHandlers)
-        {
-            InternalMessageCenter.Instance.Subscribe<T>(messageId, messageHandlers);
-        }
+        InternalMessageCenter.Instance.Subscribe<T>(messageId, messageHandlers);
+    }
 
-        /// <summary>
-        /// 订阅消息
-        /// </summary>
-        /// <param name="messageId"></param>
-        /// <param name="messageHandlers"></param>
-        public static void Subscribe<T>(string messageId, params Func<string, object, Task>[] messageHandlers)
-        {
-            InternalMessageCenter.Instance.Subscribe<T>(messageId, messageHandlers);
-        }
+    /// <summary>
+    /// 订阅消息
+    /// </summary>
+    /// <param name="messageId"></param>
+    /// <param name="messageHandlers"></param>
+    public static void Subscribe<T>(string messageId, params Func<string, object, Task>[] messageHandlers)
+    {
+        InternalMessageCenter.Instance.Subscribe<T>(messageId, messageHandlers);
+    }
 
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="messageId"></param>
-        /// <param name="payload"></param>
-        /// <param name="isSync">是否同步执行</param>
-        public static void Send(string messageId, object payload = default, bool isSync = false)
-        {
-            InternalMessageCenter.Instance.Send(messageId, payload, isSync);
-        }
+    /// <summary>
+    /// 发送消息
+    /// </summary>
+    /// <param name="messageId"></param>
+    /// <param name="payload"></param>
+    /// <param name="isSync">是否同步执行</param>
+    public static void Send(string messageId, object payload = default, bool isSync = false)
+    {
+        InternalMessageCenter.Instance.Send(messageId, payload, isSync);
+    }
 
-        /// <summary>
-        /// 取消订阅
-        /// </summary>
-        /// <param name="messageId"></param>
-        public static void Unsubscribe(string messageId)
-        {
-            InternalMessageCenter.Instance.Unsubscribe(messageId);
-        }
+    /// <summary>
+    /// 取消订阅
+    /// </summary>
+    /// <param name="messageId"></param>
+    public static void Unsubscribe(string messageId)
+    {
+        InternalMessageCenter.Instance.Unsubscribe(messageId);
     }
 }

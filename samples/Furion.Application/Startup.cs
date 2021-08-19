@@ -1,7 +1,6 @@
-﻿namespace Furion.Application
+﻿namespace Furion.Application;
+
+[AppStartup(900)]
+public sealed class Startup : AppStartup
 {
-    [AppStartup(900)]
-    public sealed class Startup : AppStartup
-    {
-    }
 }

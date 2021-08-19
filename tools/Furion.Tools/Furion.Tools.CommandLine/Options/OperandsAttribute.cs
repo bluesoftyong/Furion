@@ -6,15 +6,12 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+namespace Furion.Tools.CommandLine;
 
-namespace Furion.Tools.CommandLine
+/// <summary>
+/// 操作符
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public class OperandsAttribute : Attribute
 {
-    /// <summary>
-    /// 操作符
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class OperandsAttribute : Attribute
-    {
-    }
 }

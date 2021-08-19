@@ -7,19 +7,17 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
 
-namespace Furion.DatabaseAccessor
+namespace Furion.DatabaseAccessor;
+
+/// <summary>
+/// Sql 执行代理基特性
+/// </summary>
+[SuppressSniffer, AttributeUsage(AttributeTargets.Method)]
+public class SqlProxyAttribute : Attribute
 {
     /// <summary>
-    /// Sql 执行代理基特性
+    /// 配置拦截唯一 ID（比方法名优先级高）
     /// </summary>
-    [SuppressSniffer, AttributeUsage(AttributeTargets.Method)]
-    public class SqlProxyAttribute : Attribute
-    {
-        /// <summary>
-        /// 配置拦截唯一 ID（比方法名优先级高）
-        /// </summary>
-        public string InterceptorId { get; set; }
-    }
+    public string InterceptorId { get; set; }
 }

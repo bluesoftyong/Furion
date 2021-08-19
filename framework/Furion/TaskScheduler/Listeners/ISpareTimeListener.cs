@@ -6,19 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
+namespace Furion.TaskScheduler;
 
-namespace Furion.TaskScheduler
+/// <summary>
+/// 定时器监听接口（注册为单例）
+/// </summary>
+public interface ISpareTimeListener
 {
     /// <summary>
-    /// 定时器监听接口（注册为单例）
+    /// 监听器
     /// </summary>
-    public interface ISpareTimeListener
-    {
-        /// <summary>
-        /// 监听器
-        /// </summary>
-        /// <param name="executer"></param>
-        Task OnListener(SpareTimerExecuter executer);
-    }
+    /// <param name="executer"></param>
+    Task OnListener(SpareTimerExecuter executer);
 }

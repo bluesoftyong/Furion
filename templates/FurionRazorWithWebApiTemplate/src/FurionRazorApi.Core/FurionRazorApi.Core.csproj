@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <NoWarn>1701;1702;1591</NoWarn>
     <DocumentationFile>FurionRazorApi.Core.xml</DocumentationFile>
   </PropertyGroup>
@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Furion" Version="2.18.3" />
-    <PackageReference Include="Furion.Extras.Authentication.JwtBearer" Version="2.18.3" />
-    <PackageReference Include="Furion.Extras.ObjectMapper.Mapster" Version="2.18.3" />
+    <PackageReference Include="Furion" Version="3.0.0-rc.4" />
+    <PackageReference Include="Furion.Extras.Authentication.JwtBearer" Version="3.0.0-rc.4" />
+    <PackageReference Include="Furion.Extras.ObjectMapper.Mapster" Version="3.0.0-rc.4" />
   </ItemGroup>
 
 </Project>

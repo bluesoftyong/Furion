@@ -8,84 +8,78 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-#if !NET5_0
-using Microsoft.AspNetCore.Builder;
-#endif
 
-namespace Microsoft.Extensions.Hosting
+namespace Microsoft.Extensions.Hosting;
+
+/// <summary>
+/// 主机构建器拓展类
+/// </summary>
+[SuppressSniffer]
+public static class HostBuilderExtensions
 {
     /// <summary>
-    /// 主机构建器拓展类
+    /// Web 应用注入
     /// </summary>
-    [SuppressSniffer]
-    public static class HostBuilderExtensions
+    /// <param name="webApplicationBuilder">Web应用构建器</param>
+    /// <param name="assemblyName">外部程序集名称</param>
+    /// <returns>IWebHostBuilder</returns>
+    public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder, string assemblyName = default)
     {
+        webApplicationBuilder.WebHost.Inject(assemblyName);
 
-#if !NET5_0
-        /// <summary>
-        /// Web 应用注入
-        /// </summary>
-        /// <param name="webApplicationBuilder">Web应用构建器</param>
-        /// <param name="assemblyName">外部程序集名称</param>
-        /// <returns>IWebHostBuilder</returns>
-        public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder, string assemblyName = default)
+        return webApplicationBuilder;
+    }
+
+    /// <summary>
+    /// Web 主机注入
+    /// </summary>
+    /// <param name="hostBuilder">Web主机构建器</param>
+    /// <param name="assemblyName">外部程序集名称</param>
+    /// <returns>IWebHostBuilder</returns>
+    public static IWebHostBuilder Inject(this IWebHostBuilder hostBuilder, string assemblyName = default)
+    {
+        var frameworkPackageName = assemblyName ?? typeof(HostBuilderExtensions).Assembly.GetName().Name;
+        hostBuilder.UseSetting(WebHostDefaults.HostingStartupAssembliesKey, frameworkPackageName);
+
+        return hostBuilder;
+    }
+
+    /// <summary>
+    /// 泛型主机注入
+    /// </summary>
+    /// <param name="hostBuilder">泛型主机注入构建器</param>
+    /// <param name="autoRegisterBackgroundService">是否自动注册 BackgroundService</param>
+    /// <returns>IWebHostBuilder</returns>
+    public static IHostBuilder Inject(this IHostBuilder hostBuilder, bool autoRegisterBackgroundService = true)
+    {
+        hostBuilder.ConfigureAppConfiguration((hostContext, configurationBuilder) =>
         {
-            webApplicationBuilder.WebHost.Inject(assemblyName);
+            // 存储环境对象
+            InternalApp.HostEnvironment = hostContext.HostingEnvironment;
 
-            return webApplicationBuilder;
-        }
-#endif
+            // 加载配置
+            InternalApp.AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
+        });
 
-        /// <summary>
-        /// Web 主机注入
-        /// </summary>
-        /// <param name="hostBuilder">Web主机构建器</param>
-        /// <param name="assemblyName">外部程序集名称</param>
-        /// <returns>IWebHostBuilder</returns>
-        public static IWebHostBuilder Inject(this IWebHostBuilder hostBuilder, string assemblyName = default)
+        // 自动注入 AddApp() 服务
+        hostBuilder.ConfigureServices((hostContext, services) =>
         {
-            var frameworkPackageName = assemblyName ?? typeof(HostBuilderExtensions).Assembly.GetName().Name;
-            hostBuilder.UseSetting(WebHostDefaults.HostingStartupAssembliesKey, frameworkPackageName);
+            // 存储配置对象
+            InternalApp.Configuration = hostContext.Configuration;
 
-            return hostBuilder;
-        }
+            // 存储服务提供器
+            InternalApp.InternalServices = services;
 
-        /// <summary>
-        /// 泛型主机注入
-        /// </summary>
-        /// <param name="hostBuilder">泛型主机注入构建器</param>
-        /// <param name="autoRegisterBackgroundService">是否自动注册 BackgroundService</param>
-        /// <returns>IWebHostBuilder</returns>
-        public static IHostBuilder Inject(this IHostBuilder hostBuilder, bool autoRegisterBackgroundService = true)
-        {
-            hostBuilder.ConfigureAppConfiguration((hostContext, configurationBuilder) =>
-            {
-                // 存储环境对象
-                InternalApp.HostEnvironment = hostContext.HostingEnvironment;
+            // 初始化应用服务
+            services.AddApp();
 
-                // 加载配置
-                InternalApp.AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
-            });
+            // 自动注册 BackgroundService
+            if (autoRegisterBackgroundService) services.AddAppHostedService();
+        });
 
-            // 自动注入 AddApp() 服务
-            hostBuilder.ConfigureServices((hostContext, services) =>
-            {
-                // 存储配置对象
-                InternalApp.Configuration = hostContext.Configuration;
-
-                // 存储服务提供器
-                InternalApp.InternalServices = services;
-
-                // 初始化应用服务
-                services.AddApp();
-
-                // 自动注册 BackgroundService
-                if (autoRegisterBackgroundService) services.AddAppHostedService();
-            });
-
-            return hostBuilder;
-        }
+        return hostBuilder;
     }
 }

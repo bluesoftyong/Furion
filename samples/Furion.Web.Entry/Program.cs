@@ -1,23 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-namespace Furion.Web.Entry
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.Inject()
-                              .UseStartup<Startup>();
-                });
-        }
-    }
-}
+var builder = WebApplication.CreateBuilder(args).Inject();  // ×¢Èë Furion
+var app = builder.Build();
+app.Run();

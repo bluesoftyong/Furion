@@ -6,28 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+namespace Furion.Tools.CommandLine;
 
-namespace Furion.Tools.CommandLine
+/// <summary>
+/// 参数转换选项
+/// </summary>
+public class ArgumentParseOptions
 {
     /// <summary>
-    /// 参数转换选项
+    /// 目标类型
     /// </summary>
-    public class ArgumentParseOptions
-    {
-        /// <summary>
-        /// 目标类型
-        /// </summary>
-        public Type TargetType { get; set; }
+    public Type TargetType { get; set; }
 
-        /// <summary>
-        /// 合并多行
-        /// </summary>
-        public bool CombineAllMultiples { get; set; }
+    /// <summary>
+    /// 合并多行
+    /// </summary>
+    public bool CombineAllMultiples { get; set; }
 
-        /// <summary>
-        /// 合并参数
-        /// </summary>
-        public string[] CombinableArguments { get; set; } = Array.Empty<string>();
-    }
+    /// <summary>
+    /// 合并参数
+    /// </summary>
+    public string[] CombinableArguments { get; set; } = Array.Empty<string>();
 }

@@ -7,15 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
 
-namespace Furion.DynamicApiController
+namespace Furion.DynamicApiController;
+
+/// <summary>
+/// 动态 WebApi 特性
+/// </summary>
+[SuppressSniffer, AttributeUsage(AttributeTargets.Class)]
+public sealed class DynamicApiControllerAttribute : Attribute
 {
-    /// <summary>
-    /// 动态 WebApi 特性
-    /// </summary>
-    [SuppressSniffer, AttributeUsage(AttributeTargets.Class)]
-    public sealed class DynamicApiControllerAttribute : Attribute
-    {
-    }
 }

@@ -7,15 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
 
-namespace Microsoft.AspNetCore.Mvc
+namespace Microsoft.AspNetCore.Mvc;
+
+/// <summary>
+/// 跳过验证
+/// </summary>
+[SuppressSniffer, AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+public sealed class NonValidationAttribute : Attribute
 {
-    /// <summary>
-    /// 跳过验证
-    /// </summary>
-    [SuppressSniffer, AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public sealed class NonValidationAttribute : Attribute
-    {
-    }
 }

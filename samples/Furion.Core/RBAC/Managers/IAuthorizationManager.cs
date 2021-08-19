@@ -1,21 +1,20 @@
-﻿namespace Furion.Core
+﻿namespace Furion.Core;
+
+/// <summary>
+/// 权限管理器
+/// </summary>
+public interface IAuthorizationManager
 {
     /// <summary>
-    /// 权限管理器
+    /// 获取用户 Id
     /// </summary>
-    public interface IAuthorizationManager
-    {
-        /// <summary>
-        /// 获取用户 Id
-        /// </summary>
-        /// <returns></returns>
-        int GetUserId();
+    /// <returns></returns>
+    int GetUserId();
 
-        /// <summary>
-        /// 检查授权
-        /// </summary>
-        /// <param name="resourceId"></param>
-        /// <returns></returns>
-        bool CheckSecurity(string resourceId);
-    }
+    /// <summary>
+    /// 检查授权
+    /// </summary>
+    /// <param name="resourceId"></param>
+    /// <returns></returns>
+    bool CheckSecurity(string resourceId);
 }

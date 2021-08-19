@@ -6,21 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
+namespace Furion.IPCChannel;
 
-namespace Furion.IPCChannel
+/// <summary>
+/// 进程管道内通信处理程序
+/// </summary>
+/// <typeparam name="TMessage"></typeparam>
+public abstract class ChannelHandler<TMessage>
 {
     /// <summary>
-    /// 进程管道内通信处理程序
+    /// 管道执行器
     /// </summary>
-    /// <typeparam name="TMessage"></typeparam>
-    public abstract class ChannelHandler<TMessage>
-    {
-        /// <summary>
-        /// 管道执行器
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public abstract Task InvokeAsync(TMessage message);
-    }
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public abstract Task InvokeAsync(TMessage message);
 }

@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+namespace Furion.DataValidation;
 
-namespace Furion.DataValidation
+/// <summary>
+/// 验证消息类型提供器
+/// </summary>
+public interface IValidationMessageTypeProvider
 {
     /// <summary>
-    /// 验证消息类型提供器
+    /// 验证消息类型定义
     /// </summary>
-    public interface IValidationMessageTypeProvider
-    {
-        /// <summary>
-        /// 验证消息类型定义
-        /// </summary>
-        Type[] Definitions { get; }
-    }
+    Type[] Definitions { get; }
 }

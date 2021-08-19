@@ -12,45 +12,44 @@ using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(Furion.HostingStartup))]
 
-namespace Furion
+namespace Furion;
+
+/// <summary>
+/// 配置程序启动时自动注入
+/// </summary>
+[SuppressSniffer]
+public sealed class HostingStartup : IHostingStartup
 {
     /// <summary>
-    /// 配置程序启动时自动注入
+    /// 配置应用启动
     /// </summary>
-    [SuppressSniffer]
-    public sealed class HostingStartup : IHostingStartup
+    /// <param name="builder"></param>
+    public void Configure(IWebHostBuilder builder)
     {
-        /// <summary>
-        /// 配置应用启动
-        /// </summary>
-        /// <param name="builder"></param>
-        public void Configure(IWebHostBuilder builder)
+        // 自动装载配置
+        builder.ConfigureAppConfiguration((hostContext, configurationBuilder) =>
         {
-            // 自动装载配置
-            builder.ConfigureAppConfiguration((hostContext, configurationBuilder) =>
-            {
-                // 存储环境对象
-                InternalApp.HostEnvironment = InternalApp.WebHostEnvironment = hostContext.HostingEnvironment;
+            // 存储环境对象
+            InternalApp.HostEnvironment = InternalApp.WebHostEnvironment = hostContext.HostingEnvironment;
 
-                // 加载配置
-                InternalApp.AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
-            });
+            // 加载配置
+            InternalApp.AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
+        });
 
-            // 应用初始化服务
-            builder.ConfigureServices((hostContext, services) =>
-            {
-                // 存储配置对象
-                InternalApp.Configuration = hostContext.Configuration;
+        // 应用初始化服务
+        builder.ConfigureServices((hostContext, services) =>
+        {
+            // 存储配置对象
+            InternalApp.Configuration = hostContext.Configuration;
 
-                // 存储服务提供器
-                InternalApp.InternalServices = services;
+            // 存储服务提供器
+            InternalApp.InternalServices = services;
 
-                // 注册 Startup 过滤器
-                services.AddTransient<IStartupFilter, StartupFilter>();
+            // 注册 Startup 过滤器
+            services.AddTransient<IStartupFilter, StartupFilter>();
 
-                // 初始化应用服务
-                services.AddApp();
-            });
-        }
+            // 初始化应用服务
+            services.AddApp();
+        });
     }
 }

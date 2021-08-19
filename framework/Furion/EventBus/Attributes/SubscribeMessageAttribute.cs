@@ -7,28 +7,26 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
 
-namespace Furion.EventBus
+namespace Furion.EventBus;
+
+/// <summary>
+/// 订阅消息特性
+/// </summary>
+[SuppressSniffer, AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class SubscribeMessageAttribute : Attribute
 {
     /// <summary>
-    /// 订阅消息特性
+    /// 构造函数
     /// </summary>
-    [SuppressSniffer, AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class SubscribeMessageAttribute : Attribute
+    /// <param name="messageId"></param>
+    public SubscribeMessageAttribute(string messageId)
     {
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="messageId"></param>
-        public SubscribeMessageAttribute(string messageId)
-        {
-            MessageId = messageId;
-        }
-
-        /// <summary>
-        /// 消息Id
-        /// </summary>
-        public string MessageId { get; set; }
+        MessageId = messageId;
     }
+
+    /// <summary>
+    /// 消息Id
+    /// </summary>
+    public string MessageId { get; set; }
 }

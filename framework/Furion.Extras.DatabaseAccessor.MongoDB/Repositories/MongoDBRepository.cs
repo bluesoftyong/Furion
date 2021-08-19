@@ -6,41 +6,40 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace MongoDB.Driver
+namespace MongoDB.Driver;
+
+/// <summary>
+/// MongoDB 仓储
+/// </summary>
+public class MongoDBRepository : IMongoDBRepository
 {
     /// <summary>
-    /// MongoDB 仓储
+    /// 构造函数
     /// </summary>
-    public class MongoDBRepository : IMongoDBRepository
+    /// <param name="mongoClient"></param>
+    public MongoDBRepository(IMongoClient mongoClient)
     {
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="mongoClient"></param>
-        public MongoDBRepository(IMongoClient mongoClient)
-        {
-            DynamicContext = Context = (MongoClient)mongoClient;
-        }
+        DynamicContext = Context = (MongoClient)mongoClient;
+    }
 
-        /// <summary>
-        /// 数据库上下文
-        /// </summary>
-        public virtual MongoClient Context { get; }
+    /// <summary>
+    /// 数据库上下文
+    /// </summary>
+    public virtual MongoClient Context { get; }
 
-        /// <summary>
-        /// 动态数据库上下文
-        /// </summary>
-        public virtual dynamic DynamicContext { get; }
+    /// <summary>
+    /// 动态数据库上下文
+    /// </summary>
+    public virtual dynamic DynamicContext { get; }
 
-        /// <summary>
-        /// 获取数据库
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="settings"></param>
-        /// <returns></returns>
-        public virtual IMongoDatabase GetDatabase(string name, MongoDatabaseSettings settings = null)
-        {
-            return Context.GetDatabase(name, settings);
-        }
+    /// <summary>
+    /// 获取数据库
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public virtual IMongoDatabase GetDatabase(string name, MongoDatabaseSettings settings = null)
+    {
+        return Context.GetDatabase(name, settings);
     }
 }

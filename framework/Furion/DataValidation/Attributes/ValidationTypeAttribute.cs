@@ -7,15 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System;
 
-namespace Furion.DataValidation
+namespace Furion.DataValidation;
+
+/// <summary>
+/// 验证类型特性
+/// </summary>
+[SuppressSniffer, AttributeUsage(AttributeTargets.Enum)]
+public sealed class ValidationTypeAttribute : Attribute
 {
-    /// <summary>
-    /// 验证类型特性
-    /// </summary>
-    [SuppressSniffer, AttributeUsage(AttributeTargets.Enum)]
-    public sealed class ValidationTypeAttribute : Attribute
-    {
-    }
 }

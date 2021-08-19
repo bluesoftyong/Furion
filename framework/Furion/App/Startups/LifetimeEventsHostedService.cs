@@ -7,45 +7,41 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Microsoft.Extensions.Hosting
+namespace Microsoft.Extensions.Hosting;
+
+/// <summary>
+/// 监听主机启动事件并存储根服务
+/// </summary>
+internal class LifetimeEventsHostedService : IHostedService
 {
     /// <summary>
-    /// 监听主机启动事件并存储根服务
+    /// 构造函数
     /// </summary>
-    internal class LifetimeEventsHostedService : IHostedService
+    /// <param name="serviceProvider"></param>
+    public LifetimeEventsHostedService(IServiceProvider serviceProvider)
     {
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        public LifetimeEventsHostedService(IServiceProvider serviceProvider)
-        {
-            // 存储根服务
-            InternalApp.RootServices = serviceProvider;
-        }
+        // 存储根服务
+        InternalApp.RootServices = serviceProvider;
+    }
 
-        /// <summary>
-        /// 监听主机启动
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+    /// <summary>
+    /// 监听主机启动
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 
-        /// <summary>
-        /// 监听主机停止
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
+    /// <summary>
+    /// 监听主机停止
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

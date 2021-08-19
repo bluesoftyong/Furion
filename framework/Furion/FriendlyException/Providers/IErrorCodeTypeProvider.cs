@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+namespace Furion.FriendlyException;
 
-namespace Furion.FriendlyException
+/// <summary>
+/// 异常错误代码提供器
+/// </summary>
+public interface IErrorCodeTypeProvider
 {
     /// <summary>
-    /// 异常错误代码提供器
+    /// 错误代码定义类型
     /// </summary>
-    public interface IErrorCodeTypeProvider
-    {
-        /// <summary>
-        /// 错误代码定义类型
-        /// </summary>
-        Type[] Definitions { get; }
-    }
+    Type[] Definitions { get; }
 }

@@ -6,23 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+namespace Furion.Reflection;
 
-namespace Furion.Reflection
+/// <summary>
+/// 代理拦截依赖接口
+/// </summary>
+public interface IDispatchProxy
 {
     /// <summary>
-    /// 代理拦截依赖接口
+    /// 实例
     /// </summary>
-    public interface IDispatchProxy
-    {
-        /// <summary>
-        /// 实例
-        /// </summary>
-        object Target { get; set; }
+    object Target { get; set; }
 
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        IServiceProvider Services { get; set; }
-    }
+    /// <summary>
+    /// 服务提供器
+    /// </summary>
+    IServiceProvider Services { get; set; }
 }

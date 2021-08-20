@@ -84,6 +84,16 @@ public sealed class SpecificationDocumentSettingsOptions : IConfigurableOptions<
     public string[] PackagesGroups { get; set; }
 
     /// <summary>
+    /// 启用枚举 Schema 筛选器
+    /// </summary>
+    public bool? EnableEnumSchemaFilter { get; set; }
+
+    /// <summary>
+    /// 启用标签排序筛选器
+    /// </summary>
+    public bool? EnableTagsOrderDocumentFilter { get; set; }
+
+    /// <summary>
     /// 后期配置
     /// </summary>
     /// <param name="options"></param>
@@ -144,5 +154,7 @@ public sealed class SpecificationDocumentSettingsOptions : IConfigurableOptions<
         HideServers ??= true;
         RouteTemplate ??= "swagger/{documentName}/swagger.json";
         PackagesGroups ??= Array.Empty<string>();
+        EnableEnumSchemaFilter ??= true;
+        EnableTagsOrderDocumentFilter ??= true;
     }
 }

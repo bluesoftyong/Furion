@@ -10,7 +10,6 @@ using Furion;
 using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -28,7 +27,7 @@ public static class HostBuilderExtensions
     /// <returns>IWebHostBuilder</returns>
     public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder, string assemblyName = default)
     {
-        webApplicationBuilder.WebHost.Inject(assemblyName);
+        InternalApp.ConfigureApplication(webApplicationBuilder.WebHost);
 
         return webApplicationBuilder;
     }
@@ -55,30 +54,7 @@ public static class HostBuilderExtensions
     /// <returns>IWebHostBuilder</returns>
     public static IHostBuilder Inject(this IHostBuilder hostBuilder, bool autoRegisterBackgroundService = true)
     {
-        hostBuilder.ConfigureAppConfiguration((hostContext, configurationBuilder) =>
-        {
-            // 存储环境对象
-            InternalApp.HostEnvironment = hostContext.HostingEnvironment;
-
-            // 加载配置
-            InternalApp.AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
-        });
-
-        // 自动注入 AddApp() 服务
-        hostBuilder.ConfigureServices((hostContext, services) =>
-        {
-            // 存储配置对象
-            InternalApp.Configuration = hostContext.Configuration;
-
-            // 存储服务提供器
-            InternalApp.InternalServices = services;
-
-            // 初始化应用服务
-            services.AddApp();
-
-            // 自动注册 BackgroundService
-            if (autoRegisterBackgroundService) services.AddAppHostedService();
-        });
+        InternalApp.ConfigureApplication(hostBuilder, autoRegisterBackgroundService);
 
         return hostBuilder;
     }

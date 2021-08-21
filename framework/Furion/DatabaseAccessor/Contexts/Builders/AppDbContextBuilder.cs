@@ -481,7 +481,7 @@ internal static class AppDbContextBuilder
                         if (typeof(DbContext).IsAssignableFrom(entityCorrelationType))
                         {
                             // 判断是否已经注册了上下文并且是否等于当前上下文
-                            if (Penetrates.DbContextWithLocatorCached.Values.Contains(entityCorrelationType) && entityCorrelationType == dbContext.GetType())
+                            if (Penetrates.DbContextDescriptors.Values.Contains(entityCorrelationType) && entityCorrelationType == dbContext.GetType())
                             {
                                 result.ModelBuilderFilterInstances.Add(dbContext as IPrivateModelBuilderFilter);
                             }

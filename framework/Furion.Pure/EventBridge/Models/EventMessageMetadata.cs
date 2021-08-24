@@ -11,23 +11,36 @@ using Furion.DependencyInjection;
 namespace Furion.EventBridge;
 
 /// <summary>
-/// 事件 Id 配置
+/// 承载事件传输元数据
 /// </summary>
-[SuppressSniffer, AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public sealed class EventIdAttribute : Attribute
+[SuppressSniffer]
+public class EventMessageMetadata : EventHandlerMetadata
 {
     /// <summary>
-    /// 事件 Id
+    /// 只允许程序集内创建
     /// </summary>
-    /// <param name="id"></param>
-    public EventIdAttribute(string id)
+    internal EventMessageMetadata()
     {
-        Id = id;
     }
 
     /// <summary>
-    /// 事件Id
+    /// 事件 Id
     /// </summary>
-    public string Id { get; set; }
+    public string EventId { get; internal set; }
+
+    /// <summary>
+    /// 负载数据（进行序列化存储）
+    /// </summary>
+    public string Payload { get; internal set; }
+
+    /// <summary>
+    /// 程序集名称
+    /// </summary>
+    public string PayloadAssemblyName { get; internal set; }
+
+    /// <summary>
+    /// 处理程序名称
+    /// </summary>
+    public string PayloadTypeFullName { get; internal set; }
 }
 

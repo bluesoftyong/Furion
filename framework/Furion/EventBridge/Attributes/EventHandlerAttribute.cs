@@ -11,29 +11,29 @@ using Furion.DependencyInjection;
 namespace Furion.EventBridge;
 
 /// <summary>
-/// 事件元数据
+/// 事件处理程序特性
 /// </summary>
-[SuppressSniffer]
-public class EventIdMetadata : EventMetadata
+[SuppressSniffer, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class EventHandlerAttribute : Attribute
 {
     /// <summary>
-    /// 事件 Id
+    /// 构造函数
     /// </summary>
-    public string EventId { get; set; }
+    public EventHandlerAttribute()
+    {
+    }
 
     /// <summary>
-    /// 负载数据（进行序列化存储）
+    /// 构造函数
     /// </summary>
-    public string Payload { get; set; }
+    /// <param name="category"></param>
+    public EventHandlerAttribute(string category)
+    {
+        Category = category;
+    }
 
     /// <summary>
-    /// 程序集名称
+    /// 分类名
     /// </summary>
-    public string PayloadAssemblyName { get; set; }
-
-    /// <summary>
-    /// 处理程序名称
-    /// </summary>
-    public string PayloadTypeFullName { get; set; }
+    public string Category { get; set; }
 }
-

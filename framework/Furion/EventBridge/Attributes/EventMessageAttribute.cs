@@ -11,29 +11,23 @@ using Furion.DependencyInjection;
 namespace Furion.EventBridge;
 
 /// <summary>
-/// 事件元数据
+/// 事件消息特性
 /// </summary>
-[SuppressSniffer]
-public class EventMetadata
+[SuppressSniffer, AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public sealed class EventMessageAttribute : Attribute
 {
     /// <summary>
-    /// 程序集名称
+    /// 构造函数
     /// </summary>
-    public string AssemblyName { get; set; }
+    /// <param name="eventId"></param>
+    public EventMessageAttribute(string eventId)
+    {
+        EventId = eventId;
+    }
 
     /// <summary>
-    /// 处理程序名称
+    /// 事件 Id
     /// </summary>
-    public string TypeFullName { get; set; }
-
-    /// <summary>
-    /// 分类名
-    /// </summary>
-    public string Category { get; set; }
-
-    /// <summary>
-    /// 创建事件
-    /// </summary>
-    public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
+    public string EventId { get; set; }
 }
 

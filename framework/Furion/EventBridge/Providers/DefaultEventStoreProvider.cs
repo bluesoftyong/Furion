@@ -7,13 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using Furion.Extensions;
 using Furion.IPCChannel;
-using Furion.JsonSerialization;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.Loader;
 
 namespace Furion.EventBridge;
 
@@ -74,12 +70,15 @@ public sealed class DefaultEventStoreProvider : IEventStoreProvider
     /// </summary>
     /// <param name="eventIdMetadata"></param>
     /// <returns></returns>
-    public Task AppendEventIdAsync(EventIdMetadata eventIdMetadata)
+    public async Task AppendEventIdAsync(EventIdMetadata eventIdMetadata)
     {
         if (Debugger.IsAttached) Console.WriteLine(nameof(AppendEventIdAsync));
 
         EventIdStore.TryAdd($"{eventIdMetadata.Category}:{eventIdMetadata.EventId}", eventIdMetadata);
-        return Task.CompletedTask;
+
+        // 反射创建承载数据
+        var payload = Event.DeserializePayload(eventIdMetadata);
+        await ChannelContext<EventPayload, EventDispatcher>.BoundedChannel.Writer.WriteAsync(new EventPayload(eventIdMetadata.Category, eventIdMetadata.EventId, payload));
     }
 
     /// <summary>
@@ -144,33 +143,8 @@ public sealed class DefaultEventStoreProvider : IEventStoreProvider
 
         foreach (var eventIdMetadata in eventIdMetadatas)
         {
-            var payload = DeserializePayload(eventIdMetadata);
-            await ChannelContext<EventPayload, EventDispatcher>.BoundedChannel.Writer.WriteAsync(new EventPayload(eventIdMetadata.Category, eventIdMetadata.EventId, payload));
+            await AppendEventIdAsync(eventIdMetadata);
         }
-    }
-
-    /// <summary>
-    /// 反序列化承载是数据
-    /// </summary>
-    /// <param name="eventIdMetadata"></param>
-    /// <returns></returns>
-    private static object DeserializePayload(EventIdMetadata eventIdMetadata)
-    {
-        object payload = null;
-
-        // 反序列化承载数据
-        if (eventIdMetadata.Payload != null)
-        {
-            // 加载程序集
-            var payloadAssembly = AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(eventIdMetadata.PayloadAssemblyName));
-            var payloadType = payloadAssembly.GetType(eventIdMetadata.PayloadTypeFullName);
-
-            // 转换承载数据为具体值
-            if (payloadType.IsValueType) payload = eventIdMetadata.Payload.ChangeType(payloadType);
-            else payload = typeof(JSON).GetMethod("Deserialize").MakeGenericMethod(payloadType).Invoke(null, new object[] { eventIdMetadata.Payload, null, null });
-        }
-
-        return payload;
     }
 }
 

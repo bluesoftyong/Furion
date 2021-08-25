@@ -25,17 +25,15 @@ public class ViewEngineOptions
     public ViewEngineOptions()
     {
         ReferencedAssemblies = new HashSet<Assembly>()
-            {
-                typeof(object).Assembly,
-                typeof(ViewEngineModel).Assembly,
-                typeof(System.Collections.IList).Assembly,
-                typeof(IEnumerable<>).Assembly,
-                Reflect.GetAssembly("Microsoft.CSharp"),
-                Reflect.GetAssembly("System.Runtime"),
-                Reflect.GetAssembly("System.Linq"),
-                Reflect.GetAssembly("System.Linq.Expressions"),
-                Reflect.GetAssembly("netstandard")
-            };
+        {
+             typeof(object).Assembly,
+             typeof(ViewEngineModel).Assembly,
+             typeof(System.Collections.IList).Assembly,
+             typeof(IEnumerable<>).Assembly,
+             Reflect.GetAssembly("System.Runtime"),
+             Reflect.GetAssembly("System.Linq"),
+             Reflect.GetAssembly("System.Linq.Expressions"),
+         };
     }
 
     /// <summary>

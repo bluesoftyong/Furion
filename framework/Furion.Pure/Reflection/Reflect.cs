@@ -52,9 +52,9 @@ internal static class Reflect
     /// </summary>
     /// <param name="assembly"></param>
     /// <returns></returns>
-    internal static Assembly LoadAssembly(Stream assembly)
+    internal static Assembly LoadAssembly(MemoryStream assembly)
     {
-        return AssemblyLoadContext.Default.LoadFromStream(assembly);
+        return Assembly.Load(assembly.ToArray());
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ internal static class Reflect
     /// <param name="assembly"></param>
     /// <param name="typeFullName"></param>
     /// <returns></returns>
-    internal static Type GetType(Stream assembly, string typeFullName)
+    internal static Type GetType(MemoryStream assembly, string typeFullName)
     {
         return LoadAssembly(assembly).GetType(typeFullName);
     }
@@ -120,4 +120,3 @@ internal static class Reflect
         return GetAssemblyName(typeInfo.Assembly);
     }
 }
-

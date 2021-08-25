@@ -189,13 +189,13 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     {
         var (Name, IsLowercaseRoute, IsKeepName) = ConfigureControllerAndActionName(apiDescriptionSettings, action.ActionMethod.Name, _dynamicApiControllerSettings.AbandonActionAffixes, (tempName) =>
           {
-                  // 处理动作方法名称谓词
-                  if (!CheckIsKeepVerb(apiDescriptionSettings, controllerApiDescriptionSettings))
+              // 处理动作方法名称谓词
+              if (!CheckIsKeepVerb(apiDescriptionSettings, controllerApiDescriptionSettings))
               {
                   var words = tempName.SplitCamelCase();
                   var verbKey = words.First().ToLower();
-                      // 处理类似 getlist,getall 多个单词
-                      if (words.Length > 1 && _verbToHttpMethods.ContainsKey((words[0] + words[1]).ToLower()))
+                  // 处理类似 getlist,getall 多个单词
+                  if (words.Length > 1 && _verbToHttpMethods.ContainsKey((words[0] + words[1]).ToLower()))
                   {
                       tempName = tempName[(words[0] + words[1]).Length..];
                   }
@@ -502,7 +502,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
             apiVersion ??= version;
 
             // 清除指定前后缀
-            tempName = Penetrates.ClearStringAffixes(tempName, affixes: affixes);
+            tempName = tempName.ClearStringAffixes(affixes: affixes);
 
             isKeepName = CheckIsKeepName(controllerApiDescriptionSettings == null ? null : apiDescriptionSettings, controllerApiDescriptionSettings ?? apiDescriptionSettings);
 

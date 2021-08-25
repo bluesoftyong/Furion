@@ -8,7 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.Extensions;
-using System.Reflection;
+using Furion.Reflection;
 
 namespace Furion.ViewEngine;
 
@@ -35,9 +35,7 @@ public class ViewEngineTemplate : IViewEngineTemplate
     internal ViewEngineTemplate(MemoryStream assemblyByteCode)
     {
         this.assemblyByteCode = assemblyByteCode;
-
-        var assembly = Assembly.Load(assemblyByteCode.ToArray());
-        templateType = assembly.GetType("Furion.ViewEngine.Template");
+        templateType = Reflect.GetType(assemblyByteCode, "Furion.ViewEngine.Template");
     }
 
     /// <summary>
@@ -199,9 +197,7 @@ public class ViewEngineTemplate<T> : IViewEngineTemplate<T>
     internal ViewEngineTemplate(MemoryStream assemblyByteCode)
     {
         this.assemblyByteCode = assemblyByteCode;
-
-        var assembly = Assembly.Load(assemblyByteCode.ToArray());
-        templateType = assembly.GetType("Furion.ViewEngine.Template");
+        templateType = Reflect.GetType(assemblyByteCode, "Furion.ViewEngine.Template");
     }
 
     /// <summary>

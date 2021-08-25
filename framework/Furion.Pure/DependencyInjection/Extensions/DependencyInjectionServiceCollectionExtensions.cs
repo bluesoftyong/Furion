@@ -265,7 +265,7 @@ public static class DependencyInjectionServiceCollectionExtensions
                 };
 
                 // 加载代理拦截
-                if (!string.IsNullOrWhiteSpace(externalService.Proxy)) injectionAttribute.Proxy = LoadStringType(externalService.Proxy);
+                if (!string.IsNullOrWhiteSpace(externalService.Proxy)) injectionAttribute.Proxy = GetProxyType(externalService.Proxy);
 
                 // 解析注册类型
                 var dependencyType = externalService.RegisterType switch
@@ -277,9 +277,9 @@ public static class DependencyInjectionServiceCollectionExtensions
                 };
 
                 RegisterService(services, dependencyType,
-                    LoadStringType(externalService.Service),
+                    GetProxyType(externalService.Service),
                     injectionAttribute,
-                    new[] { LoadStringType(externalService.Interface) });
+                    new[] { GetProxyType(externalService.Interface) });
             }
         }
     }
@@ -293,7 +293,7 @@ public static class DependencyInjectionServiceCollectionExtensions
     {
         if (!type.IsGenericType) return type;
 
-        return type.Assembly.GetType($"{type.Namespace}.{type.Name}", true, true);
+        return Reflect.GetType(type.Assembly, $"{type.Namespace}.{type.Name}");
     }
 
     /// <summary>
@@ -307,15 +307,14 @@ public static class DependencyInjectionServiceCollectionExtensions
     }
 
     /// <summary>
-    /// 加载字符串类型
+    /// 加载代理程序集
     /// </summary>
     /// <param name="str"></param>
     /// <returns></returns>
-    private static Type LoadStringType(string str)
+    private static Type GetProxyType(string str)
     {
         var typeDefinitions = str.Split(";");
-        var assembly = App.Assemblies.First(u => u.GetName().Name == typeDefinitions[0]);
-        return assembly.GetType(typeDefinitions[1], true, true);
+        return Reflect.GetType(typeDefinitions[0], typeDefinitions[1]);
     }
 
     /// <summary>

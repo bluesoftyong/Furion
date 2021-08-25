@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
+using Furion.Reflection;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
 
@@ -28,12 +29,12 @@ public class ViewEngineOptions
                 typeof(object).Assembly,
                 typeof(ViewEngineModel).Assembly,
                 typeof(System.Collections.IList).Assembly,
-                typeof(System.Collections.Generic.IEnumerable<>).Assembly,
-                Assembly.Load(new AssemblyName("Microsoft.CSharp")),
-                Assembly.Load(new AssemblyName("System.Runtime")),
-                Assembly.Load(new AssemblyName("System.Linq")),
-                Assembly.Load(new AssemblyName("System.Linq.Expressions")),
-                Assembly.Load(new AssemblyName("netstandard"))
+                typeof(IEnumerable<>).Assembly,
+                Reflect.GetAssembly("Microsoft.CSharp"),
+                Reflect.GetAssembly("System.Runtime"),
+                Reflect.GetAssembly("System.Linq"),
+                Reflect.GetAssembly("System.Linq.Expressions"),
+                Reflect.GetAssembly("netstandard")
             };
     }
 

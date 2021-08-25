@@ -8,6 +8,7 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Furion.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
@@ -23,9 +24,8 @@ public static class HostBuilderExtensions
     /// Web 应用注入
     /// </summary>
     /// <param name="webApplicationBuilder">Web应用构建器</param>
-    /// <param name="assemblyName">外部程序集名称</param>
     /// <returns>IWebHostBuilder</returns>
-    public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder, string assemblyName = default)
+    public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder)
     {
         InternalApp.ConfigureApplication(webApplicationBuilder.WebHost);
 
@@ -40,7 +40,7 @@ public static class HostBuilderExtensions
     /// <returns>IWebHostBuilder</returns>
     public static IWebHostBuilder Inject(this IWebHostBuilder hostBuilder, string assemblyName = default)
     {
-        var frameworkPackageName = assemblyName ?? typeof(HostBuilderExtensions).Assembly.GetName().Name;
+        var frameworkPackageName = assemblyName ?? Reflect.GetAssemblyName(typeof(HostBuilderExtensions));
         hostBuilder.UseSetting(WebHostDefaults.HostingStartupAssembliesKey, frameworkPackageName);
 
         return hostBuilder;

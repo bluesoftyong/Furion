@@ -446,8 +446,8 @@ public sealed partial class HttpRequestPart
                 // 失败重试
                 await Retry.Invoke(async () =>
                 {
-                        // 发送请求
-                        response = await httpClient.SendAsync(request, cancellationToken);
+                    // 发送请求
+                    response = await httpClient.SendAsync(request, cancellationToken);
                 }, RetryPolicy.Value.NumRetries, RetryPolicy.Value.RetryTimeout);
             }
         }
@@ -531,8 +531,18 @@ public sealed partial class HttpRequestPart
                 }
 
                 // 设置内容类型
-                if (multipartFormDataContent.Any()) httpContent = multipartFormDataContent;
+                multipartFormDataContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
+                httpContent = multipartFormDataContent;
+                break;
 
+            case "application/octet-stream":
+                if (BodyBytes.Count > 0 && BodyBytes[0].Bytes.Length > 0)
+                {
+                    httpContent = new ByteArrayContent(BodyBytes[0].Bytes);
+
+                    // 设置内容类型
+                    httpContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
+                }
                 break;
 
             case "application/json":

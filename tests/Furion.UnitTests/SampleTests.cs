@@ -31,7 +31,7 @@ public class SampleTests
     [Theory]
     [InlineData(3)]
     [InlineData(5)]
-    [InlineData(6)]
+    [InlineData(7)]
     public void Test_Numbers_Is_Odd(int value)
     {
         Assert.True(IsOdd(value));

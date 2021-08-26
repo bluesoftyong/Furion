@@ -3,7 +3,7 @@ using Furion.DynamicApiController;
 using Furion.ViewEngine;
 using Furion.ViewEngine.Extensions;
 
-namespace Furion.TestProject.TestServices;
+namespace Furion.TestProject;
 
 /// <summary>
 /// 视图引擎集成测试

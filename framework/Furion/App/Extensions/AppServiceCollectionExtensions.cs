@@ -18,14 +18,15 @@ public static class AppServiceCollectionExtensions
     public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configurationSection, Action<AppSettingsOptions>? configureOptions = default)
     {
         // 注册 App 全局应用配置
-        services.AddOptions<AppSettingsOptions>()
-                .Bind(configurationSection, binderOptions =>
-                {
-                    binderOptions.ErrorOnUnknownConfiguration = true;
-                    binderOptions.BindNonPublicProperties = true;
-                })
-                .PostConfigure(configureOptions)
-                .ValidateDataAnnotations();
+        var optionsBuilder = services.AddOptions<AppSettingsOptions>()
+                   .Bind(configurationSection, binderOptions =>
+                   {
+                       binderOptions.ErrorOnUnknownConfiguration = true;
+                       binderOptions.BindNonPublicProperties = true;
+                   })
+                   .ValidateDataAnnotations();
+
+        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
         // 注册为单例
         services.AddSingleton<IApp, App>();

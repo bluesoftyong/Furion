@@ -17,8 +17,13 @@ public static class WebApplicationBuilderExtensions
     /// <returns></returns>
     public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder, string? appSettingsSection = default, Action<AppSettingsOptions>? appSettingsConfigureOptions = default)
     {
+        var services = webApplicationBuilder.Services;
+
+        // 注册 HttpContext 访问器
+        services.AddHttpContextAccessor();
+
         // 注册 App 全局应用对象服务
-        webApplicationBuilder.Services.AddApp(
+        services.AddApp(
             webApplicationBuilder.Configuration.GetSection(appSettingsSection ?? "AppSettings")
             , appSettingsConfigureOptions);
 

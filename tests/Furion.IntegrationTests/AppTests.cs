@@ -30,4 +30,19 @@ public class AppTests : IClassFixture<WebApplicationFactory<TestProject.FakeStar
         _output = output;
         _factory = factory;
     }
+
+    /// <summary>
+    /// 测试 IApp 是否是单例
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/AppTests/TestIsSingleton")]
+    public async Task TestIsSingleton(string url)
+    {
+        var content = await _factory.PostAsStringAsync(url);
+        _output.WriteLine($"{content}");
+
+        Assert.True(bool.Parse(content));
+    }
 }

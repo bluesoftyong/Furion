@@ -28,11 +28,12 @@ public static class OptionsServiceCollectionExtensions
                             ? optionsType.Name.SubSuffix("Options")
                             : appOptionsAttribute.SectionKey;
 
-        // 读取后缀配置
+        // 读取后置配置
         var postConfigureMethod = optionsType.GetTypeInfo().DeclaredMethods.First(m => m.Name == nameof(IAppOptions<TOptions>.PostConfigure));
 
         // 注册服务
-        services.AddAppOptions<TOptions>(configuration.GetSection(sectionKey), options => postConfigureMethod.Invoke(options, new[] { options }));
+        services.AddAppOptions<TOptions>(configuration.GetSection(sectionKey)
+            , options => postConfigureMethod.Invoke(options, new[] { options }));
 
         return services;
     }

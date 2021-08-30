@@ -44,14 +44,20 @@ public class AppTests : ControllerBase
     [HttpPost]
     public bool TestIsSingleton([FromServices] IApp app3)
     {
-        var isEqual = _app.Equals(_app2)
+        return _app.Equals(_app2)
             && _app.Equals(_serviceProvider.GetRequiredService<IApp>())
             && _app.Equals(_host.Services.GetRequiredService<IApp>())
             && _app.Equals(app3)
             && _app.Equals(_httpContextAccessor.HttpContext?.RequestServices?.GetRequiredService<IApp>());
+    }
 
-        if (!isEqual) throw new Exception("IApp 不是一个单例服务");
-
-        return isEqual;
+    /// <summary>
+    /// 测试 AppSettings 不为 Null
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost]
+    public bool TestAppSettingsNotNull()
+    {
+        return _app.AppSettings != default;
     }
 }

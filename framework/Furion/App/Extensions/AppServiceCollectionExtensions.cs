@@ -15,18 +15,10 @@ public static class AppServiceCollectionExtensions
     /// <param name="configurationSection">App 配置节点</param>
     /// <param name="configureOptions">AppSettings 后置配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configurationSection, Action<AppSettingsOptions>? configureOptions = default)
+    public static IServiceCollection AddApp(this IServiceCollection services, IConfigurationSection configurationSection, Action<AppSettingsOptions>? configureOptions = default)
     {
         // 注册 App 全局应用配置
-        var optionsBuilder = services.AddOptions<AppSettingsOptions>()
-                   .Bind(configurationSection, binderOptions =>
-                   {
-                       binderOptions.ErrorOnUnknownConfiguration = true;
-                       binderOptions.BindNonPublicProperties = true;
-                   })
-                   .ValidateDataAnnotations();
-
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        services.AddAppOptions(configurationSection, configureOptions);
 
         // 注册为单例
         services.AddSingleton<IApp, App>();

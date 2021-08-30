@@ -1,4 +1,7 @@
-﻿namespace Furion;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
+namespace Furion;
 
 /// <summary>
 /// App 全局应用对象接口规范
@@ -11,9 +14,19 @@ public interface IApp
     IServiceProvider ServiceProvider { get; }
 
     /// <summary>
+    /// 配置对象
+    /// </summary>
+    IConfiguration Configuration { get; }
+
+    /// <summary>
     /// App 全局配置
     /// </summary>
     AppSettingsOptions AppSettings { get; }
+
+    /// <summary>
+    /// 主机环境
+    /// </summary>
+    IHostEnvironment Environment { get; }
 
     /// <summary>
     /// 解析服务

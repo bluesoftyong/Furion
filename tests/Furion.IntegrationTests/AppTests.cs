@@ -45,4 +45,19 @@ public class AppTests : IClassFixture<WebApplicationFactory<TestProject.FakeStar
 
         Assert.True(bool.Parse(content));
     }
+
+    /// <summary>
+    /// 测试 AppSettings 不为 Null
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/AppTests/TestAppSettingsNotNull")]
+    public async Task TestAppSettingsNotNull(string url)
+    {
+        var content = await _factory.PostAsStringAsync(url);
+        _output.WriteLine($"{content}");
+
+        Assert.True(bool.Parse(content));
+    }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -20,19 +22,35 @@ public sealed partial class App : IApp
     /// <param name="logger">日志对象</param>
     /// <param name="optionsMonitor">配置选项</param>
     /// <param name="serviceProvider">服务提供器</param>
-    public App(ILogger<App> logger,
-        IOptionsMonitor<AppSettingsOptions> optionsMonitor,
-        IServiceProvider serviceProvider)
+    /// <param name="configuration">配置对象</param>
+    /// <param name="hostEnvironment">主机环境</param>
+    public App(ILogger<App> logger
+        , IOptionsMonitor<AppSettingsOptions> optionsMonitor
+        , IServiceProvider serviceProvider
+        , IConfiguration configuration
+        , IHostEnvironment hostEnvironment)
     {
         _logger = logger;
         AppSettings = optionsMonitor.CurrentValue;
         ServiceProvider = serviceProvider;
+        Configuration = configuration;
+        Environment = hostEnvironment;
     }
 
     /// <summary>
     /// 服务提供器
     /// </summary>
     public IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    /// 配置对象
+    /// </summary>
+    public IConfiguration Configuration { get; }
+
+    /// <summary>
+    /// 主机环境
+    /// </summary>
+    public IHostEnvironment Environment { get; }
 
     /// <summary>
     /// App 全局配置

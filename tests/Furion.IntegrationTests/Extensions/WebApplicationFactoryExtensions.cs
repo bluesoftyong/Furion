@@ -22,4 +22,3 @@ public static class WebApplicationFactoryExtensions
         return await response.Content.ReadAsStringAsync();
     }
 }
-

@@ -59,6 +59,7 @@ public class OptionsTests : ControllerBase
 /// <summary>
 /// 未实现 IAppOptions 接口测试
 /// </summary>
+[AppOptions(typeof(ValidateSettingsOptions), typeof(Validate2SettingsOptions))]
 public sealed class TestSettingsOptions
 {
     public string? Name { get; set; }
@@ -79,5 +80,37 @@ public sealed class Test2SettingsOptions : IAppOptions<Test2SettingsOptions>
     void IAppOptions<Test2SettingsOptions>.PostConfigure(Test2SettingsOptions options)
     {
         options.Name ??= "Furion";
+    }
+}
+
+class ValidateSettingsOptions : IValidateOptions<TestSettingsOptions>
+{
+    private readonly IConfiguration _configuration;
+    public ValidateSettingsOptions(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public ValidateOptionsResult Validate(string name, TestSettingsOptions options)
+    {
+        return options.Name == "Fur"
+                ? ValidateOptionsResult.Fail("出错啦")
+                : ValidateOptionsResult.Success;
+    }
+}
+
+class Validate2SettingsOptions : IValidateOptions<TestSettingsOptions>
+{
+    private readonly IConfiguration _configuration;
+    public Validate2SettingsOptions(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public ValidateOptionsResult Validate(string name, TestSettingsOptions options)
+    {
+        return options.Name == "Fur"
+                ? ValidateOptionsResult.Fail("出错啦")
+                : ValidateOptionsResult.Success;
     }
 }

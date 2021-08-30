@@ -2,6 +2,7 @@
 using Furion.Options;
 using Furion.Options.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -195,9 +196,32 @@ public static class OptionsServiceCollectionExtensions
                    .Bind(configurationSection, binderOptions =>
                    {
                        binderOptions.ErrorOnUnknownConfiguration = true;
-                       binderOptions.BindNonPublicProperties = true;
+                       binderOptions.BindNonPublicProperties = false;
                    })
                    .ValidateDataAnnotations();
+
+        // 配置复杂验证
+        Type optionsType = typeof(TOptions)
+            , validateOptionsType = typeof(IValidateOptions<TOptions>);
+
+        // 禁止选项自实现 IValidateOptions<TOptions> 类型
+        if (validateOptionsType.IsAssignableFrom(optionsType))
+            throw new InvalidOperationException($"Type `{optionsType.Name}` prohibits the implementation of `IValidateOptions<TOptions>`.");
+
+        // 配置复杂验证支持
+        var appOptionsAttribute = optionsType.GetTypeAttribute<AppOptionsAttribute>();
+        if (appOptionsAttribute?.ValidateOptionsTypes == default || appOptionsAttribute.ValidateOptionsTypes.Length == 0) return optionsBuilder;
+
+        // 注册所有验证
+        foreach (var validateType in appOptionsAttribute.ValidateOptionsTypes)
+        {
+            // 验证类型必须实现 IValidateOptions<TOptions>
+            if (!validateOptionsType.IsAssignableFrom(validateType))
+                throw new InvalidOperationException($"The value type of `{nameof(AppOptionsAttribute.ValidateOptionsTypes)}` property must implement the `IValidateOptions<TOptions>` interface.");
+
+            // 注册 IValidateOptions 复杂验证
+            services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, validateType));
+        }
 
         return optionsBuilder;
     }

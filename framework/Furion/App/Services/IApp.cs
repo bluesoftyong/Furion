@@ -19,14 +19,20 @@ public interface IApp
     IConfiguration Configuration { get; }
 
     /// <summary>
-    /// App 全局配置
-    /// </summary>
-    AppSettingsOptions AppSettings { get; }
-
-    /// <summary>
     /// 主机环境
     /// </summary>
     IHostEnvironment Environment { get; }
+
+    /// <summary>
+    /// 主机对象
+    /// </summary>
+    /// <remarks>可通过.Services 获取根服务，常用于多线程操作</remarks>
+    IHost Host { get; }
+
+    /// <summary>
+    /// App 全局配置
+    /// </summary>
+    AppSettingsOptions AppSettings { get; }
 
     /// <summary>
     /// 解析服务

@@ -24,17 +24,20 @@ public sealed partial class App : IApp
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="configuration">配置对象</param>
     /// <param name="hostEnvironment">主机环境</param>
+    /// <param name="host">主机对象</param>
     public App(ILogger<App> logger
         , IOptionsMonitor<AppSettingsOptions> optionsMonitor
         , IServiceProvider serviceProvider
         , IConfiguration configuration
-        , IHostEnvironment hostEnvironment)
+        , IHostEnvironment hostEnvironment
+        , IHost host)
     {
         _logger = logger;
         AppSettings = optionsMonitor.CurrentValue;
         ServiceProvider = serviceProvider;
         Configuration = configuration;
         Environment = hostEnvironment;
+        Host = host;
     }
 
     /// <summary>
@@ -51,6 +54,12 @@ public sealed partial class App : IApp
     /// 主机环境
     /// </summary>
     public IHostEnvironment Environment { get; }
+
+    /// <summary>
+    /// 主机对象
+    /// </summary>
+    /// <remarks>可通过.Services 获取根服务，常用于多线程操作</remarks>
+    public IHost Host { get; }
 
     /// <summary>
     /// App 全局配置

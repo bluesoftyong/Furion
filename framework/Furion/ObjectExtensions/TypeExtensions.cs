@@ -2,6 +2,9 @@
 
 namespace Furion.ObjectExtensions;
 
+/// <summary>
+/// Type 类型拓展
+/// </summary>
 internal static class TypeExtensions
 {
     /// <summary>

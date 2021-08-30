@@ -41,9 +41,9 @@ internal static class OptionsBuilderExtensions
             throw new InvalidOperationException($"The `{postConfigureMethod}` method with the same signature as `OptionsBuilder<TOptions>` was not found.");
 
         // 创建相同签名委托
-        var actionParameterType = typeof(Action).Assembly.GetType($"{typeof(Action).FullName}`{postConfigureMethod.GetParameters().Length}")
+        var actionGenericParameterType = typeof(Action).Assembly.GetType($"{typeof(Action).FullName}`{postConfigureMethod.GetParameters().Length}")
                                             ?.MakeGenericType(parameterTypes);
-        var @delegate = postConfigureMethod.CreateDelegate(actionParameterType!, default(TOptions));
+        var @delegate = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
 
         // 调用 PostConfigure 方法
         if (optionsBuilderPostConfigureMethod.IsGenericMethod)

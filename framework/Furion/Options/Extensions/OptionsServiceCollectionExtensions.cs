@@ -31,7 +31,6 @@ public static class OptionsServiceCollectionExtensions
         return services;
     }
 
-
     /// <summary>
     /// 添加配置选项
     /// </summary>
@@ -92,7 +91,6 @@ public static class OptionsServiceCollectionExtensions
         return services;
     }
 
-
     /// <summary>
     /// 添加配置选项
     /// </summary>
@@ -116,7 +114,6 @@ public static class OptionsServiceCollectionExtensions
 
         return services;
     }
-
 
     /// <summary>
     /// 添加配置选项
@@ -143,7 +140,6 @@ public static class OptionsServiceCollectionExtensions
 
         return services;
     }
-
 
     /// <summary>
     /// 添加配置选项

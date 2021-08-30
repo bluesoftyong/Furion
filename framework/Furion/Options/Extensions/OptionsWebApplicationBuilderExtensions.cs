@@ -15,7 +15,7 @@ public static class OptionsWebApplicationBuilderExtensions
     /// <param name="webApplicationBuilder">WebApplication 构建器</param>
     /// <returns></returns>
     public static WebApplicationBuilder AddAppOptions<TOptions>(this WebApplicationBuilder webApplicationBuilder)
-        where TOptions : class, IAppOptions<TOptions>
+        where TOptions : class, IAppOptionsDependency
     {
         var services = webApplicationBuilder.Services;
         var configuration = webApplicationBuilder.Configuration;

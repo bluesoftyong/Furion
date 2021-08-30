@@ -21,7 +21,7 @@ internal static class OptionsBuilderExtensions
 
         // 添加后置配置
         var postConfigureMethods = optionsType.GetTypeInfo().DeclaredMethods
-                                                            .Where(m => m.Name == nameof(IAppOptions<TOptions>.PostConfigure)
+                                                            .Where(m => (m.Name == nameof(IAppOptions<TOptions>.PostConfigure) || m.Name.EndsWith($".{nameof(IAppOptions<TOptions>.PostConfigure)}"))
                                                                 && m.GetParameters()[0].ParameterType == optionsType);
 
         if (postConfigureMethods.Count() > 1)

@@ -12,7 +12,7 @@ public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
     /// 后期配置
     /// </summary>
     /// <param name="options"></param>
-    public void PostConfigure(AppSettingsOptions options)
+    void IAppOptions<AppSettingsOptions>.PostConfigure(AppSettingsOptions options)
     {
     }
 }

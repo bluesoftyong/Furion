@@ -1,5 +1,8 @@
 ﻿namespace Furion.Options;
 
+/// <summary>
+/// 选项配置特性
+/// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public sealed class AppOptionsAttribute : Attribute
 {

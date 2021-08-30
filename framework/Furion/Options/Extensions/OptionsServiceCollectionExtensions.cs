@@ -42,7 +42,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configurationSection">配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
@@ -60,7 +60,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configurationSection">配置节点对象</param>
@@ -80,7 +80,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep1">依赖服务</typeparam>
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
@@ -103,7 +103,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep1">依赖服务</typeparam>
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <typeparam name="TDep3">依赖服务</typeparam>
@@ -128,7 +128,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep1">依赖服务</typeparam>
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <typeparam name="TDep3">依赖服务</typeparam>
@@ -155,7 +155,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 添加配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep1">依赖服务</typeparam>
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <typeparam name="TDep3">依赖服务</typeparam>
@@ -183,7 +183,7 @@ public static class OptionsServiceCollectionExtensions
     /// <summary>
     /// 创建配置选项
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
+    /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configurationSection">配置节点对象</param>
     /// <returns></returns>

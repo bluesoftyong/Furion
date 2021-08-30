@@ -3,14 +3,17 @@ using System.Reflection;
 
 namespace Furion.Options.Extensions;
 
+/// <summary>
+/// OptionsBuilder 对象拓展类
+/// </summary>
 internal static class OptionsBuilderExtensions
 {
     /// <summary>
     /// 反射调用 PostConfigure 配置方法
     /// </summary>
-    /// <typeparam name="TOptions"></typeparam>
-    /// <param name="optionsBuilder"></param>
-    /// <returns></returns>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项类型</param>
+    /// <returns>OptionsBuilder</returns>
     internal static OptionsBuilder<TOptions>? InvokePostConfigure<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
         where TOptions : class, IAppOptionsDependency
     {

@@ -3,9 +3,9 @@
 namespace Microsoft.AspNetCore.Builder;
 
 /// <summary>
-/// App 全局应用 WebApplication 拓展类
+/// WebApplication 拓展类
 /// </summary>
-public static class AppWebApplicationBuilderExtensions
+public static class WebApplicationBuilderExtensions
 {
     /// <summary>
     /// 初始化框架服务

@@ -12,13 +12,13 @@ public static class AppServiceCollectionExtensions
     /// 添加 App 全局应用服务
     /// </summary>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">App 配置节点</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">AppSettings 后置配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddApp(this IServiceCollection services, IConfigurationSection configurationSection, Action<AppSettingsOptions>? configureOptions = default)
+    public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册 App 全局应用配置
-        services.AddAppOptions(configurationSection, configureOptions);
+        services.AddAppOptions<AppSettingsOptions>(configuration);
 
         // 注册为单例
         services.AddSingleton<IApp, App>();

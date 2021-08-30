@@ -10,11 +10,11 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Furion.TestProject", Version = "v1" });
 });
 
-builder.Services.AddAppOptions<TestSettingsOptions>(builder.Configuration.GetSection("TestSettings"), options =>
+builder.Services.AddAppOptions<TestSettingsOptions>(builder.Configuration, options =>
 {
     options.Name ??= "Furion";
 });
-builder.AddAppOptions<Test2SettingsOptions>();
+builder.Services.AddAppOptions<Test2SettingsOptions>(builder.Configuration);
 
 var app = builder.Build();
 

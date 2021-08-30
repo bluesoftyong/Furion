@@ -17,21 +17,13 @@ public static class OptionsServiceCollectionExtensions
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configuration">配置对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <returns></returns>
     public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration)
         where TOptions : class, IAppOptionsDependency
     {
-        var optionsType = typeof(TOptions);
-        var appOptionsAttribute = optionsType.GetTypeAttribute<AppOptionsAttribute>();
-
-        // 获取配置 key
-        var sectionKey = string.IsNullOrWhiteSpace(appOptionsAttribute?.SectionKey)
-                            ? optionsType.Name.SubSuffix("Options")
-                            : appOptionsAttribute.SectionKey;
-
         // 创建配置选项
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration.GetSection(sectionKey));
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         // 添加后期配置
         _ = optionsBuilder.InvokePostConfigure();
@@ -45,13 +37,13 @@ public static class OptionsServiceCollectionExtensions
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, Action<TOptions>? configureOptions = default)
         where TOptions : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -64,14 +56,14 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <typeparam name="TDep">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions, TDep>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep>? configureOptions = default)
         where TOptions : class
         where TDep : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -85,15 +77,15 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep1">依赖服务</typeparam>
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions, TDep1, TDep2>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2>? configureOptions = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -109,16 +101,16 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <typeparam name="TDep3">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions, TDep1, TDep2, TDep3>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3>? configureOptions = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
         where TDep3 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -135,17 +127,17 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep3">依赖服务</typeparam>
     /// <typeparam name="TDep4">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions, TDep1, TDep2, TDep3, TDep4>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4>? configureOptions = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
         where TDep3 : class
         where TDep4 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -163,10 +155,10 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep4">依赖服务</typeparam>
     /// <typeparam name="TDep5">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <param name="configureOptions">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>(this IServiceCollection services, IConfigurationSection configurationSection, Action<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>? configureOptions = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
@@ -174,7 +166,7 @@ public static class OptionsServiceCollectionExtensions
         where TDep4 : class
         where TDep5 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configurationSection);
+        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -186,14 +178,26 @@ public static class OptionsServiceCollectionExtensions
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
-    /// <param name="configurationSection">配置节点对象</param>
+    /// <param name="configuration">配置对象或配置节点对象</param>
     /// <returns></returns>
-    private static OptionsBuilder<TOptions> CreateAppOptions<TOptions>(this IServiceCollection services, IConfigurationSection configurationSection)
+    private static OptionsBuilder<TOptions> CreateAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration)
         where TOptions : class
     {
+        var optionsType = typeof(TOptions);
+        var appOptionsAttribute = optionsType.GetTypeAttribute<AppOptionsAttribute>();
+
+        // 解析配置类型（自动识别是否是节点配置对象）
+        IConfiguration config = configuration is IConfigurationSection configurationSection
+                                    ? configurationSection
+                                    : configuration.GetSection(
+                                          string.IsNullOrWhiteSpace(appOptionsAttribute?.SectionKey)
+                                              ? optionsType.Name.SubSuffix("Options")
+                                              : appOptionsAttribute.SectionKey
+                                       );
+
         // 注册选项
         var optionsBuilder = services.AddOptions<TOptions>()
-                   .Bind(configurationSection, binderOptions =>
+                   .Bind(config, binderOptions =>
                    {
                        binderOptions.ErrorOnUnknownConfiguration = true;
                        binderOptions.BindNonPublicProperties = false;
@@ -201,15 +205,13 @@ public static class OptionsServiceCollectionExtensions
                    .ValidateDataAnnotations();
 
         // 配置复杂验证
-        Type optionsType = typeof(TOptions)
-            , validateOptionsType = typeof(IValidateOptions<TOptions>);
+        var validateOptionsType = typeof(IValidateOptions<TOptions>);
 
         // 禁止选项自实现 IValidateOptions<TOptions> 类型
         if (validateOptionsType.IsAssignableFrom(optionsType))
             throw new InvalidOperationException($"Type `{optionsType.Name}` prohibits the implementation of `IValidateOptions<TOptions>`.");
 
         // 配置复杂验证支持
-        var appOptionsAttribute = optionsType.GetTypeAttribute<AppOptionsAttribute>();
         if (appOptionsAttribute?.ValidateOptionsTypes == default || appOptionsAttribute.ValidateOptionsTypes.Length == 0) return optionsBuilder;
 
         // 注册所有验证

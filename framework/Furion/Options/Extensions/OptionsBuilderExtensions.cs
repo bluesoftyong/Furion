@@ -24,6 +24,7 @@ internal static class OptionsBuilderExtensions
                                                             .Where(m => (m.Name == nameof(IAppOptions<TOptions>.PostConfigure) || m.Name.EndsWith($".{nameof(IAppOptions<TOptions>.PostConfigure)}"))
                                                                 && m.GetParameters()[0].ParameterType == optionsType);
 
+        // 限制选项多次实现 IAppOptionsDependency 接口
         if (postConfigureMethods.Count() > 1)
             throw new InvalidOperationException($"Please ensure that the option class `{optionsType.Name}` has and uniquely implements the `{nameof(IAppOptionsDependency)}` interface.");
 

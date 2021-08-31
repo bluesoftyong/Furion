@@ -18,9 +18,10 @@ public static class WebApplicationBuilderExtensions
     {
         var services = webApplicationBuilder.Services;
         var configuration = webApplicationBuilder.Configuration;
+        var environment = webApplicationBuilder.Environment;
 
         // 添加初始配置
-        configuration.AddAppConfiguration();
+        configuration.AddAppConfiguration(environment);
 
         // 注册 HttpContext 访问器
         services.AddHttpContextAccessor();

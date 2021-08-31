@@ -16,6 +16,6 @@ internal static class StringExtensions
     {
         if (!str.EndsWith(suffix, comparisonType)) return str;
 
-        return str.Substring(0, str.Length - suffix.Length);
+        return str[0..^suffix.Length];
     }
 }

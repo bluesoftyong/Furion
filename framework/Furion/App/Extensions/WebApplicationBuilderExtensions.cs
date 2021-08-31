@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -16,6 +18,9 @@ public static class WebApplicationBuilderExtensions
     {
         var services = webApplicationBuilder.Services;
         var configuration = webApplicationBuilder.Configuration;
+
+        // 添加初始配置
+        configuration.AddAppConfiguration();
 
         // 注册 HttpContext 访问器
         services.AddHttpContextAccessor();

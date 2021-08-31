@@ -28,7 +28,7 @@ public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
     /// </summary>
     /// <remarks>
     /// <para>限定特定配置文件：[...]; 不加载配置：null</para>
-    /// <para>@: 程序根目录; /：绝对路径; &：程序执行目录（bin，默认值）</para>
+    /// <para>@或~: 程序根目录; /或!：绝对路径; &或.：程序执行目录（bin，默认值）</para>
     /// <para>支持 *.json;*.xml;*.ini</para>
     /// <para>支持配置 includeEnvironment、optional 和 reloadOnChange</para>
     /// </remarks>

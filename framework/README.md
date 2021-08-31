@@ -39,6 +39,7 @@
 | 支持判断配置节点是否存在                                    | ✅   |
 | 支持自定义配置提供程序（`待优化`）                          | ✅   |
 | 支持在主机启动、任何可解析 `IConfiguration` 地方读取        | ✅   |
+| 支持不同编码正确读取，如中文                                | ⏳   |
 | 配置集成测试                                                | ⏳   |
 
 ### 选项 / Options
@@ -53,5 +54,4 @@
 | 支持特性配置选项节点及 `IValidateOptions<TOptions>` 验证类型  | ✅   |
 | 支持实现 `IAppOptions<TOptions,[TDep1..5]>` 接口方式配置      | ✅   |
 | 支持选项 `IOptions/IOptionsSnapshot/IOptionsMonitor` 接口读取 | ✅   |
-| 支持在任何可解析 `IConfiguration` 地方读取                    | ✅   |
 | 选项集成测试                                                  | ⏳   |

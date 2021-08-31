@@ -63,9 +63,9 @@ public static class ConfigurationManagerExtensions
         var parameterRegex = new Regex(@"\s+(?<parameter>\boptional\b|\breloadOnChange\b|\bincludeEnvironment\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
 
         // 校验配置选项格式是否正确
-        var isConfigureParameters = parameterRegex.IsMatch(filePath);
+        var defineParameters = parameterRegex.IsMatch(filePath);
         var itemSplits = filePath.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (!isConfigureParameters && itemSplits.Length > 1)
+        if (!defineParameters && itemSplits.Length > 1)
             throw new InvalidCastException($"The `{filePath}` is not a valid configuration format.");
 
         // 判断是否有效拓展名
@@ -92,7 +92,7 @@ public static class ConfigurationManagerExtensions
             throw new InvalidOperationException($"The `{fileName}` is not in a valid format of `xxx[.{{environment}}].(json|xml|.ini)`.");
 
         // 填充配置参数
-        if (isConfigureParameters)
+        if (defineParameters)
         {
             foreach (Match match in parameterRegex.Matches(filePath))
             {

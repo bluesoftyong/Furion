@@ -14,7 +14,7 @@ internal static class OptionsBuilderExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项类型</param>
     /// <returns>OptionsBuilder</returns>
-    internal static OptionsBuilder<TOptions>? InvokePostConfigure<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
+    internal static OptionsBuilder<TOptions>? PostConfigure<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
         where TOptions : class, IAppOptionsDependency
     {
         var optionsType = typeof(TOptions);

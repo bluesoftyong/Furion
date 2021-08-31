@@ -13,7 +13,6 @@ public static class ConfigurationManagerExtensions
     /// <summary>
     /// 添加应用配置
     /// </summary>
-    /// <remarks>包含自动扫描、环境配置</remarks>
     /// <param name="configurationManager">配置管理对象</param>
     /// <param name="environment">环境对象</param>
     /// <returns></returns>

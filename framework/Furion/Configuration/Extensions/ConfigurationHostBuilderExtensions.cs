@@ -10,7 +10,6 @@ public static class ConfigurationHostBuilderExtensions
     /// <summary>
     /// 添加应用配置
     /// </summary>
-    /// <remarks>包含自动扫描、环境配置</remarks>
     /// <param name="hostBuilder">主机构建器</param>
     /// <param name="configuration">默认启动配置对象</param>
     /// <param name="environment">环境对象</param>

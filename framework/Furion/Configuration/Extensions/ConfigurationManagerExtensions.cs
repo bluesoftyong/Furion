@@ -20,7 +20,7 @@ public static class ConfigurationManagerExtensions
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
         // 添加 Furion 框架环境变量配置支持
-        configurationBuilder.AddEnvironmentVariables(prefix: configuration[$"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}"] ?? AppSettingsOptions._environmentVariablesPrefix);
+        configurationBuilder.AddEnvironmentVariables(prefix: configuration.GetValue($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions._environmentVariablesPrefix));
 
         Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key}={c.Value}")));
 

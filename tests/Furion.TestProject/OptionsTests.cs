@@ -40,7 +40,7 @@ public class OptionsTests : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPost]
-    public string[] TestNotImplementOptions([FromServices] IConfiguration configuration)
+    public string[] TestNotImplementOptions()
     {
         return new string[] { _testOptions.Value.Name!, _testOptionsSnapshot.Value.Name!, _testOptionsMonitor.CurrentValue.Name! };
     }

@@ -28,9 +28,8 @@ public static class ConfigurationManagerExtensions
     }
 
     /// <summary>
-    /// 添加应用配置
+    /// 添加配置文件
     /// </summary>
-    /// <remarks>包含自动扫描、环境配置</remarks>
     /// <param name="configurationManager">配置管理对象</param>
     /// <param name="environment">环境对象</param>
     /// <param name="filePath">文件路径或配置语法路径</param>
@@ -38,19 +37,18 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static ConfigurationManager AddAppConfiguration(this ConfigurationManager configurationManager, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static ConfigurationManager AddConfigurationFile(this ConfigurationManager configurationManager, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
-        configurationBuilder.AddAppConfiguration(environment, filePath, optional, reloadOnChange, includeEnvironment);
+        configurationBuilder.AddConfigurationFile(environment, filePath, optional, reloadOnChange, includeEnvironment);
 
         return configurationManager;
     }
 
     /// <summary>
-    /// 添加应用配置
+    /// 添加配置文件
     /// </summary>
-    /// <remarks>包含自动扫描、环境配置</remarks>
     /// <param name="configurationBuilder">配置构建器</param>
     /// <param name="environment">环境对象</param>
     /// <param name="filePath">文件路径或配置语法路径</param>
@@ -58,7 +56,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static IConfigurationBuilder AddAppConfiguration(this IConfigurationBuilder configurationBuilder, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static IConfigurationBuilder AddConfigurationFile(this IConfigurationBuilder configurationBuilder, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
 
@@ -181,7 +179,7 @@ public static class ConfigurationManagerExtensions
         var userConfigurationFiles = configuration.GetSection($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}").Get<string[]>() ?? Array.Empty<string>();
         if (userConfigurationFiles.Length == 0) return configurationBuilder;
 
-        Array.ForEach(userConfigurationFiles, item => configurationBuilder.AddAppConfiguration(environment, item));
+        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddConfigurationFile(environment, filePath));
 
         return configurationBuilder;
     }

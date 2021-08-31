@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -19,8 +18,6 @@ public static class ConfigurationHostBuilderExtensions
     public static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment environment)
     {
         hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) => configurationBuilder.Configure(configuration, environment));
-
-        Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key}={c.Value}")));
 
         return hostBuilder;
     }

@@ -23,7 +23,7 @@ public static class OptionsServiceCollectionExtensions
         where TOptions : class, IAppOptionsDependency
     {
         // 创建配置选项
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         // 添加后期配置
         _ = optionsBuilder.InvokePostConfigure();
@@ -42,7 +42,7 @@ public static class OptionsServiceCollectionExtensions
     public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, Action<TOptions>? configureOptions = default)
         where TOptions : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -62,7 +62,7 @@ public static class OptionsServiceCollectionExtensions
         where TOptions : class
         where TDep : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -84,7 +84,7 @@ public static class OptionsServiceCollectionExtensions
         where TDep1 : class
         where TDep2 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -108,7 +108,7 @@ public static class OptionsServiceCollectionExtensions
         where TDep2 : class
         where TDep3 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -134,7 +134,7 @@ public static class OptionsServiceCollectionExtensions
         where TDep3 : class
         where TDep4 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -162,7 +162,7 @@ public static class OptionsServiceCollectionExtensions
         where TDep4 : class
         where TDep5 : class
     {
-        var optionsBuilder = services.CreateAppOptions<TOptions>(configuration);
+        var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
 
@@ -170,13 +170,13 @@ public static class OptionsServiceCollectionExtensions
     }
 
     /// <summary>
-    /// 创建配置选项
+    /// 创建选项构建器
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
     /// <returns></returns>
-    private static OptionsBuilder<TOptions> CreateAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration)
+    private static OptionsBuilder<TOptions> CreateOptionsBuilder<TOptions>(this IServiceCollection services, IConfiguration configuration)
         where TOptions : class
     {
         var optionsType = typeof(TOptions);

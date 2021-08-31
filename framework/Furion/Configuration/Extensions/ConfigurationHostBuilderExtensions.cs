@@ -1,5 +1,4 @@
-﻿using Furion;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 
 namespace Microsoft.Extensions.Hosting;
@@ -18,11 +17,7 @@ public static class ConfigurationHostBuilderExtensions
     /// <returns></returns>
     public static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder, IConfiguration configuration)
     {
-        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
-        {
-            // 添加 Furion 框架环境变量配置支持
-            configurationBuilder.AddEnvironmentVariables(prefix: configuration.GetValue($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions._environmentVariablesPrefix));
-        });
+        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) => configurationBuilder.Configure(configuration));
 
         Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key}={c.Value}")));
 

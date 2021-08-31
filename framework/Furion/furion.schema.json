@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "JSON Schema for Furion JSON file format",
+  "type": "object",
+  "definitions": {
+    "AppSettings": {
+      "type": "object",
+      "description": "全局应用配置对象",
+      "properties": {
+        "environmentVariablesPrefix": {
+          "description": "环境配置变量前缀",
+          "type": "string",
+          "default": "FURION_"
+        }
+      },
+      "required": [ "environmentVariablesPrefix" ]
+    }
+  }
+}

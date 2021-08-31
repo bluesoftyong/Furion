@@ -183,8 +183,8 @@ public static class OptionsServiceCollectionExtensions
         var appOptionsAttribute = optionsType.GetTypeAttribute<AppOptionsAttribute>();
 
         // 解析配置类型（自动识别是否是节点配置对象）
-        IConfiguration config = configuration is IConfigurationSection configurationSection
-                                    ? configurationSection
+        var configurationSection = configuration is IConfigurationSection section
+                                    ? section
                                     : configuration.GetSection(
                                           string.IsNullOrWhiteSpace(appOptionsAttribute?.SectionKey)
                                               ? optionsType.Name.SubSuffix("Options")
@@ -193,7 +193,7 @@ public static class OptionsServiceCollectionExtensions
 
         // 注册选项
         var optionsBuilder = services.AddOptions<TOptions>()
-                   .Bind(config, binderOptions =>
+                   .Bind(configurationSection, binderOptions =>
                    {
                        binderOptions.ErrorOnUnknownConfiguration = true;
                        binderOptions.BindNonPublicProperties = false;

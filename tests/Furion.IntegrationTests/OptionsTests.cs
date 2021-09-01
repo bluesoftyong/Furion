@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 namespace Furion.IntegrationTests;
 
 /// <summary>
-///选项模块集成测试
+/// 选项模块集成测试
 /// </summary>
 public class OptionsTests : IClassFixture<WebApplicationFactory<TestProject.FakeStartup>>
 {

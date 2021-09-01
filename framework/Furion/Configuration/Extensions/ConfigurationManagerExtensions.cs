@@ -16,17 +16,17 @@ public static class ConfigurationManagerExtensions
     /// 添加文件配置
     /// </summary>
     /// <param name="configurationManager">配置管理对象</param>
-    /// <param name="environment">环境对象</param>
     /// <param name="filePath">文件路径或配置语法路径</param>
+    /// <param name="environment">环境对象</param>
     /// <param name="optional">是否可选配置文件</param>
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
-        configurationBuilder.AddFile(environment, filePath, optional, reloadOnChange, includeEnvironment);
+        configurationBuilder.AddFile(filePath, environment, optional, reloadOnChange, includeEnvironment);
 
         return configurationManager;
     }
@@ -35,13 +35,13 @@ public static class ConfigurationManagerExtensions
     /// 添加文件配置
     /// </summary>
     /// <param name="configurationBuilder">配置构建器</param>
-    /// <param name="environment">环境对象</param>
     /// <param name="filePath">文件路径或配置语法路径</param>
+    /// <param name="environment">环境对象</param>
     /// <param name="optional">是否可选配置文件</param>
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
 
@@ -60,7 +60,7 @@ public static class ConfigurationManagerExtensions
         {
             '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName = firstSplit[1..]),
             '/' or '!' => fileName = firstSplit[1..],
-            '@' or '~' => Path.Combine(environment.ContentRootPath, fileName = firstSplit[1..]),
+            '@' or '~' => Path.Combine(Directory.GetCurrentDirectory(), fileName = firstSplit[1..]),
             _ => fileName = Path.Combine(AppContext.BaseDirectory, firstSplit)
         };
 
@@ -95,19 +95,21 @@ public static class ConfigurationManagerExtensions
         }
 
         var fileExtension = Path.GetExtension(fileName);
-        // 是否带环境标识的文件名
-        var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
-        // 拼接带环境名的完整路径
-        var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
-                                                ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{fileExtension}")
-                                                : default;
 
         // 创建添加配置文件委托
         var addFile = CreateAddProviderFileDelegate(configurationBuilder, fileExtension);
-        if (fileNameSplits.Length == 2) addFile(fileFullPath, optional, reloadOnChange);
-        if (includeEnvironment || isWithEnvironmentFile)
+        if (fileNameSplits.Length == 2 || environment is null) addFile(fileFullPath, optional, reloadOnChange);
+
+        // 带环境标识的文件
+        if (environment is not null)
         {
-            addFile(environmentFileFullPath!, optional, reloadOnChange);
+            // 是否带环境标识的文件名
+            var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
+            // 拼接带环境名的完整路径
+            var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
+                                                    ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{fileExtension}")
+                                                    : default;
+            if (includeEnvironment || isWithEnvironmentFile) addFile(environmentFileFullPath!, optional, reloadOnChange);
         }
 
         return configurationBuilder;
@@ -150,7 +152,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="configuration"></param>
     /// <param name="environment"></param>
     /// <returns></returns>
-    internal static IConfigurationBuilder Configure(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment environment)
+    internal static IConfigurationBuilder Configure(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
         // 添加 Furion 框架环境变量配置支持
         configurationBuilder.AddEnvironmentVariables(prefix: configuration.GetValue($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions._environmentVariablesPrefix))
@@ -167,12 +169,12 @@ public static class ConfigurationManagerExtensions
     /// <param name="configurationBuilder"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment environment)
+    internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
         var userConfigurationFiles = configuration.GetSection($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}").Get<string[]>() ?? Array.Empty<string>();
         if (userConfigurationFiles.Length == 0) return configurationBuilder;
 
-        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddFile(environment, filePath));
+        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddFile(filePath, environment));
 
         return configurationBuilder;
     }

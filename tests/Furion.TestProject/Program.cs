@@ -1,6 +1,16 @@
 using Furion.TestProject.Controllers;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
+
+builder.Configuration.AddFile("@furion.json optional=true reloadOnChange=true");
+
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    ["Memory:Item"] = "MemoryValue"
+});
+
+builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
 
 // Add services to the container.
 

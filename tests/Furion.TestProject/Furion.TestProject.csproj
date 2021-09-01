@@ -6,6 +6,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="key-per-file\key" />
+    <None Remove="key-per-file\key2" />
+    <None Remove="key-per-file\key__name" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="key-per-file\key">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="key-per-file\key__name">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="key-per-file\key2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
   </ItemGroup>
 
@@ -17,5 +35,7 @@
     <Folder Include="wwwroot\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

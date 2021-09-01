@@ -1,68 +1,57 @@
-# 先知 / Furion
+# Furion 实验版
 
-[![license](https://img.shields.io/badge/license-MulanPSL--2.0-orange?cacheSeconds=10800)](https://gitee.com/dotnetchina/Furion/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Furion.svg?cacheSeconds=10800)](https://www.nuget.org/packages/Furion) [![nuget downloads](https://img.shields.io/badge/downloads-1M-green?cacheSeconds=10800)](https://www.nuget.org/profiles/monk.soul) [![dotNET China](https://img.shields.io/badge/organization-dotNET%20China-yellow?cacheSeconds=10800)](https://gitee.com/dotnetchina)
+🎉 实现彻彻底底无第三方依赖的 Furion 版本。
 
-一个应用程序框架，您可以将它集成到任何 .NET/C# 应用程序中。
+- 作者：百小僧
+- 日期：2021 年 08 月 30 日
 
-An application framework that you can integrate into any .NET/C# application.
+## 状态
 
-## 安装 / Installation
+我们创建了一个详细的列表来轻松显示 Furion 实验版本的状态和演变。
 
-- [Package Manager](https://www.nuget.org/packages/Furion)
+| 图标 | 描述     |
+| ---- | -------- |
+| ⚠️   | 待定     |
+| ⏳   | 进行中   |
+| ✅   | 完成     |
+| 💔   | 随时抛弃 |
 
-```powershell
-Install-Package Furion
-```
+## 概述
 
-- [.NET CLI](https://www.nuget.org/packages/Furion)
+要跟踪正在进行的进度，请过滤处理程序标签。
 
-```powershell
-dotnet add package Furion
-```
+### 配置 / Configuration
 
-## 例子 / Examples
+| 功能                                                        | 状态 |
+| ----------------------------------------------------------- | ---- |
+| 支持添加 `.json;.xml;.ini;` 配置文件                        | ✅   |
+| 支持 `AppSettings:CustomizeConfigurationFiles` 节点添加配置 | ✅   |
+| 支持系统环境配置（可复写配置文件内容）                      | ✅   |
+| 支持系统环境配置前缀符设置                                  | ✅   |
+| 支持命令行启动配置                                          | ✅   |
+| 支持内存配置                                                | ✅   |
+| 支持 `Key-per-file` 模式配置                                | ✅   |
+| 支持不同系统环境切换配置文件                                | ✅   |
+| 支持后期配置文件添加（物理文件不存在）                      | ✅   |
+| 支持配置文件更改通知（热更新）                              | ✅   |
+| 支持特定通配符配置文件路径，`@!~.&/`                        | ✅   |
+| 支持配置读取单个值、对象、数组、字典、枚举                  | ✅   |
+| 支持判断配置节点是否存在                                    | ✅   |
+| 支持自定义配置提供程序（`待优化`）                          | ✅   |
+| 支持在主机启动、任何可解析 `IConfiguration` 地方读取        | ✅   |
+| 支持不同编码正确读取，如中文                                | ⏳   |
+| 配置集成测试                                                | ⏳   |
 
-我们在[主页](https://dotnetchina.gitee.io/furion)上有不少例子，这是让您入门的第一个：
+### 选项 / Options
 
-We have several examples [on the website](https://dotnetchina.gitee.io/furion). Here is the first one to get you started:
-
-```cs
-var services = Inject.Create();
-services.AddRemoteRequest();
-services.Build();
-
-var responseString = await "https://dotnet.microsoft.com/".GetAsStringAsync();
-responseString.LogInformation();
-```
-
-## 文档 / Documentation
-
-您可以在[主页](https://dotnetchina.gitee.io/furion)或[备份主页](https://furion.pro)找到 Furion 文档。
-
-You can find the Furion documentation [on the website](https://dotnetchina.gitee.io/furion) or [on the backup website](https://dotnetchina.gitee.io/furion).
-
-## 贡献 / Contributing
-
-该存储库的主要目的是继续发展 Furion 核心，使其更快、更易于使用。 Furion 的开发在 [Gitee](https://gitee.com/dotnetchina/Furion) 上公开进行，我们感谢社区贡献错误修复和改进。
-
-阅读[贡献指南](https://dotnetchina.gitee.io/furion/docs/contribute)内容，了解如何参与改进 Furion。
-
-The main purpose of this repository is to continue evolving Furion core, making it faster and easier to use. Development of Furion happens in the open on [Gitee](https://gitee.com/dotnetchina/Furion), and we are grateful to the community for contributing bugfixes and improvements. 
-
-Read [contribution documents](https://dotnetchina.gitee.io/furion/docs/contribute) to learn how you can take part in improving Furion.
-
-## 许可证 / License
-
-Furion 采用 [MulanPSL-2.0](https://gitee.com/dotnetchina/Furion/blob/master/LICENSE) 开源许可证。
-
-Furion uses the [MulanPSL-2.0](https://gitee.com/dotnetchina/Furion/blob/master/LICENSE) open source license. 
-
-```
-Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
-Furion is licensed under Mulan PSL v2.
-You can use this software according to the terms andconditions of the Mulan PSL v2.
-You may obtain a copy of Mulan PSL v2 at:
-            https://gitee.com/dotnetchina/Furion/blob/master/LICENSE
-THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUTWARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-See the Mulan PSL v2 for more details.
-```
+| 功能                                                          | 状态 |
+| ------------------------------------------------------------- | ---- |
+| 支持选项配置功能                                              | ✅   |
+| 支持公开类（选项）和节点绑定                                  | ✅   |
+| 支持选项属性特性验证                                          | ✅   |
+| 支持选项属性 `IValidateOptions<TOptions>` 复杂验证（多个）    | ✅   |
+| 支持选项后期配置（且支持最多 5 个依赖服务注入）               | ✅   |
+| 支持特性配置选项节点及 `IValidateOptions<TOptions>` 验证类型  | ✅   |
+| 支持实现 `IAppOptions<TOptions,[TDep1..5]>` 接口方式配置      | ✅   |
+| 支持选项 `IOptions/IOptionsSnapshot/IOptionsMonitor` 接口读取 | ✅   |
+| 选项集成测试                                                  | ⏳   |

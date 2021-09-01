@@ -1,5 +1,4 @@
 using Furion.TestProject.Controllers;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 

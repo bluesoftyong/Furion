@@ -68,7 +68,7 @@ public static class ConfigurationManagerExtensions
         {
             '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName = firstSplit[1..]),
             '/' or '!' => fileName = firstSplit[1..],
-            '@' or '~' => Path.Combine(Directory.GetCurrentDirectory(), fileName = firstSplit[1..]),
+            '@' or '~' => Path.Combine(environment is null ? Directory.GetCurrentDirectory() : environment.ContentRootPath, fileName = firstSplit[1..]),
             _ => fileName = Path.Combine(AppContext.BaseDirectory, firstSplit)
         };
 

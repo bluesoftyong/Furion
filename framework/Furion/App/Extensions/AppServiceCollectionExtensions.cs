@@ -8,6 +8,7 @@
 
 using Furion;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -29,7 +30,7 @@ public static class AppServiceCollectionExtensions
         services.AddAppOptions<AppSettingsOptions>(configuration);
 
         // 注册为单例
-        services.AddSingleton<IApp, App>();
+        services.TryAddSingleton<IApp, App>();
 
         return services;
     }

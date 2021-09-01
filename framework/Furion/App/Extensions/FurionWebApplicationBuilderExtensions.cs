@@ -3,9 +3,9 @@
 namespace Microsoft.AspNetCore.Builder;
 
 /// <summary>
-/// WebApplication 拓展类
+/// 配置 Furion 框架初始化
 /// </summary>
-public static class WebApplicationBuilderExtensions
+public static class FurionWebApplicationBuilderExtensions
 {
     /// <summary>
     /// 初始化框架服务

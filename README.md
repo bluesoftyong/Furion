@@ -41,6 +41,7 @@
 | 支持在主机启动、任何可解析 `IConfiguration` 地方读取        | ✅   |
 | 支持不同编码正确读取，如中文（另存文件编码为 UTF-8）        | ✅   |
 | 配置集成测试                                                | ⏳   |
+| 配置使用文档                                                | ⚠️   |
 
 ### 选项 / Options
 
@@ -55,3 +56,4 @@
 | 支持实现 `IAppOptions<TOptions,[TDep1..5]>` 接口方式配置      | ✅   |
 | 支持选项 `IOptions/IOptionsSnapshot/IOptionsMonitor` 接口读取 | ✅   |
 | 选项集成测试                                                  | ⏳   |
+| 选项使用文档                                                  | ⚠️   |

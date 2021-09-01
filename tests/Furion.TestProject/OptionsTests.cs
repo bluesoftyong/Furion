@@ -94,7 +94,7 @@ class ValidateSettingsOptions : IValidateOptions<TestSettingsOptions>
     public ValidateOptionsResult Validate(string name, TestSettingsOptions options)
     {
         return options.Name == "Fur"
-                ? ValidateOptionsResult.Fail("出错啦")
+                ? ValidateOptionsResult.Fail("字符串不匹配")
                 : ValidateOptionsResult.Success;
     }
 }
@@ -110,7 +110,7 @@ class Validate2SettingsOptions : IValidateOptions<TestSettingsOptions>
     public ValidateOptionsResult Validate(string name, TestSettingsOptions options)
     {
         return options.Name == "Fur"
-                ? ValidateOptionsResult.Fail("出错啦")
+                ? ValidateOptionsResult.Fail("字符串不匹配")
                 : ValidateOptionsResult.Success;
     }
 }

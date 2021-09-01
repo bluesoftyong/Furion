@@ -189,7 +189,7 @@ public static class ConfigurationManagerExtensions
             ".json" => new JsonConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
             ".xml" => new XmlConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
             ".ini" => new IniConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            _ => throw new InvalidOperationException("The file type configuration provider handler was not found.")
+            _ => throw new InvalidOperationException("The file type configuration source was not found.")
         };
         // 初始化文件提供器
         configurationSource.ResolveFileProvider();

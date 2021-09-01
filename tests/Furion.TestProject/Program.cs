@@ -2,7 +2,7 @@ using Furion.TestProject.Controllers;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
-builder.Configuration.AddFile("@furion.json optional=true reloadOnChange=true");
+builder.Configuration.AddFile("furion.json optional=true reloadOnChange=true");
 
 builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 {

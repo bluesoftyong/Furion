@@ -7,10 +7,11 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using Furion.ObjectExtensions;
+using Microsoft.Extensions.Configuration.Ini;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.Xml;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Extensions.Configuration;
@@ -69,7 +70,7 @@ public static class ConfigurationManagerExtensions
             '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName = firstSplit[1..]),
             '/' or '!' => fileName = firstSplit[1..],
             '@' or '~' => Path.Combine(environment is null ? Directory.GetCurrentDirectory() : environment.ContentRootPath, fileName = firstSplit[1..]),
-            _ => fileName = Path.Combine(AppContext.BaseDirectory, firstSplit)
+            _ => Path.Combine(environment is null ? Directory.GetCurrentDirectory() : environment.ContentRootPath, fileName = firstSplit)
         };
 
         Trace.WriteLine(fileFullPath);
@@ -90,22 +91,19 @@ public static class ConfigurationManagerExtensions
             parameters.TryGetValue(nameof(includeEnvironment), out includeEnvironment);
         }
 
-        var fileExtension = Path.GetExtension(fileName);
-
-        // 创建添加配置文件委托
-        var addFile = CreateAddProviderFileDelegate(configurationBuilder, fileExtension);
-        if (fileNameSplits.Length == 2 || environment is null) addFile(fileFullPath, optional, reloadOnChange);
+        // 添加配置文件
+        configurationBuilder.AddFile(fileFullPath, optional, reloadOnChange);
 
         // 带环境标识的文件
-        if (environment is not null)
+        if (fileNameSplits.Length == 2 && environment is not null)
         {
             // 是否带环境标识的文件名
             var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
             // 拼接带环境名的完整路径
             var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
-                                                    ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{fileExtension}")
+                                                    ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{Path.GetExtension(fileName)}")
                                                     : default;
-            if (includeEnvironment || isWithEnvironmentFile) addFile(environmentFileFullPath!, optional, reloadOnChange);
+            if (includeEnvironment || isWithEnvironmentFile) configurationBuilder.AddFile(environmentFileFullPath!, optional, reloadOnChange);
         }
 
         return configurationBuilder;
@@ -176,33 +174,26 @@ public static class ConfigurationManagerExtensions
     }
 
     /// <summary>
-    /// 创建添加配置文件委托
+    /// 添加配置文件
     /// </summary>
     /// <param name="configurationBuilder"></param>
-    /// <param name="fileExtension"></param>
+    /// <param name="path"></param>
+    /// <param name="optional"></param>
+    /// <param name="reloadOnChange"></param>
     /// <returns></returns>
-    private static Func<string, bool, bool, IConfigurationBuilder> CreateAddProviderFileDelegate(IConfigurationBuilder configurationBuilder, string fileExtension)
+    private static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string path, bool optional = true, bool reloadOnChange = true)
     {
-        var supportExts = new[] { ".json", ".xml", ".ini" };
-        if (string.IsNullOrWhiteSpace(fileExtension) || !supportExts.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
-            throw new InvalidOperationException("The file type configuration provider handler was not found.");
-
-        var flag = fileExtension.ToLower()[1..].ToTitleCase();
-
-        // 加载特定程序集中类型对应方法
-        var providerAssembly = Assembly.Load($"Microsoft.Extensions.Configuration.{flag}");
-        var providerClassType = providerAssembly.GetType($"Microsoft.Extensions.Configuration.{flag}ConfigurationExtensions");
-        var providerMethodInfo = providerClassType!.GetTypeInfo().DeclaredMethods
-                                                        .First(u => u.IsPublic && u.IsStatic
-                                                            && u.Name == $"Add{flag}File" && u.GetParameters().Length == 4);
-
-        // 创建方法委托
-        IConfigurationBuilder func(string f, bool o, bool r)
+        var fileExtension = Path.GetExtension(path);
+        FileConfigurationSource? configurationSource = fileExtension.ToLower() switch
         {
-            return providerMethodInfo.CreateDelegate<Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder>>()
-                    (configurationBuilder, f, o, r);
-        }
+            ".json" => new JsonConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".xml" => new XmlConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".ini" => new IniConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            _ => throw new InvalidOperationException("The file type configuration provider handler was not found.")
+        };
+        // 初始化文件提供器
+        configurationSource.ResolveFileProvider();
 
-        return func;
+        return configurationBuilder.Add(configurationSource);
     }
 }

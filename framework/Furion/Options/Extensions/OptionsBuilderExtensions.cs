@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 
@@ -21,13 +22,14 @@ internal static class OptionsBuilderExtensions
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项类型</param>
+    /// <param name="services">服务注册集合</param>
     /// <returns>OptionsBuilder</returns>
-    internal static OptionsBuilder<TOptions>? PostConfigure<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
+    internal static OptionsBuilder<TOptions>? PostConfigure<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IServiceCollection services)
         where TOptions : class, IAppOptionsDependency
     {
         var optionsType = typeof(TOptions);
 
-        // 添加后置配置
+        // 扫描后期配置方法
         var postConfigureMethods = optionsType.GetTypeInfo().DeclaredMethods
                                                             .Where(m => (m.Name == nameof(IAppOptions<TOptions>.PostConfigure) || m.Name.EndsWith($".{nameof(IAppOptions<TOptions>.PostConfigure)}"))
                                                                 && m.GetParameters()[0].ParameterType == optionsType);
@@ -41,23 +43,28 @@ internal static class OptionsBuilderExtensions
         //  获取后缀选项参数
         var parameterTypes = postConfigureMethod.GetParameters().Select(p => p.ParameterType).ToArray();
 
-        // 获取相同签名的方法
-        var optionsBuilderPostConfigureMethod = typeof(OptionsBuilder<TOptions>).GetTypeInfo().DeclaredMethods
-              .First(m => m.Name == nameof(IAppOptions<TOptions>.PostConfigure)
-                  && m.IsPublic && m.IsVirtual && ((m.IsGenericMethod && m.GetGenericArguments().Length == parameterTypes.Length - 1)) || m.GetParameters().Length == parameterTypes.Length);
-
-        if (optionsBuilderPostConfigureMethod == default)
-            throw new InvalidOperationException($"The `{postConfigureMethod}` method with the same signature as `OptionsBuilder<TOptions>` was not found.");
-
         // 创建相同签名委托
-        var actionGenericParameterType = typeof(Action).Assembly.GetType($"{typeof(Action).FullName}`{postConfigureMethod.GetParameters().Length}")
+        var actionGenericParameterType = typeof(Action).Assembly.GetType($"{typeof(Action).FullName}`{parameterTypes.Length}")
                                             ?.MakeGenericType(parameterTypes);
-        var @delegate = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
+        var configureOptions = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
 
-        // 调用 PostConfigure 方法
-        if (optionsBuilderPostConfigureMethod.IsGenericMethod)
-            return optionsBuilderPostConfigureMethod.MakeGenericMethod(parameterTypes.Skip(1).ToArray()).Invoke(optionsBuilder, new[] { @delegate }) as OptionsBuilder<TOptions>;
-        else
-            return optionsBuilderPostConfigureMethod.Invoke(optionsBuilder, new[] { @delegate }) as OptionsBuilder<TOptions>;
+        // 添加选项后期配置
+        services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), sp =>
+        {
+            // 添加参数
+            var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };
+            args.AddRange(parameterTypes.Skip(1).Select(u => sp.GetRequiredService(u)));
+            args.Add(configureOptions);
+
+            // 动态创建 PostConfigureOptions<TOptions, TDep1..TDep5> 对象
+            var postConfigureOptionsType = typeof(PostConfigureOptions<TOptions>);
+            var runtimePostConfigureOptionsType = postConfigureOptionsType.Assembly.GetType($"{postConfigureOptionsType.Namespace}.{postConfigureOptionsType.Name![..^1]}{parameterTypes.Length}")
+                                                            ?.MakeGenericType(parameterTypes);
+            var postConfigureOptions = Activator.CreateInstance(runtimePostConfigureOptionsType!, args.ToArray());
+
+            return postConfigureOptions!;
+        }, parameterTypes.Length > 1 ? ServiceLifetime.Transient : ServiceLifetime.Singleton));
+
+        return optionsBuilder;
     }
 }

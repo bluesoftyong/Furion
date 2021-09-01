@@ -34,7 +34,7 @@ public static class OptionsServiceCollectionExtensions
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         // 添加后期配置
-        _ = optionsBuilder.PostConfigure();
+        _ = optionsBuilder.PostConfigure(services);
 
         return services;
     }

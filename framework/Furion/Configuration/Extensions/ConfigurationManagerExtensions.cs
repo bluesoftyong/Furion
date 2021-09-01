@@ -149,6 +149,21 @@ public static class ConfigurationManagerExtensions
     }
 
     /// <summary>
+    /// 添加目录文件 Key-per-file 配置
+    /// </summary>
+    /// <param name="configurationManager">配置管理对象</param>
+    /// <param name="initialData">集合</param>
+    /// <returns></returns>
+    public static ConfigurationManager AddKeyPerFile(this ConfigurationManager configurationManager, string directoryPath, bool optional = true, bool reloadOnChange = true)
+    {
+        var configurationBuilder = configurationManager as IConfigurationBuilder;
+
+        configurationBuilder.AddKeyPerFile(directoryPath, optional, reloadOnChange);
+
+        return configurationManager;
+    }
+
+    /// <summary>
     /// 配置 配置对象构建器
     /// </summary>
     /// <param name="configurationBuilder"></param>

@@ -1,6 +1,6 @@
 using Furion.TestProject.Controllers;
 
-var builder = WebApplication.CreateBuilder(args).Inject();
+var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 // Add services to the container.
 

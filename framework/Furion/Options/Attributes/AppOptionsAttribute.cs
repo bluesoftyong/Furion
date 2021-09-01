@@ -51,4 +51,19 @@ public sealed class AppOptionsAttribute : Attribute
     /// 复杂验证类型
     /// </summary>
     public Type[]? ValidateOptionsTypes { get; set; }
+
+    /// <summary>
+    /// 存在未知配置节点抛异常
+    /// </summary>
+    public bool ErrorOnUnknownConfiguration { get; set; } = false;
+
+    /// <summary>
+    /// 绑定非公开属性
+    /// </summary>
+    public bool BindNonPublicProperties { get; set; } = false;
+
+    /// <summary>
+    /// 启动数据校验
+    /// </summary>
+    public bool ValidateDataAnnotations { get; set; } = true;
 }

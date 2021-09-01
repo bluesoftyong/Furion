@@ -8,15 +8,13 @@ namespace Microsoft.Extensions.Hosting;
 public static class ConfigurationHostBuilderExtensions
 {
     /// <summary>
-    /// 添加应用配置
+    /// 添加框架初始配置
     /// </summary>
     /// <param name="hostBuilder">主机构建器</param>
-    /// <param name="configuration">默认启动配置对象</param>
-    /// <param name="environment">环境对象</param>
     /// <returns></returns>
-    public static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment environment)
+    public static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
     {
-        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) => configurationBuilder.Configure(configuration, environment));
+        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) => configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment));
 
         return hostBuilder;
     }

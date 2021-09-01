@@ -195,10 +195,15 @@ public static class OptionsServiceCollectionExtensions
         var optionsBuilder = services.AddOptions<TOptions>()
                    .Bind(configurationSection, binderOptions =>
                    {
-                       binderOptions.ErrorOnUnknownConfiguration = true;
-                       binderOptions.BindNonPublicProperties = false;
-                   })
-                   .ValidateDataAnnotations();
+                       binderOptions.ErrorOnUnknownConfiguration = appOptionsAttribute?.ErrorOnUnknownConfiguration ?? false;
+                       binderOptions.BindNonPublicProperties = appOptionsAttribute?.BindNonPublicProperties ?? false;
+                   });
+
+        // 如果未明确关闭数据验证，则默认启用
+        if (appOptionsAttribute?.ValidateDataAnnotations == false) return optionsBuilder;
+
+        // 启用特性验证
+        optionsBuilder.ValidateDataAnnotations();
 
         // 配置复杂验证
         var validateOptionsType = typeof(IValidateOptions<TOptions>);

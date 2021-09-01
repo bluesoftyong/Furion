@@ -5,7 +5,7 @@ namespace Furion;
 /// <summary>
 /// App 全局应用对象配置
 /// </summary>
-[AppOptions(_sectionKey)]
+[AppOptions(_sectionKey, ErrorOnUnknownConfiguration = true)]
 public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
 {
     /// <summary>

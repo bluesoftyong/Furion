@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -14,14 +12,13 @@ public static class WebApplicationBuilderExtensions
     /// </summary>
     /// <param name="webApplicationBuilder">WebApplication 构建器</param>
     /// <returns></returns>
-    public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder)
+    public static WebApplicationBuilder UseFurion(this WebApplicationBuilder webApplicationBuilder)
     {
         var services = webApplicationBuilder.Services;
         var configuration = webApplicationBuilder.Configuration;
-        var environment = webApplicationBuilder.Environment;
 
-        // 添加初始配置
-        configuration.AddAppConfiguration(environment);
+        // 添加框架初始配置
+        webApplicationBuilder.AddAppConfiguration();
 
         // 注册 HttpContext 访问器
         services.AddHttpContextAccessor();

@@ -11,23 +11,7 @@ namespace Microsoft.Extensions.Configuration;
 public static class ConfigurationManagerExtensions
 {
     /// <summary>
-    /// 添加应用配置
-    /// </summary>
-    /// <param name="configurationManager">配置管理对象</param>
-    /// <param name="environment">环境对象</param>
-    /// <returns></returns>
-    public static ConfigurationManager AddAppConfiguration(this ConfigurationManager configurationManager, IHostEnvironment environment)
-    {
-        var configuration = configurationManager as IConfiguration;
-        var configurationBuilder = configurationManager as IConfigurationBuilder;
-
-        configurationBuilder.Configure(configuration, environment);
-
-        return configurationManager;
-    }
-
-    /// <summary>
-    /// 添加配置文件
+    /// 添加文件配置
     /// </summary>
     /// <param name="configurationManager">配置管理对象</param>
     /// <param name="environment">环境对象</param>
@@ -36,17 +20,17 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static ConfigurationManager AddConfigurationFile(this ConfigurationManager configurationManager, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
-        configurationBuilder.AddConfigurationFile(environment, filePath, optional, reloadOnChange, includeEnvironment);
+        configurationBuilder.AddFile(environment, filePath, optional, reloadOnChange, includeEnvironment);
 
         return configurationManager;
     }
 
     /// <summary>
-    /// 添加配置文件
+    /// 添加文件配置
     /// </summary>
     /// <param name="configurationBuilder">配置构建器</param>
     /// <param name="environment">环境对象</param>
@@ -55,7 +39,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static IConfigurationBuilder AddConfigurationFile(this IConfigurationBuilder configurationBuilder, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, IHostEnvironment environment, string filePath, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
         if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
 
@@ -150,6 +134,21 @@ public static class ConfigurationManagerExtensions
     }
 
     /// <summary>
+    /// 添加内存集合配置
+    /// </summary>
+    /// <param name="configurationManager">配置管理对象</param>
+    /// <param name="initialData">集合</param>
+    /// <returns></returns>
+    public static ConfigurationManager AddInMemoryCollection(this ConfigurationManager configurationManager, IEnumerable<KeyValuePair<string, string>> initialData)
+    {
+        var configurationBuilder = configurationManager as IConfigurationBuilder;
+
+        configurationBuilder.AddInMemoryCollection(initialData);
+
+        return configurationManager;
+    }
+
+    /// <summary>
     /// 配置 配置对象构建器
     /// </summary>
     /// <param name="configurationBuilder"></param>
@@ -178,7 +177,7 @@ public static class ConfigurationManagerExtensions
         var userConfigurationFiles = configuration.GetSection($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}").Get<string[]>() ?? Array.Empty<string>();
         if (userConfigurationFiles.Length == 0) return configurationBuilder;
 
-        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddConfigurationFile(environment, filePath));
+        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddFile(environment, filePath));
 
         return configurationBuilder;
     }

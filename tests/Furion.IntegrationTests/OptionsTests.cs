@@ -49,7 +49,7 @@ public class OptionsTests : IClassFixture<WebApplicationFactory<TestProject.Fake
 
         Assert.All(result, str =>
         {
-            Assert.Equal("Furion", str);
+            Assert.Equal("Furion!", str);
         });
     }
 }

@@ -103,11 +103,11 @@ public static class ConfigurationManagerExtensions
                                                 : default;
 
         // 创建添加配置文件委托
-        var addFile = CreateAddFileDelegate(configurationBuilder, ext);
-        if (fileNameSplits.Length == 2) addFile(configurationBuilder, fileFullPath, optional, reloadOnChange);
+        var addFile = CreateAddProviderFileDelegate(configurationBuilder, ext);
+        if (fileNameSplits.Length == 2) addFile(fileFullPath, optional, reloadOnChange);
         if (includeEnvironment || isWithEnvironmentFile)
         {
-            addFile(configurationBuilder, environmentFileFullPath!, optional, reloadOnChange);
+            addFile(environmentFileFullPath!, optional, reloadOnChange);
         }
 
         return configurationBuilder;
@@ -183,7 +183,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="configuration"></param>
     /// <param name="ext"></param>
     /// <returns></returns>
-    private static Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder> CreateAddFileDelegate(IConfigurationBuilder configuration, string ext)
+    private static Func<string, bool, bool, IConfigurationBuilder> CreateAddProviderFileDelegate(IConfigurationBuilder configuration, string ext)
     {
         var supportExts = new[] { ".json", ".xml", ".ini" };
         if (string.IsNullOrWhiteSpace(ext) || !supportExts.Contains(ext, StringComparer.OrdinalIgnoreCase))
@@ -198,6 +198,13 @@ public static class ConfigurationManagerExtensions
                                                         .First(u => u.IsPublic && u.IsStatic
                                                             && u.Name == $"Add{flag}File" && u.GetParameters().Length == 4);
 
-        return providerMethodInfo.CreateDelegate<Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder>>();
+        // 创建方法委托
+        IConfigurationBuilder func(string f, bool o, bool r)
+        {
+            return providerMethodInfo.CreateDelegate<Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder>>()
+                    (configuration, f, o, r);
+        }
+
+        return func;
     }
 }

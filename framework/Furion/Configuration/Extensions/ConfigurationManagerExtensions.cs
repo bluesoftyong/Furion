@@ -85,9 +85,9 @@ public static class ConfigurationManagerExtensions
             var parameters = parameterRegex.Matches(filePath)
                                                                .ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
 
-            parameters.TryGetValue("optional", out optional);
-            parameters.TryGetValue("reloadOnChange", out reloadOnChange);
-            parameters.TryGetValue("includeEnvironment", out includeEnvironment);
+            parameters.TryGetValue(nameof(optional), out optional);
+            parameters.TryGetValue(nameof(reloadOnChange), out reloadOnChange);
+            parameters.TryGetValue(nameof(includeEnvironment), out includeEnvironment);
         }
 
         var fileExtension = Path.GetExtension(fileName);

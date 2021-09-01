@@ -18,4 +18,14 @@ internal static class StringExtensions
 
         return str[0..^suffix.Length];
     }
+
+    /// <summary>
+    /// 首字母大写
+    /// </summary>
+    /// <param name="str">字符串</param>
+    /// <returns></returns>
+    internal static string ToTitleCase(this string str)
+    {
+        return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(str);
+    }
 }

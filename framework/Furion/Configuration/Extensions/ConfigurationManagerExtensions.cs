@@ -1,6 +1,8 @@
 ﻿using Furion;
+using Furion.ObjectExtensions;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Extensions.Configuration;
@@ -43,7 +45,6 @@ public static class ConfigurationManagerExtensions
     {
         if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
 
-        var supportExts = new[] { ".json", ".xml", ".ini" };
         var parameterRegex = new Regex(@"\s+(?<parameter>\boptional\b|\breloadOnChange\b|\bincludeEnvironment\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
 
         // 校验配置选项格式是否正确
@@ -52,12 +53,7 @@ public static class ConfigurationManagerExtensions
         if (!defineParameters && itemSplits.Length > 1)
             throw new InvalidCastException($"The `{filePath}` is not a valid configuration format.");
 
-        // 判断是否有效拓展名
         var firstSplit = itemSplits[0];
-        var ext = Path.GetExtension(firstSplit);
-        if (string.IsNullOrWhiteSpace(ext) || !supportExts.Contains(ext, StringComparer.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Only extension named `.json; .xml; .ini;` path.");
-
         string fileName;
         // 解析绝对路径
         var fileFullPath = firstSplit[0] switch
@@ -98,36 +94,20 @@ public static class ConfigurationManagerExtensions
             }
         }
 
-        var withEnvironmentFileName = $"{fileNameSplits[0]}.{environment.EnvironmentName}{ext}";
-        var isEnvironmentFileItem = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
-        var environmentFileFullPath = includeEnvironment || isEnvironmentFileItem ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, withEnvironmentFileName) : default;
+        var ext = Path.GetExtension(fileName);
+        // 是否带环境标识的文件名
+        var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
+        // 拼接带环境名的完整路径
+        var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
+                                                ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{ext}")
+                                                : default;
 
-        // 添加配置
-        switch (ext.ToLower())
+        // 创建添加配置文件委托
+        var addFile = CreateAddFileDelegate(configurationBuilder, ext);
+        if (fileNameSplits.Length == 2) addFile(configurationBuilder, fileFullPath, optional, reloadOnChange);
+        if (includeEnvironment || isWithEnvironmentFile)
         {
-            case ".json":
-                if (fileNameSplits.Length == 2) configurationBuilder.AddJsonFile(fileFullPath, optional, reloadOnChange);
-                if (includeEnvironment || isEnvironmentFileItem)
-                {
-                    configurationBuilder.AddJsonFile(environmentFileFullPath, optional, reloadOnChange);
-                }
-                break;
-            case ".xml":
-                if (fileNameSplits.Length == 2) configurationBuilder.AddXmlFile(fileFullPath, optional, reloadOnChange);
-                if (includeEnvironment || isEnvironmentFileItem)
-                {
-                    configurationBuilder.AddXmlFile(environmentFileFullPath, optional, reloadOnChange);
-                }
-                break;
-            case ".ini":
-                if (fileNameSplits.Length == 2) configurationBuilder.AddIniFile(fileFullPath, optional, reloadOnChange);
-                if (includeEnvironment || isEnvironmentFileItem)
-                {
-                    configurationBuilder.AddIniFile(environmentFileFullPath, optional, reloadOnChange);
-                }
-                break;
-            default:
-                break;
+            addFile(configurationBuilder, environmentFileFullPath!, optional, reloadOnChange);
         }
 
         return configurationBuilder;
@@ -195,5 +175,29 @@ public static class ConfigurationManagerExtensions
         Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddFile(environment, filePath));
 
         return configurationBuilder;
+    }
+
+    /// <summary>
+    /// 创建添加配置文件委托
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <param name="ext"></param>
+    /// <returns></returns>
+    private static Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder> CreateAddFileDelegate(IConfigurationBuilder configuration, string ext)
+    {
+        var supportExts = new[] { ".json", ".xml", ".ini" };
+        if (string.IsNullOrWhiteSpace(ext) || !supportExts.Contains(ext, StringComparer.OrdinalIgnoreCase))
+            throw new InvalidOperationException("The file type configuration provider handler was not found.");
+
+        var flag = ext.ToLower()[1..].ToTitleCase();
+
+        // 加载特定程序集中类型对应方法
+        var providerAssembly = Assembly.Load($"Microsoft.Extensions.Configuration.{flag}");
+        var providerClassType = providerAssembly.GetType($"Microsoft.Extensions.Configuration.{flag}ConfigurationExtensions");
+        var providerMethodInfo = providerClassType!.GetTypeInfo().DeclaredMethods
+                                                        .First(u => u.IsPublic && u.IsStatic
+                                                            && u.Name == $"Add{flag}File" && u.GetParameters().Length == 4);
+
+        return providerMethodInfo.CreateDelegate<Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder>>();
     }
 }

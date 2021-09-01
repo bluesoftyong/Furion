@@ -94,16 +94,16 @@ public static class ConfigurationManagerExtensions
             }
         }
 
-        var ext = Path.GetExtension(fileName);
+        var fileExtension = Path.GetExtension(fileName);
         // 是否带环境标识的文件名
         var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
         // 拼接带环境名的完整路径
         var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
-                                                ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{ext}")
+                                                ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{fileExtension}")
                                                 : default;
 
         // 创建添加配置文件委托
-        var addFile = CreateAddProviderFileDelegate(configurationBuilder, ext);
+        var addFile = CreateAddProviderFileDelegate(configurationBuilder, fileExtension);
         if (fileNameSplits.Length == 2) addFile(fileFullPath, optional, reloadOnChange);
         if (includeEnvironment || isWithEnvironmentFile)
         {
@@ -180,16 +180,16 @@ public static class ConfigurationManagerExtensions
     /// <summary>
     /// 创建添加配置文件委托
     /// </summary>
-    /// <param name="configuration"></param>
-    /// <param name="ext"></param>
+    /// <param name="configurationBuilder"></param>
+    /// <param name="fileExtension"></param>
     /// <returns></returns>
-    private static Func<string, bool, bool, IConfigurationBuilder> CreateAddProviderFileDelegate(IConfigurationBuilder configuration, string ext)
+    private static Func<string, bool, bool, IConfigurationBuilder> CreateAddProviderFileDelegate(IConfigurationBuilder configurationBuilder, string fileExtension)
     {
         var supportExts = new[] { ".json", ".xml", ".ini" };
-        if (string.IsNullOrWhiteSpace(ext) || !supportExts.Contains(ext, StringComparer.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(fileExtension) || !supportExts.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             throw new InvalidOperationException("The file type configuration provider handler was not found.");
 
-        var flag = ext.ToLower()[1..].ToTitleCase();
+        var flag = fileExtension.ToLower()[1..].ToTitleCase();
 
         // 加载特定程序集中类型对应方法
         var providerAssembly = Assembly.Load($"Microsoft.Extensions.Configuration.{flag}");
@@ -202,7 +202,7 @@ public static class ConfigurationManagerExtensions
         IConfigurationBuilder func(string f, bool o, bool r)
         {
             return providerMethodInfo.CreateDelegate<Func<IConfigurationBuilder, string, bool, bool, IConfigurationBuilder>>()
-                    (configuration, f, o, r);
+                    (configurationBuilder, f, o, r);
         }
 
         return func;

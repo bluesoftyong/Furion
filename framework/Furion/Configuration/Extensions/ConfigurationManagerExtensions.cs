@@ -53,7 +53,7 @@ public static class ConfigurationManagerExtensions
     {
         if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
 
-        var parameterRegex = new Regex(@"\s+(?<parameter>\boptional\b|\breloadOnChange\b|\bincludeEnvironment\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
+        var parameterRegex = new Regex(@"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
 
         // 校验配置选项格式是否正确
         var defineParameters = parameterRegex.IsMatch(filePath);
@@ -82,24 +82,12 @@ public static class ConfigurationManagerExtensions
         // 填充配置参数
         if (defineParameters)
         {
-            foreach (Match match in parameterRegex.Matches(filePath))
-            {
-                var value = bool.Parse(match.Groups["value"].Value);
-                switch (match.Groups["parameter"].Value)
-                {
-                    case "optional":
-                        optional = value;
-                        break;
-                    case "reloadOnChange":
-                        reloadOnChange = value;
-                        break;
-                    case "includeEnvironment":
-                        includeEnvironment = value;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            var parameters = parameterRegex.Matches(filePath)
+                                                               .ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
+
+            parameters.TryGetValue("optional", out optional);
+            parameters.TryGetValue("reloadOnChange", out reloadOnChange);
+            parameters.TryGetValue("includeEnvironment", out includeEnvironment);
         }
 
         var fileExtension = Path.GetExtension(fileName);

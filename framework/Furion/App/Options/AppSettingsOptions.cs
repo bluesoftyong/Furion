@@ -13,18 +13,18 @@ namespace Furion;
 /// <summary>
 /// App 全局应用对象配置
 /// </summary>
-[AppOptions(_sectionKey, ErrorOnUnknownConfiguration = true)]
+[AppOptions(sectionKey, ErrorOnUnknownConfiguration = true)]
 public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
 {
     /// <summary>
     /// 节点 Key
     /// </summary>
-    internal const string _sectionKey = "AppSettings";
+    internal const string sectionKey = "AppSettings";
 
     /// <summary>
     /// 环境变量配置 Key 前缀
     /// </summary>
-    internal const string _environmentVariablesPrefix = "FURION_";
+    internal const string environmentVariablesPrefix = "FURION_";
 
     /// <summary>
     /// 环境变量配置 Key 前缀
@@ -36,7 +36,7 @@ public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
     /// </summary>
     /// <remarks>
     /// <para>限定特定配置文件：[...]; 不加载配置：null</para>
-    /// <para>@或~: 程序根目录; /或!：绝对路径; &或.：程序执行目录（bin，默认值）</para>
+    /// <para>@或~: 程序根目录（默认值）; /或!：绝对路径; &或.：程序执行目录（bin）</para>
     /// <para>支持 *.json;*.xml;*.ini</para>
     /// <para>支持配置 includeEnvironment、optional 和 reloadOnChange</para>
     /// </remarks>
@@ -49,6 +49,6 @@ public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
     /// <param name="options"></param>
     void IAppOptions<AppSettingsOptions>.PostConfigure(AppSettingsOptions options)
     {
-        options.EnvironmentVariablesPrefix ??= _environmentVariablesPrefix;
+        options.EnvironmentVariablesPrefix ??= environmentVariablesPrefix;
     }
 }

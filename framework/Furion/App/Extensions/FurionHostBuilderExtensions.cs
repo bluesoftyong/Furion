@@ -34,6 +34,9 @@ public static class FurionHostBuilderExtensions
 
             // 注册 App 全局应用对象服务
             services.AddApp(hostBuilderContext.Configuration);
+
+            // 注册依赖注入服务
+            services.AddDependencyInjection(hostBuilderContext.Configuration);
         });
 
         // 配置服务提供器

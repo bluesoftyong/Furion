@@ -30,7 +30,7 @@ public static class AppServiceCollectionExtensions
         services.AddAppOptions<AppSettingsOptions>(configuration);
 
         // 注册为单例
-        services.TryAddSingleton<IApp, App>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));
 
         return services;
     }

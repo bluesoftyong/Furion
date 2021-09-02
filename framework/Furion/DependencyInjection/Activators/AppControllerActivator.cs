@@ -58,7 +58,7 @@ public sealed class AppControllerActivator : IControllerActivator
                                                                    .Select(p => serviceProvider.GetRequiredService(p.ParameterType))
                                                                    .ToArray();
 
-            return (serviceProvider as AppServiceProvider)!.ResolveAutowriedService(
+            return serviceProvider.ResolveAutowriedService(
                 Activator.CreateInstance(controllerTypeInfo, parameters))!;
         }
     }

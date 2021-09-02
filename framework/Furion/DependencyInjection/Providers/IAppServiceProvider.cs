@@ -6,23 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Microsoft.Extensions.DependencyInjection;
-
-namespace System;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// IServiceProvider 拓展类
+/// 框架内服务提供器
 /// </summary>
-public static class IServiceProviderExtensions
+public interface IAppServiceProvider : IServiceProvider
 {
     /// <summary>
-    /// 包装服务提供器
+    /// 属性注入
     /// </summary>
-    /// <param name="serviceProvider"></param>
+    /// <param name="instance"></param>
     /// <returns></returns>
-    public static IAppServiceProvider Resolve(this IServiceProvider serviceProvider)
-    {
-        if (serviceProvider is AppServiceProvider) return (serviceProvider as IAppServiceProvider)!;
-        else return new AppServiceProvider(serviceProvider);
-    }
+    object? ResolveAutowriedService(object? instance);
 }

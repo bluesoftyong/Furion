@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// 框架内服务提供器
 /// </summary>
-public sealed class AppServiceProvider : IServiceProvider
+public sealed class AppServiceProvider : IAppServiceProvider
 {
     /// <summary>
     /// .NET 内置服务提供器
@@ -45,7 +45,7 @@ public sealed class AppServiceProvider : IServiceProvider
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    internal object? ResolveAutowriedService(object? instance)
+    public object? ResolveAutowriedService(object? instance)
     {
         if (instance == null) return default;
 

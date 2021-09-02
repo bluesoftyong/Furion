@@ -6,23 +6,26 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace System;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// IServiceProvider 拓展类
+/// 依赖注入服务拓展
 /// </summary>
-public static class IServiceProviderExtensions
+public static class DependencyInjectionServiceCollectionExtensions
 {
     /// <summary>
-    /// 包装服务提供器
+    /// 依赖注入服务拓展
     /// </summary>
-    /// <param name="serviceProvider"></param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IAppServiceProvider Resolve(this IServiceProvider serviceProvider)
+    public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
     {
-        if (serviceProvider is AppServiceProvider) return (serviceProvider as IAppServiceProvider)!;
-        else return new AppServiceProvider(serviceProvider);
+        services.TryAddSingleton(sp => sp.Resolve());
+
+        return services;
     }
 }

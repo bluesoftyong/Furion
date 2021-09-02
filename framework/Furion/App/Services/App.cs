@@ -35,14 +35,14 @@ public sealed partial class App : IApp
     /// <param name="host">主机对象</param>
     public App(ILogger<App> logger
         , IOptionsMonitor<AppSettingsOptions> optionsMonitor
-        , IServiceProvider serviceProvider
+        , IAppServiceProvider appServiceProvider
         , IConfiguration configuration
         , IHostEnvironment hostEnvironment
         , IHost host)
     {
         _logger = logger;
         AppSettings = optionsMonitor.CurrentValue;
-        ServiceProvider = serviceProvider;
+        ServiceProvider = appServiceProvider;
         Configuration = configuration;
         Environment = hostEnvironment;
         Host = host;
@@ -51,7 +51,7 @@ public sealed partial class App : IApp
     /// <summary>
     /// 服务提供器
     /// </summary>
-    public IServiceProvider ServiceProvider { get; }
+    public IAppServiceProvider ServiceProvider { get; }
 
     /// <summary>
     /// 配置对象

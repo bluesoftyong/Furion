@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Furion;
@@ -19,7 +20,7 @@ public interface IApp
     /// <summary>
     /// 服务提供器
     /// </summary>
-    IServiceProvider ServiceProvider { get; }
+    IAppServiceProvider ServiceProvider { get; }
 
     /// <summary>
     /// 配置对象

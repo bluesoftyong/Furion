@@ -54,7 +54,7 @@ public class NamedServiceProvider : INamedServiceProvider
     /// <returns></returns>
     public object GetRequiredService(string named)
     {
-        return GetService(named) ?? throw new InvalidOperationException($"The registered naming `{named}` service was not found.");
+        return GetService(named) ?? throw new InvalidOperationException($"Named service `{named}` is not registered in container.");
     }
 
     /// <summary>

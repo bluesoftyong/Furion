@@ -37,8 +37,8 @@ public sealed class AppControllerActivator : IControllerActivator
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor.ControllerTypeInfo));
         }
 
-        // 提供当前服务提供器
-        var serviceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
+        // 代理请求服务提供器
+        var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
 
         // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
@@ -49,16 +49,16 @@ public sealed class AppControllerActivator : IControllerActivator
 
         // 处理无参构造函数
         if (constructor?.GetParameters()?.Length == 0)
-            return serviceProvider.GetRequiredService(controllerTypeInfo);
+            return appServiceProvider.GetRequiredService(controllerTypeInfo);
         // 处理嵌套依赖
         else
         {
             var parameters = constructors.FirstOrDefault()!.GetParameters()
                                                                    .Where(p => p.ParameterType.IsClass || p.ParameterType.IsInterface)
-                                                                   .Select(p => serviceProvider.GetRequiredService(p.ParameterType))
+                                                                   .Select(p => appServiceProvider.GetRequiredService(p.ParameterType))
                                                                    .ToArray();
 
-            return serviceProvider.ResolveAutowriedService(
+            return appServiceProvider.ResolveAutowriedService(
                 Activator.CreateInstance(controllerTypeInfo, parameters))!;
         }
     }

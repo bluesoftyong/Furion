@@ -14,7 +14,7 @@ namespace System;
 public static class IServiceProviderExtensions
 {
     /// <summary>
-    /// 包装服务提供器
+    /// 创建服务提供器代理
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>

@@ -287,13 +287,13 @@ public static class OptionsServiceCollectionExtensions
         var configureOptions = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
 
         // 添加选项后期配置
-        services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), sp =>
+        services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), provider =>
         {
-            sp = sp.CreateProxy();
+            var appServiceProvider = provider.CreateProxy();
 
             // 添加参数
             var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };
-            args.AddRange(parameterTypes.Skip(1).Select(u => sp.GetRequiredService(u)));
+            args.AddRange(parameterTypes.Skip(1).Select(u => appServiceProvider.GetRequiredService(u)));
             args.Add(configureOptions);
 
             // 动态创建 PostConfigureOptions<TOptions, TDep1..TDep5> 对象

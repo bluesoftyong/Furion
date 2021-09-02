@@ -129,7 +129,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     public void Build()
     {
         // 注册命名服务提供器
-        _services.AddTransient<INamedServiceProvider>(sp => new NamedServiceProvider(sp.CreateProxy(), _namedServiceDescriptors));
+        _services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceDescriptors));
 
         Trace.WriteLine(string.Join(";\n", _namedServiceDescriptors.Select(c => $"{c.Key} = {c.Value}")));
     }

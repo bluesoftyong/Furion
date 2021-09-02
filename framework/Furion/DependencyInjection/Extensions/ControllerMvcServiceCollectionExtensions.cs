@@ -22,7 +22,7 @@ public static class ControllerMvcServiceCollectionExtensions
     /// <param name="mvcBuilder"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IMvcBuilder AddControllersAsAutowiredServices(this IMvcBuilder mvcBuilder)
+    public static IMvcBuilder AddControllersServicesWithAutowired(this IMvcBuilder mvcBuilder)
     {
         var services = mvcBuilder.Services;
 

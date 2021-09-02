@@ -24,7 +24,7 @@ builder.Services.AddDependencyInjection(builder.Configuration, builder =>
 // Add services to the container.
 builder.Services.AddTransient<IAutowriedService, AutowriedService>();
 
-builder.Services.AddControllers().AddControllersAsAutowiredServices();
+builder.Services.AddControllers().AddControllersServicesWithAutowired();
 builder.Services.AddScoped<TestControllerFilter>();
 
 builder.Services.AddSwaggerGen(c =>

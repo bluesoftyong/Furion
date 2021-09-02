@@ -55,7 +55,8 @@ public class DependencyInjectionTests : ControllerBase
             && _app.Equals(_serviceProvider.GetRequiredService<IApp>())
             && _app.Equals(_wrapServiceProvider.GetRequiredService<IApp>())
             && _app.Equals(_appServiceProvider.GetRequiredService<IApp>())
-            && _app.Equals(_autowriedService.App);
+            && _app.Equals(_autowriedService.App)
+            && _app != null;
     }
 
     /// <summary>

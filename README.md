@@ -24,6 +24,8 @@
 - `IApplicationBuilder` 拓展方法须以 `Use` 开头
 - 对 `.NET` 的拓展尽可能保持和原生一样的命名空间
 - 所有中间件须以 `Middleware` 结尾
+- 所有筛选器须以 `Filter` 或 `AsyncFilter` 结尾
+- 框架内部默认实现须以 `App` 开头
 - 所有私有的方法禁止定义为拓展方法
 - 所有选项类须以 `SettingsOptions` 结尾
 - 尽可能在方法第一行判断参数空，统一采用 `if (parameter == null) throw new ArgumentNullException(nameof(parameter));`

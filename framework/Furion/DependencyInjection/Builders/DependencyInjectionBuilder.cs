@@ -9,6 +9,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics;
 
 namespace Furion.DependencyInjection;
 
@@ -126,5 +127,7 @@ public class DependencyInjectionBuilder : IDependencyInjectionBuilder
     {
         // 注册命名服务提供器
         _services.AddTransient<INamedServiceProvider>(sp => new NamedServiceProvider(sp.Resolve(), _namedServiceDescriptors));
+
+        Trace.WriteLine(string.Join(";\n", _namedServiceDescriptors.Select(c => $"{c.Key} = {c.Value}")));
     }
 }

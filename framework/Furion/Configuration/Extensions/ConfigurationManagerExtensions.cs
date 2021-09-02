@@ -155,7 +155,7 @@ public static class ConfigurationManagerExtensions
         configurationBuilder.AddEnvironmentVariables(prefix: configuration.GetValue($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions.environmentVariablesPrefix))
                             .AddCustomizeConfigurationFiles(configuration, environment);
 
-        Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key}={c.Value}")));
+        Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key} = {c.Value}")));
 
         return configurationBuilder;
     }

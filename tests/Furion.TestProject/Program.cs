@@ -1,4 +1,5 @@
 using Furion.TestProject.Controllers;
+using Furion.TestProject.Filters;
 using Furion.TestProject.Services;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
@@ -16,6 +17,8 @@ builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory()
 builder.Services.AddTransient<IAutowriedService, AutowriedService>();
 
 builder.Services.AddControllers().AddControllersAsAutowiredServices();
+builder.Services.AddScoped<TestControllerFilter>();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Furion.TestProject", Version = "v1" });

@@ -45,12 +45,13 @@ public sealed class AppServiceProvider : IServiceProvider
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public object? ResolveAutowriedService(object? instance)
+    internal object? ResolveAutowriedService(object? instance)
     {
         if (instance == null) return default;
 
         var instanceType = instance as Type ?? instance.GetType();
 
+        // 扫描所有公开和非公开的实例属性
         var serviceProperties = instanceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                                                           .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(AutowiredServicesAttribute), false));
 

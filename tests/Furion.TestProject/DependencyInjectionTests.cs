@@ -1,4 +1,5 @@
-﻿using Furion.TestProject.Services;
+﻿using Furion.TestProject.Filters;
+using Furion.TestProject.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Furion.TestProject.Controllers;
@@ -34,7 +35,7 @@ public class DependencyInjectionTests : ControllerBase
     /// 测试构造函数注入、属性注入、方法注入、手动解析
     /// </summary>
     /// <returns></returns>
-    [HttpPost]
+    [HttpPost, ServiceFilter(typeof(TestControllerFilter))]
     public bool TestService([FromServices] IApp app2)
     {
         return _app.Equals(App)

@@ -1,4 +1,5 @@
 using Furion.TestProject.Controllers;
+using Furion.TestProject.Services;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
@@ -12,8 +13,9 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
 
 // Add services to the container.
+builder.Services.AddTransient<IAutowriedService, AutowriedService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddControllersAsAutowiredServices();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Furion.TestProject", Version = "v1" });

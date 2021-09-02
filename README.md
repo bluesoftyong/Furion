@@ -22,6 +22,7 @@
 - 框架内部所有 `Helper` 拓展类及方法都应该是 `internal` 修饰
 - `IServiceCollection` 拓展方法须以 `Add` 开头
 - `IApplicationBuilder` 拓展方法须以 `Use` 开头
+- 对 `.NET` 的拓展尽可能保持和原生一样的命名空间
 - 所有中间件须以 `Middleware` 结尾
 - 所有私有的方法禁止定义为拓展方法
 - 所有选项类须以 `SettingsOptions` 结尾
@@ -104,7 +105,7 @@
 | 支持单例、作用域、瞬时生存周期注册                     | ✅   |
 | 支持构造函数注入                                       | ✅   |
 | 支持函数参数 `[FromServices]` 注入                     | ✅   |
-| 支持属性注入 `[AutowiredServices]` 注入                | ⏳   |
+| 支持属性注入 `[AutowiredServices]` 注入                | ✅   |
 | 支持依赖接口解析生存周期接口并注册                     | ⏳   |
 | 支持配置外部程序集扫描注册                             | ⏳   |
 | 支持泛型注入                                           | ✅   |

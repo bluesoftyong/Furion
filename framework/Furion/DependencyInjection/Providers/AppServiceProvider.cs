@@ -6,6 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion.ObjectExtensions;
+using System.Reflection;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
@@ -34,6 +37,38 @@ public sealed class AppServiceProvider : IServiceProvider
     /// <returns></returns>
     public object? GetService(Type serviceType)
     {
-        return _serviceProvider.GetService(serviceType);
+        return ResolveAutowriedService(_serviceProvider.GetService(serviceType));
+    }
+
+    /// <summary>
+    /// 属性注入服务
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns></returns>
+    public object? ResolveAutowriedService(object? instance)
+    {
+        if (instance == null) return default;
+
+        var instanceType = instance as Type ?? instance.GetType();
+
+        var serviceProperties = instanceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                                                          .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(AutowiredServicesAttribute), false));
+
+        if (serviceProperties.IsEmpty()) return instance;
+
+        Array.ForEach(serviceProperties.ToArray(), p =>
+        {
+            var autowiredServicesAttributes = p.GetCustomAttribute<AutowiredServicesAttribute>(false);
+            if (autowiredServicesAttributes?.Required ?? true)
+            {
+                p.SetValue(instance, _serviceProvider.GetRequiredService(p.PropertyType));
+            }
+            else
+            {
+                p.SetValue(instance, GetService(p.PropertyType));
+            }
+        });
+
+        return instance;
     }
 }

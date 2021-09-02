@@ -39,7 +39,7 @@ public static class FurionHostBuilderExtensions
             services.AddDependencyInjection(hostBuilderContext.Configuration);
         });
 
-        // 配置服务提供器
+        // 配置框架服务提供器工厂
         hostBuilder.UseAppServiceProviderFactory(configure);
 
         return hostBuilder;

@@ -59,7 +59,7 @@ public static class FurionHostBuilderExtensions
         hostBuilder.ConfigureServices((hostBuilderContext, services) =>
         {
             // 依赖注入
-            services.AddDependencyInjection(hostBuilderContext.Configuration);
+            services.AddDependencyInjectionServices(hostBuilderContext.Configuration);
         });
 
         return hostBuilder;

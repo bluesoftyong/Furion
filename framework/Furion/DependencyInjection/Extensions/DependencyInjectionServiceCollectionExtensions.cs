@@ -23,7 +23,7 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <param name="configuration"></param>
     /// <param name="builderConfigure"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration, Action<IDependencyInjectionBuilder>? builderConfigure = default)
+    public static IServiceCollection AddDependencyInjectionServices(this IServiceCollection services, IConfiguration configuration, Action<IDependencyInjectionBuilder>? builderConfigure = default)
     {
         if (builderConfigure != default)
         {

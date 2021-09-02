@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,17 +33,34 @@ public class DependencyInjectionTests : IClassFixture<WebApplicationFactory<Test
     }
 
     /// <summary>
-    /// 测试自定义
+    /// 测试自定义服务提供器
     /// </summary>
     /// <param name="url"></param>
     /// <returns></returns>
     [Theory]
     [InlineData("/DependencyInjectionTests/TestService")]
-    public async Task TestOptions(string url)
+    public async Task TestService(string url)
     {
         var content = await _factory.PostAsStringAsync(url);
         _output.WriteLine($"{content}");
 
         Assert.True(bool.Parse(content));
+    }
+
+    /// <summary>
+    /// 测试命名服务
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/DependencyInjectionTests/TestNamedService")]
+    public async Task TestNamedService(string url)
+    {
+        var content = await _factory.PostAsStringAsync(url);
+        _output.WriteLine($"{content}");
+
+        var result = JsonSerializer.Deserialize<string[]>(content);
+
+        Assert.Equal("Test2NamedService", result!.Last());
     }
 }

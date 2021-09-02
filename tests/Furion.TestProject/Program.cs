@@ -13,6 +13,11 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 
 builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
 
+builder.Services.AsDependencyInjectionBuilder(builder.Configuration)
+    .AddNamedService<ITestNamedService, Test1NamedService>("test1", ServiceLifetime.Transient)
+    .AddNamedService<ITestNamedService, Test2NamedService>("test2", ServiceLifetime.Transient)
+    .Build();
+
 // Add services to the container.
 builder.Services.AddTransient<IAutowriedService, AutowriedService>();
 

@@ -7,9 +7,10 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.ObjectExtensions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace System;
 
 /// <summary>
 /// 框架内服务提供器

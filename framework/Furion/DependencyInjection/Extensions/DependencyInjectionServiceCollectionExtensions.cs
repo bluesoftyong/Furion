@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -24,8 +25,21 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
     {
+        // 注册框架服务提供器
         services.TryAddSingleton(sp => sp.Resolve());
 
         return services;
+    }
+
+    /// <summary>
+    /// 创建依赖注入构建器
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static IDependencyInjectionBuilder AsDependencyInjectionBuilder(this IServiceCollection services, IConfiguration configuration)
+    {
+        var builder = new DependencyInjectionBuilder(services, configuration);
+        return builder;
     }
 }

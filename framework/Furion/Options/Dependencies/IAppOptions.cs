@@ -12,7 +12,7 @@ namespace Furion.Options;
 /// 选项依赖接口
 /// </summary>
 /// <typeparam name="TOptions"></typeparam>
-public interface IAppOptions<TOptions> : IAppOptionsDependency
+public interface IAppOptions<TOptions> : IAppOptions
     where TOptions : class
 {
     /// <summary>
@@ -27,7 +27,7 @@ public interface IAppOptions<TOptions> : IAppOptionsDependency
 /// </summary>
 /// <typeparam name="TOptions"></typeparam>
 /// <typeparam name="TDep"></typeparam>
-public interface IAppOptions<TOptions, TDep> : IAppOptionsDependency
+public interface IAppOptions<TOptions, TDep> : IAppOptions
     where TOptions : class
     where TDep : class
 {
@@ -45,7 +45,7 @@ public interface IAppOptions<TOptions, TDep> : IAppOptionsDependency
 /// <typeparam name="TOptions"></typeparam>
 /// <typeparam name="TDep1"></typeparam>
 /// <typeparam name="TDep2"></typeparam>
-public interface IAppOptions<TOptions, TDep1, TDep2> : IAppOptionsDependency
+public interface IAppOptions<TOptions, TDep1, TDep2> : IAppOptions
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -66,7 +66,7 @@ public interface IAppOptions<TOptions, TDep1, TDep2> : IAppOptionsDependency
 /// <typeparam name="TDep1"></typeparam>
 /// <typeparam name="TDep2"></typeparam>
 /// <typeparam name="TDep3"></typeparam>
-public interface IAppOptions<TOptions, TDep1, TDep2, TDep3> : IAppOptionsDependency
+public interface IAppOptions<TOptions, TDep1, TDep2, TDep3> : IAppOptions
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -90,7 +90,7 @@ public interface IAppOptions<TOptions, TDep1, TDep2, TDep3> : IAppOptionsDepende
 /// <typeparam name="TDep2"></typeparam>
 /// <typeparam name="TDep3"></typeparam>
 /// <typeparam name="TDep4"></typeparam>
-public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IAppOptionsDependency
+public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IAppOptions
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -117,7 +117,7 @@ public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IAppOptions
 /// <typeparam name="TDep3"></typeparam>
 /// <typeparam name="TDep4"></typeparam>
 /// <typeparam name="TDep5"></typeparam>
-public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IAppOptionsDependency
+public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IAppOptions
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -140,6 +140,6 @@ public interface IAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IApp
 /// <summary>
 /// 选项依赖接口根接口
 /// </summary>
-public interface IAppOptionsDependency
+public interface IAppOptions
 {
 }

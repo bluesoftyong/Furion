@@ -16,6 +16,7 @@ public class DependencyInjectionTests : ControllerBase
     private readonly IServiceProvider _wrapServiceProvider;
     private readonly IAppServiceProvider _appServiceProvider;
     private readonly IAutowriedService _autowriedService;
+    private readonly INamedServiceProvider _namedServiceProvider;
 
     /// <summary>
     /// 构造函数
@@ -24,16 +25,19 @@ public class DependencyInjectionTests : ControllerBase
     /// <param name="serviceProvider"></param>
     /// <param name="appServiceProvider"></param>
     /// <param name="autowriedService"></param>
+    /// <param name="namedServiceProvider"></param>
     public DependencyInjectionTests(IApp app
         , IServiceProvider serviceProvider
         , IAppServiceProvider appServiceProvider
-        , IAutowriedService autowriedService)
+        , IAutowriedService autowriedService
+        , INamedServiceProvider namedServiceProvider)
     {
         _app = app;
         _serviceProvider = serviceProvider;
         _appServiceProvider = appServiceProvider;
         _wrapServiceProvider = serviceProvider.Resolve();
         _autowriedService = autowriedService;
+        _namedServiceProvider = namedServiceProvider;
     }
 
     [AutowiredServices]
@@ -52,5 +56,18 @@ public class DependencyInjectionTests : ControllerBase
             && _app.Equals(_wrapServiceProvider.GetRequiredService<IApp>())
             && _app.Equals(_appServiceProvider.GetRequiredService<IApp>())
             && _app.Equals(_autowriedService.App);
+    }
+
+    /// <summary>
+    /// 测试命名服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost]
+    public string[] TestNamedService()
+    {
+        return new[] {
+            _namedServiceProvider.GetRequiredService<ITestNamedService>("test1").GetType().Name,
+             _namedServiceProvider.GetRequiredService<ITestNamedService>("test2").GetType().Name,
+        };
     }
 }

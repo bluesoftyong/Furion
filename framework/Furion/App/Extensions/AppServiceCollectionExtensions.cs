@@ -29,7 +29,7 @@ public static class AppServiceCollectionExtensions
         // 注册 App 全局应用配置
         services.AddAppOptions<AppSettingsOptions>(configuration);
 
-        // 注册为单例
+        // 注册全局 IApp 对象
         services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));
 
         return services;

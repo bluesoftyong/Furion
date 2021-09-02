@@ -28,7 +28,7 @@ public static class OptionsServiceCollectionExtensions
     /// <param name="configuration">配置对象或配置节点对象</param>
     /// <returns></returns>
     public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration)
-        where TOptions : class, IAppOptionsDependency
+        where TOptions : class, IAppOptions
     {
         // 创建配置选项
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
@@ -263,7 +263,7 @@ public static class OptionsServiceCollectionExtensions
     /// <param name="services">服务注册集合</param>
     /// <returns>OptionsBuilder</returns>
     private static OptionsBuilder<TOptions>? PostConfigure<TOptions>(OptionsBuilder<TOptions> optionsBuilder, IServiceCollection services)
-        where TOptions : class, IAppOptionsDependency
+        where TOptions : class, IAppOptions
     {
         var optionsType = typeof(TOptions);
 
@@ -274,7 +274,7 @@ public static class OptionsServiceCollectionExtensions
 
         // 限制选项多次实现 IAppOptionsDependency 接口
         if (postConfigureMethods.Count() > 1)
-            throw new InvalidOperationException($"Please ensure that the option class `{optionsType.Name}` has and uniquely implements the `{nameof(IAppOptionsDependency)}` interface.");
+            throw new InvalidOperationException($"Please ensure that the option class `{optionsType.Name}` has and uniquely implements the `{nameof(IAppOptions)}` interface.");
 
         var postConfigureMethod = postConfigureMethods.First();
 
@@ -289,6 +289,8 @@ public static class OptionsServiceCollectionExtensions
         // 添加选项后期配置
         services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), sp =>
         {
+            sp = sp.Resolve();
+
             // 添加参数
             var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };
             args.AddRange(parameterTypes.Skip(1).Select(u => sp.GetRequiredService(u)));

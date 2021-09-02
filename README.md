@@ -113,9 +113,9 @@
 | 支持配置外部程序集扫描注册                                                     | ⏳   |
 | 支持泛型注入                                                                   | ✅   |
 | 支持多实现注入                                                                 | ✅   |
-| 支持 `INamedServiceProvider`、`IAppServiceProvider` 服务提供器，解析多服务实例 | ⏳   |
+| 支持 `INamedServiceProvider`、`IAppServiceProvider` 服务提供器，解析多服务实例 | ✅   |
 | 支持 `AOP` 切面拦截                                                            | ⚠️   |
-| 依赖注入集成测试                                                               | ⏳   |
+| 依赖注入集成测试                                                               | ✅   |
 | 依赖注入使用文档                                                               | ⚠️   |
 | 依赖注入使用例子                                                               | ⚠️   |
 

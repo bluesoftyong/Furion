@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -22,17 +22,7 @@ public static class FurionWebApplicationBuilderExtensions
     /// <returns></returns>
     public static WebApplicationBuilder UseFurion(this WebApplicationBuilder webApplicationBuilder)
     {
-        var services = webApplicationBuilder.Services;
-        var configuration = webApplicationBuilder.Configuration;
-
-        // 添加框架初始配置
-        webApplicationBuilder.AddAppConfiguration();
-
-        // 注册 HttpContext 访问器
-        services.AddHttpContextAccessor();
-
-        // 注册 App 全局应用对象服务
-        services.AddApp(configuration);
+        webApplicationBuilder.Host.UseFurion();
 
         return webApplicationBuilder;
     }

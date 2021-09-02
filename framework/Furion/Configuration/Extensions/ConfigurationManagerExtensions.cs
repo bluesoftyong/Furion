@@ -190,9 +190,9 @@ public static class ConfigurationManagerExtensions
         var fileExtension = Path.GetExtension(path);
         FileConfigurationSource? fileConfigurationSource = fileExtension.ToLower() switch
         {
-            ".json" => new JsonConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            ".xml" => new XmlConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            ".ini" => new IniConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".json" => new JsonConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".xml" => new XmlConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".ini" => new IniConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
             _ => throw new InvalidOperationException($"Cannot create a file `{fileExtension}` configuration source for this file type.")
         };
         // 初始化文件提供器

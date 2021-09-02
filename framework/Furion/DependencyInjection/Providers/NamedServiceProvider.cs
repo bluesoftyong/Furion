@@ -11,7 +11,7 @@ namespace System;
 /// <summary>
 /// 命名服务提供器
 /// </summary>
-public class NamedServiceProvider : INamedServiceProvider
+public sealed class NamedServiceProvider : INamedServiceProvider
 {
     /// <summary>
     /// 框架内服务提供器

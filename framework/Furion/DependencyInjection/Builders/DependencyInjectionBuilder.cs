@@ -16,7 +16,7 @@ namespace Furion.DependencyInjection;
 /// <summary>
 /// 依赖注入构建器
 /// </summary>
-public class DependencyInjectionBuilder : IDependencyInjectionBuilder
+public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
 {
     /// <summary>
     /// 服务注册集合对象

@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// 框架内置服务提供器工厂
 /// </summary>
-public class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
+public sealed class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
 {
     /// <summary>
     /// 服务提供器选项

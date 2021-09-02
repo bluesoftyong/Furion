@@ -22,9 +22,11 @@ internal static class TypeExtensions
     /// <param name="classType">类类型</param>
     /// <param name="inherit">是否继承查找</param>
     /// <returns>特性对象</returns>
-    internal static TAttribute? GetTypeAttribute<TAttribute>(this Type classType, bool inherit = false)
+    internal static TAttribute? GetTypeAttribute<TAttribute>(this Type? classType, bool inherit = false)
         where TAttribute : Attribute
     {
+        if (classType == null) throw new ArgumentNullException(nameof(classType));
+
         return classType.IsDefined(typeof(TAttribute), inherit)
             ? classType.GetCustomAttribute<TAttribute>(inherit)
             : default;

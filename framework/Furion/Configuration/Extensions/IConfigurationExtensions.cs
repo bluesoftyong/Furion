@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.Configuration;
 /// <summary>
 /// IConfiguration 对象拓展
 /// </summary>
-public static class ConfigurationExtensions
+public static class IConfigurationExtensions
 {
     /// <summary>
     /// 判断配置是否存在

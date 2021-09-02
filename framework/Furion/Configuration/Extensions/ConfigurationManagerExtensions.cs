@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
+using Furion.ObjectExtensions;
 using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Xml;
@@ -92,18 +93,20 @@ public static class ConfigurationManagerExtensions
         }
 
         // 添加配置文件
-        configurationBuilder.AddFile(fileFullPath, optional, reloadOnChange);
+        configurationBuilder.Add(CreateFileConfigurationSource(fileFullPath, optional, reloadOnChange));
 
-        // 带环境标识的文件
+        // 环境对象不为空且文件不带环境配置
         if (fileNameSplits.Length == 2 && environment is not null)
         {
             // 是否带环境标识的文件名
             var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
-            // 拼接带环境名的完整路径
-            var environmentFileFullPath = includeEnvironment || isWithEnvironmentFile
-                                                    ? Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{Path.GetExtension(fileName)}")
-                                                    : default;
-            if (includeEnvironment || isWithEnvironmentFile) configurationBuilder.AddFile(environmentFileFullPath!, optional, reloadOnChange);
+
+            // 添加带环境配置文件
+            if (includeEnvironment || isWithEnvironmentFile)
+            {
+                var environmentFileFullPath = Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{Path.GetExtension(fileName)}");
+                configurationBuilder.Add(CreateFileConfigurationSource(environmentFileFullPath, optional, reloadOnChange));
+            }
         }
 
         return configurationBuilder;
@@ -165,35 +168,36 @@ public static class ConfigurationManagerExtensions
     /// <returns></returns>
     internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
-        var userConfigurationFiles = configuration.GetSection($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}").Get<string[]>() ?? Array.Empty<string>();
-        if (userConfigurationFiles.Length == 0) return configurationBuilder;
+        var userConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions._sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
+        if (userConfigurationFiles.IsEmpty()) return configurationBuilder;
 
-        Array.ForEach(userConfigurationFiles, filePath => configurationBuilder.AddFile(filePath, environment));
+        // 遍历添加
+        Array.ForEach(userConfigurationFiles, filePath
+            => configurationBuilder.AddFile(filePath, environment));
 
         return configurationBuilder;
     }
 
     /// <summary>
-    /// 添加配置文件
+    /// 创建配置源
     /// </summary>
-    /// <param name="configurationBuilder"></param>
     /// <param name="path"></param>
     /// <param name="optional"></param>
     /// <param name="reloadOnChange"></param>
     /// <returns></returns>
-    private static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string path, bool optional = true, bool reloadOnChange = true)
+    private static FileConfigurationSource CreateFileConfigurationSource(string path, bool optional = true, bool reloadOnChange = true)
     {
         var fileExtension = Path.GetExtension(path);
-        FileConfigurationSource? configurationSource = fileExtension.ToLower() switch
+        FileConfigurationSource? fileConfigurationSource = fileExtension.ToLower() switch
         {
             ".json" => new JsonConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
             ".xml" => new XmlConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
             ".ini" => new IniConfigurationSource() { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            _ => throw new InvalidOperationException("The file type configuration source was not supported.")
+            _ => throw new InvalidOperationException($"Cannot create a file `{fileExtension}` configuration source for this file type.")
         };
         // 初始化文件提供器
-        configurationSource.ResolveFileProvider();
+        fileConfigurationSource.ResolveFileProvider();
 
-        return configurationBuilder.Add(configurationSource);
+        return fileConfigurationSource;
     }
 }

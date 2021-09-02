@@ -8,10 +8,10 @@
 
 using Furion.ObjectExtensions;
 using Furion.Options;
-using Furion.Options.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +34,7 @@ public static class OptionsServiceCollectionExtensions
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
         // 添加后期配置
-        _ = optionsBuilder.PostConfigure(services);
+        PostConfigure(optionsBuilder, services);
 
         return services;
     }
@@ -52,7 +52,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -72,7 +72,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -94,7 +94,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -118,7 +118,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -144,7 +144,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -172,7 +172,7 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) _ = optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
 
         return services;
     }
@@ -207,6 +207,24 @@ public static class OptionsServiceCollectionExtensions
                        binderOptions.BindNonPublicProperties = appOptionsAttribute?.BindNonPublicProperties ?? false;
                    });
 
+        // 验证选项
+        Validate(optionsBuilder, services, appOptionsAttribute);
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
+    /// 验证选项
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项类型</param>
+    /// <param name="services">服务注册集合</param>
+    /// <returns></returns>
+    private static OptionsBuilder<TOptions> Validate<TOptions>(OptionsBuilder<TOptions> optionsBuilder, IServiceCollection services, AppOptionsAttribute? appOptionsAttribute)
+        where TOptions : class
+    {
+        var optionsType = typeof(TOptions);
+
         // 如果未明确关闭数据验证，则默认启用
         if (appOptionsAttribute?.ValidateDataAnnotations == false) return optionsBuilder;
 
@@ -221,10 +239,10 @@ public static class OptionsServiceCollectionExtensions
             throw new InvalidOperationException($"Type `{optionsType.Name}` prohibits the implementation of `IValidateOptions<TOptions>`.");
 
         // 配置复杂验证支持
-        if (appOptionsAttribute?.ValidateOptionsTypes == default || appOptionsAttribute.ValidateOptionsTypes.Length == 0) return optionsBuilder;
+        if (appOptionsAttribute?.ValidateOptionsTypes.IsEmpty() == true) return optionsBuilder;
 
         // 注册所有验证
-        foreach (var validateType in appOptionsAttribute.ValidateOptionsTypes)
+        foreach (var validateType in appOptionsAttribute?.ValidateOptionsTypes!)
         {
             // 验证类型必须实现 IValidateOptions<TOptions>
             if (!validateOptionsType.IsAssignableFrom(validateType))
@@ -233,6 +251,57 @@ public static class OptionsServiceCollectionExtensions
             // 注册 IValidateOptions 复杂验证
             services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, validateType));
         }
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
+    /// 选项后期配置
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项类型</param>
+    /// <param name="services">服务注册集合</param>
+    /// <returns>OptionsBuilder</returns>
+    private static OptionsBuilder<TOptions>? PostConfigure<TOptions>(OptionsBuilder<TOptions> optionsBuilder, IServiceCollection services)
+        where TOptions : class, IAppOptionsDependency
+    {
+        var optionsType = typeof(TOptions);
+
+        // 扫描后期配置方法
+        var postConfigureMethods = optionsType.GetTypeInfo().DeclaredMethods
+                                                            .Where(m => (m.Name == nameof(IAppOptions<TOptions>.PostConfigure) || m.Name.EndsWith($".{nameof(IAppOptions<TOptions>.PostConfigure)}"))
+                                                                && m.GetParameters()[0].ParameterType == optionsType);
+
+        // 限制选项多次实现 IAppOptionsDependency 接口
+        if (postConfigureMethods.Count() > 1)
+            throw new InvalidOperationException($"Please ensure that the option class `{optionsType.Name}` has and uniquely implements the `{nameof(IAppOptionsDependency)}` interface.");
+
+        var postConfigureMethod = postConfigureMethods.First();
+
+        //  获取后缀选项参数
+        var parameterTypes = postConfigureMethod.GetParameters().Select(p => p.ParameterType).ToArray();
+
+        // 创建相同签名委托
+        var actionGenericParameterType = typeof(Action).Assembly.GetType($"{typeof(Action).FullName}`{parameterTypes.Length}")
+                                            ?.MakeGenericType(parameterTypes);
+        var configureOptions = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
+
+        // 添加选项后期配置
+        services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), sp =>
+        {
+            // 添加参数
+            var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };
+            args.AddRange(parameterTypes.Skip(1).Select(u => sp.GetRequiredService(u)));
+            args.Add(configureOptions);
+
+            // 动态创建 PostConfigureOptions<TOptions, TDep1..TDep5> 对象
+            var postConfigureOptionsType = typeof(PostConfigureOptions<TOptions>);
+            var runtimePostConfigureOptionsType = postConfigureOptionsType.Assembly.GetType($"{postConfigureOptionsType.Namespace}.{postConfigureOptionsType.Name![..^1]}{parameterTypes.Length}")
+                                                            ?.MakeGenericType(parameterTypes);
+            var postConfigureOptions = Activator.CreateInstance(runtimePostConfigureOptionsType!, args.ToArray());
+
+            return postConfigureOptions!;
+        }, parameterTypes.Length > 1 ? ServiceLifetime.Transient : ServiceLifetime.Singleton));
 
         return optionsBuilder;
     }

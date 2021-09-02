@@ -34,13 +34,29 @@ public static class FurionHostBuilderExtensions
 
             // 注册 App 全局应用对象服务
             services.AddApp(hostBuilderContext.Configuration);
-
-            // 注册依赖注入服务
-            services.AddDependencyInjection(hostBuilderContext.Configuration);
         });
 
         // 配置框架服务提供器工厂
         hostBuilder.UseAppServiceProviderFactory(configure);
+
+        return hostBuilder;
+    }
+
+    /// <summary>
+    /// 初始化框架服务（含常用服务注册）
+    /// </summary>
+    /// <param name="hostBuilder">主机构建器</param>
+    /// <returns></returns>
+    public static IHostBuilder UseFurionDefaults(this IHostBuilder hostBuilder)
+    {
+        hostBuilder.UseFurion();
+
+        // 配置默认服务
+        hostBuilder.ConfigureServices((hostBuilderContext, services) =>
+        {
+            // 依赖注入
+            services.AddDependencyInjection(hostBuilderContext.Configuration);
+        });
 
         return hostBuilder;
     }

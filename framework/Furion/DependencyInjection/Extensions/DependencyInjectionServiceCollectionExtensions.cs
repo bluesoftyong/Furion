@@ -22,24 +22,20 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="builderConfigure"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration, Action<IDependencyInjectionBuilder>? builderConfigure = default)
     {
         // 注册框架服务提供器
         services.TryAddSingleton(sp => sp.Resolve());
 
-        return services;
-    }
+        if (builderConfigure != default)
+        {
+            var builder = new DependencyInjectionBuilder(services, configuration);
+            builderConfigure(builder);
+            builder.Build();
+        }
 
-    /// <summary>
-    /// 创建依赖注入构建器
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="configuration"></param>
-    /// <returns></returns>
-    public static IDependencyInjectionBuilder AsDependencyInjectionBuilder(this IServiceCollection services, IConfiguration configuration)
-    {
-        var builder = new DependencyInjectionBuilder(services, configuration);
-        return builder;
+        return services;
     }
 }

@@ -26,4 +26,16 @@ public static class FurionWebApplicationBuilderExtensions
 
         return webApplicationBuilder;
     }
+
+    /// <summary>
+    /// 初始化框架服务（含常用服务注册）
+    /// </summary>
+    /// <param name="webApplicationBuilder">WebApplication 构建器</param>
+    /// <returns></returns>
+    public static WebApplicationBuilder UseFurionDefaults(this WebApplicationBuilder webApplicationBuilder)
+    {
+        webApplicationBuilder.Host.UseFurionDefaults();
+
+        return webApplicationBuilder;
+    }
 }

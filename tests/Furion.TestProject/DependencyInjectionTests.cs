@@ -1,6 +1,7 @@
 ﻿using Furion.TestProject.Filters;
 using Furion.TestProject.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Furion.TestProject.Controllers;
 
@@ -13,6 +14,7 @@ public class DependencyInjectionTests : ControllerBase
 {
     private readonly IApp _app;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _appServiceProvider;
     private readonly IAutowriedService _autowriedService;
 
     /// <summary>
@@ -25,6 +27,7 @@ public class DependencyInjectionTests : ControllerBase
     {
         _app = app;
         _serviceProvider = serviceProvider;
+        _appServiceProvider = serviceProvider.Resolve();
         _autowriedService = autowriedService;
     }
 
@@ -41,6 +44,7 @@ public class DependencyInjectionTests : ControllerBase
         return _app.Equals(App)
             && _app.Equals(app2)
             && _app.Equals(_serviceProvider.GetRequiredService<IApp>())
+            && _app.Equals(_appServiceProvider.GetRequiredService<IApp>())
             && _app.Equals(_autowriedService.App);
     }
 }

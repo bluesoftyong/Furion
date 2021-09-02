@@ -38,11 +38,7 @@ public sealed class AppControllerActivator : IControllerActivator
         }
 
         // 提供当前服务提供器
-        var serviceProvider = controllerContext.HttpContext.RequestServices;
-        if (serviceProvider is not AppServiceProvider)
-        {
-            serviceProvider = new AppServiceProvider(serviceProvider);
-        }
+        var serviceProvider = controllerContext.HttpContext.RequestServices.Resolve();
 
         // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);

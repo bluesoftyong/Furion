@@ -16,13 +16,13 @@ public class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollect
     /// <summary>
     /// 服务提供器选项
     /// </summary>
-    private readonly ServiceProviderOptions _options;
+    private readonly AppServiceProviderOptions _options;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     public AppServiceProviderFactory()
-        : this(new ServiceProviderOptions())
+        : this(new AppServiceProviderOptions())
     {
     }
 
@@ -30,7 +30,7 @@ public class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollect
     /// 构造函数
     /// </summary>
     /// <param name="options"></param>
-    public AppServiceProviderFactory(ServiceProviderOptions options)
+    public AppServiceProviderFactory(AppServiceProviderOptions options)
     {
         _options = options;
     }

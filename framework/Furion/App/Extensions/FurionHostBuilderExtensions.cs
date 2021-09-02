@@ -21,7 +21,7 @@ public static class FurionHostBuilderExtensions
     /// <param name="hostBuilder">主机构建器</param>
     /// <param name="configure">服务提供器配置</param>
     /// <returns></returns>
-    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
+    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
     {
         // 添加框架初始配置
         hostBuilder.AddAppConfiguration();

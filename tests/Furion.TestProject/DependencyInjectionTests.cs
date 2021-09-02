@@ -35,7 +35,7 @@ public class DependencyInjectionTests : ControllerBase
         _app = app;
         _serviceProvider = serviceProvider;
         _appServiceProvider = appServiceProvider;
-        _wrapServiceProvider = serviceProvider.Resolve();
+        _wrapServiceProvider = serviceProvider.CreateProxy();
         _autowriedService = autowriedService;
         _namedServiceProvider = namedServiceProvider;
     }

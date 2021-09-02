@@ -38,7 +38,7 @@ public sealed class AppControllerActivator : IControllerActivator
         }
 
         // 提供当前服务提供器
-        var serviceProvider = controllerContext.HttpContext.RequestServices.Resolve();
+        var serviceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
 
         // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);

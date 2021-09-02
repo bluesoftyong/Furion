@@ -32,6 +32,7 @@ public static class AppServiceProviderFactoryHostBuilderExtensions
             serviceProviderOptions.ValidateOnBuild = validateOnBuild;
 
             configure?.Invoke(context, serviceProviderOptions);
+
             return new AppServiceProviderFactory(serviceProviderOptions);
         });
     }

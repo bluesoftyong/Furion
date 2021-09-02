@@ -16,11 +16,6 @@ namespace Furion.DependencyInjection;
 public interface IDependencyInjectionBuilder
 {
     /// <summary>
-    /// 服务注册集合对象
-    /// </summary>
-    IServiceCollection Services { get; }
-
-    /// <summary>
     /// 注册命名服务
     /// </summary>
     /// <typeparam name="TService"></typeparam>

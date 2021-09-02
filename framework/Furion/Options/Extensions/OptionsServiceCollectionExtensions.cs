@@ -289,7 +289,7 @@ public static class OptionsServiceCollectionExtensions
         // 添加选项后期配置
         services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), sp =>
         {
-            sp = sp.Resolve();
+            sp = sp.CreateProxy();
 
             // 添加参数
             var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };

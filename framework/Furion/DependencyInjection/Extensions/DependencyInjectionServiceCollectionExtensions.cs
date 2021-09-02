@@ -17,21 +17,16 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class DependencyInjectionServiceCollectionExtensions
 {
     /// <summary>
-    /// 依赖注入服务拓展
+    /// 创建依赖注入构建器
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    /// <param name="builderConfigure"></param>
+    /// <param name="contextProperties"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDependencyInjectionServices(this IServiceCollection services, IConfiguration configuration, Action<IDependencyInjectionBuilder>? builderConfigure = default)
+    public static IDependencyInjectionBuilder AddServiceBuilder(this IServiceCollection services, IConfiguration configuration, IDictionary<object, object> contextProperties)
     {
-        if (builderConfigure != default)
-        {
-            var builder = new DependencyInjectionBuilder(services, configuration);
-            builderConfigure(builder);
-            builder.Build();
-        }
-
-        return services;
+        var namedServiceDescriptors = contextProperties[nameof(NamedServiceProvider)] as IDictionary<string, Type>;
+        var builder = new DependencyInjectionBuilder(services, configuration, namedServiceDescriptors!);
+        return builder;
     }
 }

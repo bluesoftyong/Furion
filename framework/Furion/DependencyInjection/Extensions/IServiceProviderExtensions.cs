@@ -18,7 +18,7 @@ public static class IServiceProviderExtensions
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>
-    public static IAppServiceProvider Resolve(this IServiceProvider serviceProvider)
+    public static IAppServiceProvider CreateProxy(this IServiceProvider serviceProvider)
     {
         if (serviceProvider is AppServiceProvider) return (serviceProvider as IAppServiceProvider)!;
         else return new AppServiceProvider(serviceProvider);

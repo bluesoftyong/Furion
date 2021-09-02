@@ -37,7 +37,7 @@ public static class FurionHostBuilderExtensions
             services.AddApp(hostBuilderContext.Configuration);
 
             // 注册框架服务提供器
-            services.TryAddSingleton(sp => sp.Resolve());
+            services.TryAddTransient(sp => sp.Resolve());
         });
 
         // 配置框架服务提供器工厂

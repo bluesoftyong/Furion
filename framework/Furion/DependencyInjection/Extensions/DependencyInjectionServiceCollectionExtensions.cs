@@ -8,7 +8,6 @@
 
 using Furion.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -26,9 +25,6 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration, Action<IDependencyInjectionBuilder>? builderConfigure = default)
     {
-        // 注册框架服务提供器
-        services.TryAddSingleton(sp => sp.Resolve());
-
         if (builderConfigure != default)
         {
             var builder = new DependencyInjectionBuilder(services, configuration);

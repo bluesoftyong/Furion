@@ -67,7 +67,9 @@ public class DependencyInjectionTests : ControllerBase
     {
         return new[] {
             _namedServiceProvider.GetRequiredService<ITestNamedService>("test1").GetType().Name,
-             _namedServiceProvider.GetRequiredService<ITestNamedService>("test2").GetType().Name,
+            _namedServiceProvider.GetRequiredService<ITestNamedService>("test2").GetType().Name,
+            _namedServiceProvider.GetRequiredService<ITestNamedService>("test3").GetType().Name,
+            _namedServiceProvider.GetRequiredService<ITestNamedService>("test4").GetType().Name
         };
     }
 }

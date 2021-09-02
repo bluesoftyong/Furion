@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -34,6 +35,9 @@ public static class FurionHostBuilderExtensions
 
             // 注册 App 全局应用对象服务
             services.AddApp(hostBuilderContext.Configuration);
+
+            // 注册框架服务提供器
+            services.TryAddSingleton(sp => sp.Resolve());
         });
 
         // 配置框架服务提供器工厂

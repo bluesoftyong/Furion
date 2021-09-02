@@ -21,7 +21,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <summary>
     /// 服务注册集合对象
     /// </summary>
-    private readonly IServiceCollection _services;
+    public IServiceCollection Services { get; }
 
     /// <summary>
     /// 命名服务描述器集合
@@ -35,7 +35,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <param name="configuration"></param>
     public DependencyInjectionBuilder(IServiceCollection services, IConfiguration configuration)
     {
-        _services = services;
+        Services = services;
     }
 
     /// <summary>
@@ -52,8 +52,8 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-        _services.Add(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
+        Services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+        Services.Add(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
 
         _namedServiceDescriptors.Add(serviceName, implementationType);
 
@@ -74,8 +74,8 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-        _services.TryAdd(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
+        Services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+        Services.TryAdd(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
 
         _namedServiceDescriptors.TryAdd(serviceName, implementationType);
 
@@ -94,7 +94,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+        Services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
 
         _namedServiceDescriptors.Add(serviceName, implementationType);
 
@@ -113,7 +113,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+        Services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
 
         _namedServiceDescriptors.TryAdd(serviceName, implementationType);
 
@@ -126,7 +126,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     public void Build()
     {
         // 注册命名服务提供器
-        _services.AddTransient<INamedServiceProvider>(sp => new NamedServiceProvider(sp.Resolve(), _namedServiceDescriptors));
+        Services.AddTransient<INamedServiceProvider>(sp => new NamedServiceProvider(sp.Resolve(), _namedServiceDescriptors));
 
         Trace.WriteLine(string.Join(";\n", _namedServiceDescriptors.Select(c => $"{c.Key} = {c.Value}")));
     }

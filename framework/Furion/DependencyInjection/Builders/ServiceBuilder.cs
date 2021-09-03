@@ -19,14 +19,19 @@ namespace Furion.DependencyInjection;
 internal sealed class ServiceBuilder : IServiceBuilder
 {
     /// <summary>
-    /// 服务注册集合对象
+    /// 上下文共享数据
     /// </summary>
-    private readonly IServiceCollection _services;
+    private readonly IDictionary<object, object> _contextProperties;
 
     /// <summary>
     /// 命名服务集合
     /// </summary>
     private readonly IDictionary<string, Type> _namedServiceCollection;
+
+    /// <summary>
+    /// 服务描述器集合
+    /// </summary>
+    private readonly IDictionary<ServiceDescriptor, ServiceDescriptor> _serviceDescriptors;
 
     /// <summary>
     /// 依赖注入扫描程序集集合
@@ -38,12 +43,12 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <param name="contextProperties"></param>
-    internal ServiceBuilder(IServiceCollection services
-        , IDictionary<object, object> contextProperties)
+    internal ServiceBuilder(IDictionary<object, object> contextProperties)
     {
-        _services = services;
+        _contextProperties = contextProperties;
         _additionAssemblies = (contextProperties["AdditionAssemblies"] as IDictionary<Assembly, Assembly>)!;
         _namedServiceCollection = (contextProperties["NamedServiceCollection"] as IDictionary<string, Type>)!;
+        _serviceDescriptors = (contextProperties["ServiceDescriptors"] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
     }
 
     /// <summary>
@@ -88,10 +93,12 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-        _services.Add(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
-
         _namedServiceCollection.Add(serviceName, implementationType);
+
+        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+        var typeServiceDescriptor = ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime);
+        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+        _serviceDescriptors.Add(typeServiceDescriptor, typeServiceDescriptor);
 
         return this;
     }
@@ -110,10 +117,14 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-        _services.TryAdd(ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime));
+        if (_namedServiceCollection.TryAdd(serviceName, implementationType))
+        {
+            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+            var typeServiceDescriptor = ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime);
 
-        _namedServiceCollection.TryAdd(serviceName, implementationType);
+            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+            _serviceDescriptors.Add(typeServiceDescriptor, typeServiceDescriptor);
+        }
 
         return this;
     }
@@ -130,9 +141,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-
         _namedServiceCollection.Add(serviceName, implementationType);
+
+        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
 
         return this;
     }
@@ -149,9 +161,11 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         var implementationType = typeof(TImplementation);
 
-        _services.TryAdd(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-
-        _namedServiceCollection.TryAdd(serviceName, implementationType);
+        if (_namedServiceCollection.TryAdd(serviceName, implementationType))
+        {
+            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+            _serviceDescriptors.TryAdd(implementationServiceDescriptor, implementationServiceDescriptor);
+        }
 
         return this;
     }
@@ -159,26 +173,34 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 构建依赖注入程序集注册
     /// </summary>
-    internal void Build()
+    /// <param name="services"></param>
+    internal void Build(IServiceCollection services)
     {
+        var parallelLoopResult1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor =>
+          {
+              services.Add(serviceDescriptor);
+          });
+
         var dependencyType = typeof(IDependency);
 
         var serviceTypes = _additionAssemblies.Values.SelectMany(ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
                && dependencyType.IsAssignableFrom(type)));
 
-        Parallel.ForEach(serviceTypes, implementationType =>
-        {
-            var lifetime = ResolveServiceLifetime(implementationType);
-            var interfaces = implementationType.GetInterfaces()
-                                                .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType);
+        var parallelLoopResult2 = Parallel.ForEach(serviceTypes, implementationType =>
+           {
+               var lifetime = ResolveServiceLifetime(implementationType);
+               var interfaces = implementationType.GetInterfaces()
+                                                   .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType);
 
 
-            _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-            foreach (var serviceType in interfaces)
-            {
-                _services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
-            }
-        });
+               services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+               foreach (var serviceType in interfaces)
+               {
+                   services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
+               }
+           });
+
+        Release(parallelLoopResult1, parallelLoopResult2);
     }
 
     /// <summary>
@@ -194,5 +216,24 @@ internal sealed class ServiceBuilder : IServiceBuilder
         else if (typeof(ISingletonService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
         else throw new InvalidCastException("Invalid service registration lifetime.");
         return lifetime;
+    }
+
+    /// <summary>
+    /// 释放上下文对象
+    /// </summary>
+    /// <param name="isCompleted"></param>
+    private void Release(params ParallelLoopResult[] results)
+    {
+        while (true)
+        {
+            if (results.All(u => u.IsCompleted))
+            {
+                _contextProperties.Remove("ServiceDescriptors");
+                _contextProperties.Remove("AdditionAssemblies");
+                _contextProperties.Remove("ServiceBuilder");
+                _contextProperties.Remove("HostBuilderContext");
+                break;
+            }
+        }
     }
 }

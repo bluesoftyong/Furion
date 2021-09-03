@@ -26,10 +26,11 @@ internal static class ConfigurationHostBuilderExtensions
     {
         hostBuilder.Properties.Add("NamedServiceCollection", new Dictionary<string, Type>());
         hostBuilder.Properties.Add("AdditionAssemblies", new Dictionary<Assembly, Assembly>());
+        hostBuilder.Properties.Add("ServiceDescriptors", new Dictionary<ServiceDescriptor, ServiceDescriptor>());
 
         hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
         {
-            hostingContext.Properties.Add(hostingContext, hostingContext);
+            hostingContext.Properties.Add("HostBuilderContext", hostingContext);
             configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment);
         });
 

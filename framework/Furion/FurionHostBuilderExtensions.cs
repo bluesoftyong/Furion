@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
+using Furion.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
@@ -43,7 +44,7 @@ public static class FurionHostBuilderExtensions
             services.TryAddTransient(provider => provider.CreateProxy());
 
             // 注册启动程序集依赖注入
-            services.AsServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!);
+            context.Properties.Add("ServiceBuilder", new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
         });
 
         // 配置框架服务提供器工厂

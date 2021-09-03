@@ -47,6 +47,7 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     {
         // 注册命名服务提供器
         services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties["NamedServiceCollection"] as IDictionary<string, Type>)!));
+        ((ServiceBuilder)services.AsServiceBuilder(_contextProperties)).Build(services);
 
         return services;
     }
@@ -56,10 +57,9 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// </summary>
     /// <param name="containerBuilder"></param>
     /// <returns></returns>
-    public IServiceProvider CreateServiceProvider(IServiceCollection containerBuilder)
+    public IServiceProvider CreateServiceProvider(IServiceCollection services)
     {
-        ((ServiceBuilder)containerBuilder.AsServiceBuilder(_contextProperties)).Build();
-        var appServiceProvider = new AppServiceProvider(containerBuilder.BuildServiceProvider(_options));
+        var appServiceProvider = new AppServiceProvider(services.BuildServiceProvider(_options));
 
         using var diagnosticListener = new DiagnosticListener(nameof(Furion));
         if (diagnosticListener.IsEnabled() && diagnosticListener.IsEnabled(FurionDiagnosticConsts.BUILD_SERVICE_PROVIDER))

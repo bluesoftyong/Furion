@@ -8,6 +8,7 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
@@ -49,6 +50,26 @@ public static class FurionHostBuilderExtensions
 
         // 配置框架服务提供器工厂
         hostBuilder.UseAppServiceProviderFactory(configure);
+
+        return hostBuilder;
+    }
+
+    /// <summary>
+    /// 添加框架初始配置
+    /// </summary>
+    /// <param name="hostBuilder">主机构建器</param>
+    /// <returns></returns>
+    internal static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
+    {
+        hostBuilder.Properties.Add("NamedServiceCollection", new Dictionary<string, Type>());
+        hostBuilder.Properties.Add("AdditionAssemblies", new Dictionary<Assembly, Assembly>());
+        hostBuilder.Properties.Add("ServiceDescriptors", new Dictionary<ServiceDescriptor, ServiceDescriptor>());
+
+        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
+        {
+            hostingContext.Properties.Add("HostBuilderContext", hostingContext);
+            configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment);
+        });
 
         return hostBuilder;
     }

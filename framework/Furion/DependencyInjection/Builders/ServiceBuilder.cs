@@ -176,17 +176,13 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <param name="services"></param>
     internal void Build(IServiceCollection services)
     {
-        var parallelLoopResult1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor =>
-          {
-              services.Add(serviceDescriptor);
-          });
+        var result1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
 
         var dependencyType = typeof(IDependency);
-
         var serviceTypes = _additionAssemblies.Values.SelectMany(ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
                && dependencyType.IsAssignableFrom(type)));
 
-        var parallelLoopResult2 = Parallel.ForEach(serviceTypes, implementationType =>
+        var result2 = Parallel.ForEach(serviceTypes, implementationType =>
            {
                var lifetime = ResolveServiceLifetime(implementationType);
                var interfaces = implementationType.GetInterfaces()
@@ -200,7 +196,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
                }
            });
 
-        Release(parallelLoopResult1, parallelLoopResult2);
+        Release(result1, result2);
     }
 
     /// <summary>

@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,14 +23,6 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IDictionary<object, object> contextProperties)
     {
-        contextProperties.TryAdd("NamedServiceCollection", new Dictionary<string, Type>());
-        contextProperties.TryAdd("AdditionAssemblies", new Dictionary<Assembly, Assembly>());
-        contextProperties.TryAdd("ServiceDescriptors", new Dictionary<ServiceDescriptor, ServiceDescriptor>());
-        if (!contextProperties.TryGetValue("ServiceBuilder", out _))
-        {
-            contextProperties.Add("ServiceBuilder", new ServiceBuilder(contextProperties).AddAssemblies(Assembly.GetEntryAssembly()!));
-        }
-
         return (contextProperties.First(u => u.Value is IServiceBuilder).Value as IServiceBuilder)!;
     }
 }

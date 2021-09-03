@@ -160,11 +160,20 @@ public sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 构建服务
     /// </summary>
-    public void Build()
+    internal void Build()
     {
         // 注册命名服务提供器
         _services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceCollection));
 
         Trace.WriteLine(string.Join(";\n", _namedServiceCollection.Select(c => $"{c.Key} = {c.Value}")));
+    }
+
+    /// <summary>
+    /// 注册程序集导出类型
+    /// </summary>
+    private void RegisterAssemblyExportTypes(Assembly assembly)
+    {
+        var serviceTypes = assembly.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
+              && typeof(IDependency).IsAssignableFrom(type));
     }
 }

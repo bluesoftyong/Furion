@@ -6,13 +6,28 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.DependencyInjection;
+using System.Diagnostics;
 
-namespace System;
+namespace Furion;
 
 /// <summary>
-/// 范围服务依赖接口
+/// 框架诊断监听器
 /// </summary>
-public interface IScopedService : IDependency
+internal sealed class FurionDiagnosticObserver : IObserver<DiagnosticListener>
 {
+    public void OnCompleted()
+    {
+    }
+
+    public void OnError(Exception error)
+    {
+    }
+
+    public void OnNext(DiagnosticListener value)
+    {
+        if (value.Name == nameof(Furion))
+        {
+            value.Subscribe(new FurionKeyValueObserver()!);
+        }
+    }
 }

@@ -6,13 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.DependencyInjection;
-
-namespace System;
+namespace Furion.DependencyInjection;
 
 /// <summary>
-/// 范围服务依赖接口
+/// 依赖注入生存周期接口依赖
 /// </summary>
-public interface IScopedService : IDependency
+public interface IDependency
 {
 }

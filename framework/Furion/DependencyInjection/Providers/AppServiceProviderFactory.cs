@@ -6,13 +6,22 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion;
+using Furion.DependencyInjection;
+using System.Diagnostics;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// 框架内置服务提供器工厂
 /// </summary>
-public sealed class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
+internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
 {
+    /// <summary>
+    /// 上下文数据
+    /// </summary>
+    private readonly IDictionary<object, object> _contextProperties;
+
     /// <summary>
     /// 服务提供器选项
     /// </summary>
@@ -21,17 +30,11 @@ public sealed class AppServiceProviderFactory : IServiceProviderFactory<IService
     /// <summary>
     /// 构造函数
     /// </summary>
-    public AppServiceProviderFactory()
-        : this(new ServiceProviderOptions())
-    {
-    }
-
-    /// <summary>
-    /// 构造函数
-    /// </summary>
     /// <param name="options"></param>
-    public AppServiceProviderFactory(ServiceProviderOptions options)
+    internal AppServiceProviderFactory(IDictionary<object, object> contextProperties
+        , ServiceProviderOptions options)
     {
+        _contextProperties = contextProperties;
         _options = options;
     }
 
@@ -52,6 +55,15 @@ public sealed class AppServiceProviderFactory : IServiceProviderFactory<IService
     /// <returns></returns>
     public IServiceProvider CreateServiceProvider(IServiceCollection containerBuilder)
     {
-        return new AppServiceProvider(containerBuilder.BuildServiceProvider(_options));
+        ((ServiceBuilder)containerBuilder.AsServiceBuilder(_contextProperties)).Build();
+        var appServiceProvider = new AppServiceProvider(containerBuilder.BuildServiceProvider(_options));
+
+        using var diagnosticListener = new DiagnosticListener(nameof(Furion));
+        if (diagnosticListener.IsEnabled() && diagnosticListener.IsEnabled(FurionDiagnosticConsts.BUILD_SERVICE_PROVIDER))
+        {
+            diagnosticListener.Write(FurionDiagnosticConsts.BUILD_SERVICE_PROVIDER, _options);
+        }
+
+        return appServiceProvider;
     }
 }

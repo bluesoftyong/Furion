@@ -74,9 +74,4 @@ public interface IServiceBuilder
     /// <returns></returns>
     IServiceBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TImplementation : class;
-
-    /// <summary>
-    /// 构建
-    /// </summary>
-    void Build();
 }

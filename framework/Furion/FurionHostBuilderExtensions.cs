@@ -6,8 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -24,6 +27,9 @@ public static class FurionHostBuilderExtensions
     /// <returns></returns>
     public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
     {
+        // 配置框架诊断监听器
+        DiagnosticListener.AllListeners.Subscribe(new FurionDiagnosticObserver());
+
         // 添加框架初始配置
         hostBuilder.AddAppConfiguration();
 
@@ -35,6 +41,9 @@ public static class FurionHostBuilderExtensions
 
             // 注册框架服务提供器
             services.TryAddTransient(provider => provider.CreateProxy());
+
+            // 注册启动程序集依赖注入
+            services.AsServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!);
         });
 
         // 配置框架服务提供器工厂

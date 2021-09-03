@@ -15,13 +15,11 @@ builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory()
 
 builder.Services.AsServiceBuilder(builder.Host.Properties)
     .AddNamedService<ITestNamedService, Test1NamedService>("test1", ServiceLifetime.Transient)
-    .AddNamedService<ITestNamedService, Test2NamedService>("test2", ServiceLifetime.Transient)
-    .Build();
+    .AddNamedService<ITestNamedService, Test2NamedService>("test2", ServiceLifetime.Transient);
 
 builder.Services.AsServiceBuilder(builder.Host.Properties)
     .AddNamedService<ITestNamedService, Test1NamedService>("test3", ServiceLifetime.Transient)
-    .AddNamedService<ITestNamedService, Test2NamedService>("test4", ServiceLifetime.Transient)
-    .Build();
+    .AddNamedService<ITestNamedService, Test2NamedService>("test4", ServiceLifetime.Transient);
 
 // Add services to the container.
 builder.Services.AddTransient<IAutowriedService, AutowriedService>();

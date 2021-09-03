@@ -24,7 +24,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
     internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
     {
         // 替换 .NET 默认工厂
-        return hostBuilder.UseServiceProviderFactory((HostBuilderContext context) =>
+        return hostBuilder.UseServiceProviderFactory(context =>
         {
             // 创建默认配置选项
             var serviceProviderOptions = new ServiceProviderOptions();
@@ -33,7 +33,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
 
             configure?.Invoke(context, serviceProviderOptions);
 
-            return new AppServiceProviderFactory(serviceProviderOptions);
+            return new AppServiceProviderFactory(hostBuilder.Properties, serviceProviderOptions);
         });
     }
 }

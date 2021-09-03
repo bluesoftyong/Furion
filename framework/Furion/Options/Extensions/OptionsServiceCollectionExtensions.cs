@@ -242,7 +242,7 @@ public static class OptionsServiceCollectionExtensions
         if (appOptionsAttribute?.ValidateOptionsTypes.IsEmpty() == true) return optionsBuilder;
 
         // 注册所有验证
-        foreach (var validateType in appOptionsAttribute?.ValidateOptionsTypes!)
+        Parallel.ForEach(appOptionsAttribute?.ValidateOptionsTypes!, validateType =>
         {
             // 验证类型必须实现 IValidateOptions<TOptions>
             if (!validateOptionsType.IsAssignableFrom(validateType))
@@ -250,7 +250,7 @@ public static class OptionsServiceCollectionExtensions
 
             // 注册 IValidateOptions 复杂验证
             services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, validateType));
-        }
+        });
 
         return optionsBuilder;
     }

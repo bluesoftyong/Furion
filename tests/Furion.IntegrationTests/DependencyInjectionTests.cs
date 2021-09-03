@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -62,5 +63,29 @@ public class DependencyInjectionTests : IClassFixture<WebApplicationFactory<Test
         var result = JsonSerializer.Deserialize<string[]>(content);
 
         Assert.Equal("Test2NamedService", result!.Last());
+    }
+
+    /// <summary>
+    /// 测试扫描依赖注入服务
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/DependencyInjectionTests/TestDependencyService")]
+    public async Task TestDependencyService(string url)
+    {
+        var httpClient = _factory.WithWebHostBuilder(builder =>
+          {
+              builder.ConfigureServices((context, services) =>
+              {
+                  services.AsServiceBuilder(new Dictionary<object, object>()).AddAssemblies(typeof(TestProject.FakeStartup).Assembly);
+              });
+          }).CreateClient();
+
+        using var response = await httpClient.PostAsync($"{url}", null);
+        var content = await response.Content.ReadAsStringAsync();
+        _output.WriteLine($"{content}");
+
+        Assert.True(bool.Parse(content));
     }
 }

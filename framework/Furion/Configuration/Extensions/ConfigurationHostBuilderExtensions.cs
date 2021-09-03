@@ -24,7 +24,6 @@ internal static class ConfigurationHostBuilderExtensions
     /// <returns></returns>
     internal static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
     {
-        hostBuilder.Properties.Add(hostBuilder, hostBuilder);
         hostBuilder.Properties.Add("NamedServiceCollection", new Dictionary<string, Type>());
         hostBuilder.Properties.Add("AdditionAssemblies", new Dictionary<Assembly, Assembly>());
 

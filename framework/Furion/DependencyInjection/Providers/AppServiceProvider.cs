@@ -58,7 +58,7 @@ public sealed class AppServiceProvider : IAppServiceProvider
 
         if (serviceProperties.IsEmpty()) return instance;
 
-        Array.ForEach(serviceProperties.ToArray(), p =>
+        Parallel.ForEach(serviceProperties, p =>
         {
             var autowiredServicesAttributes = p.GetCustomAttribute<AutowiredServicesAttribute>(false);
             if (autowiredServicesAttributes?.Required ?? true)

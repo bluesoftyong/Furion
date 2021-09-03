@@ -9,7 +9,6 @@
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Furion.DependencyInjection;
@@ -17,7 +16,7 @@ namespace Furion.DependencyInjection;
 /// <summary>
 /// 依赖注入构建器
 /// </summary>
-public sealed class ServiceBuilder : IServiceBuilder
+internal sealed class ServiceBuilder : IServiceBuilder
 {
     /// <summary>
     /// 服务注册集合对象
@@ -39,7 +38,7 @@ public sealed class ServiceBuilder : IServiceBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <param name="contextProperties"></param>
-    public ServiceBuilder(IServiceCollection services
+    internal ServiceBuilder(IServiceCollection services
         , IDictionary<object, object> contextProperties)
     {
         _services = services;
@@ -56,7 +55,7 @@ public sealed class ServiceBuilder : IServiceBuilder
     {
         if (assemblies.IsEmpty()) throw new ArgumentException(nameof(assemblies));
 
-        Array.ForEach(assemblies, ass => _additionAssemblies.Add(ass, ass));
+        Parallel.ForEach(assemblies, ass => _additionAssemblies.Add(ass, ass));
 
         return this;
     }
@@ -70,7 +69,7 @@ public sealed class ServiceBuilder : IServiceBuilder
     {
         if (assemblies.IsEmpty()) throw new ArgumentException(nameof(assemblies));
 
-        Array.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
+        Parallel.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
 
         return this;
     }
@@ -158,22 +157,42 @@ public sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
-    /// 构建服务
+    /// 构建依赖注入程序集注册
     /// </summary>
     internal void Build()
     {
-        // 注册命名服务提供器
-        _services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceCollection));
+        var dependencyType = typeof(IDependency);
 
-        Trace.WriteLine(string.Join(";\n", _namedServiceCollection.Select(c => $"{c.Key} = {c.Value}")));
+        var serviceTypes = _additionAssemblies.Values.SelectMany(ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
+               && dependencyType.IsAssignableFrom(type)));
+
+        Parallel.ForEach(serviceTypes, implementationType =>
+        {
+            var lifetime = ResolveServiceLifetime(implementationType);
+            var interfaces = implementationType.GetInterfaces()
+                                                .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType);
+
+
+            _services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+            foreach (var serviceType in interfaces)
+            {
+                _services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
+            }
+        });
     }
 
     /// <summary>
-    /// 注册程序集导出类型
+    /// 解析服务种注册生存周期
     /// </summary>
-    private void RegisterAssemblyExportTypes(Assembly assembly)
+    /// <param name="implementationType"></param>
+    /// <returns></returns>
+    private static ServiceLifetime ResolveServiceLifetime(Type implementationType)
     {
-        var serviceTypes = assembly.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
-              && typeof(IDependency).IsAssignableFrom(type));
+        ServiceLifetime lifetime;
+        if (typeof(ITransientService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Transient;
+        else if (typeof(IScopedService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
+        else if (typeof(ISingletonService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
+        else throw new InvalidCastException("Invalid service registration lifetime.");
+        return lifetime;
     }
 }

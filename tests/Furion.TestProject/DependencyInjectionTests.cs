@@ -73,4 +73,17 @@ public class DependencyInjectionTests : ControllerBase
             _namedServiceProvider.GetRequiredService<ITestNamedService>("test4").GetType().Name
         };
     }
+
+    /// <summary>
+    /// 测试扫描依赖注入服务
+    /// </summary>
+    /// <param name="testDependencyService"></param>
+    /// <param name="testDependencyService1"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public bool TestDependencyService([FromServices] ITestDependencyService testDependencyService, [FromServices] TestDependencyService testDependencyService1)
+    {
+        return testDependencyService != null
+            && testDependencyService1 != null;
+    }
 }

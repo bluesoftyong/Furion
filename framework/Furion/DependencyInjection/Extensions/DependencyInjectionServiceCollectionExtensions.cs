@@ -23,10 +23,10 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <param name="configuration"></param>
     /// <param name="contextProperties"></param>
     /// <returns></returns>
-    public static IDependencyInjectionBuilder AsServiceBuilder(this IServiceCollection services, IConfiguration configuration, IDictionary<object, object> contextProperties)
+    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IConfiguration configuration, IDictionary<object, object> contextProperties)
     {
         var namedServiceDescriptors = contextProperties[nameof(NamedServiceProvider)] as IDictionary<string, Type>;
-        var builder = new DependencyInjectionBuilder(services, configuration, namedServiceDescriptors!);
+        var builder = new ServiceBuilder(services, configuration, namedServiceDescriptors!);
         return builder;
     }
 }

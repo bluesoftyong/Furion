@@ -16,7 +16,7 @@ namespace Furion.DependencyInjection;
 /// <summary>
 /// 依赖注入构建器
 /// </summary>
-public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
+public sealed class ServiceBuilder : IServiceBuilder
 {
     /// <summary>
     /// 服务注册集合对象
@@ -33,7 +33,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    public DependencyInjectionBuilder(IServiceCollection services
+    public ServiceBuilder(IServiceCollection services
         , IConfiguration configuration
         , IDictionary<string, Type> namedServiceDescriptors)
     {
@@ -49,7 +49,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    public IDependencyInjectionBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
+    public IServiceBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
     {
@@ -71,7 +71,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    public IDependencyInjectionBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
+    public IServiceBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
           where TService : class
         where TImplementation : class, TService
     {
@@ -92,7 +92,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    public IDependencyInjectionBuilder AddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
+    public IServiceBuilder AddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TImplementation : class
     {
         var implementationType = typeof(TImplementation);
@@ -111,7 +111,7 @@ public sealed class DependencyInjectionBuilder : IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    public IDependencyInjectionBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
+    public IServiceBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
           where TImplementation : class
     {
         var implementationType = typeof(TImplementation);

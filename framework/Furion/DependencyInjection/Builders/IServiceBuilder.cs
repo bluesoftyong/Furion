@@ -13,7 +13,7 @@ namespace Furion.DependencyInjection;
 /// <summary>
 /// 依赖注入构建器
 /// </summary>
-public interface IDependencyInjectionBuilder
+public interface IServiceBuilder
 {
     /// <summary>
     /// 注册命名服务
@@ -23,7 +23,7 @@ public interface IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    IDependencyInjectionBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
+    IServiceBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService;
 
@@ -35,7 +35,7 @@ public interface IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    IDependencyInjectionBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
+    IServiceBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService;
 
@@ -46,7 +46,7 @@ public interface IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    IDependencyInjectionBuilder AddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
+    IServiceBuilder AddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TImplementation : class;
 
     /// <summary>
@@ -57,7 +57,7 @@ public interface IDependencyInjectionBuilder
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
     /// <returns></returns>
-    IDependencyInjectionBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
+    IServiceBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TImplementation : class;
 
     /// <summary>

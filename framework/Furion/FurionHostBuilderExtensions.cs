@@ -24,9 +24,6 @@ public static class FurionHostBuilderExtensions
     /// <returns></returns>
     public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
     {
-        // 存储命名服务描述器
-        _ = hostBuilder.Properties.TryAdd(nameof(NamedServiceProvider), new Dictionary<string, Type>());
-
         // 添加框架初始配置
         hostBuilder.AddAppConfiguration();
 

@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Furion.DependencyInjection;
 
@@ -15,6 +16,20 @@ namespace Furion.DependencyInjection;
 /// </summary>
 public interface IServiceBuilder
 {
+    /// <summary>
+    /// 添加依赖注入扫描程序集
+    /// </summary>
+    /// <param name="assemblies"></param>
+    /// <returns></returns>
+    IServiceBuilder AddAssemblies(params Assembly[] assemblies);
+
+    /// <summary>
+    /// 添加依赖注入扫描程序集
+    /// </summary>
+    /// <param name="assemblies"></param>
+    /// <returns></returns>
+    IServiceBuilder TryAddAssemblies(params Assembly[] assemblies);
+
     /// <summary>
     /// 注册命名服务
     /// </summary>

@@ -7,22 +7,37 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;
 
 /// <summary>
 /// 配置主机构建器拓展类
 /// </summary>
-public static class ConfigurationHostBuilderExtensions
+internal static class ConfigurationHostBuilderExtensions
 {
     /// <summary>
     /// 添加框架初始配置
     /// </summary>
     /// <param name="hostBuilder">主机构建器</param>
     /// <returns></returns>
-    public static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
+    internal static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
     {
-        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) => configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment));
+        hostBuilder.Properties.Add(hostBuilder, hostBuilder);
+        hostBuilder.Properties.Add("NamedServiceCollection", new Dictionary<string, Type>());
+
+        var entryAssembly = Assembly.GetEntryAssembly()!;
+        hostBuilder.Properties.Add("AdditionAssemblies", new Dictionary<Assembly, Assembly>
+        {
+            { entryAssembly,entryAssembly }
+        });
+
+        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
+        {
+            hostBuilder.Properties.Add(hostingContext, hostingContext);
+            configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment);
+        });
 
         return hostBuilder;
     }

@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,13 +19,11 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// 创建依赖注入构建器
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="configuration"></param>
     /// <param name="contextProperties"></param>
     /// <returns></returns>
-    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IConfiguration configuration, IDictionary<object, object> contextProperties)
+    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IDictionary<object, object> contextProperties)
     {
-        var namedServiceDescriptors = contextProperties[nameof(NamedServiceProvider)] as IDictionary<string, Type>;
-        var builder = new ServiceBuilder(services, configuration, namedServiceDescriptors!);
+        var builder = new ServiceBuilder(services, contextProperties!);
         return builder;
     }
 }

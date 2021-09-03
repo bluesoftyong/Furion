@@ -19,19 +19,20 @@ public sealed class NamedServiceProvider : INamedServiceProvider
     private readonly IAppServiceProvider _appServiceProvider;
 
     /// <summary>
-    /// 命名服务描述器集合
+    /// 命名服务集合
     /// </summary>
-    private readonly IDictionary<string, Type> _namedServiceDescriptors;
+    private readonly IDictionary<string, Type> _namedServiceCollection;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="appServiceProvider"></param>
-    /// <param name="namedServiceDescriptors"></param>
-    public NamedServiceProvider(IAppServiceProvider appServiceProvider, IDictionary<string, Type> namedServiceDescriptors)
+    /// <param name="namedServiceCollection"></param>
+    public NamedServiceProvider(IAppServiceProvider appServiceProvider
+        , IDictionary<string, Type> namedServiceCollection)
     {
         _appServiceProvider = appServiceProvider;
-        _namedServiceDescriptors = namedServiceDescriptors;
+        _namedServiceCollection = namedServiceCollection;
     }
 
     /// <summary>
@@ -43,7 +44,7 @@ public sealed class NamedServiceProvider : INamedServiceProvider
     {
         if (string.IsNullOrWhiteSpace(named)) throw new ArgumentNullException(nameof(named));
 
-        var isRegistered = _namedServiceDescriptors.TryGetValue(named, out var implementactionType);
+        var isRegistered = _namedServiceCollection.TryGetValue(named, out var implementactionType);
         return isRegistered ? _appServiceProvider.GetService(implementactionType!) : default;
     }
 

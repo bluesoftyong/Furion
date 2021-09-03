@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.Hosting;
 /// <summary>
 /// 框架内服务提供器工厂主机拓展类
 /// </summary>
-public static class AppServiceProviderFactoryHostBuilderExtensions
+internal static class AppServiceProviderFactoryHostBuilderExtensions
 {
     /// <summary>
     /// 使用框架提供的服务提供器工厂
@@ -21,7 +21,7 @@ public static class AppServiceProviderFactoryHostBuilderExtensions
     /// <param name="hostBuilder"></param>
     /// <param name="configure"></param>
     /// <returns></returns>
-    public static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
+    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
     {
         // 替换 .NET 默认工厂
         return hostBuilder.UseServiceProviderFactory((HostBuilderContext context) =>

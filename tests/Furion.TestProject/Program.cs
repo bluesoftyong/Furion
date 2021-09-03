@@ -13,12 +13,12 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 
 builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
 
-builder.Services.AsServiceBuilder(builder.Configuration, builder.Host.Properties)
+builder.Services.AsServiceBuilder(builder.Host.Properties)
     .AddNamedService<ITestNamedService, Test1NamedService>("test1", ServiceLifetime.Transient)
     .AddNamedService<ITestNamedService, Test2NamedService>("test2", ServiceLifetime.Transient)
     .Build();
 
-builder.Services.AsServiceBuilder(builder.Configuration, builder.Host.Properties)
+builder.Services.AsServiceBuilder(builder.Host.Properties)
     .AddNamedService<ITestNamedService, Test1NamedService>("test3", ServiceLifetime.Transient)
     .AddNamedService<ITestNamedService, Test2NamedService>("test4", ServiceLifetime.Transient)
     .Build();

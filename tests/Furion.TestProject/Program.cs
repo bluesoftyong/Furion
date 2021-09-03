@@ -1,3 +1,4 @@
+using Furion.TestProject;
 using Furion.TestProject.Controllers;
 using Furion.TestProject.Filters;
 using Furion.TestProject.Services;
@@ -13,6 +14,7 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 
 builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
 
+builder.Services.AsServiceBuilder(builder.Host.Properties).TryAddAssemblies(typeof(FakeStartup).Assembly);
 builder.Services.AsServiceBuilder(builder.Host.Properties)
     .AddNamedService<ITestNamedService, Test1NamedService>("test1", ServiceLifetime.Transient)
     .AddNamedService<ITestNamedService, Test2NamedService>("test2", ServiceLifetime.Transient);

@@ -23,7 +23,7 @@ public class FurionKeyValueObserver : IObserver<KeyValuePair<string, object>>
 
     public void OnNext(KeyValuePair<string, object> value)
     {
-        if (value.Key == FurionDiagnosticConsts.BUILD_SERVICE_PROVIDER)
+        if (value.Key == FurionConsts.DIAGNOSTIC_BUILD_SERVICE_PROVIDER)
         {
             Console.WriteLine($"Furion is initializing {nameof(AppServiceProvider)}.");
         }

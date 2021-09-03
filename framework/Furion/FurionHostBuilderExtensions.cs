@@ -45,7 +45,7 @@ public static class FurionHostBuilderExtensions
             services.TryAddTransient(provider => provider.CreateProxy());
 
             // 注册启动程序集依赖注入
-            context.Properties.Add("ServiceBuilder", new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
+            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
         });
 
         // 配置框架服务提供器工厂
@@ -61,13 +61,13 @@ public static class FurionHostBuilderExtensions
     /// <returns></returns>
     internal static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
     {
-        hostBuilder.Properties.Add("NamedServiceCollection", new Dictionary<string, Type>());
-        hostBuilder.Properties.Add("AdditionAssemblies", new Dictionary<Assembly, Assembly>());
-        hostBuilder.Properties.Add("ServiceDescriptors", new Dictionary<ServiceDescriptor, ServiceDescriptor>());
+        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION, new Dictionary<string, Type>());
+        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES, new Dictionary<Assembly, Assembly>());
+        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS, new Dictionary<ServiceDescriptor, ServiceDescriptor>());
 
         hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
         {
-            hostingContext.Properties.Add("HostBuilderContext", hostingContext);
+            hostingContext.Properties.Add(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT, hostingContext);
             configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment);
         });
 

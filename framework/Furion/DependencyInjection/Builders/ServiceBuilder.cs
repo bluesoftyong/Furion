@@ -46,9 +46,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
     internal ServiceBuilder(IDictionary<object, object> contextProperties)
     {
         _contextProperties = contextProperties;
-        _additionAssemblies = (contextProperties["AdditionAssemblies"] as IDictionary<Assembly, Assembly>)!;
-        _namedServiceCollection = (contextProperties["NamedServiceCollection"] as IDictionary<string, Type>)!;
-        _serviceDescriptors = (contextProperties["ServiceDescriptors"] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
+        _additionAssemblies = (contextProperties[FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES] as IDictionary<Assembly, Assembly>)!;
+        _namedServiceCollection = (contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!;
+        _serviceDescriptors = (contextProperties[FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
     }
 
     /// <summary>
@@ -224,10 +224,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
         {
             if (results.All(u => u.IsCompleted))
             {
-                _contextProperties.Remove("ServiceDescriptors");
-                _contextProperties.Remove("AdditionAssemblies");
-                _contextProperties.Remove("ServiceBuilder");
-                _contextProperties.Remove("HostBuilderContext");
+                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
+                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
+                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
+                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
                 break;
             }
         }

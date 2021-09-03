@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion;
 using Furion.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,6 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IDictionary<object, object> contextProperties)
     {
-        return (contextProperties.First(u => u.Value is IServiceBuilder).Value as IServiceBuilder)!;
+        return (contextProperties[FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
     }
 }

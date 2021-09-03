@@ -45,9 +45,6 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <returns></returns>
     public IServiceCollection CreateBuilder(IServiceCollection services)
     {
-        // 注册命名服务提供器
-        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(),
-            (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
         ((ServiceBuilder)services.AsServiceBuilder(_contextProperties)).Build(services);
 
         return services;

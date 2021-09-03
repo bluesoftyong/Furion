@@ -176,6 +176,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <param name="services"></param>
     internal void Build(IServiceCollection services)
     {
+        // 注册命名服务提供器
+        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
+
         var result1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
 
         var dependencyType = typeof(IDependency);
@@ -200,7 +203,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
-    /// 解析服务种注册生存周期
+    /// 解析服务注册生存周期
     /// </summary>
     /// <param name="implementationType"></param>
     /// <returns></returns>

@@ -37,15 +37,14 @@ public sealed class AppControllerActivator : IControllerActivator
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor.ControllerTypeInfo));
         }
 
-        // 代理请求服务提供器
-        var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
-
         // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
         if (constructors.Length > 1)
             throw new InvalidOperationException($"Multiple constructors accepting all given argument types have been found in type '{controllerTypeInfo.Namespace}.{controllerTypeInfo.Name}'. There should only be one applicable constructor.");
 
         var constructor = constructors.FirstOrDefault();
+        // 代理请求服务提供器
+        var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
 
         object? controller;
         // 处理无参构造函数

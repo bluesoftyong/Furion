@@ -22,7 +22,7 @@ public static class FurionWebApplicationBuilderExtensions
     /// <param name="webApplicationBuilder">WebApplication 构建器</param>
     /// <param name="configure"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder UseFurion(this WebApplicationBuilder webApplicationBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
+    public static WebApplicationBuilder UseFurion(this WebApplicationBuilder webApplicationBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
     {
         webApplicationBuilder.Host.UseFurion(configure);
 

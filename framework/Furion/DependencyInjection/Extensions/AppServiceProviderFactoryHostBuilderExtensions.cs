@@ -21,13 +21,13 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
     /// <param name="hostBuilder"></param>
     /// <param name="configure"></param>
     /// <returns></returns>
-    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, AppServiceProviderOptions>? configure = default)
+    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
     {
         // 替换 .NET 默认工厂
         return hostBuilder.UseServiceProviderFactory((HostBuilderContext context) =>
         {
             // 创建默认配置选项
-            var serviceProviderOptions = new AppServiceProviderOptions();
+            var serviceProviderOptions = new ServiceProviderOptions();
             var validateOnBuild = (serviceProviderOptions.ValidateScopes = context.HostingEnvironment.IsDevelopment());
             serviceProviderOptions.ValidateOnBuild = validateOnBuild;
 

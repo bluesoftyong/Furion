@@ -16,13 +16,13 @@ public sealed class AppServiceProviderFactory : IServiceProviderFactory<IService
     /// <summary>
     /// 服务提供器选项
     /// </summary>
-    private readonly AppServiceProviderOptions _options;
+    private readonly ServiceProviderOptions _options;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     public AppServiceProviderFactory()
-        : this(new AppServiceProviderOptions())
+        : this(new ServiceProviderOptions())
     {
     }
 
@@ -30,7 +30,7 @@ public sealed class AppServiceProviderFactory : IServiceProviderFactory<IService
     /// 构造函数
     /// </summary>
     /// <param name="options"></param>
-    public AppServiceProviderFactory(AppServiceProviderOptions options)
+    public AppServiceProviderFactory(ServiceProviderOptions options)
     {
         _options = options;
     }

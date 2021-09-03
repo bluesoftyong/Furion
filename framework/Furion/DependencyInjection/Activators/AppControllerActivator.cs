@@ -47,20 +47,21 @@ public sealed class AppControllerActivator : IControllerActivator
 
         var constructor = constructors.FirstOrDefault();
 
+        object? controller;
         // 处理无参构造函数
         if (constructor?.GetParameters()?.Length == 0)
-            return appServiceProvider.GetRequiredService(controllerTypeInfo);
-        // 处理嵌套依赖
+            controller = Activator.CreateInstance(controllerTypeInfo);
+        // 处理有参构造函数
         else
         {
             var parameters = constructors.FirstOrDefault()!.GetParameters()
                                                                    .Where(p => p.ParameterType.IsClass || p.ParameterType.IsInterface)
                                                                    .Select(p => appServiceProvider.GetRequiredService(p.ParameterType))
                                                                    .ToArray();
-
-            return appServiceProvider.ResolveAutowriedService(
-                Activator.CreateInstance(controllerTypeInfo, parameters))!;
+            controller = Activator.CreateInstance(controllerTypeInfo, parameters);
         }
+
+        return appServiceProvider.ResolveAutowriedService(controller)!;
     }
 
     /// <summary>

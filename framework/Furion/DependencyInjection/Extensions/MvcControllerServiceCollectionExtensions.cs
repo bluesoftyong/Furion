@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// 控制器服务拓展类
 /// </summary>
-public static class ControllerMvcServiceCollectionExtensions
+public static class MvcControllerServiceCollectionExtensions
 {
     /// <summary>
     /// 支持属性注入的控制器服务
@@ -22,12 +22,9 @@ public static class ControllerMvcServiceCollectionExtensions
     /// <param name="mvcBuilder"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IMvcBuilder AddControllersServicesWithAutowired(this IMvcBuilder mvcBuilder)
+    public static IMvcBuilder AddAutowired(this IMvcBuilder mvcBuilder)
     {
         var services = mvcBuilder.Services;
-
-        // 将控制器注册成服务
-        mvcBuilder.AddControllersAsServices();
 
         // 替换控制器激活器
         services.Replace(ServiceDescriptor.Transient<IControllerActivator, AppControllerActivator>());

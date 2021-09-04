@@ -82,56 +82,6 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 注册命名服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="serviceName"></param>
-    /// <param name="lifetime"></param>
-    /// <returns></returns>
-    public IServiceBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
-        where TService : class
-        where TImplementation : class, TService
-    {
-        var implementationType = typeof(TImplementation);
-
-        _namedServiceCollection.Add(serviceName, implementationType);
-
-        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-        var typeServiceDescriptor = ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime);
-        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
-        _serviceDescriptors.Add(typeServiceDescriptor, typeServiceDescriptor);
-
-        return this;
-    }
-
-    /// <summary>
-    /// 注册命名服务
-    /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="serviceName"></param>
-    /// <param name="lifetime"></param>
-    /// <returns></returns>
-    public IServiceBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
-          where TService : class
-        where TImplementation : class, TService
-    {
-        var implementationType = typeof(TImplementation);
-
-        if (_namedServiceCollection.TryAdd(serviceName, implementationType))
-        {
-            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-            var typeServiceDescriptor = ServiceDescriptor.Describe(typeof(TService), implementationType, lifetime);
-
-            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
-            _serviceDescriptors.Add(typeServiceDescriptor, typeServiceDescriptor);
-        }
-
-        return this;
-    }
-
-    /// <summary>
-    /// 注册命名服务
-    /// </summary>
     /// <typeparam name="TImplementation"></typeparam>
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>

@@ -33,30 +33,6 @@ public interface IServiceBuilder
     /// <summary>
     /// 注册命名服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="serviceName"></param>
-    /// <param name="lifetime"></param>
-    /// <returns></returns>
-    IServiceBuilder AddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
-        where TService : class
-        where TImplementation : class, TService;
-
-    /// <summary>
-    /// 注册命名服务
-    /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <param name="serviceName"></param>
-    /// <param name="lifetime"></param>
-    /// <returns></returns>
-    IServiceBuilder TryAddNamedService<TService, TImplementation>(string serviceName, ServiceLifetime lifetime)
-        where TService : class
-        where TImplementation : class, TService;
-
-    /// <summary>
-    /// 注册命名服务
-    /// </summary>
     /// <typeparam name="TImplementation"></typeparam>
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>

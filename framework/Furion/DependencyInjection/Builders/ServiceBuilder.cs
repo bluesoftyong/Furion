@@ -183,8 +183,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
         // 扫描所有程序集注册
         var dependencyType = typeof(IDependency);
-        var serviceTypes = _additionAssemblies.Values.SelectMany(ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
-               && dependencyType.IsAssignableFrom(type)).Select(type => ResolveGenericType(type)));
+        var serviceTypes = _additionAssemblies.Values.SelectMany(ass =>
+                                            ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
+                                                && dependencyType.IsAssignableFrom(type)).Select(type => ResolveGenericType(type)));
 
         var result2 = Parallel.ForEach(serviceTypes, implementationType =>
            {

@@ -78,4 +78,19 @@ public class DependencyInjectionTests : IClassFixture<WebApplicationFactory<Test
 
         Assert.True(bool.Parse(content));
     }
+
+    /// <summary>
+    /// 测试泛型接口
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/DependencyInjectionTests/TestGenericDependencyService")]
+    public async Task TestGenericDependencyService(string url)
+    {
+        var content = await _factory.PostAsStringAsync(url, ensure: false);
+        _output.WriteLine($"{content}");
+
+        Assert.True(bool.Parse(content));
+    }
 }

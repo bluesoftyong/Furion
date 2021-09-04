@@ -98,4 +98,15 @@ public class DependencyInjectionTests : ControllerBase
     {
         return testDependencyService1 != null;
     }
+
+    /// <summary>
+    /// 测试泛型接口
+    /// </summary>
+    /// <param name="genericDependencyService"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public bool TestGenericDependencyService([FromServices] ITestGenericDependencyService<int> genericDependencyService)
+    {
+        return genericDependencyService != null;
+    }
 }

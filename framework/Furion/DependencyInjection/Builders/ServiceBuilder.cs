@@ -181,15 +181,17 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
         var result1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
 
+        // 扫描所有程序集注册
         var dependencyType = typeof(IDependency);
         var serviceTypes = _additionAssemblies.Values.SelectMany(ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
-               && dependencyType.IsAssignableFrom(type)));
+               && dependencyType.IsAssignableFrom(type)).Select(type => ResolveGenericType(type)));
 
         var result2 = Parallel.ForEach(serviceTypes, implementationType =>
            {
                var lifetime = ResolveServiceLifetime(implementationType);
                var interfaces = implementationType.GetInterfaces()
-                                                   .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType);
+                                                   .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType)
+                                                   .Select(type => ResolveGenericType(type));
 
 
                services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
@@ -199,22 +201,8 @@ internal sealed class ServiceBuilder : IServiceBuilder
                }
            });
 
+        // 释放主机上下文对象
         Release(result1, result2);
-    }
-
-    /// <summary>
-    /// 解析服务注册生存周期
-    /// </summary>
-    /// <param name="implementationType"></param>
-    /// <returns></returns>
-    private static ServiceLifetime ResolveServiceLifetime(Type implementationType)
-    {
-        ServiceLifetime lifetime;
-        if (typeof(ITransientService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Transient;
-        else if (typeof(IScopedService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
-        else if (typeof(ISingletonService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
-        else throw new InvalidCastException("Invalid service registration lifetime.");
-        return lifetime;
     }
 
     /// <summary>
@@ -234,5 +222,32 @@ internal sealed class ServiceBuilder : IServiceBuilder
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// 解析服务注册生存周期
+    /// </summary>
+    /// <param name="implementationType"></param>
+    /// <returns></returns>
+    private static ServiceLifetime ResolveServiceLifetime(Type implementationType)
+    {
+        ServiceLifetime lifetime;
+        if (typeof(ITransientService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Transient;
+        else if (typeof(IScopedService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
+        else if (typeof(ISingletonService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
+        else throw new InvalidCastException("Invalid service registration lifetime.");
+        return lifetime;
+    }
+
+    /// <summary>
+    /// 解析泛型实际类型
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    private static Type ResolveGenericType(Type type)
+    {
+        if (!type.IsGenericType) return type;
+
+        return type.Assembly.GetType($"{type.Namespace}.{type.Name}")!;
     }
 }

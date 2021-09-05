@@ -268,15 +268,9 @@ public static class OptionsServiceCollectionExtensions
         var optionsType = typeof(TOptions);
 
         // 扫描后期配置方法
-        var postConfigureMethods = optionsType.GetTypeInfo().DeclaredMethods
-                                                            .Where(m => (m.Name == nameof(IAppOptions<TOptions>.PostConfigure) || m.Name.EndsWith($".{nameof(IAppOptions<TOptions>.PostConfigure)}"))
-                                                                && m.GetParameters()[0].ParameterType == optionsType);
-
-        // 限制选项多次实现 IAppOptionsDependency 接口
-        if (postConfigureMethods.Count() > 1)
-            throw new InvalidOperationException($"Please ensure that the option class `{optionsType.Name}` has and uniquely implements the `{nameof(IAppOptions)}` interface.");
-
-        var postConfigureMethod = postConfigureMethods.First();
+        var postConfigureMethod = optionsType.GetTypeInfo().DeclaredMethods
+                                                      .Single(m => (m.Name == "PostConfigure" || m.Name.EndsWith($".PostConfigure"))
+                                                          && m.GetParameters()[0].ParameterType == optionsType);
 
         //  获取后缀选项参数
         var parameterTypes = postConfigureMethod.GetParameters().Select(p => p.ParameterType).ToArray();

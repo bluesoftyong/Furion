@@ -6,12 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.DependencyInjection;
+using Furion.DependencyInjection;
+
+namespace System;
 
 /// <summary>
 /// 基于工厂的服务依赖接口
 /// </summary>
-public interface IFactoryService
+public interface IFactoryService<TDependency>
+    where TDependency : IDependency
 {
     /// <summary>
     /// 服务工厂
@@ -19,18 +22,4 @@ public interface IFactoryService
     /// <param name="serviceProvider"></param>
     /// <returns></returns>
     object ServiceFactory(IServiceProvider serviceProvider);
-}
-
-/// <summary>
-/// 基于工厂的服务依赖接口
-/// </summary>
-public interface IFactoryService<TServiceType>
-    where TServiceType : class
-{
-    /// <summary>
-    /// 服务工厂
-    /// </summary>
-    /// <param name="serviceProvider"></param>
-    /// <returns></returns>
-    TServiceType ServiceFactory(IServiceProvider serviceProvider);
 }

@@ -19,16 +19,45 @@ internal static class TypeExtensions
     /// 获取类型自定义特性
     /// </summary>
     /// <typeparam name="TAttribute">特性类型</typeparam>
-    /// <param name="classType">类类型</param>
+    /// <param name="type">类类型</param>
     /// <param name="inherit">是否继承查找</param>
     /// <returns>特性对象</returns>
-    internal static TAttribute? GetTypeAttribute<TAttribute>(this Type? classType, bool inherit = false)
+    internal static TAttribute? GetTypeAttribute<TAttribute>(this Type? type, bool inherit = false)
         where TAttribute : Attribute
     {
-        if (classType == null) throw new ArgumentNullException(nameof(classType));
+        if (type == null) throw new ArgumentNullException(nameof(type));
 
-        return classType.IsDefined(typeof(TAttribute), inherit)
-            ? classType.GetCustomAttribute<TAttribute>(inherit)
+        return type.IsDefined(typeof(TAttribute), inherit)
+            ? type.GetCustomAttribute<TAttribute>(inherit)
             : default;
+    }
+
+    /// <summary>
+    /// 判断类型是否实现泛型接口
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="genericInterface"></param>
+    /// <returns></returns>
+    internal static bool IsAssignableToGenericInterface(this Type type, Type genericInterface)
+    {
+        return Array.Exists(type.GetInterfaces(), t => t.IsGenericType && t.GetGenericTypeDefinition() == genericInterface);
+    }
+
+    /// <summary>
+    /// 设置属性值
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="target"></param>
+    /// <param name="value"></param>
+    internal static void SetPropertyValue(this PropertyInfo property, object target, object? value)
+    {
+        if (target == default) throw new ArgumentNullException(nameof(target));
+
+        if (property.SetMethod == null)
+        {
+            target.GetType().GetField($"<{property.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
+                  ?.SetValue(target, value);
+        }
+        else property.SetValue(target, value);
     }
 }

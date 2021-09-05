@@ -63,11 +63,11 @@ public sealed class AppServiceProvider : IAppServiceProvider
             var autowiredServicesAttributes = p.GetCustomAttribute<AutowiredServicesAttribute>(false);
             if (autowiredServicesAttributes?.Required ?? true)
             {
-                p.SetValue(instance, _serviceProvider.GetRequiredService(p.PropertyType));
+                p.SetPropertyValue(instance, _serviceProvider.GetRequiredService(p.PropertyType));
             }
             else
             {
-                p.SetValue(instance, GetService(p.PropertyType));
+                p.SetPropertyValue(instance, GetService(p.PropertyType));
             }
         });
 

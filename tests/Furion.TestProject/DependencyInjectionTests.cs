@@ -41,7 +41,7 @@ public class DependencyInjectionTests : ControllerBase
     }
 
     [AutowiredServices]
-    IApp? App { get; set; }
+    IApp? App { get; }
 
     /// <summary>
     /// 测试构造函数注入、属性注入、方法注入、手动解析
@@ -108,5 +108,16 @@ public class DependencyInjectionTests : ControllerBase
     public bool TestGenericDependencyService([FromServices] ITestGenericDependencyService<int> genericDependencyService)
     {
         return genericDependencyService != null;
+    }
+
+    /// <summary>
+    /// 测试工厂解析服务
+    /// </summary>
+    /// <param name="test3DependencyService"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public bool TestFactoryService([FromServices] ITest3DependencyService test3DependencyService)
+    {
+        return test3DependencyService.NoNull();
     }
 }

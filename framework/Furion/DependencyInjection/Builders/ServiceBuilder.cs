@@ -139,7 +139,8 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
         var result2 = Parallel.ForEach(serviceTypes, implementationType =>
            {
-               var lifetime = ResolveServiceLifetime(implementationType);
+               var lifetimeType = implementationType.GetInterfaces().First(u => dependencyType.IsAssignableFrom(u));
+               var lifetime = ResolveServiceLifetime(lifetimeType);
                var interfaces = implementationType.GetInterfaces()
                                                    .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType)
                                                    .Select(type => ResolveGenericType(type));
@@ -152,8 +153,44 @@ internal sealed class ServiceBuilder : IServiceBuilder
                }
            });
 
+        var factoryType = typeof(IFactoryService<>);
+        // 扫描工厂类型
+        var factoryServiceTypes = _additionAssemblies.Values.SelectMany(ass =>
+                                            ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
+                                                && type.IsAssignableToGenericInterface(factoryType)));
+
+        var result3 = Parallel.ForEach(factoryServiceTypes, implementationType =>
+        {
+            var factoryServiceType = implementationType.GetInterfaces().First(intr => ResolveGenericType(intr) == factoryType);
+            var genericArgs = factoryServiceType.GetGenericArguments();
+
+            var lifetime = ResolveServiceLifetime(genericArgs[0]);
+
+            // 扫描工厂方法
+            var @delegate = implementationType.GetTypeInfo().DeclaredMethods
+                                                          .Single(m => (m.Name == "ServiceFactory" || m.Name.EndsWith($".ServiceFactory"))
+                                                              && m.GetParameters()[0].ParameterType == typeof(IServiceProvider))
+                                                          .CreateDelegate<Func<IServiceProvider, object>>(Convert.ChangeType(default, implementationType));
+
+
+            var interfaces = implementationType.GetInterfaces()
+                                                   .Where(intr => ResolveGenericType(intr) != factoryType);
+
+
+            services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+            foreach (var serviceType in interfaces)
+            {
+                services.Add(ServiceDescriptor.Describe(serviceType, provider =>
+                {
+                    var appServiceProvider = provider.CreateProxy();
+                    var obj = @delegate(appServiceProvider);
+                    return appServiceProvider.ResolveAutowriedService(obj)!;
+                }, lifetime));
+            }
+        });
+
         // 释放主机上下文对象
-        Release(result1, result2);
+        Release(result1, result2, result3);
     }
 
     /// <summary>
@@ -178,16 +215,14 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 解析服务注册生存周期
     /// </summary>
-    /// <param name="implementationType"></param>
+    /// <param name="lifetimeType"></param>
     /// <returns></returns>
-    private static ServiceLifetime ResolveServiceLifetime(Type implementationType)
+    private static ServiceLifetime ResolveServiceLifetime(Type lifetimeType)
     {
-        ServiceLifetime lifetime;
-        if (typeof(ITransientService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Transient;
-        else if (typeof(IScopedService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
-        else if (typeof(ISingletonService).IsAssignableFrom(implementationType)) lifetime = ServiceLifetime.Scoped;
+        if (lifetimeType == typeof(ITransientService)) return ServiceLifetime.Transient;
+        else if (lifetimeType == typeof(IScopedService)) return ServiceLifetime.Scoped;
+        else if (lifetimeType == typeof(ISingletonService)) return ServiceLifetime.Singleton;
         else throw new InvalidCastException("Invalid service registration lifetime.");
-        return lifetime;
     }
 
     /// <summary>

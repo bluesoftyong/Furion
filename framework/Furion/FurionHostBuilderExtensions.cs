@@ -45,7 +45,8 @@ public static class FurionHostBuilderExtensions
             services.TryAddTransient(provider => provider.CreateProxy());
 
             // 添加启动程序集到服务构建器中
-            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
+            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER,
+                new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
         });
 
         // 配置框架服务提供器工厂

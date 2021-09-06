@@ -11,6 +11,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21452.24" />
+	  <PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21454.1" />
 	</ItemGroup>
 </Project>

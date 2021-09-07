@@ -81,7 +81,7 @@ public class DependencyInjectionTests : ControllerBase
     /// <param name="testDependencyService1"></param>
     /// <returns></returns>
     [HttpPost]
-    public bool TestDependencyService([FromServices] ITestDependencyService testDependencyService, [FromServices] TestDependencyService testDependencyService1)
+    public bool TestDependencyService([FromServices] ITestDependencyService testDependencyService, [FromServices] ITest2DependencyService testDependencyService1)
     {
         return testDependencyService != null
             && testDependencyService1 != null;

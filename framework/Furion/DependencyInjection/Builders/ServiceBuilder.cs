@@ -52,7 +52,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
-    /// 添加依赖注入扫描程序集
+    /// 添加程序集
     /// </summary>
     /// <param name="assemblies"></param>
     /// <returns></returns>
@@ -66,8 +66,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
-    /// 添加依赖注入扫描程序集
+    /// 添加程序集
     /// </summary>
+    /// <remarks>如果存在则跳过</remarks>
     /// <param name="assemblies"></param>
     /// <returns></returns>
     public IServiceBuilder TryAddAssemblies(params Assembly[] assemblies)
@@ -102,6 +103,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 注册命名服务
     /// </summary>
+    /// <remarks>如果存在则跳过</remarks>
     /// <typeparam name="TImplementation"></typeparam>
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
@@ -114,14 +116,14 @@ internal sealed class ServiceBuilder : IServiceBuilder
         if (_namedServiceCollection.TryAdd(serviceName, implementationType))
         {
             var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-            _serviceDescriptors.TryAdd(implementationServiceDescriptor, implementationServiceDescriptor);
+            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
         }
 
         return this;
     }
 
     /// <summary>
-    /// 构建依赖注入程序集注册
+    /// 服务注册构建
     /// </summary>
     /// <param name="services"></param>
     internal void Build(IServiceCollection services)
@@ -129,68 +131,92 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 注册命名服务提供器
         services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
 
-        var result1 = Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
+        // 批量注册服务描述器
+        var result1 = BatchRegisterServiceDescriptors(services);
 
-        // 扫描所有程序集注册
-        var dependencyType = typeof(IDependency);
-        var serviceTypes = _additionAssemblies.Values.SelectMany(ass =>
-                                            ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
-                                                && dependencyType.IsAssignableFrom(type)).Select(type => ResolveGenericType(type)));
+        // 通过依赖接口批量注册
+        var result2 = BatchRegisterServiceByDependencyType(services);
 
-        var result2 = Parallel.ForEach(serviceTypes, implementationType =>
-           {
-               var lifetimeType = implementationType.GetInterfaces().First(u => dependencyType.IsAssignableFrom(u));
-               var lifetime = ResolveServiceLifetime(lifetimeType);
-               var interfaces = implementationType.GetInterfaces()
-                                                   .Where(intr => !dependencyType.IsAssignableFrom(intr) && intr != dependencyType)
-                                                   .Select(type => ResolveGenericType(type));
-
-
-               services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-               foreach (var serviceType in interfaces)
-               {
-                   services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
-               }
-           });
-
-        var factoryType = typeof(IFactoryService<>);
-        // 扫描工厂类型
-        var factoryServiceTypes = _additionAssemblies.Values.SelectMany(ass =>
-                                            ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass
-                                                && type.IsAssignableToGenericInterface(factoryType)));
-
-        var result3 = Parallel.ForEach(factoryServiceTypes, implementationType =>
-        {
-            var factoryServiceType = implementationType.GetInterfaces().First(intr => ResolveGenericType(intr) == factoryType);
-            var genericArgs = factoryServiceType.GetGenericArguments();
-
-            var lifetime = ResolveServiceLifetime(genericArgs[0]);
-
-            // 扫描工厂方法
-            var @delegate = implementationType.GetTypeInfo().DeclaredMethods
-                                                          .Single(m => (m.Name == "ServiceFactory" || m.Name.EndsWith($".ServiceFactory"))
-                                                              && m.GetParameters()[0].ParameterType == typeof(IServiceProvider))
-                                                          .CreateDelegate<Func<IServiceProvider, object>>(Convert.ChangeType(default, implementationType));
-
-
-            var interfaces = implementationType.GetInterfaces()
-                                                   .Where(intr => ResolveGenericType(intr) != factoryType);
-
-
-            services.Add(ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
-            foreach (var serviceType in interfaces)
-            {
-                services.Add(ServiceDescriptor.Describe(serviceType, provider =>
-                {
-                    var appServiceProvider = provider.CreateProxy();
-                    var obj = @delegate(appServiceProvider);
-                    return appServiceProvider.ResolveAutowriedService(obj)!;
-                }, lifetime));
-            }
-        });
+        // 通过依赖工厂类型批量注册
+        var result3 = BatchRegisterServiceByDependencyFactoryType(services);
 
         // 释放主机上下文对象
         Release(result1, result2, result3);
+    }
+
+    /// <summary>
+    /// 通过依赖类型批量注册
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    private ParallelLoopResult BatchRegisterServiceByDependencyType(IServiceCollection services)
+    {
+        var dependencyType = typeof(IDependency);
+
+        // 扫描所有待注册服务类型
+        var implementationTypes = _additionAssemblies.Values.SelectMany(
+                                            ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && dependencyType.IsAssignableFrom(type))
+                                                                                    .Select(type => FixedGenericType(type)));
+
+        return Parallel.ForEach(implementationTypes, implementationType =>
+        {
+            var interfaces = implementationType.GetInterfaces();
+            var lifetime = ConvertToServiceLifetime(interfaces.First(type => dependencyType.IsAssignableFrom(type) && type != dependencyType));
+
+            // 获取所有服务类型
+            var serviceTypes = interfaces.Where(type => !dependencyType.IsAssignableFrom(type))
+                                                        .Select(type => FixedGenericType(type));
+
+            foreach (var serviceType in serviceTypes)
+            {
+                services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
+            }
+        });
+    }
+
+    /// <summary>
+    /// 通过依赖工厂类型批量注册
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    private ParallelLoopResult BatchRegisterServiceByDependencyFactoryType(IServiceCollection services)
+    {
+        var factoryDependencyType = typeof(IFactoryService<,>);
+
+        // 扫描所有待注册服务工厂类型
+        var implementationTypes = _additionAssemblies.Values.SelectMany(
+                                                    ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && type.IsGenericAssignableTo(factoryDependencyType)));
+
+        return Parallel.ForEach(implementationTypes, implementationType =>
+        {
+            var interfaces = implementationType.GetInterfaces();
+            var factoryDependencyTypeGenericArguments = interfaces.First(type => FixedGenericType(type) == factoryDependencyType).GetGenericArguments();
+            var serviceType = factoryDependencyTypeGenericArguments[0];
+            var lifetime = ConvertToServiceLifetime(factoryDependencyTypeGenericArguments[1]);
+
+            // 获取类型实现工厂方法（委托）
+            var implementationFactory = implementationType.GetTypeInfo().DeclaredMethods
+                                                           .Single(m => (m.Name == "ImplementationFactory" || m.Name.EndsWith($".ImplementationFactory")) && m.GetParameters()[0].ParameterType == typeof(IServiceProvider))
+                                                           .CreateDelegate<Func<IServiceProvider, object>>(Convert.ChangeType(default, implementationType));
+
+            services.Add(ServiceDescriptor.Describe(serviceType == typeof(object) ? implementationType : serviceType
+                , provider =>
+                {
+                    var appServiceProvider = provider.CreateProxy();
+                    var instance = implementationFactory(appServiceProvider);
+                    return appServiceProvider.ResolveAutowriedService(instance)!;
+                }, lifetime));
+        });
+    }
+
+    /// <summary>
+    /// 批量注册服务描述器
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    private ParallelLoopResult BatchRegisterServiceDescriptors(IServiceCollection services)
+    {
+        return Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
     }
 
     /// <summary>
@@ -213,24 +239,24 @@ internal sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
-    /// 解析服务注册生存周期
+    /// 根据依赖接口类型解析 ServiceLifetime 对象
     /// </summary>
-    /// <param name="lifetimeType"></param>
+    /// <param name="dependencyLifetimeType"></param>
     /// <returns></returns>
-    private static ServiceLifetime ResolveServiceLifetime(Type lifetimeType)
+    private static ServiceLifetime ConvertToServiceLifetime(Type dependencyLifetimeType)
     {
-        if (lifetimeType == typeof(ITransientService)) return ServiceLifetime.Transient;
-        else if (lifetimeType == typeof(IScopedService)) return ServiceLifetime.Scoped;
-        else if (lifetimeType == typeof(ISingletonService)) return ServiceLifetime.Singleton;
+        if (dependencyLifetimeType == typeof(ITransientService)) return ServiceLifetime.Transient;
+        else if (dependencyLifetimeType == typeof(IScopedService)) return ServiceLifetime.Scoped;
+        else if (dependencyLifetimeType == typeof(ISingletonService)) return ServiceLifetime.Singleton;
         else throw new InvalidCastException("Invalid service registration lifetime.");
     }
 
     /// <summary>
-    /// 解析泛型实际类型
+    /// 修正泛型类型
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static Type ResolveGenericType(Type type)
+    private static Type FixedGenericType(Type type)
     {
         if (!type.IsGenericType) return type;
 

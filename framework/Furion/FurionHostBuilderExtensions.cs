@@ -35,6 +35,9 @@ public static class FurionHostBuilderExtensions
         // 添加框架初始配置
         hostBuilder.AddAppConfiguration();
 
+        // 配置框架服务提供器工厂
+        hostBuilder.UseAppServiceProviderFactory(configure);
+
         // 配置初始服务
         hostBuilder.ConfigureServices((context, services) =>
         {
@@ -48,9 +51,6 @@ public static class FurionHostBuilderExtensions
             context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER,
                 new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
         });
-
-        // 配置框架服务提供器工厂
-        hostBuilder.UseAppServiceProviderFactory(configure);
 
         return hostBuilder;
     }

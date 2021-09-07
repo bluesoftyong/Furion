@@ -13,13 +13,14 @@ namespace System;
 /// <summary>
 /// 基于工厂的服务依赖接口
 /// </summary>
-public interface IFactoryService<TDependency>
+public interface IFactoryService<TServiceType, TDependency>
+    where TServiceType : class
     where TDependency : IDependency
 {
     /// <summary>
-    /// 服务工厂
+    /// 实现工厂
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>
-    object ServiceFactory(IServiceProvider serviceProvider);
+    object ImplementationFactory(IServiceProvider serviceProvider);
 }

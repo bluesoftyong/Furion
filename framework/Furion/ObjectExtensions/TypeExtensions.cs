@@ -38,7 +38,7 @@ internal static class TypeExtensions
     /// <param name="type"></param>
     /// <param name="genericInterface"></param>
     /// <returns></returns>
-    internal static bool IsAssignableToGenericInterface(this Type type, Type genericInterface)
+    internal static bool IsGenericAssignableTo(this Type type, Type genericInterface)
     {
         return Array.Exists(type.GetInterfaces(), t => t.IsGenericType && t.GetGenericTypeDefinition() == genericInterface);
     }

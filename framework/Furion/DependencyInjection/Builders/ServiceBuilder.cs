@@ -173,8 +173,14 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 批量注册服务描述器
         var _4 = BatchRegisterServiceDescriptors(services);
 
-        // 释放主机上下文对象
-        Release(_1, _2, _3, _4);
+        // 等待任务完成并释放
+        _1.ContinueWith(new[] { _2, _3, _4 }, () =>
+        {
+            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
+            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
+            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
+            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
+        });
     }
 
     /// <summary>
@@ -300,25 +306,6 @@ internal sealed class ServiceBuilder : IServiceBuilder
                                                        .CreateDelegate<Func<string>>(Convert.ChangeType(default, implementationType));
 
         AddNamedService(serviceNameDelegate(), implementationType, lifetime);
-    }
-
-    /// <summary>
-    /// 释放上下文对象
-    /// </summary>
-    /// <param name="isCompleted"></param>
-    private void Release(params ParallelLoopResult[] results)
-    {
-        while (true)
-        {
-            if (results.All(u => u.IsCompleted))
-            {
-                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
-                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
-                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
-                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
-                break;
-            }
-        }
     }
 
     /// <summary>

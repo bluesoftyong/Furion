@@ -46,7 +46,6 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="services"></param>
     /// <param name="context"></param>
     internal ServiceBuilder(HostBuilderContext context)
     {

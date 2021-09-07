@@ -20,9 +20,9 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
     /// 使用框架提供的服务提供器工厂
     /// </summary>
     /// <param name="hostBuilder"></param>
-    /// <param name="configure"></param>
+    /// <param name="configureDelegate"></param>
     /// <returns></returns>
-    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
+    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configureDelegate = default)
     {
         // 替换 .NET 默认工厂
         return hostBuilder.UseServiceProviderFactory(context =>
@@ -32,7 +32,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
             var validateOnBuild = (serviceProviderOptions.ValidateScopes = context.HostingEnvironment.IsDevelopment());
             serviceProviderOptions.ValidateOnBuild = validateOnBuild;
 
-            configure?.Invoke(context, serviceProviderOptions);
+            configureDelegate?.Invoke(context, serviceProviderOptions);
 
             return new AppServiceProviderFactory(context, serviceProviderOptions);
         });

@@ -31,7 +31,7 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// 构造函数
     /// </summary>
     /// <param name="appServiceProvider"></param>
-    /// <param name="namedServiceCollection"></param>
+    /// <param name="context"></param>
     internal NamedServiceProvider(IAppServiceProvider appServiceProvider
         , HostBuilderContext context)
     {

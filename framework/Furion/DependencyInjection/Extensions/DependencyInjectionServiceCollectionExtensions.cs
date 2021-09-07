@@ -21,6 +21,7 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// 创建依赖注入构建器
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="context"></param>
     /// <returns></returns>
     public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, HostBuilderContext context)
     {

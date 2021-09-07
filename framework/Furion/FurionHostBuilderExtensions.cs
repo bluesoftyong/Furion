@@ -27,9 +27,9 @@ public static class FurionHostBuilderExtensions
     /// 初始化框架服务
     /// </summary>
     /// <param name="hostBuilder">主机构建器</param>
-    /// <param name="configure">服务提供器配置</param>
+    /// <param name="configureDelegate">服务提供器配置</param>
     /// <returns></returns>
-    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configure = default)
+    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configureDelegate = default)
     {
         // 配置框架诊断监听器
         DiagnosticListener.AllListeners.Subscribe(new FurionDiagnosticObserver());
@@ -38,7 +38,7 @@ public static class FurionHostBuilderExtensions
         hostBuilder.AddAppConfiguration();
 
         // 替换 .NET 内置默认服务提供器工厂
-        hostBuilder.UseAppServiceProviderFactory(configure);
+        hostBuilder.UseAppServiceProviderFactory(configureDelegate);
 
         // 配置初始服务
         hostBuilder.ConfigureServices((context, services) =>

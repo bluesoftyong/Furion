@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
 {
     /// <summary>
-    /// 上下文数据
+    /// 主机构建器上下文
     /// </summary>
     private readonly HostBuilderContext _context;
 

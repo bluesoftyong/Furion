@@ -49,16 +49,16 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, Action<TOptions>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, Action<TOptions>? configureDelegate = default)
         where TOptions : class
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;
@@ -71,17 +71,17 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep>? configureDelegate = default)
         where TOptions : class
         where TDep : class
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;
@@ -95,18 +95,18 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep2">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2>? configureDelegate = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;
@@ -121,9 +121,9 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep3">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3>? configureDelegate = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
@@ -131,9 +131,9 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;
@@ -149,9 +149,9 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep4">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4>? configureDelegate = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
@@ -160,9 +160,9 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;
@@ -179,9 +179,9 @@ public static class OptionsServiceCollectionExtensions
     /// <typeparam name="TDep5">依赖服务</typeparam>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">后期配置</param>
+    /// <param name="configureDelegate">后期配置</param>
     /// <returns></returns>
-    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>? configureOptions = default)
+    public static IServiceCollection AddAppOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>(this IServiceCollection services, IConfiguration configuration, Action<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>? configureDelegate = default)
         where TOptions : class
         where TDep1 : class
         where TDep2 : class
@@ -191,9 +191,9 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default)
+        if (configureDelegate != default)
         {
-            optionsBuilder.PostConfigure(configureOptions);
+            optionsBuilder.PostConfigure(configureDelegate);
         }
 
         return services;

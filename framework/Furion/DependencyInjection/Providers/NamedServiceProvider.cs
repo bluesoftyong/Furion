@@ -38,24 +38,27 @@ public sealed class NamedServiceProvider : INamedServiceProvider
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <param name="named"></param>
+    /// <param name="serviceName"></param>
     /// <returns></returns>
-    public object? GetService(string named)
+    public object? GetService(string serviceName)
     {
-        if (string.IsNullOrWhiteSpace(named)) throw new ArgumentNullException(nameof(named));
+        if (string.IsNullOrWhiteSpace(serviceName))
+        {
+            throw new ArgumentNullException(nameof(serviceName));
+        }
 
-        var isRegistered = _namedServiceCollection.TryGetValue(named, out var implementactionType);
+        var isRegistered = _namedServiceCollection.TryGetValue(serviceName, out var implementactionType);
         return isRegistered ? _appServiceProvider.GetService(implementactionType!) : default;
     }
 
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <param name="named"></param>
+    /// <param name="serviceName"></param>
     /// <returns></returns>
-    public object GetRequiredService(string named)
+    public object GetRequiredService(string serviceName)
     {
-        return GetService(named) ?? throw new InvalidOperationException($"Named service `{named}` is not registered in container.");
+        return GetService(serviceName) ?? throw new InvalidOperationException($"Named service `{serviceName}` is not registered in container.");
     }
 
     /// <summary>
@@ -64,10 +67,10 @@ public sealed class NamedServiceProvider : INamedServiceProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="serviceType"></param>
     /// <returns></returns>
-    public T? GetService<T>(string named)
+    public T? GetService<T>(string serviceName)
          where T : class
     {
-        return GetService(named) as T;
+        return GetService(serviceName) as T;
     }
 
     /// <summary>
@@ -76,9 +79,9 @@ public sealed class NamedServiceProvider : INamedServiceProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="serviceType"></param>
     /// <returns></returns>
-    public T GetRequiredService<T>(string named)
+    public T GetRequiredService<T>(string serviceName)
          where T : class
     {
-        return (GetRequiredService(named) as T)!;
+        return (GetRequiredService(serviceName) as T)!;
     }
 }

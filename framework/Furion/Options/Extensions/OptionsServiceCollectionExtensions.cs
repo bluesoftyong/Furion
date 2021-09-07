@@ -52,7 +52,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -72,7 +75,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -94,7 +100,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -118,7 +127,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -144,7 +156,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -172,7 +187,10 @@ public static class OptionsServiceCollectionExtensions
     {
         var optionsBuilder = services.CreateOptionsBuilder<TOptions>(configuration);
 
-        if (configureOptions != default) optionsBuilder.PostConfigure(configureOptions);
+        if (configureOptions != default)
+        {
+            optionsBuilder.PostConfigure(configureOptions);
+        }
 
         return services;
     }
@@ -226,7 +244,10 @@ public static class OptionsServiceCollectionExtensions
         var optionsType = typeof(TOptions);
 
         // 如果未明确关闭数据验证，则默认启用
-        if (appOptionsAttribute?.ValidateDataAnnotations == false) return optionsBuilder;
+        if (appOptionsAttribute?.ValidateDataAnnotations == false)
+        {
+            return optionsBuilder;
+        }
 
         // 启用特性验证
         optionsBuilder.ValidateDataAnnotations();
@@ -236,17 +257,25 @@ public static class OptionsServiceCollectionExtensions
 
         // 禁止选项自实现 IValidateOptions<TOptions> 类型
         if (validateOptionsType.IsAssignableFrom(optionsType))
+        {
             throw new InvalidOperationException($"Type `{optionsType.Name}` prohibits the implementation of `IValidateOptions<TOptions>`.");
+        }
 
         // 配置复杂验证支持
-        if (appOptionsAttribute?.ValidateOptionsTypes.IsEmpty() == true) return optionsBuilder;
+        if (appOptionsAttribute?.ValidateOptionsTypes.IsEmpty() == true)
+        {
+            return optionsBuilder;
+        }
 
         // 注册所有验证
         Parallel.ForEach(appOptionsAttribute?.ValidateOptionsTypes!, validateType =>
         {
             // 验证类型必须实现 IValidateOptions<TOptions>
             if (!validateOptionsType.IsAssignableFrom(validateType))
+            {
+
                 throw new InvalidOperationException($"The value type of `{nameof(AppOptionsAttribute.ValidateOptionsTypes)}` property must implement the `IValidateOptions<TOptions>` interface.");
+            }
 
             // 注册 IValidateOptions 复杂验证
             services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, validateType));

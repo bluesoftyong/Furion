@@ -20,7 +20,13 @@ public static class IServiceProviderExtensions
     /// <returns></returns>
     public static IAppServiceProvider CreateProxy(this IServiceProvider serviceProvider)
     {
-        if (serviceProvider is AppServiceProvider) return (serviceProvider as IAppServiceProvider)!;
-        else return new AppServiceProvider(serviceProvider);
+        if (serviceProvider is AppServiceProvider)
+        {
+            return (serviceProvider as IAppServiceProvider)!;
+        }
+        else
+        {
+            return new AppServiceProvider(serviceProvider);
+        }
     }
 }

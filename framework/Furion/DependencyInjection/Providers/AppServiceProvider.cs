@@ -48,7 +48,10 @@ public sealed class AppServiceProvider : IAppServiceProvider
     /// <returns></returns>
     public object? ResolveAutowriedService(object? instance)
     {
-        if (instance == null) return default;
+        if (instance == null)
+        {
+            return default;
+        }
 
         var instanceType = instance as Type ?? instance.GetType();
 
@@ -56,7 +59,10 @@ public sealed class AppServiceProvider : IAppServiceProvider
         var serviceProperties = instanceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                                                           .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(AutowiredServicesAttribute), false));
 
-        if (serviceProperties.IsEmpty()) return instance;
+        if (serviceProperties.IsEmpty())
+        {
+            return instance;
+        }
 
         Parallel.ForEach(serviceProperties, p =>
         {

@@ -25,7 +25,10 @@ internal static class TypeExtensions
     internal static TAttribute? GetTypeAttribute<TAttribute>(this Type? type, bool inherit = false)
         where TAttribute : Attribute
     {
-        if (type == null) throw new ArgumentNullException(nameof(type));
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
 
         return type.IsDefined(typeof(TAttribute), inherit)
             ? type.GetCustomAttribute<TAttribute>(inherit)
@@ -51,13 +54,19 @@ internal static class TypeExtensions
     /// <param name="value"></param>
     internal static void SetPropertyValue(this PropertyInfo property, object target, object? value)
     {
-        if (target == default) throw new ArgumentNullException(nameof(target));
+        if (target == default)
+        {
+            throw new ArgumentNullException(nameof(target));
+        }
 
         if (property.SetMethod == null)
         {
             target.GetType().GetField($"<{property.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
                   ?.SetValue(target, value);
         }
-        else property.SetValue(target, value);
+        else
+        {
+            property.SetValue(target, value);
+        }
     }
 }

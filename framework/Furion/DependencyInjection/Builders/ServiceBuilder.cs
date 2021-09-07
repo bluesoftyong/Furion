@@ -58,7 +58,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     public IServiceBuilder AddAssemblies(params Assembly[] assemblies)
     {
-        if (assemblies.IsEmpty()) throw new ArgumentException(nameof(assemblies));
+        if (assemblies.IsEmpty())
+        {
+            throw new ArgumentException(nameof(assemblies));
+        }
 
         Parallel.ForEach(assemblies, ass => _additionAssemblies.Add(ass, ass));
 
@@ -73,7 +76,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     public IServiceBuilder TryAddAssemblies(params Assembly[] assemblies)
     {
-        if (assemblies.IsEmpty()) throw new ArgumentException(nameof(assemblies));
+        if (assemblies.IsEmpty())
+        {
+            throw new ArgumentException(nameof(assemblies));
+        }
 
         Parallel.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
 
@@ -245,10 +251,22 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     private static ServiceLifetime ConvertToServiceLifetime(Type dependencyLifetimeType)
     {
-        if (dependencyLifetimeType == typeof(ITransientService)) return ServiceLifetime.Transient;
-        else if (dependencyLifetimeType == typeof(IScopedService)) return ServiceLifetime.Scoped;
-        else if (dependencyLifetimeType == typeof(ISingletonService)) return ServiceLifetime.Singleton;
-        else throw new InvalidCastException("Invalid service registration lifetime.");
+        if (dependencyLifetimeType == typeof(ITransientService))
+        {
+            return ServiceLifetime.Transient;
+        }
+        else if (dependencyLifetimeType == typeof(IScopedService))
+        {
+            return ServiceLifetime.Scoped;
+        }
+        else if (dependencyLifetimeType == typeof(ISingletonService))
+        {
+            return ServiceLifetime.Singleton;
+        }
+        else
+        {
+            throw new InvalidCastException("Invalid service registration lifetime.");
+        }
     }
 
     /// <summary>
@@ -258,7 +276,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     private static Type FixedGenericType(Type type)
     {
-        if (!type.IsGenericType) return type;
+        if (!type.IsGenericType)
+        {
+            return type;
+        }
 
         return type.Assembly.GetType($"{type.Namespace}.{type.Name}")!;
     }

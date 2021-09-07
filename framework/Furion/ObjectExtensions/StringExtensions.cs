@@ -22,9 +22,15 @@ internal static class StringExtensions
     /// <returns></returns>
     internal static string SubSuffix(this string? str, string suffix, StringComparison comparisonType = StringComparison.Ordinal)
     {
-        if (str == null) throw new ArgumentNullException(nameof(str));
+        if (str == null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
 
-        if (!str.EndsWith(suffix, comparisonType)) return str;
+        if (!str.EndsWith(suffix, comparisonType))
+        {
+            return str;
+        }
 
         return str[0..^suffix.Length];
     }
@@ -36,7 +42,10 @@ internal static class StringExtensions
     /// <returns></returns>
     internal static string ToTitleCase(this string? str)
     {
-        if (str == null) throw new ArgumentNullException(nameof(str));
+        if (str == null)
+        {
+            throw new ArgumentNullException(nameof(str));
+        }
 
         return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(str);
     }

@@ -27,10 +27,12 @@ public sealed class AppControllerActivator : IControllerActivator
         {
             throw new ArgumentNullException(nameof(controllerContext));
         }
+
         if (controllerContext.ActionDescriptor == null)
         {
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor));
         }
+
         var controllerTypeInfo = controllerContext.ActionDescriptor.ControllerTypeInfo;
         if (controllerTypeInfo == null)
         {
@@ -40,7 +42,9 @@ public sealed class AppControllerActivator : IControllerActivator
         // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
         if (constructors.Length > 1)
+        {
             throw new InvalidOperationException($"Multiple constructors accepting all given argument types have been found in type '{controllerTypeInfo.Namespace}.{controllerTypeInfo.Name}'. There should only be one applicable constructor.");
+        }
 
         var constructor = constructors.FirstOrDefault();
         // 代理请求服务提供器
@@ -49,7 +53,9 @@ public sealed class AppControllerActivator : IControllerActivator
         object? controller;
         // 处理无参构造函数
         if (constructor?.GetParameters()?.Length == 0)
+        {
             controller = Activator.CreateInstance(controllerTypeInfo);
+        }
         // 处理有参构造函数
         else
         {
@@ -74,6 +80,7 @@ public sealed class AppControllerActivator : IControllerActivator
         {
             throw new ArgumentNullException(nameof(controllerContext));
         }
+
         if (controller == null)
         {
             throw new ArgumentNullException(nameof(controller));

@@ -16,16 +16,16 @@ public interface INamedServiceProvider
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <param name="named"></param>
+    /// <param name="serviceName"></param>
     /// <returns></returns>
-    object? GetService(string named);
+    object? GetService(string serviceName);
 
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <param name="named"></param>
+    /// <param name="serviceName"></param>
     /// <returns></returns>
-    object GetRequiredService(string named);
+    object GetRequiredService(string serviceName);
 
     /// <summary>
     /// 解析服务
@@ -33,7 +33,7 @@ public interface INamedServiceProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="serviceType"></param>
     /// <returns></returns>
-    T? GetService<T>(string named)
+    T? GetService<T>(string serviceName)
         where T : class;
 
     /// <summary>
@@ -42,6 +42,6 @@ public interface INamedServiceProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="serviceType"></param>
     /// <returns></returns>
-    T GetRequiredService<T>(string named)
+    T GetRequiredService<T>(string serviceName)
         where T : class;
 }

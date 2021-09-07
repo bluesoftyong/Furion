@@ -53,7 +53,10 @@ public static class ConfigurationManagerExtensions
     /// <returns></returns>
     public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
     {
-        if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentNullException(nameof(filePath));
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentNullException(nameof(filePath));
+        }
 
         var parameterRegex = new Regex(@"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
 
@@ -61,7 +64,9 @@ public static class ConfigurationManagerExtensions
         var defineParameters = parameterRegex.IsMatch(filePath);
         var itemSplits = filePath.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (!defineParameters && itemSplits.Length > 1)
+        {
             throw new InvalidCastException($"The `{filePath}` is not a valid configuration format.");
+        }
 
         var firstSplit = itemSplits[0];
         string fileName;
@@ -79,7 +84,9 @@ public static class ConfigurationManagerExtensions
         // 判断文件格式是否正确 xxx[.{environment}].(json|xml|.ini)
         var fileNameSplits = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries);
         if (!(fileNameSplits.Length == 2 || fileNameSplits.Length == 3))
+        {
             throw new InvalidOperationException($"The `{fileName}` is not in a valid format of `xxx[.{{environment}}].(json|xml|.ini)`.");
+        }
 
         // 填充配置参数
         if (defineParameters)
@@ -169,7 +176,10 @@ public static class ConfigurationManagerExtensions
     internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
         var userConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
-        if (userConfigurationFiles.IsEmpty()) return configurationBuilder;
+        if (userConfigurationFiles.IsEmpty())
+        {
+            return configurationBuilder;
+        }
 
         // 遍历添加
         Array.ForEach(userConfigurationFiles, filePath

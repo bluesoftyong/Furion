@@ -35,7 +35,7 @@ public static class FurionHostBuilderExtensions
         // 添加框架初始配置
         hostBuilder.AddAppConfiguration();
 
-        // 配置框架服务提供器工厂
+        // 替换 .NET 内置默认服务提供器工厂
         hostBuilder.UseAppServiceProviderFactory(configure);
 
         // 配置初始服务

@@ -29,7 +29,7 @@ builder.Services.AddTransient<IAutowriedService, AutowriedService>();
 // ×¢²á HttpContext ·ÃÎÊÆ÷
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddAutowired();
+builder.Services.AddControllers().AddPropertiesAutowired();
 builder.Services.AddScoped<TestControllerFilter>();
 
 builder.Services.AddSwaggerGen(c =>

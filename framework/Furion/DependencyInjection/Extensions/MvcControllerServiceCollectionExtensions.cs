@@ -17,12 +17,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class MvcControllerServiceCollectionExtensions
 {
     /// <summary>
-    /// 支持属性注入的控制器服务
+    /// 添加属性注入服务
     /// </summary>
     /// <param name="mvcBuilder"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IMvcBuilder AddAutowired(this IMvcBuilder mvcBuilder)
+    public static IMvcBuilder AddPropertiesAutowired(this IMvcBuilder mvcBuilder)
     {
         var services = mvcBuilder.Services;
 

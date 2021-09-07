@@ -11,6 +11,8 @@ using Furion.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -49,7 +51,7 @@ public static class FurionHostBuilderExtensions
 
             // 添加启动程序集到服务构建器中
             context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER,
-                new ServiceBuilder(context.Properties).AddAssemblies(Assembly.GetEntryAssembly()!));
+                new ServiceBuilder(context).AddAssemblies(Assembly.GetEntryAssembly()!));
         });
 
         return hostBuilder;

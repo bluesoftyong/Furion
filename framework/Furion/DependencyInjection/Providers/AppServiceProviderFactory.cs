@@ -8,6 +8,8 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Diagnostics;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -20,7 +22,7 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <summary>
     /// 上下文数据
     /// </summary>
-    private readonly IDictionary<object, object> _contextProperties;
+    private readonly HostBuilderContext _context;
 
     /// <summary>
     /// 服务提供器选项
@@ -30,11 +32,12 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <summary>
     /// 构造函数
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="options"></param>
-    internal AppServiceProviderFactory(IDictionary<object, object> contextProperties
+    internal AppServiceProviderFactory(HostBuilderContext context
         , ServiceProviderOptions options)
     {
-        _contextProperties = contextProperties;
+        _context = context;
         _options = options;
     }
 
@@ -45,7 +48,7 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <returns></returns>
     public IServiceCollection CreateBuilder(IServiceCollection services)
     {
-        ((ServiceBuilder)services.AsServiceBuilder(_contextProperties)).Build(services);
+        ((ServiceBuilder)services.AsServiceBuilder(_context)).Build(services);
 
         return services;
     }

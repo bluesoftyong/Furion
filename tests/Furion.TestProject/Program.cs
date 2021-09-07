@@ -1,7 +1,12 @@
-using Furion.TestProject;
 using Furion.TestProject.Controllers;
 using Furion.TestProject.Filters;
 using Furion.TestProject.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
@@ -13,15 +18,6 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 });
 
 builder.Configuration.AddKeyPerFile(Path.Combine(Directory.GetCurrentDirectory(), "key-per-file"));
-
-builder.Services.AsServiceBuilder(builder.Host.Properties).TryAddAssemblies(typeof(FakeStartup).Assembly);
-builder.Services.AsServiceBuilder(builder.Host.Properties)
-    .AddNamedService<Test1NamedService>("test1", ServiceLifetime.Transient)
-    .AddNamedService<Test2NamedService>("test2", ServiceLifetime.Transient);
-
-builder.Services.AsServiceBuilder(builder.Host.Properties)
-    .AddNamedService<Test1NamedService>("test3", ServiceLifetime.Transient)
-    .AddNamedService<Test2NamedService>("test4", ServiceLifetime.Transient);
 
 // Add services to the container.
 builder.Services.AddTransient<IAutowriedService, AutowriedService>();

@@ -8,7 +8,7 @@
 
 using Furion.DependencyInjection;
 
-namespace System;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// 瞬时服务依赖接口

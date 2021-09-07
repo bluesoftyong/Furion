@@ -9,7 +9,12 @@
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Furion.DependencyInjection;
 
@@ -19,9 +24,9 @@ namespace Furion.DependencyInjection;
 internal sealed class ServiceBuilder : IServiceBuilder
 {
     /// <summary>
-    /// 上下文共享数据
+    /// 主机构建器上下文
     /// </summary>
-    private readonly IDictionary<object, object> _contextProperties;
+    private readonly HostBuilderContext _context;
 
     /// <summary>
     /// 命名服务集合
@@ -42,13 +47,13 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// 构造函数
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="contextProperties"></param>
-    internal ServiceBuilder(IDictionary<object, object> contextProperties)
+    /// <param name="context"></param>
+    internal ServiceBuilder(HostBuilderContext context)
     {
-        _contextProperties = contextProperties;
-        _additionAssemblies = (contextProperties[FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES] as IDictionary<Assembly, Assembly>)!;
-        _namedServiceCollection = (contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!;
-        _serviceDescriptors = (contextProperties[FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
+        _context = context;
+        _additionAssemblies = (context.Properties[FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES] as IDictionary<Assembly, Assembly>)!;
+        _namedServiceCollection = (context.Properties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!;
+        _serviceDescriptors = (context.Properties[FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
     }
 
     /// <summary>
@@ -155,28 +160,22 @@ internal sealed class ServiceBuilder : IServiceBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册命名服务提供器
-        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
+        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _context));
+
+        // 通过主机构建器服务依赖接口批量注册
+        var _1 = BatchRegisterHostBuilderServices(services);
 
         // 通过依赖接口批量注册
-        var _1 = BatchRegisterServiceByDependencyType(services);
+        var _2 = BatchRegisterServiceTypes(services);
 
         // 通过依赖工厂类型批量注册
-        var _2 = BatchRegisterServiceByDependencyFactoryType(services);
+        var _3 = BatchRegisterFactoryServiceTypes(services);
 
         // 批量注册服务描述器
-        ParallelLoopResult _3;
-
-        while (true)
-        {
-            if (_1.IsCompleted && _2.IsCompleted)
-            {
-                _3 = BatchRegisterServiceDescriptors(services);
-                break;
-            }
-        }
+        ParallelLoopResult _4 = BatchRegisterServiceDescriptors(services);
 
         // 释放主机上下文对象
-        Release(_1, _2, _3);
+        Release(_1, _2, _3, _4);
     }
 
     /// <summary>
@@ -194,7 +193,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    private ParallelLoopResult BatchRegisterServiceByDependencyType(IServiceCollection services)
+    private ParallelLoopResult BatchRegisterServiceTypes(IServiceCollection services)
     {
         var dependencyType = typeof(IDependency);
 
@@ -227,7 +226,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    private ParallelLoopResult BatchRegisterServiceByDependencyFactoryType(IServiceCollection services)
+    private ParallelLoopResult BatchRegisterFactoryServiceTypes(IServiceCollection services)
     {
         var factoryDependencyType = typeof(IFactoryService<,>);
 
@@ -261,6 +260,30 @@ internal sealed class ServiceBuilder : IServiceBuilder
     }
 
     /// <summary>
+    /// 通过主机构建器服务依赖接口批量注册
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    private ParallelLoopResult BatchRegisterHostBuilderServices(IServiceCollection services)
+    {
+        var hostBuilderServiceDependencyType = typeof(IHostBuilderService);
+
+        // 扫描项目所有程序集公开类型
+        var hostBuilderServiceTypes = GetProjectAssemblies().SelectMany(
+                                                    ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && hostBuilderServiceDependencyType.IsAssignableFrom(type)));
+
+        return Parallel.ForEach(hostBuilderServiceTypes, hostBuilderServiceType =>
+        {
+            // 获取配置服务委托
+            var configureDelegate = hostBuilderServiceType.GetTypeInfo().DeclaredMethods
+                                                           .Single(m => (m.Name == "Configure" || m.Name.EndsWith($".Configure")) && m.GetParameters()[0].ParameterType == typeof(IServiceCollection))
+                                                           .CreateDelegate<Action<IServiceCollection, HostBuilderContext>>(Convert.ChangeType(default, hostBuilderServiceType));
+
+            configureDelegate(services, _context);
+        });
+    }
+
+    /// <summary>
     /// 注册命名服务
     /// </summary>
     /// <param name="implementationType"></param>
@@ -290,10 +313,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
         {
             if (results.All(u => u.IsCompleted))
             {
-                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
-                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
-                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
-                _contextProperties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
+                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
+                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
+                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
+                _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
                 break;
             }
         }
@@ -337,5 +360,19 @@ internal sealed class ServiceBuilder : IServiceBuilder
         }
 
         return type.Assembly.GetType($"{type.Namespace}.{type.Name}")!;
+    }
+
+    /// <summary>
+    /// 获取项目所有程序集
+    /// </summary>
+    /// <returns></returns>
+    private static IEnumerable<Assembly> GetProjectAssemblies()
+    {
+        var excludeAssemblyNames = new[] { "Microsoft.", "System.", "netstandard", "mscorlib" };
+
+        var projectAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+                            .Where(ass => !ass.IsDynamic && ass.GetName().Name != nameof(Furion) && !excludeAssemblyNames.Any(u => ass.GetName().Name!.StartsWith(u, StringComparison.OrdinalIgnoreCase)));
+
+        return projectAssemblies;
     }
 }

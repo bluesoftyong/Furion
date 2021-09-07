@@ -5,6 +5,11 @@
 - 作者：[百小僧](https://gitee.com/monksoul)
 - 日期：2021 年 08 月 30 日
 
+## 运行环境
+
+- `Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1`
+- `.NET SDK 6 Daily Version`：[每日构建版](https://github.com/dotnet/installer#installers-and-binaries)
+
 ## 开发规范
 
 - 采用一切为了依赖注入的设计模式
@@ -123,8 +128,8 @@
 
 ### 模块 / Module
 
-| 功能                                                         | 状态 |
-| ------------------------------------------------------------ | ---- |
-| 支持特性配置                                                 | ⚠️   |
-| 支持 `ConfigureServices` 和 `Configure` 分割、合并、依赖排序 | ⚠️   |
-| 支持扫描程序集自动调用                                       | ⚠️   |
+| 功能                                | 状态 |
+| ----------------------------------- | ---- |
+| 支持特性配置                        | ⚠️   |
+| 支持 `IHostBuilderService` 配置服务 | ✅   |
+| 支持扫描程序集自动调用              | ✅   |

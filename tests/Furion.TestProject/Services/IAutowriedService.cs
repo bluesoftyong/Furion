@@ -1,4 +1,6 @@
-﻿namespace Furion.TestProject.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Furion.TestProject.Services;
 
 public interface IAutowriedService
 {

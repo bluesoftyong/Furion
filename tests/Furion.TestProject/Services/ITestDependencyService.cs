@@ -1,5 +1,7 @@
 ﻿
 using Furion.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Furion.TestProject.Services;
 

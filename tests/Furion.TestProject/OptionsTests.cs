@@ -1,5 +1,6 @@
 ﻿using Furion.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Furion.TestProject.Controllers;

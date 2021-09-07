@@ -8,6 +8,7 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,10 +21,9 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// 创建依赖注入构建器
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="contextProperties"></param>
     /// <returns></returns>
-    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, IDictionary<object, object> contextProperties)
+    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, HostBuilderContext context)
     {
-        return (contextProperties[FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
+        return (context.Properties[FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
     }
 }

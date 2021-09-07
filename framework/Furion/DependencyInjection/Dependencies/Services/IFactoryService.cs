@@ -7,8 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
+using System;
 
-namespace System;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// 基于工厂的服务依赖接口

@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -33,7 +34,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
 
             configure?.Invoke(context, serviceProviderOptions);
 
-            return new AppServiceProviderFactory(hostBuilder.Properties, serviceProviderOptions);
+            return new AppServiceProviderFactory(context, serviceProviderOptions);
         });
     }
 }

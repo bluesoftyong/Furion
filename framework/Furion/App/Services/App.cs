@@ -11,13 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Furion;
 
 /// <summary>
 /// App 全局应用对象实现类
 /// </summary>
-public sealed partial class App : IApp
+internal sealed partial class App : IApp
 {
     /// <summary>
     /// 日志对象

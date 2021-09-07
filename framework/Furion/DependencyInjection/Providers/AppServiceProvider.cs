@@ -8,14 +8,16 @@
 
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace System;
 
 /// <summary>
 /// 框架内服务提供器
 /// </summary>
-public sealed class AppServiceProvider : IAppServiceProvider
+internal sealed class AppServiceProvider : IAppServiceProvider
 {
     /// <summary>
     /// .NET 内置服务提供器
@@ -26,7 +28,7 @@ public sealed class AppServiceProvider : IAppServiceProvider
     /// 构造函数
     /// </summary>
     /// <param name="serviceProvider"></param>
-    public AppServiceProvider(IServiceProvider serviceProvider)
+    internal AppServiceProvider(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -96,6 +98,11 @@ public sealed class AppServiceProvider : IAppServiceProvider
         return instance;
     }
 
+    /// <summary>
+    /// 判断是否是合理的项目类型
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     private static bool CheckIsProjectType(Type type)
     {
         // 排除微软程序集

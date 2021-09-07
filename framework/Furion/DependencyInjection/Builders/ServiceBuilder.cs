@@ -173,7 +173,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 批量注册服务描述器
         var _4 = BatchRegisterServiceDescriptors(services);
 
-        // 等待任务完成并释放
+        // 等待任务完成释放主机构建器上下文
         _1.ContinueWith(new[] { _2, _3, _4 }, () =>
         {
             _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);

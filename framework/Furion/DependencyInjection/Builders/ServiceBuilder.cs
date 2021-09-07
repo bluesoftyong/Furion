@@ -171,7 +171,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         var _3 = BatchRegisterFactoryServiceTypes(services);
 
         // 批量注册服务描述器
-        ParallelLoopResult _4 = BatchRegisterServiceDescriptors(services);
+        var _4 = BatchRegisterServiceDescriptors(services);
 
         // 释放主机上下文对象
         Release(_1, _2, _3, _4);

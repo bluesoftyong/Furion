@@ -120,4 +120,14 @@ public class DependencyInjectionTests : ControllerBase
     {
         return test3DependencyService.NoNull();
     }
+
+    /// <summary>
+    /// 测试依赖命名服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost]
+    public bool TestNamedDependencyService()
+    {
+        return _namedServiceProvider.GetService("test_four") != null;
+    }
 }

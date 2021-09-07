@@ -89,6 +89,41 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 注册命名服务
     /// </summary>
+    /// <param name="serviceName"></param>
+    /// <param name="implementationType"></param>
+    /// <param name="lifetime"></param>
+    /// <returns></returns>
+    public IServiceBuilder AddNamedService(string serviceName, Type implementationType, ServiceLifetime lifetime)
+    {
+        _namedServiceCollection.Add(serviceName, implementationType);
+
+        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+
+        return this;
+    }
+
+    /// <summary>
+    /// 注册命名服务
+    /// </summary>
+    /// <param name="serviceName"></param>
+    /// <param name="implementationType"></param>
+    /// <param name="lifetime"></param>
+    /// <returns></returns>
+    public IServiceBuilder TryAddNamedService(string serviceName, Type implementationType, ServiceLifetime lifetime)
+    {
+        if (_namedServiceCollection.TryAdd(serviceName, implementationType))
+        {
+            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
+            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// 注册命名服务
+    /// </summary>
     /// <typeparam name="TImplementation"></typeparam>
     /// <param name="serviceName"></param>
     /// <param name="lifetime"></param>
@@ -96,14 +131,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     public IServiceBuilder AddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
         where TImplementation : class
     {
-        var implementationType = typeof(TImplementation);
-
-        _namedServiceCollection.Add(serviceName, implementationType);
-
-        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
-
-        return this;
+        return AddNamedService(serviceName, typeof(TImplementation), lifetime);
     }
 
     /// <summary>
@@ -117,15 +145,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     public IServiceBuilder TryAddNamedService<TImplementation>(string serviceName, ServiceLifetime lifetime)
           where TImplementation : class
     {
-        var implementationType = typeof(TImplementation);
-
-        if (_namedServiceCollection.TryAdd(serviceName, implementationType))
-        {
-            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
-        }
-
-        return this;
+        return TryAddNamedService(serviceName, typeof(TImplementation), lifetime);
     }
 
     /// <summary>
@@ -137,14 +157,23 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 注册命名服务提供器
         services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
 
-        // 批量注册服务描述器
-        var _1 = BatchRegisterServiceDescriptors(services);
-
         // 通过依赖接口批量注册
-        var _2 = BatchRegisterServiceByDependencyType(services);
+        var _1 = BatchRegisterServiceByDependencyType(services);
 
         // 通过依赖工厂类型批量注册
-        var _3 = BatchRegisterServiceByDependencyFactoryType(services);
+        var _2 = BatchRegisterServiceByDependencyFactoryType(services);
+
+        // 批量注册服务描述器
+        ParallelLoopResult _3;
+
+        while (true)
+        {
+            if (_1.IsCompleted && _2.IsCompleted)
+            {
+                _3 = BatchRegisterServiceDescriptors(services);
+                break;
+            }
+        }
 
         // 释放主机上下文对象
         Release(_1, _2, _3);
@@ -187,6 +216,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
             {
                 services.Add(ServiceDescriptor.Describe(serviceType, implementationType, lifetime));
             }
+
+            // 注册命名服务
+            RegisterNamedService(implementationType, lifetime);
         });
     }
 
@@ -215,14 +247,37 @@ internal sealed class ServiceBuilder : IServiceBuilder
                                                            .Single(m => (m.Name == "ImplementationFactory" || m.Name.EndsWith($".ImplementationFactory")) && m.GetParameters()[0].ParameterType == typeof(IServiceProvider))
                                                            .CreateDelegate<Func<IServiceProvider, object>>(Convert.ChangeType(default, implementationType));
 
-            services.Add(ServiceDescriptor.Describe(serviceType == typeof(object) ? implementationType : serviceType
-                , provider =>
-                {
-                    var appServiceProvider = provider.CreateProxy();
-                    var instance = implementationFactory(appServiceProvider);
-                    return appServiceProvider.ResolveAutowriedService(instance)!;
-                }, lifetime));
+            var realityServiceType = serviceType == typeof(object) ? implementationType : serviceType;
+            services.Add(ServiceDescriptor.Describe(realityServiceType, provider =>
+            {
+                var appServiceProvider = provider.CreateProxy();
+                var instance = implementationFactory(appServiceProvider);
+                return appServiceProvider.ResolveAutowriedService(instance)!;
+            }, lifetime));
+
+            // 注册命名服务
+            RegisterNamedService(implementationType, lifetime);
         });
+    }
+
+    /// <summary>
+    /// 注册命名服务
+    /// </summary>
+    /// <param name="implementationType"></param>
+    /// <param name="lifetime"></param>
+    private void RegisterNamedService(Type implementationType, ServiceLifetime lifetime)
+    {
+        if (!typeof(INamedService).IsAssignableFrom(implementationType))
+        {
+            return;
+        }
+
+        // 获取类型服务名称委托
+        var serviceNameDelegate = implementationType.GetTypeInfo().DeclaredMethods
+                                                       .Single(m => (m.Name == "ServiceName" || m.Name.EndsWith($".ServiceName")))
+                                                       .CreateDelegate<Func<string>>(Convert.ChangeType(default, implementationType));
+
+        AddNamedService(serviceNameDelegate(), implementationType, lifetime);
     }
 
     /// <summary>

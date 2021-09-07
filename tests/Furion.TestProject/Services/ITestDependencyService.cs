@@ -1,4 +1,6 @@
 ﻿
+using Furion.DependencyInjection;
+
 namespace Furion.TestProject.Services;
 
 public interface ITestDependencyService
@@ -44,5 +46,18 @@ public class Test3DependencyService : ITest3DependencyService, IFactoryService<I
     public object ImplementationFactory(IServiceProvider serviceProvider)
     {
         return new Test3DependencyService();
+    }
+}
+
+public interface ITest4NamedService
+{
+
+}
+
+public class Test4NamedService : ITest4NamedService, INamedService, ITransientService
+{
+    public string ServiceName()
+    {
+        return "test_four";
     }
 }

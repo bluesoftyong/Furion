@@ -1,5 +1,4 @@
-﻿using Furion.DependencyInjection;
-using Furion.TestProject.Services;
+﻿using Furion.TestProject.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

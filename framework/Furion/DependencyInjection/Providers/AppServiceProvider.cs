@@ -44,9 +44,10 @@ public sealed class AppServiceProvider : IAppServiceProvider
             return default;
         }
 
-        // 这里需要排除微软程序集
-        //var proxyInstance = typeof(DispatchProxy).GetMethod("Create", BindingFlags.Public | BindingFlags.Static)!.MakeGenericMethod(serviceType, typeof(DefaultInterceptor)).Invoke(null, Array.Empty<object>()) as DefaultInterceptor;
-        //proxyInstance!.Target = instance;
+        if (!CheckIsProjectType(serviceType))
+        {
+            return instance;
+        }
 
         return ResolveAutowriedService(instance);
     }
@@ -64,6 +65,11 @@ public sealed class AppServiceProvider : IAppServiceProvider
         }
 
         var instanceType = instance as Type ?? instance.GetType();
+
+        if (!CheckIsProjectType(instanceType))
+        {
+            return instance;
+        }
 
         // 扫描所有公开和非公开的实例属性
         var serviceProperties = instanceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -88,5 +94,17 @@ public sealed class AppServiceProvider : IAppServiceProvider
         });
 
         return instance;
+    }
+
+    private static bool CheckIsProjectType(Type type)
+    {
+        // 排除微软程序集
+        if (type.Assembly.GetName().Name!.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase)
+            || type.Assembly.GetName().Name!.StartsWith("System", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
     }
 }

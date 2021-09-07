@@ -38,7 +38,17 @@ public sealed class AppServiceProvider : IAppServiceProvider
     /// <returns></returns>
     public object? GetService(Type serviceType)
     {
-        return ResolveAutowriedService(_serviceProvider.GetService(serviceType));
+        var instance = _serviceProvider.GetService(serviceType);
+        if (instance == default)
+        {
+            return default;
+        }
+
+        // 这里需要排除微软程序集
+        //var proxyInstance = typeof(DispatchProxy).GetMethod("Create", BindingFlags.Public | BindingFlags.Static)!.MakeGenericMethod(serviceType, typeof(DefaultInterceptor)).Invoke(null, Array.Empty<object>()) as DefaultInterceptor;
+        //proxyInstance!.Target = instance;
+
+        return ResolveAutowriedService(instance);
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
+﻿1   // Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
 // Furion is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
@@ -39,7 +39,6 @@ public sealed class AppControllerActivator : IControllerActivator
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor.ControllerTypeInfo));
         }
 
-        // 获取构造函数
         var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
         if (constructors.Length > 1)
         {
@@ -47,22 +46,19 @@ public sealed class AppControllerActivator : IControllerActivator
         }
 
         var constructor = constructors.FirstOrDefault();
-        // 代理请求服务提供器
         var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
 
         object? controller;
-        // 处理无参构造函数
         if (constructor?.GetParameters()?.Length == 0)
         {
             controller = Activator.CreateInstance(controllerTypeInfo);
         }
-        // 处理有参构造函数
         else
         {
             var parameters = constructors.FirstOrDefault()!.GetParameters()
-                                                                   .Where(p => p.ParameterType.IsClass || p.ParameterType.IsInterface)
-                                                                   .Select(p => appServiceProvider.GetRequiredService(p.ParameterType))
-                                                                   .ToArray();
+                                                 .Where(p => p.ParameterType.IsClass || p.ParameterType.IsInterface)
+                                                 .Select(p => appServiceProvider.GetRequiredService(p.ParameterType))
+                                                 .ToArray();
             controller = Activator.CreateInstance(controllerTypeInfo, parameters);
         }
 

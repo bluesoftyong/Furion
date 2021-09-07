@@ -138,16 +138,26 @@ internal sealed class ServiceBuilder : IServiceBuilder
         services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), (_contextProperties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!));
 
         // 批量注册服务描述器
-        var result1 = BatchRegisterServiceDescriptors(services);
+        var _1 = BatchRegisterServiceDescriptors(services);
 
         // 通过依赖接口批量注册
-        var result2 = BatchRegisterServiceByDependencyType(services);
+        var _2 = BatchRegisterServiceByDependencyType(services);
 
         // 通过依赖工厂类型批量注册
-        var result3 = BatchRegisterServiceByDependencyFactoryType(services);
+        var _3 = BatchRegisterServiceByDependencyFactoryType(services);
 
         // 释放主机上下文对象
-        Release(result1, result2, result3);
+        Release(_1, _2, _3);
+    }
+
+    /// <summary>
+    /// 批量注册服务描述器
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    private ParallelLoopResult BatchRegisterServiceDescriptors(IServiceCollection services)
+    {
+        return Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
     }
 
     /// <summary>
@@ -213,16 +223,6 @@ internal sealed class ServiceBuilder : IServiceBuilder
                     return appServiceProvider.ResolveAutowriedService(instance)!;
                 }, lifetime));
         });
-    }
-
-    /// <summary>
-    /// 批量注册服务描述器
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    private ParallelLoopResult BatchRegisterServiceDescriptors(IServiceCollection services)
-    {
-        return Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
     }
 
     /// <summary>

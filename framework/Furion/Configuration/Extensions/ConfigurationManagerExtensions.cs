@@ -6,8 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion;
-using Furion.ObjectExtensions;
 using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Xml;
@@ -151,45 +149,6 @@ public static class ConfigurationManagerExtensions
         configurationBuilder.AddKeyPerFile(directoryPath, optional, reloadOnChange);
 
         return configurationManager;
-    }
-
-    /// <summary>
-    /// 配置 配置对象构建器
-    /// </summary>
-    /// <param name="configurationBuilder"></param>
-    /// <param name="configuration"></param>
-    /// <param name="environment"></param>
-    /// <returns></returns>
-    internal static IConfigurationBuilder Configure(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
-    {
-        // 添加 Furion 框架环境变量配置支持
-        configurationBuilder.AddEnvironmentVariables(prefix: configuration.GetValue($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions.environmentVariablesPrefix))
-                            .AddCustomizeConfigurationFiles(configuration, environment);
-
-        Trace.WriteLine(string.Join(";\n", configuration.AsEnumerable().Select(c => $"{c.Key} = {c.Value}")));
-
-        return configurationBuilder;
-    }
-
-    /// <summary>
-    /// 添加自定义配置
-    /// </summary>
-    /// <param name="configurationBuilder"></param>
-    /// <param name="configuration"></param>
-    /// <returns></returns>
-    internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
-    {
-        var userConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
-        if (userConfigurationFiles.IsEmpty())
-        {
-            return configurationBuilder;
-        }
-
-        // 遍历添加
-        Array.ForEach(userConfigurationFiles, filePath
-            => configurationBuilder.AddFile(filePath, environment));
-
-        return configurationBuilder;
     }
 
     /// <summary>

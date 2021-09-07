@@ -6,8 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion;
-using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 
 namespace System;
@@ -31,12 +29,12 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// 构造函数
     /// </summary>
     /// <param name="appServiceProvider"></param>
-    /// <param name="context"></param>
+    /// <param name="namedServiceCollection"></param>
     internal NamedServiceProvider(IAppServiceProvider appServiceProvider
-        , HostBuilderContext context)
+        , IDictionary<string, Type> namedServiceCollection)
     {
         _appServiceProvider = appServiceProvider;
-        _namedServiceCollection = (context.Properties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!;
+        _namedServiceCollection = namedServiceCollection;
     }
 
     /// <summary>

@@ -8,11 +8,11 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Furion.ObjectExtensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -34,8 +34,8 @@ public static class FurionHostBuilderExtensions
         // 配置框架诊断监听器
         DiagnosticListener.AllListeners.Subscribe(new FurionDiagnosticObserver());
 
-        // 添加框架初始配置
-        hostBuilder.AddAppConfiguration();
+        // 配置框架初始化配置
+        hostBuilder.ConfigureAppConfiguration();
 
         // 替换 .NET 内置默认服务提供器工厂
         hostBuilder.UseAppServiceProviderFactory(configureDelegate);
@@ -58,22 +58,41 @@ public static class FurionHostBuilderExtensions
     }
 
     /// <summary>
-    /// 添加框架初始配置
+    /// 配置框架初始化配置
     /// </summary>
-    /// <param name="hostBuilder">主机构建器</param>
+    /// <param name="hostBuilder"></param>
     /// <returns></returns>
-    internal static IHostBuilder AddAppConfiguration(this IHostBuilder hostBuilder)
+    internal static IHostBuilder ConfigureAppConfiguration(this IHostBuilder hostBuilder)
     {
-        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION, new Dictionary<string, Type>());
-        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES, new Dictionary<Assembly, Assembly>());
-        hostBuilder.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS, new Dictionary<ServiceDescriptor, ServiceDescriptor>());
-
-        hostBuilder.ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
+        // 添加框架初始配置
+        hostBuilder.ConfigureAppConfiguration((context, configurationBuilder) =>
         {
-            hostingContext.Properties.Add(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT, hostingContext);
-            configurationBuilder.Configure(hostingContext.Configuration, hostingContext.HostingEnvironment);
+            // 添加 Furion 框架环境变量配置支持
+            configurationBuilder.AddEnvironmentVariables(prefix: context.Configuration.GetValue($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions.environmentVariablesPrefix))
+                                .AddCustomizeConfigurationFiles(context.Configuration, context.HostingEnvironment);
         });
 
         return hostBuilder;
+    }
+
+    /// <summary>
+    /// 添加自定义配置
+    /// </summary>
+    /// <param name="configurationBuilder"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
+    {
+        var userConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
+        if (userConfigurationFiles.IsEmpty())
+        {
+            return configurationBuilder;
+        }
+
+        // 遍历添加
+        Array.ForEach(userConfigurationFiles, filePath
+            => configurationBuilder.AddFile(filePath, environment));
+
+        return configurationBuilder;
     }
 }

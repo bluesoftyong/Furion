@@ -50,9 +50,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     internal ServiceBuilder(HostBuilderContext context)
     {
         _context = context;
-        _additionAssemblies = (context.Properties[FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES] as IDictionary<Assembly, Assembly>)!;
-        _namedServiceCollection = (context.Properties[FurionConsts.HOST_PROPERTIES_NAMED_SERVICE_COLLECTION] as IDictionary<string, Type>)!;
-        _serviceDescriptors = (context.Properties[FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS] as IDictionary<ServiceDescriptor, ServiceDescriptor>)!;
+
+        _additionAssemblies = new Dictionary<Assembly, Assembly>();
+        _namedServiceCollection = new Dictionary<string, Type>();
+        _serviceDescriptors = new Dictionary<ServiceDescriptor, ServiceDescriptor>();
     }
 
     /// <summary>
@@ -159,7 +160,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册命名服务提供器
-        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _context));
+        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceCollection));
 
         // 通过主机构建器服务依赖接口批量注册
         var _1 = BatchRegisterHostBuilderServices(services);
@@ -173,13 +174,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 批量注册服务描述器
         var _4 = BatchRegisterServiceDescriptors(services);
 
-        // 等待任务完成释放主机构建器上下文
+        // 等待任务完成释放服务构建器
         _1.ContinueWith(new[] { _2, _3, _4 }, () =>
         {
-            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_DESCRIPTORS);
-            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_ADDITION_ASSEMBLIES);
             _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
-            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_HOST_BUILDER_CONTEXT);
         });
     }
 

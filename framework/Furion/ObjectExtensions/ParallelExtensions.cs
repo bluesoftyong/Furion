@@ -21,6 +21,7 @@ public static class ParallelExtensions
     /// ParallelLoopResult 延续拓展
     /// </summary>
     /// <param name="result"></param>
+    /// <param name="actions"></param>
     /// <param name="configureDelegate"></param>
     public static void ContinueWith(this ParallelLoopResult result, Func<ParallelLoopResult>[] actions, Action configureDelegate)
     {

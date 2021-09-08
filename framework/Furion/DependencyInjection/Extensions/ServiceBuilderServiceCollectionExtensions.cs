@@ -13,9 +13,9 @@ using Microsoft.Extensions.Hosting;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// 依赖注入服务拓展
+/// 服务构建器服务拓展类
 /// </summary>
-public static class DependencyInjectionServiceCollectionExtensions
+public static class ServiceBuilderServiceCollectionExtensions
 {
     /// <summary>
     /// 创建依赖注入构建器

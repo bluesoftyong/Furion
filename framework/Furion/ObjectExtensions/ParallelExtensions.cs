@@ -22,7 +22,7 @@ public static class ParallelExtensions
     /// </summary>
     /// <param name="result"></param>
     /// <param name="configureDelegate"></param>
-    public static void ContinueWith(this ParallelLoopResult result, ParallelLoopResult[] results, Action configureDelegate)
+    public static void ContinueWith(this ParallelLoopResult result, Func<ParallelLoopResult>[] actions, Action configureDelegate)
     {
         if (configureDelegate == default)
         {
@@ -34,9 +34,9 @@ public static class ParallelExtensions
         {
             if (result.IsCompleted)
             {
-                if (i++ < results.Length)
+                if (i++ < actions.Length)
                 {
-                    results[0].ContinueWith(results.Skip(1).ToArray(), configureDelegate);
+                    actions[0]().ContinueWith(actions.Skip(1).ToArray(), configureDelegate);
                 }
 
                 configureDelegate();

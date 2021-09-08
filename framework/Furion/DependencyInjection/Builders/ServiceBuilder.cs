@@ -8,9 +8,9 @@
 
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -31,17 +31,17 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 命名服务集合
     /// </summary>
-    private readonly IDictionary<string, Type> _namedServiceCollection;
+    private readonly ConcurrentDictionary<string, Type> _namedServiceCollection;
 
     /// <summary>
     /// 服务描述器集合
     /// </summary>
-    private readonly IDictionary<ServiceDescriptor, ServiceDescriptor> _serviceDescriptors;
+    private readonly ConcurrentDictionary<ServiceDescriptor, ServiceDescriptor> _serviceDescriptors;
 
     /// <summary>
     /// 依赖注入扫描程序集集合
     /// </summary>
-    private readonly IDictionary<Assembly, Assembly> _additionAssemblies;
+    private readonly ConcurrentDictionary<Assembly, Assembly> _additionAssemblies;
 
     /// <summary>
     /// 构造函数
@@ -51,9 +51,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         _context = context;
 
-        _additionAssemblies = new Dictionary<Assembly, Assembly>();
-        _namedServiceCollection = new Dictionary<string, Type>();
-        _serviceDescriptors = new Dictionary<ServiceDescriptor, ServiceDescriptor>();
+        _additionAssemblies = new ConcurrentDictionary<Assembly, Assembly>();
+        _namedServiceCollection = new ConcurrentDictionary<string, Type>();
+        _serviceDescriptors = new ConcurrentDictionary<ServiceDescriptor, ServiceDescriptor>();
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
             throw new ArgumentException(nameof(assemblies));
         }
 
-        Parallel.ForEach(assemblies, ass => _additionAssemblies.Add(ass, ass));
+        Parallel.ForEach(assemblies, ass => _additionAssemblies.AddOrUpdate(ass, ass, (_, _) => ass));
 
         return this;
     }
@@ -100,10 +100,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     public IServiceBuilder AddNamedService(string serviceName, Type implementationType, ServiceLifetime lifetime)
     {
-        _namedServiceCollection.Add(serviceName, implementationType);
+        _namedServiceCollection.AddOrUpdate(serviceName, implementationType, (_, _) => implementationType);
 
         var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-        _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+        _serviceDescriptors.AddOrUpdate(implementationServiceDescriptor, implementationServiceDescriptor, (_, _) => implementationServiceDescriptor);
 
         return this;
     }
@@ -120,7 +120,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         if (_namedServiceCollection.TryAdd(serviceName, implementationType))
         {
             var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-            _serviceDescriptors.Add(implementationServiceDescriptor, implementationServiceDescriptor);
+            _serviceDescriptors.TryAdd(implementationServiceDescriptor, implementationServiceDescriptor);
         }
 
         return this;
@@ -163,19 +163,19 @@ internal sealed class ServiceBuilder : IServiceBuilder
         services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceCollection));
 
         // 通过主机构建器服务依赖接口批量注册
-        var _1 = BatchRegisterHostBuilderServices(services);
+        ParallelLoopResult _1() => BatchRegisterHostBuilderServices(services);
 
         // 通过依赖接口批量注册
-        var _2 = BatchRegisterServiceTypes(services);
+        ParallelLoopResult _2() => BatchRegisterServiceTypes(services);
 
         // 通过依赖工厂类型批量注册
-        var _3 = BatchRegisterFactoryServiceTypes(services);
+        ParallelLoopResult _3() => BatchRegisterFactoryServiceTypes(services);
 
         // 通过服务描述器批量注册
-        var _4 = BatchRegisterServiceDescriptors(services);
+        ParallelLoopResult _4() => BatchRegisterServiceDescriptors(services);
 
         // 等待任务完成释放服务构建器
-        _1.ContinueWith(new[] { _2, _3, _4 }, () =>
+        _1().ContinueWith(new Func<ParallelLoopResult>[] { _2, _3, _4 }, () =>
         {
             _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
         });

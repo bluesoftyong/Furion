@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace System;
 
@@ -23,7 +23,7 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// <summary>
     /// 命名服务集合
     /// </summary>
-    private readonly IDictionary<string, Type> _namedServiceCollection;
+    private readonly ConcurrentDictionary<string, Type> _namedServiceCollection;
 
     /// <summary>
     /// 构造函数
@@ -31,7 +31,7 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// <param name="appServiceProvider"></param>
     /// <param name="namedServiceCollection"></param>
     internal NamedServiceProvider(IAppServiceProvider appServiceProvider
-        , IDictionary<string, Type> namedServiceCollection)
+        , ConcurrentDictionary<string, Type> namedServiceCollection)
     {
         _appServiceProvider = appServiceProvider;
         _namedServiceCollection = namedServiceCollection;

@@ -19,7 +19,7 @@ public interface IFactoryService<TServiceType, TDependency>
     where TDependency : IDependency
 {
     /// <summary>
-    /// 实现工厂
+    /// 服务实例创建工厂
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>

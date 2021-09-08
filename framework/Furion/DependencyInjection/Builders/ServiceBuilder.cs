@@ -210,8 +210,8 @@ internal sealed class ServiceBuilder : IServiceBuilder
             var interfaces = implementationType.GetInterfaces();
             var lifetime = ConvertToServiceLifetime(interfaces.First(type => dependencyType.IsAssignableFrom(type) && type != dependencyType));
 
-            // 获取所有服务类型
-            var serviceTypes = interfaces.Where(type => !dependencyType.IsAssignableFrom(type))
+            // 获取所有服务类型，排除框架本身程序集接口及 IDisposable/ IAsyncDisposable 接口
+            var serviceTypes = interfaces.Where(type => type.Assembly != dependencyType.Assembly && !dependencyType.IsAssignableFrom(type) && type != typeof(IDisposable) && type != typeof(IAsyncDisposable))
                                                         .Select(type => FixedGenericType(type));
 
             foreach (var serviceType in serviceTypes)

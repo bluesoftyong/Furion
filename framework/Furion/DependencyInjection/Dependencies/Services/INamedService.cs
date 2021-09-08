@@ -13,5 +13,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public interface INamedService
 {
+    /// <summary>
+    /// 返回命名服务名称
+    /// </summary>
+    /// <returns></returns>
     string ServiceName();
 }

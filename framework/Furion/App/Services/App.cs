@@ -27,19 +27,19 @@ internal sealed partial class App : IApp
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="logger">日志对象</param>
-    /// <param name="appServiceProvider">服务提供器</param>
-    /// <param name="configuration">配置对象</param>
-    /// <param name="hostEnvironment">主机环境</param>
-    /// <param name="host">主机对象</param>
+    /// <param name="logger"></param>
+    /// <param name="serviceProvider"></param>
+    /// <param name="configuration"></param>
+    /// <param name="hostEnvironment"></param>
+    /// <param name="host"></param>
     public App(ILogger<App> logger
-        , IAppServiceProvider appServiceProvider
+        , IServiceProvider serviceProvider
         , IConfiguration configuration
         , IHostEnvironment hostEnvironment
         , IHost host)
     {
         _logger = logger;
-        ServiceProvider = appServiceProvider;
+        ServiceProvider = serviceProvider;
         Configuration = configuration;
         Environment = hostEnvironment;
         Host = host;
@@ -48,7 +48,7 @@ internal sealed partial class App : IApp
     /// <summary>
     /// 服务提供器
     /// </summary>
-    public IAppServiceProvider ServiceProvider { get; }
+    public IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     /// 配置对象

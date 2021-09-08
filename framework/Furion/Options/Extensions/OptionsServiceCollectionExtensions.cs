@@ -315,11 +315,11 @@ public static class OptionsServiceCollectionExtensions
         // 添加选项后期配置
         services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), provider =>
         {
-            var appServiceProvider = provider.CreateProxy();
+            var autowiredServiceProvider = provider.Autowired();
 
             // 添加参数
             var args = new List<object>(parameterTypes.Length + 1) { optionsBuilder.Name };
-            args.AddRange(parameterTypes.Skip(1).Select(u => appServiceProvider.GetRequiredService(u)));
+            args.AddRange(parameterTypes.Skip(1).Select(u => autowiredServiceProvider.GetRequiredService(u)));
             args.Add(configureOptions);
 
             // 动态创建 PostConfigureOptions<TOptions, TDep1..TDep5> 对象

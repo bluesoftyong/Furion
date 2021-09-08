@@ -16,9 +16,9 @@ namespace System;
 internal sealed class NamedServiceProvider : INamedServiceProvider
 {
     /// <summary>
-    /// 框架内服务提供器
+    /// 属性注入服务提供器
     /// </summary>
-    private readonly IAppServiceProvider _appServiceProvider;
+    private readonly IAutowiredServiceProvider _autowiredServiceProvider;
 
     /// <summary>
     /// 命名服务集合
@@ -28,12 +28,12 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="appServiceProvider"></param>
+    /// <param name="autowiredServiceProvider"></param>
     /// <param name="namedServiceCollection"></param>
-    public NamedServiceProvider(IAppServiceProvider appServiceProvider
+    public NamedServiceProvider(IAutowiredServiceProvider autowiredServiceProvider
         , ConcurrentDictionary<string, Type> namedServiceCollection)
     {
-        _appServiceProvider = appServiceProvider;
+        _autowiredServiceProvider = autowiredServiceProvider;
         _namedServiceCollection = namedServiceCollection;
     }
 
@@ -50,7 +50,7 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
         }
 
         var isRegistered = _namedServiceCollection.TryGetValue(serviceName, out var implementactionType);
-        return isRegistered ? _appServiceProvider.GetService(implementactionType!) : default;
+        return isRegistered ? _autowiredServiceProvider.GetService(implementactionType!) : default;
     }
 
     /// <summary>

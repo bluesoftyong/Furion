@@ -22,7 +22,6 @@ internal static class AppServiceCollectionExtensions
     /// </summary>
     /// <param name="services">服务注册集合</param>
     /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <param name="configureOptions">AppSettings 后置配置</param>
     /// <returns></returns>
     internal static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {

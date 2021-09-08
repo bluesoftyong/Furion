@@ -16,19 +16,19 @@ namespace System;
 public static class IServiceProviderExtensions
 {
     /// <summary>
-    /// 创建服务提供器代理
+    /// 解析属性注入服务提供器
     /// </summary>
     /// <param name="serviceProvider"></param>
     /// <returns></returns>
-    public static IAppServiceProvider CreateProxy(this IServiceProvider serviceProvider)
+    public static IAutowiredServiceProvider Autowired(this IServiceProvider serviceProvider)
     {
-        if (serviceProvider is AppServiceProvider)
+        if (serviceProvider is AutowiredServiceProvider)
         {
-            return (serviceProvider as IAppServiceProvider)!;
+            return (serviceProvider as IAutowiredServiceProvider)!;
         }
         else
         {
-            return serviceProvider.GetRequiredService<IAppServiceProvider>();
+            return serviceProvider.GetRequiredService<IAutowiredServiceProvider>();
         }
     }
 }

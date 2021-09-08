@@ -16,7 +16,7 @@ public class DependencyInjectionTests : ControllerBase
     private readonly IApp _app;
     private readonly IServiceProvider _serviceProvider;
     private readonly IServiceProvider _wrapServiceProvider;
-    private readonly IAppServiceProvider _appServiceProvider;
+    private readonly IAutowiredServiceProvider _autowiredServiceProvider;
     private readonly IAutowriedService _autowriedService;
     private readonly INamedServiceProvider _namedServiceProvider;
 
@@ -25,19 +25,19 @@ public class DependencyInjectionTests : ControllerBase
     /// </summary>
     /// <param name="app"></param>
     /// <param name="serviceProvider"></param>
-    /// <param name="appServiceProvider"></param>
+    /// <param name="autowiredServiceProvider"></param>
     /// <param name="autowriedService"></param>
     /// <param name="namedServiceProvider"></param>
     public DependencyInjectionTests(IApp app
         , IServiceProvider serviceProvider
-        , IAppServiceProvider appServiceProvider
+        , IAutowiredServiceProvider autowiredServiceProvider
         , IAutowriedService autowriedService
         , INamedServiceProvider namedServiceProvider)
     {
         _app = app;
         _serviceProvider = serviceProvider;
-        _appServiceProvider = appServiceProvider;
-        _wrapServiceProvider = serviceProvider.CreateProxy();
+        _autowiredServiceProvider = autowiredServiceProvider;
+        _wrapServiceProvider = serviceProvider.Autowired();
         _autowriedService = autowriedService;
         _namedServiceProvider = namedServiceProvider;
     }
@@ -56,7 +56,7 @@ public class DependencyInjectionTests : ControllerBase
             && _app.Equals(app2)
             && _app.Equals(_serviceProvider.GetRequiredService<IApp>())
             && _app.Equals(_wrapServiceProvider.GetRequiredService<IApp>())
-            && _app.Equals(_appServiceProvider.GetRequiredService<IApp>())
+            && _app.Equals(_autowiredServiceProvider.GetRequiredService<IApp>())
             && _app.Equals(_autowriedService.App)
             && App != null;
     }

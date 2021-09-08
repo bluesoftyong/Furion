@@ -20,7 +20,7 @@ public interface IApp
     /// <summary>
     /// 服务提供器
     /// </summary>
-    IAppServiceProvider ServiceProvider { get; }
+    IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     /// 配置对象

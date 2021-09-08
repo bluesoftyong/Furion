@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace System;
 
 /// <summary>
-/// 框架内服务提供器
+/// 属性注入服务提供器
 /// </summary>
-public interface IAppServiceProvider : IServiceProvider, ISupportRequiredService
+public interface IAutowiredServiceProvider : IServiceProvider, ISupportRequiredService
 {
     /// <summary>
     /// 属性注入

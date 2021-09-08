@@ -41,8 +41,8 @@ public static class FurionHostBuilderExtensions
             // 注册 App 全局应用对象服务
             services.AddApp(context.Configuration);
 
-            // 注册框架服务提供器
-            services.TryAddTransient<IAppServiceProvider, AppServiceProvider>();
+            // 注册属性注入服务提供器
+            services.TryAddTransient<IAutowiredServiceProvider, AutowiredServiceProvider>();
         });
 
         return hostBuilder;

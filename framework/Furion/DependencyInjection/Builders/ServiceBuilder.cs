@@ -248,7 +248,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
             var realityServiceType = serviceType == typeof(object) ? implementationType : serviceType;
             services.Add(ServiceDescriptor.Describe(realityServiceType, provider =>
             {
-                var appServiceProvider = provider.CreateProxy();
+                var appServiceProvider = provider.Autowired();
                 var instance = implementationFactory(appServiceProvider);
                 return appServiceProvider.ResolveAutowriedService(instance)!;
             }, lifetime));

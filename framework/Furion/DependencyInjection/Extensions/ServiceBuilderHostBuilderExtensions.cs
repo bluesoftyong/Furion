@@ -71,12 +71,12 @@ internal static class ServiceBuilderHostBuilderExtensions
         }
 
         // 替换 IHostedService 服务注册方式
-        var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService) && u.ImplementationType != default).ToList();
+        var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService) && u.ImplementationType != default && u.ImplementationType.Name != "GenericWebHostService").ToList();
         foreach (var serviceDescriptor in hostedServiceDescriptors)
         {
             services.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, provider =>
             {
-                var appServiceProvider = provider.CreateProxy();
+                var appServiceProvider = provider.Autowired();
                 return ActivatorUtilities.CreateInstance(appServiceProvider, serviceDescriptor.ImplementationType!);
             }, serviceDescriptor.Lifetime));
         }

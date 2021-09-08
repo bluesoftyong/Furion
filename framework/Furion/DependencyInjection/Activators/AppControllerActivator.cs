@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -42,10 +41,10 @@ internal sealed class AppControllerActivator : IControllerActivator
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor.ControllerTypeInfo));
         }
 
-        var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
-        var controller = CreateInstance(controllerTypeInfo, appServiceProvider);
+        var autowiredServiceProvider = controllerContext.HttpContext.RequestServices.Autowired();
+        var controller = CreateInstance(controllerTypeInfo, autowiredServiceProvider);
 
-        return appServiceProvider.ResolveAutowriedService(controller)!;
+        return autowiredServiceProvider.ResolveAutowriedService(controller)!;
     }
 
     /// <summary>
@@ -72,12 +71,12 @@ internal sealed class AppControllerActivator : IControllerActivator
     /// 创建控制器实例
     /// </summary>
     /// <param name="controllerTypeInfo"></param>
-    /// <param name="appServiceProvider"></param>
+    /// <param name="autowiredServiceProvider"></param>
     /// <returns></returns>
-    private static object CreateInstance(TypeInfo controllerTypeInfo, IAppServiceProvider appServiceProvider)
+    private static object CreateInstance(TypeInfo controllerTypeInfo, IAutowiredServiceProvider autowiredServiceProvider)
     {
         // 获取 .NET 内部 ITypeActivatorCache 接口实例
-        var typeActivatorCache = appServiceProvider.GetRequiredService(typeof(IActionSelector).Assembly
+        var typeActivatorCache = autowiredServiceProvider.GetRequiredService(typeof(IActionSelector).Assembly
                                             .GetType("Microsoft.AspNetCore.Mvc.Infrastructure.ITypeActivatorCache")!);
 
         // 构建表达式并生成方法委托
@@ -87,7 +86,7 @@ internal sealed class AppControllerActivator : IControllerActivator
         var @delegate = Expression.Lambda<Func<IServiceProvider, Type, object>>(callMethod, arg0, arg1).Compile();
 
         // 创建控制器
-        var controller = @delegate(appServiceProvider, controllerTypeInfo.AsType());
+        var controller = @delegate(autowiredServiceProvider, controllerTypeInfo.AsType());
         return controller;
     }
 }

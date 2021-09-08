@@ -28,7 +28,7 @@ public class FurionKeyValueObserver : IObserver<KeyValuePair<string, object>>
     {
         if (value.Key == FurionConsts.DIAGNOSTIC_BUILD_SERVICE_PROVIDER)
         {
-            Console.WriteLine($"Furion is initializing {nameof(AppServiceProvider)}.");
+            Console.WriteLine($"Furion is initializing {nameof(AutowiredServiceProvider)}.");
         }
     }
 }

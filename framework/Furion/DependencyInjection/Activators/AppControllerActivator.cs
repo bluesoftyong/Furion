@@ -6,9 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Microsoft.AspNetCore.Mvc.Controllers;
@@ -41,28 +42,8 @@ public sealed class AppControllerActivator : IControllerActivator
             throw new ArgumentException(nameof(ControllerContext.ActionDescriptor.ControllerTypeInfo));
         }
 
-        var constructors = controllerTypeInfo.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-        if (constructors.Length > 1)
-        {
-            throw new InvalidOperationException($"Multiple constructors accepting all given argument types have been found in type '{controllerTypeInfo.Namespace}.{controllerTypeInfo.Name}'. There should only be one applicable constructor.");
-        }
-
-        var constructor = constructors.FirstOrDefault();
         var appServiceProvider = controllerContext.HttpContext.RequestServices.CreateProxy();
-
-        object? controller;
-        if (constructor?.GetParameters()?.Length == 0)
-        {
-            controller = Activator.CreateInstance(controllerTypeInfo);
-        }
-        else
-        {
-            var parameters = constructors.FirstOrDefault()!.GetParameters()
-                                                 .Where(p => p.ParameterType.IsClass || p.ParameterType.IsInterface)
-                                                 .Select(p => appServiceProvider.GetRequiredService(p.ParameterType))
-                                                 .ToArray();
-            controller = Activator.CreateInstance(controllerTypeInfo, parameters);
-        }
+        var controller = CreateInstance(controllerTypeInfo, appServiceProvider);
 
         return appServiceProvider.ResolveAutowriedService(controller)!;
     }
@@ -85,5 +66,28 @@ public sealed class AppControllerActivator : IControllerActivator
         }
 
         (controller as IDisposable)?.Dispose();
+    }
+
+    /// <summary>
+    /// 创建控制器实例
+    /// </summary>
+    /// <param name="controllerTypeInfo"></param>
+    /// <param name="appServiceProvider"></param>
+    /// <returns></returns>
+    private static object CreateInstance(TypeInfo controllerTypeInfo, IAppServiceProvider appServiceProvider)
+    {
+        // 获取 .NET 内部 ITypeActivatorCache 接口实例
+        var typeActivatorCache = appServiceProvider.GetRequiredService(typeof(IActionSelector).Assembly
+                                            .GetType("Microsoft.AspNetCore.Mvc.Infrastructure.ITypeActivatorCache")!);
+
+        // 构建表达式创建
+        var arg0 = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+        var arg1 = Expression.Parameter(typeof(Type), "implementationType");
+        var callMethod = Expression.Call(Expression.Constant(typeActivatorCache), "CreateInstance", new[] { typeof(object) }, arg0, arg1);
+        var @delegate = Expression.Lambda<Func<IServiceProvider, Type, object>>(callMethod, arg0, arg1).Compile();
+
+        // 创建控制器
+        var controller = @delegate(appServiceProvider, controllerTypeInfo.AsType());
+        return controller;
     }
 }

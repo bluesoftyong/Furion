@@ -171,7 +171,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 通过依赖工厂类型批量注册
         var _3 = BatchRegisterFactoryServiceTypes(services);
 
-        // 批量注册服务描述器
+        // 通过服务描述器批量注册
         var _4 = BatchRegisterServiceDescriptors(services);
 
         // 等待任务完成释放服务构建器

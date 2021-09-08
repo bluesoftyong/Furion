@@ -63,6 +63,22 @@ internal sealed class AppServiceProvider : IAppServiceProvider
     }
 
     /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <param name="serviceType"></param>
+    /// <returns></returns>
+    public object GetRequiredService(Type serviceType)
+    {
+        var instance = GetService(serviceType);
+        if (instance == null)
+        {
+            throw new InvalidOperationException($"Unable to resolve service for type `{serviceType.Name}`.");
+        }
+
+        return instance!;
+    }
+
+    /// <summary>
     /// 属性注入服务
     /// </summary>
     /// <param name="instance"></param>
@@ -90,7 +106,7 @@ internal sealed class AppServiceProvider : IAppServiceProvider
             var autowiredServicesAttributes = p.GetCustomAttribute<AutowiredServicesAttribute>(false);
             if (autowiredServicesAttributes?.Required ?? true)
             {
-                p.SetPropertyValue(instance, _serviceProvider.GetRequiredService(p.PropertyType));
+                p.SetPropertyValue(instance, GetRequiredService(p.PropertyType));
             }
             else
             {

@@ -28,7 +28,7 @@ internal sealed class AppServiceProvider : IAppServiceProvider
     /// 构造函数
     /// </summary>
     /// <param name="serviceProvider"></param>
-    internal AppServiceProvider(IServiceProvider serviceProvider)
+    public AppServiceProvider(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }

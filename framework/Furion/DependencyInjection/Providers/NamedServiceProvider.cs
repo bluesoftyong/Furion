@@ -30,7 +30,7 @@ internal sealed class NamedServiceProvider : INamedServiceProvider
     /// </summary>
     /// <param name="appServiceProvider"></param>
     /// <param name="namedServiceCollection"></param>
-    internal NamedServiceProvider(IAppServiceProvider appServiceProvider
+    public NamedServiceProvider(IAppServiceProvider appServiceProvider
         , ConcurrentDictionary<string, Type> namedServiceCollection)
     {
         _appServiceProvider = appServiceProvider;

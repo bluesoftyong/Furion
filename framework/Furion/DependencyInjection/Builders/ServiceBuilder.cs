@@ -151,7 +151,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册命名服务提供器
-        services.AddTransient<INamedServiceProvider>(provider => new NamedServiceProvider(provider.CreateProxy(), _namedServiceCollection));
+        services.AddTransient<INamedServiceProvider>(provider => ActivatorUtilities.CreateInstance<NamedServiceProvider>(provider, _namedServiceCollection));
 
         // 通过主机构建器服务依赖接口批量注册
         ParallelLoopResult _1() => BatchRegisterHostBuilderServices(services);

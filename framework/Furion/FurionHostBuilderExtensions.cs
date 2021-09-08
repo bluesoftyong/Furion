@@ -45,7 +45,7 @@ public static class FurionHostBuilderExtensions
             services.AddApp(context.Configuration);
 
             // 注册框架服务提供器
-            services.TryAddTransient(provider => provider.CreateProxy());
+            services.TryAddTransient<IAppServiceProvider, AppServiceProvider>();
         });
 
         return hostBuilder;

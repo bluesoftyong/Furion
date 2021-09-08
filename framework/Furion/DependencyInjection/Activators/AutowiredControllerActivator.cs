@@ -14,9 +14,9 @@ using System.Reflection;
 namespace Microsoft.AspNetCore.Mvc.Controllers;
 
 /// <summary>
-/// 框架控制器激活器
+/// 属性注入控制器激活器
 /// </summary>
-internal sealed class AppControllerActivator : IControllerActivator
+internal sealed class AutowiredControllerActivator : IControllerActivator
 {
     /// <summary>
     /// 实现控制器创建过程

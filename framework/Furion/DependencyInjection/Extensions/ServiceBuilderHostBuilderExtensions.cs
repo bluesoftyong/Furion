@@ -67,7 +67,7 @@ internal static class ServiceBuilderHostBuilderExtensions
         // 替换 Mvc 控制器激活器
         if (services.Any(u => u.ServiceType == typeof(IControllerActivator)))
         {
-            services.Replace(ServiceDescriptor.Transient<IControllerActivator, AppControllerActivator>());
+            services.Replace(ServiceDescriptor.Transient<IControllerActivator, AutowiredControllerActivator>());
         }
 
         // 替换 IHostedService 服务注册方式

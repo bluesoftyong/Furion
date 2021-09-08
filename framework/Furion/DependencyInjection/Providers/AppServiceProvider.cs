@@ -8,9 +8,9 @@
 
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace System;
 
@@ -46,8 +46,16 @@ internal sealed class AppServiceProvider : IAppServiceProvider
             return default;
         }
 
-        if (!CheckIsProjectType(serviceType))
+        // 处理集合类型
+        var instanceType = instance as Type ?? instance.GetType();
+        if (instanceType.IsArray)
         {
+            var instances = ((IList)instance).Cast<object>();
+            foreach (var obj in instances)
+            {
+                ResolveAutowriedService(obj);
+            }
+
             return instance;
         }
 
@@ -68,11 +76,6 @@ internal sealed class AppServiceProvider : IAppServiceProvider
 
         var instanceType = instance as Type ?? instance.GetType();
 
-        if (!CheckIsProjectType(instanceType))
-        {
-            return instance;
-        }
-
         // 扫描所有公开和非公开的实例属性
         var serviceProperties = instanceType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                                                           .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(AutowiredServicesAttribute), false));
@@ -82,7 +85,7 @@ internal sealed class AppServiceProvider : IAppServiceProvider
             return instance;
         }
 
-        Parallel.ForEach(serviceProperties, p =>
+        foreach (var p in serviceProperties)
         {
             var autowiredServicesAttributes = p.GetCustomAttribute<AutowiredServicesAttribute>(false);
             if (autowiredServicesAttributes?.Required ?? true)
@@ -93,25 +96,8 @@ internal sealed class AppServiceProvider : IAppServiceProvider
             {
                 p.SetPropertyValue(instance, GetService(p.PropertyType));
             }
-        });
-
-        return instance;
-    }
-
-    /// <summary>
-    /// 判断是否是合理的项目类型
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    private static bool CheckIsProjectType(Type type)
-    {
-        // 排除微软程序集
-        if (type.Assembly.GetName().Name!.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase)
-            || type.Assembly.GetName().Name!.StartsWith("System", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
         }
 
-        return true;
+        return instance;
     }
 }

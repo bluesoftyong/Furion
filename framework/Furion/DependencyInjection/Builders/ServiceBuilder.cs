@@ -14,7 +14,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Furion.DependencyInjection;
 
@@ -68,7 +67,10 @@ internal sealed class ServiceBuilder : IServiceBuilder
             throw new ArgumentException(nameof(assemblies));
         }
 
-        Parallel.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
+        foreach (var ass in assemblies)
+        {
+            _additionAssemblies.TryAdd(ass, ass);
+        }
 
         return this;
     }
@@ -154,42 +156,38 @@ internal sealed class ServiceBuilder : IServiceBuilder
         services.AddTransient<INamedServiceProvider>(provider => ActivatorUtilities.CreateInstance<NamedServiceProvider>(provider, _namedServiceCollection));
 
         // 通过主机构建器服务依赖接口批量注册
-        ParallelLoopResult _1() => BatchRegisterHostBuilderServices(services);
+        BatchRegisterHostBuilderServices(services);
 
         // 通过依赖接口批量注册
-        ParallelLoopResult _2() => BatchRegisterServiceTypes(services);
+        BatchRegisterServiceTypes(services);
 
         // 通过依赖工厂类型批量注册
-        ParallelLoopResult _3() => BatchRegisterFactoryServiceTypes(services);
+        BatchRegisterFactoryServiceTypes(services);
 
         // 通过服务描述器批量注册
-        ParallelLoopResult _4() => BatchRegisterServiceDescriptors(services);
+        BatchRegisterServiceDescriptors(services);
 
         // 等待任务完成释放服务构建器
-        _1().ContinueWith(new Func<ParallelLoopResult>[] { _2, _3, _4 }, () =>
-        {
-            _additionAssemblies.Clear();
-            _serviceDescriptors.Clear();
-            _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
-        });
+        Release();
     }
 
     /// <summary>
     /// 批量注册服务描述器
     /// </summary>
     /// <param name="services"></param>
-    /// <returns></returns>
-    private ParallelLoopResult BatchRegisterServiceDescriptors(IServiceCollection services)
+    private void BatchRegisterServiceDescriptors(IServiceCollection services)
     {
-        return Parallel.ForEach(_serviceDescriptors.Values, serviceDescriptor => services.Add(serviceDescriptor));
+        foreach (var serviceDescriptor in _serviceDescriptors.Values)
+        {
+            services.Add(serviceDescriptor);
+        }
     }
 
     /// <summary>
     /// 通过依赖类型批量注册
     /// </summary>
     /// <param name="services"></param>
-    /// <returns></returns>
-    private ParallelLoopResult BatchRegisterServiceTypes(IServiceCollection services)
+    private void BatchRegisterServiceTypes(IServiceCollection services)
     {
         var dependencyType = typeof(IDependency);
 
@@ -198,7 +196,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
                                             ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && dependencyType.IsAssignableFrom(type))
                                                                                     .Select(type => FixedGenericType(type)));
 
-        return Parallel.ForEach(implementationTypes, implementationType =>
+        foreach (var implementationType in implementationTypes)
         {
             var interfaces = implementationType.GetInterfaces();
             var lifetime = ConvertToServiceLifetime(interfaces.First(type => dependencyType.IsAssignableFrom(type) && type != dependencyType));
@@ -220,15 +218,14 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
             // 注册命名服务
             RegisterNamedService(implementationType, lifetime);
-        });
+        }
     }
 
     /// <summary>
     /// 通过依赖工厂类型批量注册
     /// </summary>
     /// <param name="services"></param>
-    /// <returns></returns>
-    private ParallelLoopResult BatchRegisterFactoryServiceTypes(IServiceCollection services)
+    private void BatchRegisterFactoryServiceTypes(IServiceCollection services)
     {
         var factoryDependencyType = typeof(IFactoryService<,>);
 
@@ -236,7 +233,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         var implementationTypes = _additionAssemblies.Values.SelectMany(
                                                     ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && type.IsGenericAssignableTo(factoryDependencyType)));
 
-        return Parallel.ForEach(implementationTypes, implementationType =>
+        foreach (var implementationType in implementationTypes)
         {
             var interfaces = implementationType.GetInterfaces();
             var factoryDependencyTypeGenericArguments = interfaces.First(type => FixedGenericType(type) == factoryDependencyType).GetGenericArguments();
@@ -258,7 +255,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
             // 注册命名服务
             RegisterNamedService(implementationType, lifetime);
-        });
+        }
     }
 
     /// <summary>
@@ -266,7 +263,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    private ParallelLoopResult BatchRegisterHostBuilderServices(IServiceCollection services)
+    private void BatchRegisterHostBuilderServices(IServiceCollection services)
     {
         var hostBuilderServiceDependencyType = typeof(IHostBuilderService);
 
@@ -274,7 +271,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
         var hostBuilderServiceTypes = GetProjectAssemblies().SelectMany(
                                                     ass => ass.ExportedTypes.Where(type => !type.IsAbstract && !type.IsInterface && type.IsClass && hostBuilderServiceDependencyType.IsAssignableFrom(type)));
 
-        return Parallel.ForEach(hostBuilderServiceTypes, hostBuilderServiceType =>
+        foreach (var hostBuilderServiceType in hostBuilderServiceTypes)
         {
             // 获取配置服务委托
             var configureDelegate = hostBuilderServiceType.GetTypeInfo().DeclaredMethods
@@ -282,7 +279,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
                                                            .CreateDelegate<Action<IServiceCollection, HostBuilderContext>>(Convert.ChangeType(default, hostBuilderServiceType));
 
             configureDelegate(services, _context);
-        });
+        }
     }
 
     /// <summary>
@@ -303,6 +300,16 @@ internal sealed class ServiceBuilder : IServiceBuilder
                                                        .CreateDelegate<Func<string>>(Convert.ChangeType(default, implementationType));
 
         AddNamedService(serviceNameDelegate(), implementationType, lifetime);
+    }
+
+    /// <summary>
+    /// 释放服务构建器
+    /// </summary>
+    private void Release()
+    {
+        _additionAssemblies.Clear();
+        _serviceDescriptors.Clear();
+        _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
     }
 
     /// <summary>

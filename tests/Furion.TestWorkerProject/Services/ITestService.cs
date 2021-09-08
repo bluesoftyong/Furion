@@ -8,7 +8,7 @@ public interface ITestService
     DateTimeOffset GetDateTime();
 }
 
-public class TestService : ITestService, ITransientService
+public class TestService : ITestService
 {
     [AutowiredServices]
     IApp? App { get; }

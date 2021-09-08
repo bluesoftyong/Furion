@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -272,7 +271,7 @@ public static class OptionsServiceCollectionExtensions
         }
 
         // 注册所有验证
-        Parallel.ForEach(appOptionsAttribute?.ValidateOptionsTypes!, validateType =>
+        foreach (var validateType in appOptionsAttribute?.ValidateOptionsTypes!)
         {
             // 验证类型必须实现 IValidateOptions<TOptions>
             if (!validateOptionsType.IsAssignableFrom(validateType))
@@ -283,7 +282,7 @@ public static class OptionsServiceCollectionExtensions
 
             // 注册 IValidateOptions 复杂验证
             services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, validateType));
-        });
+        }
 
         return optionsBuilder;
     }

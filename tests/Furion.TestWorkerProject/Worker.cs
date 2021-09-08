@@ -1,4 +1,6 @@
 
+using Furion.TestWorkerProject.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,17 +11,17 @@ namespace Furion.TestWorkerProject;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly IAppServiceProvider _appServiceProvider;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ITestService _testService;
 
     public Worker(ILogger<Worker> logger
-        , IAppServiceProvider appServiceProvider
-        , IServiceProvider serviceProvider)
+        , ITestService testService)
     {
         _logger = logger;
-        _appServiceProvider = appServiceProvider;
-        _serviceProvider = serviceProvider;
+        _testService = testService;
     }
+
+    [AutowiredServices]
+    IApp? App { get; set; }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

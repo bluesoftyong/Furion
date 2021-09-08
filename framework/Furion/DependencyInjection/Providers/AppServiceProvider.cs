@@ -8,7 +8,6 @@
 
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections;
 using System.Linq;
 using System.Reflection;
 
@@ -44,19 +43,6 @@ internal sealed class AppServiceProvider : IAppServiceProvider
         if (instance == default)
         {
             return default;
-        }
-
-        // 处理集合类型
-        var instanceType = instance as Type ?? instance.GetType();
-        if (instanceType.IsArray)
-        {
-            var instances = ((IList)instance).Cast<object>();
-            foreach (var obj in instances)
-            {
-                ResolveAutowriedService(obj);
-            }
-
-            return instance;
         }
 
         return ResolveAutowriedService(instance);

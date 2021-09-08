@@ -9,7 +9,9 @@
 using Furion;
 using Furion.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;
@@ -35,6 +37,17 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
 
             serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
             serviceBuilder.Build(services);
+
+            // 替换所有 IHostedService 服务
+            var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService)).ToList();
+            foreach (var serviceDescriptor in hostedServiceDescriptors)
+            {
+                services.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, provider =>
+                {
+                    var appServiceProvider = provider.CreateProxy();
+                    return ActivatorUtilities.CreateInstance(appServiceProvider, serviceDescriptor.ImplementationType!);
+                }, serviceDescriptor.Lifetime));
+            }
         });
 
         // 替换 .NET 默认工厂

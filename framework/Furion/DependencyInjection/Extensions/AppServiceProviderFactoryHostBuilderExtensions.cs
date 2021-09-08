@@ -8,6 +8,7 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -38,16 +39,8 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
             serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
             serviceBuilder.Build(services);
 
-            // 替换所有 IHostedService 服务
-            var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService)).ToList();
-            foreach (var serviceDescriptor in hostedServiceDescriptors)
-            {
-                services.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, provider =>
-                {
-                    var appServiceProvider = provider.CreateProxy();
-                    return ActivatorUtilities.CreateInstance(appServiceProvider, serviceDescriptor.ImplementationType!);
-                }, serviceDescriptor.Lifetime));
-            }
+            // 实现属性注入
+            services.AddPropertiesAutowired();
         });
 
         // 替换 .NET 默认工厂
@@ -62,5 +55,32 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
 
             return new AppServiceProviderFactory(serviceProviderOptions);
         });
+    }
+
+    /// <summary>
+    /// 实现属性注入
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    internal static IServiceCollection AddPropertiesAutowired(this IServiceCollection services)
+    {
+        // 替换 Mvc 控制器激活器
+        if (services.Any(u => u.ServiceType == typeof(IControllerActivator)))
+        {
+            services.Replace(ServiceDescriptor.Transient<IControllerActivator, AppControllerActivator>());
+        }
+
+        // 替换所有 IHostedService 服务并实现属性注入
+        var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService) && u.ImplementationType != default).ToList();
+        foreach (var serviceDescriptor in hostedServiceDescriptors)
+        {
+            services.Replace(ServiceDescriptor.Describe(serviceDescriptor.ServiceType, provider =>
+            {
+                var appServiceProvider = provider.CreateProxy();
+                return ActivatorUtilities.CreateInstance(appServiceProvider, serviceDescriptor.ImplementationType!);
+            }, serviceDescriptor.Lifetime));
+        }
+
+        return services;
     }
 }

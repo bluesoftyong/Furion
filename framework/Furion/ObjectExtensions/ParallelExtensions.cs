@@ -25,11 +25,6 @@ public static class ParallelExtensions
     /// <param name="configureDelegate"></param>
     public static void ContinueWith(this ParallelLoopResult result, Func<ParallelLoopResult>[] actions, Action configureDelegate)
     {
-        if (configureDelegate == default)
-        {
-            throw new ArgumentNullException(nameof(configureDelegate));
-        }
-
         var i = 0;
         while (true)
         {
@@ -37,10 +32,12 @@ public static class ParallelExtensions
             {
                 if (i++ < actions.Length)
                 {
-                    actions[0]().ContinueWith(actions.Skip(1).ToArray(), configureDelegate);
+                    actions[0]().ContinueWith(actions.Skip(1).ToArray(), default!);
                 }
-
-                configureDelegate();
+                if (configureDelegate != default)
+                {
+                    configureDelegate();
+                }
                 break;
             }
         }

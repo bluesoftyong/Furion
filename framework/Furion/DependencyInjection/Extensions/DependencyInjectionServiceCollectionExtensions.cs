@@ -23,7 +23,7 @@ public static class DependencyInjectionServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static IServiceBuilder AsServiceBuilder(this IServiceCollection services, HostBuilderContext context)
+    public static IServiceBuilder AsServiceBuilder(this IServiceCollection _, HostBuilderContext context)
     {
         return (context.Properties[FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
     }

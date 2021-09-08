@@ -62,7 +62,7 @@ internal static class ServiceBuilderHostBuilderExtensions
     /// <param name="services"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddPropertiesAutowired(this IServiceCollection services, HostBuilderContext context)
+    internal static IServiceCollection AddPropertiesAutowired(this IServiceCollection services, HostBuilderContext _)
     {
         // 替换 Mvc 控制器激活器
         if (services.Any(u => u.ServiceType == typeof(IControllerActivator)))

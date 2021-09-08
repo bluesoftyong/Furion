@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Mvc.Controllers;
 /// <summary>
 /// 框架控制器激活器
 /// </summary>
-public sealed class AppControllerActivator : IControllerActivator
+internal sealed class AppControllerActivator : IControllerActivator
 {
     /// <summary>
     /// 实现控制器创建过程

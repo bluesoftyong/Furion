@@ -36,7 +36,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <summary>
     /// 服务描述器集合
     /// </summary>
-    private readonly ConcurrentDictionary<ServiceDescriptor, ServiceDescriptor> _serviceDescriptors;
+    private readonly ConcurrentDictionary<Type, ServiceDescriptor> _serviceDescriptors;
 
     /// <summary>
     /// 依赖注入扫描程序集集合
@@ -53,7 +53,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
 
         _additionAssemblies = new ConcurrentDictionary<Assembly, Assembly>();
         _namedServiceCollection = new ConcurrentDictionary<string, Type>();
-        _serviceDescriptors = new ConcurrentDictionary<ServiceDescriptor, ServiceDescriptor>();
+        _serviceDescriptors = new ConcurrentDictionary<Type, ServiceDescriptor>();
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
             throw new ArgumentException(nameof(assemblies));
         }
 
-        Parallel.ForEach(assemblies, ass => _additionAssemblies.AddOrUpdate(ass, ass, (_, _) => ass));
+        Parallel.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
 
         return this;
     }
@@ -81,14 +81,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     public IServiceBuilder TryAddAssemblies(params Assembly[] assemblies)
     {
-        if (assemblies.IsEmpty())
-        {
-            throw new ArgumentException(nameof(assemblies));
-        }
-
-        Parallel.ForEach(assemblies, ass => _additionAssemblies.TryAdd(ass, ass));
-
-        return this;
+        return AddAssemblies(assemblies);
     }
 
     /// <summary>
@@ -100,10 +93,9 @@ internal sealed class ServiceBuilder : IServiceBuilder
     /// <returns></returns>
     public IServiceBuilder AddNamedService(string serviceName, Type implementationType, ServiceLifetime lifetime)
     {
+        // 如果存在，则覆盖（更新）
         _namedServiceCollection.AddOrUpdate(serviceName, implementationType, (_, _) => implementationType);
-
-        var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-        _serviceDescriptors.AddOrUpdate(implementationServiceDescriptor, implementationServiceDescriptor, (_, _) => implementationServiceDescriptor);
+        _serviceDescriptors.TryAdd(implementationType, ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
 
         return this;
     }
@@ -119,8 +111,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         if (_namedServiceCollection.TryAdd(serviceName, implementationType))
         {
-            var implementationServiceDescriptor = ServiceDescriptor.Describe(implementationType, implementationType, lifetime);
-            _serviceDescriptors.TryAdd(implementationServiceDescriptor, implementationServiceDescriptor);
+            _serviceDescriptors.TryAdd(implementationType, ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
         }
 
         return this;
@@ -177,6 +168,8 @@ internal sealed class ServiceBuilder : IServiceBuilder
         // 等待任务完成释放服务构建器
         _1().ContinueWith(new Func<ParallelLoopResult>[] { _2, _3, _4 }, () =>
         {
+            _additionAssemblies.Clear();
+            _serviceDescriptors.Clear();
             _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
         });
     }
@@ -213,6 +206,12 @@ internal sealed class ServiceBuilder : IServiceBuilder
             // 获取所有服务类型，排除框架本身程序集接口及 IDisposable/ IAsyncDisposable 接口
             var serviceTypes = interfaces.Where(type => type.Assembly != dependencyType.Assembly && !dependencyType.IsAssignableFrom(type) && type != typeof(IDisposable) && type != typeof(IAsyncDisposable))
                                                         .Select(type => FixedGenericType(type));
+
+            // 如果没有扫描到接口，则注册类型本身
+            if (!serviceTypes.Any())
+            {
+                _serviceDescriptors.TryAdd(implementationType, ServiceDescriptor.Describe(implementationType, implementationType, lifetime));
+            }
 
             foreach (var serviceType in serviceTypes)
             {

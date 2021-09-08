@@ -63,3 +63,7 @@ public class Test4NamedService : ITest4NamedService, INamedService, ITransientSe
         return "test_four";
     }
 }
+
+public class Test5DependencyService : ITransientService
+{
+}

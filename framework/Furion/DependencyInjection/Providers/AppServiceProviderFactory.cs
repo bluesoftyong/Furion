@@ -6,11 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion;
-using Furion.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
-using System.Diagnostics;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -19,11 +15,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
 {
-    /// <summary>
-    /// 主机构建器上下文
-    /// </summary>
-    private readonly HostBuilderContext _context;
-
     /// <summary>
     /// 服务提供器选项
     /// </summary>
@@ -34,10 +25,8 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// </summary>
     /// <param name="context"></param>
     /// <param name="options"></param>
-    internal AppServiceProviderFactory(HostBuilderContext context
-        , ServiceProviderOptions options)
+    internal AppServiceProviderFactory(ServiceProviderOptions options)
     {
-        _context = context;
         _options = options;
     }
 
@@ -48,8 +37,6 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <returns></returns>
     public IServiceCollection CreateBuilder(IServiceCollection services)
     {
-        ((ServiceBuilder)services.AsServiceBuilder(_context)).Build(services);
-
         return services;
     }
 
@@ -60,12 +47,6 @@ internal sealed class AppServiceProviderFactory : IServiceProviderFactory<IServi
     /// <returns></returns>
     public IServiceProvider CreateServiceProvider(IServiceCollection services)
     {
-        using var diagnosticListener = new DiagnosticListener(nameof(Furion));
-        if (diagnosticListener.IsEnabled() && diagnosticListener.IsEnabled(FurionConsts.DIAGNOSTIC_BUILD_SERVICE_PROVIDER))
-        {
-            diagnosticListener.Write(FurionConsts.DIAGNOSTIC_BUILD_SERVICE_PROVIDER, _options);
-        }
-
         return services.BuildServiceProvider(_options).CreateProxy();
     }
 }

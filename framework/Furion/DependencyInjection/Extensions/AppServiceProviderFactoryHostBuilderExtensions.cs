@@ -6,8 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion;
+using Furion.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -24,6 +27,16 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
     /// <returns></returns>
     internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configureDelegate = default)
     {
+        // 配置服务提供器，创建一个全局服务构建器并添加到上下文共享数据集合中
+        hostBuilder.ConfigureContainer<IServiceCollection>((context, services) =>
+        {
+            var serviceBuilder = new ServiceBuilder(context);
+            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
+
+            serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
+            serviceBuilder.Build(services);
+        });
+
         // 替换 .NET 默认工厂
         return hostBuilder.UseServiceProviderFactory(context =>
         {
@@ -34,7 +47,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
 
             configureDelegate?.Invoke(context, serviceProviderOptions);
 
-            return new AppServiceProviderFactory(context, serviceProviderOptions);
+            return new AppServiceProviderFactory(serviceProviderOptions);
         });
     }
 }

@@ -54,14 +54,4 @@ public class AppTests : ControllerBase
             && _app.Equals(app3)
             && _app.Equals(_httpContextAccessor.HttpContext?.RequestServices?.GetRequiredService<IApp>());
     }
-
-    /// <summary>
-    /// 测试 AppSettings 不为 Null
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost]
-    public bool TestAppSettingsNotNull()
-    {
-        return _app.AppSettings != default;
-    }
 }

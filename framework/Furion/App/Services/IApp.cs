@@ -39,11 +39,6 @@ public interface IApp
     IHost Host { get; }
 
     /// <summary>
-    /// App 全局配置
-    /// </summary>
-    AppSettingsOptions AppSettings { get; }
-
-    /// <summary>
     /// 解析服务
     /// </summary>
     /// <typeparam name="TService"></typeparam>

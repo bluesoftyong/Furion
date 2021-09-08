@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace Furion;
@@ -29,20 +28,17 @@ internal sealed partial class App : IApp
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    /// <param name="optionsMonitor">配置选项</param>
-    /// <param name="serviceProvider">服务提供器</param>
+    /// <param name="appServiceProvider">服务提供器</param>
     /// <param name="configuration">配置对象</param>
     /// <param name="hostEnvironment">主机环境</param>
     /// <param name="host">主机对象</param>
     public App(ILogger<App> logger
-        , IOptionsMonitor<AppSettingsOptions> optionsMonitor
         , IAppServiceProvider appServiceProvider
         , IConfiguration configuration
         , IHostEnvironment hostEnvironment
         , IHost host)
     {
         _logger = logger;
-        AppSettings = optionsMonitor.CurrentValue;
         ServiceProvider = appServiceProvider;
         Configuration = configuration;
         Environment = hostEnvironment;
@@ -69,11 +65,6 @@ internal sealed partial class App : IApp
     /// </summary>
     /// <remarks>可通过.Services 获取根服务，常用于多线程操作</remarks>
     public IHost Host { get; }
-
-    /// <summary>
-    /// App 全局配置
-    /// </summary>
-    public AppSettingsOptions AppSettings { get; }
 
     /// <summary>
     /// 解析服务

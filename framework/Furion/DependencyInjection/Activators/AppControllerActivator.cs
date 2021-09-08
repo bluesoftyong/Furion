@@ -80,9 +80,9 @@ public sealed class AppControllerActivator : IControllerActivator
         var typeActivatorCache = appServiceProvider.GetRequiredService(typeof(IActionSelector).Assembly
                                             .GetType("Microsoft.AspNetCore.Mvc.Infrastructure.ITypeActivatorCache")!);
 
-        // 构建表达式创建
-        var arg0 = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
-        var arg1 = Expression.Parameter(typeof(Type), "implementationType");
+        // 构建表达式并生成方法委托
+        var arg0 = Expression.Parameter(typeof(IServiceProvider), "arg0");
+        var arg1 = Expression.Parameter(typeof(Type), "arg1");
         var callMethod = Expression.Call(Expression.Constant(typeActivatorCache), "CreateInstance", new[] { typeof(object) }, arg0, arg1);
         var @delegate = Expression.Lambda<Func<IServiceProvider, Type, object>>(callMethod, arg0, arg1).Compile();
 

@@ -7,8 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using Furion.ObjectExtensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -25,9 +23,8 @@ public static class FurionHostBuilderExtensions
     /// 初始化框架服务
     /// </summary>
     /// <param name="hostBuilder">主机构建器</param>
-    /// <param name="configureDelegate">服务提供器配置</param>
     /// <returns></returns>
-    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configureDelegate = default)
+    public static IHostBuilder UseFurion(this IHostBuilder hostBuilder)
     {
         // 配置框架诊断监听器
         DiagnosticListener.AllListeners.Subscribe(new FurionDiagnosticObserver());
@@ -35,8 +32,8 @@ public static class FurionHostBuilderExtensions
         // 配置框架初始化配置
         hostBuilder.ConfigureAppConfiguration();
 
-        // 替换 .NET 内置默认服务提供器工厂
-        hostBuilder.UseAppServiceProviderFactory(configureDelegate);
+        // 配置服务构建器
+        hostBuilder.ConfigureServiceBuilder();
 
         // 配置初始服务
         hostBuilder.ConfigureServices((context, services) =>
@@ -49,44 +46,5 @@ public static class FurionHostBuilderExtensions
         });
 
         return hostBuilder;
-    }
-
-    /// <summary>
-    /// 配置框架初始化配置
-    /// </summary>
-    /// <param name="hostBuilder"></param>
-    /// <returns></returns>
-    internal static IHostBuilder ConfigureAppConfiguration(this IHostBuilder hostBuilder)
-    {
-        // 添加框架初始配置
-        hostBuilder.ConfigureAppConfiguration((context, configurationBuilder) =>
-        {
-            // 添加 Furion 框架环境变量配置支持
-            configurationBuilder.AddEnvironmentVariables(prefix: context.Configuration.GetValue($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions.environmentVariablesPrefix))
-                                .AddCustomizeConfigurationFiles(context.Configuration, context.HostingEnvironment);
-        });
-
-        return hostBuilder;
-    }
-
-    /// <summary>
-    /// 添加自定义配置
-    /// </summary>
-    /// <param name="configurationBuilder"></param>
-    /// <param name="configuration"></param>
-    /// <returns></returns>
-    internal static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
-    {
-        var userConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
-        if (userConfigurationFiles.IsEmpty())
-        {
-            return configurationBuilder;
-        }
-
-        // 遍历添加
-        Array.ForEach(userConfigurationFiles, filePath
-            => configurationBuilder.AddFile(filePath, environment));
-
-        return configurationBuilder;
     }
 }

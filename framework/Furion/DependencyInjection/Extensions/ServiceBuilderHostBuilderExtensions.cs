@@ -18,51 +18,51 @@ using System.Reflection;
 namespace Microsoft.Extensions.Hosting;
 
 /// <summary>
-/// 框架内服务提供器工厂主机拓展类
+/// 服务构建器主机拓展类
 /// </summary>
-internal static class AppServiceProviderFactoryHostBuilderExtensions
+internal static class ServiceBuilderHostBuilderExtensions
 {
     /// <summary>
-    /// 使用框架提供的服务提供器工厂
+    /// 配置服务构建器
     /// </summary>
     /// <param name="hostBuilder"></param>
-    /// <param name="configureDelegate"></param>
     /// <returns></returns>
-    internal static IHostBuilder UseAppServiceProviderFactory(this IHostBuilder hostBuilder, Action<HostBuilderContext, ServiceProviderOptions>? configureDelegate = default)
+    internal static IHostBuilder ConfigureServiceBuilder(this IHostBuilder hostBuilder)
     {
         // 配置服务提供器，创建一个全局服务构建器并添加到上下文共享数据集合中
         hostBuilder.ConfigureContainer<IServiceCollection>((context, services) =>
         {
-            var serviceBuilder = new ServiceBuilder(context);
-            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
+            // 添加服务构建器及命名服务支持
+            services.AddServiceBuilderProvider(context);
 
-            serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
-            serviceBuilder.Build(services);
-
-            // 实现属性注入
-            services.AddPropertiesAutowired();
+            // 添加属性注入支持
+            services.AddPropertiesAutowired(context);
         });
 
-        // 替换 .NET 默认工厂
-        return hostBuilder.UseServiceProviderFactory(context =>
-        {
-            // 创建默认配置选项
-            var serviceProviderOptions = new ServiceProviderOptions();
-            var validateOnBuild = (serviceProviderOptions.ValidateScopes = context.HostingEnvironment.IsDevelopment());
-            serviceProviderOptions.ValidateOnBuild = validateOnBuild;
-
-            configureDelegate?.Invoke(context, serviceProviderOptions);
-
-            return new AppServiceProviderFactory(serviceProviderOptions);
-        });
+        return hostBuilder;
     }
 
     /// <summary>
-    /// 实现属性注入
+    /// 添加服务构建器及命名服务支持
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="context"></param>
+    internal static void AddServiceBuilderProvider(this IServiceCollection services, HostBuilderContext context)
+    {
+        var serviceBuilder = new ServiceBuilder(context);
+        context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
+
+        serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
+        serviceBuilder.Build(services);
+    }
+
+    /// <summary>
+    /// 添加属性注入支持
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="context"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddPropertiesAutowired(this IServiceCollection services)
+    internal static IServiceCollection AddPropertiesAutowired(this IServiceCollection services, HostBuilderContext context)
     {
         // 替换 Mvc 控制器激活器
         if (services.Any(u => u.ServiceType == typeof(IControllerActivator)))
@@ -70,7 +70,7 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
             services.Replace(ServiceDescriptor.Transient<IControllerActivator, AppControllerActivator>());
         }
 
-        // 替换所有 IHostedService 服务并实现属性注入
+        // 替换 IHostedService 服务注册方式
         var hostedServiceDescriptors = services.Where(u => u.ServiceType == typeof(IHostedService) && u.ImplementationType != default).ToList();
         foreach (var serviceDescriptor in hostedServiceDescriptors)
         {
@@ -80,6 +80,8 @@ internal static class AppServiceProviderFactoryHostBuilderExtensions
                 return ActivatorUtilities.CreateInstance(appServiceProvider, serviceDescriptor.ImplementationType!);
             }, serviceDescriptor.Lifetime));
         }
+
+        hostedServiceDescriptors.Clear();
 
         return services;
     }

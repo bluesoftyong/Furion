@@ -7,14 +7,12 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using Furion.DependencyInjection;
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -37,15 +35,8 @@ public static class FurionHostBuilderExtensions
         // 配置框架初始化配置
         hostBuilder.ConfigureAppConfiguration();
 
-        // 配置服务提供器，创建一个全局服务构建器并添加到上下文共享数据集合中
-        hostBuilder.ConfigureContainer<IServiceCollection>((context, services) =>
-        {
-            var serviceBuilder = new ServiceBuilder(context);
-            context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
-
-            serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
-            serviceBuilder.Build(services);
-        });
+        // 替换 .NET 内置默认服务提供器工厂
+        hostBuilder.UseAppServiceProviderFactory(configureDelegate);
 
         // 配置初始服务
         hostBuilder.ConfigureServices((context, services) =>

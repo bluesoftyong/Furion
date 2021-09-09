@@ -47,7 +47,7 @@ public class IAppSamplesController : ControllerBase
         var isSame = _app == app;
 
         // 读取配置
-        var appSettings = _app.Configuration["AppSettings"];
+        var prefix = _app.Configuration["AppSettings:EnvironmentVariablesPrefix"];
 
         // 判断环境
         var isDevelopment = _app.Environment.isDevelopment();

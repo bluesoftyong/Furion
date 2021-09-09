@@ -10,48 +10,6 @@
 - `Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1`
 - `.NET SDK 6 Daily Version`：[每日构建版](https://github.com/dotnet/installer#installers-and-binaries)
 
-## 开发规范
-
-- 采用一切为了依赖注入的设计模式
-- 尽可能避免静态类和静态属性定义
-- 尽可能保证方法原子性、职责单一性
-- 所有 `private` 字段须以 `_` 开头且采用 `小驼峰命名`
-- 所有类名、接口须采用 `大驼峰命名`，类型名采用 `名词` 拼接，接口须以 `I` 开头
-- 如果类不考虑被继承，设置为 `sealed` 私有类，同时尽可能添加 `partial` 修饰符
-- 如果类只是用来标记某个领域的属性，应采用 `结构` 定义
-- 所有能够在类构造函数初始化的字典都必须采用 `private readonly` 修饰
-- 如果类的属性无需外部赋值设置，应设置为 `{get;}` 或 `{get; internal set;}`
-- 所有事件类须以 `EventArgs` 结尾
-- 所有特性类须以 `Attribute` 结尾，且明确指定 `AttributeUsage` 特性
-- 所有类型拓展类必须以 `{类型}Extensions.cs` 命名，且命名空间均遵循 `Furion.模块.Extensions` 格式，泛型类遵循 `{类型}OfTExtensions.cs` 命名
-- 框架内部所有 `Helper` 拓展类及方法都应该是 `internal` 修饰
-- `IServiceCollection` 拓展方法须以 `Add` 开头
-- `IApplicationBuilder` 拓展方法须以 `Use` 开头
-- 对 `.NET` 的拓展尽可能保持和原生一样的命名空间
-- 所有中间件须以 `Middleware` 结尾
-- 所有筛选器须以 `Filter` 或 `AsyncFilter` 结尾
-- 框架内部默认实现须以 `App` 开头
-- 所有私有的方法禁止定义为拓展方法
-- 所有选项类须以 `SettingsOptions` 结尾
-- 尽可能在方法第一行判断参数空，统一采用 `if (parameter == null) throw new ArgumentNullException(nameof(parameter));`
-- 框架内部主动抛出内部异常均采用 `throw new InvalidOperationException($"消息.");` 方式
-- 框架尽可能在需要输出和调试地方使用 `Trace.WriteLine(消息);` 输出
-- 所有三元表达式代码须以 `?` 和 `:` 之前换行
-- 进行多条件 `||` 或 `&&` 判断时，每个组须之前换行
-- 所有 `Lambda` 操作代码，如果操作方法大于 `1` 个，须在每一个 `.Lambada<>` 之前换行
-- 构造函数如果定义超过一个参数，则在第二个开始换行，且以 `,` 开头
-- 框架内部尽可能保证模块零依赖性，除了公共 `Helpers`
-- 框架内所有的类、属性、方法、接口、事件、字段等成员必须采用 `///` 注释
-- 方法内的代码尽可能一组逻辑空一行且添加组注释，采用代码上行 `//` 注释
-- 框架内每个文件头部须添加开源协议描述头
-- `///` 注释尽可能简单命令，如需更多说明，须在 `<remarks></remarks>` 中编写，如果需要多行，采用 `<para></para>` 或 `<code>/</code>`
-- 框架中所有非服务类如果实现某接口方法，须采用 `显式实现`，避免外部调用
-- 所有测试方法须以 `Test` 开头，同时建议采用 `[Theory]`，而不是 `[Fact]`
-
-## 测试规范
-
-参照 [https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests](https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests)
-
 ## 状态
 
 我们创建了一个详细的列表来轻松显示 Furion 实验版本的状态和演变。
@@ -153,3 +111,45 @@
 | 支持特性配置                        | ⚠️   |
 | 支持 `IHostBuilderService` 配置服务 | ✅   |
 | 支持扫描程序集自动调用              | ✅   |
+
+## 开发规范
+
+- 采用一切为了依赖注入的设计模式
+- 尽可能避免静态类和静态属性定义
+- 尽可能保证方法原子性、职责单一性
+- 所有 `private` 字段须以 `_` 开头且采用 `小驼峰命名`
+- 所有类名、接口须采用 `大驼峰命名`，类型名采用 `名词` 拼接，接口须以 `I` 开头
+- 如果类不考虑被继承，设置为 `sealed` 私有类，同时尽可能添加 `partial` 修饰符
+- 如果类只是用来标记某个领域的属性，应采用 `结构` 定义
+- 所有能够在类构造函数初始化的字典都必须采用 `private readonly` 修饰
+- 如果类的属性无需外部赋值设置，应设置为 `{get;}` 或 `{get; internal set;}`
+- 所有事件类须以 `EventArgs` 结尾
+- 所有特性类须以 `Attribute` 结尾，且明确指定 `AttributeUsage` 特性
+- 所有类型拓展类必须以 `{类型}Extensions.cs` 命名，且命名空间均遵循 `Furion.模块.Extensions` 格式，泛型类遵循 `{类型}OfTExtensions.cs` 命名
+- 框架内部所有 `Helper` 拓展类及方法都应该是 `internal` 修饰
+- `IServiceCollection` 拓展方法须以 `Add` 开头
+- `IApplicationBuilder` 拓展方法须以 `Use` 开头
+- 对 `.NET` 的拓展尽可能保持和原生一样的命名空间
+- 所有中间件须以 `Middleware` 结尾
+- 所有筛选器须以 `Filter` 或 `AsyncFilter` 结尾
+- 框架内部默认实现须以 `App` 开头
+- 所有私有的方法禁止定义为拓展方法
+- 所有选项类须以 `SettingsOptions` 结尾
+- 尽可能在方法第一行判断参数空，统一采用 `if (parameter == null) throw new ArgumentNullException(nameof(parameter));`
+- 框架内部主动抛出内部异常均采用 `throw new InvalidOperationException($"消息.");` 方式
+- 框架尽可能在需要输出和调试地方使用 `Trace.WriteLine(消息);` 输出
+- 所有三元表达式代码须以 `?` 和 `:` 之前换行
+- 进行多条件 `||` 或 `&&` 判断时，每个组须之前换行
+- 所有 `Lambda` 操作代码，如果操作方法大于 `1` 个，须在每一个 `.Lambada<>` 之前换行
+- 构造函数如果定义超过一个参数，则在第二个开始换行，且以 `,` 开头
+- 框架内部尽可能保证模块零依赖性，除了公共 `Helpers`
+- 框架内所有的类、属性、方法、接口、事件、字段等成员必须采用 `///` 注释
+- 方法内的代码尽可能一组逻辑空一行且添加组注释，采用代码上行 `//` 注释
+- 框架内每个文件头部须添加开源协议描述头
+- `///` 注释尽可能简单命令，如需更多说明，须在 `<remarks></remarks>` 中编写，如果需要多行，采用 `<para></para>` 或 `<code>/</code>`
+- 框架中所有非服务类如果实现某接口方法，须采用 `显式实现`，避免外部调用
+- 所有测试方法须以 `Test` 开头，同时建议采用 `[Theory]`，而不是 `[Fact]`
+
+## 测试规范
+
+参照 [https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests](https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests)

@@ -9,7 +9,7 @@ using Xunit;
 namespace Furion.UnitTests;
 
 /// <summary>
-/// IApp 测试
+/// IApp 服务测试
 /// </summary>
 public class IAppTests
 {

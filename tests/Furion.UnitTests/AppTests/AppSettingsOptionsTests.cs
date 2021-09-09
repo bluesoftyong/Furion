@@ -13,12 +13,12 @@ using Xunit.Abstractions;
 namespace Furion.UnitTests;
 
 /// <summary>
-/// AppSettings 测试
+/// AppSettingsOptions 测试
 /// </summary>
-public class AppSettingsTests
+public class AppSettingsOptionsTests
 {
     private readonly ITestOutputHelper _output;
-    public AppSettingsTests(ITestOutputHelper output)
+    public AppSettingsOptionsTests(ITestOutputHelper output)
     {
         _output = output;
     }

@@ -1,8 +1,16 @@
 # `App` 模块
 
+🟡 [使用文档](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
+
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
-🟡 [使用文档](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
+`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。**
+
+如需手动注册，可添加以下注册：
+
+```cs
+services.AddApp(configuration);
+```
 
 ## `IApp` 服务接口
 

@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// App 模块服务拓展类
 /// </summary>
-internal static class AppServiceCollectionExtensions
+public static class AppServiceCollectionExtensions
 {
     /// <summary>
     /// 添加 App 模块注册
@@ -23,7 +23,7 @@ internal static class AppServiceCollectionExtensions
     /// <param name="services">服务集合对象</param>
     /// <param name="configuration">配置对象</param>
     /// <returns>服务集合对象</returns>
-    internal static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册 App 模块选项配置
         services.AddAppOptions<AppSettingsOptions>(configuration);

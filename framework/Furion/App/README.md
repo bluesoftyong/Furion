@@ -2,6 +2,14 @@
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
+## 源码/文档
+
+[https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App)
+
+## 单元测试
+
+[https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
+
 ## `IApp` 服务接口
 
 `IApp` 是 `App` 模块对外提供的服务接口，注册为 `单例` 服务。通过该接口可以获取主机常用服务对象，包括：
@@ -49,7 +57,7 @@ public class IAppSamplesController : ControllerBase
 
         // 判断环境
         var isDevelopment = _app.Environment.isDevelopment();
-        
+
         // 通过主机对象服务解析服务
         var app1 = _app.Host.Services.GetRequiredService<IApp>();
 
@@ -179,11 +187,3 @@ public class IAppSamplesController : ControllerBase
     }
 }
 ```
-
-## `App` 模块源码文档
-
-[https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App)
-
-## `App` 模块单元测试
-
-[https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)

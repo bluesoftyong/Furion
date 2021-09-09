@@ -28,7 +28,7 @@
 
 ### ✅ App / App
 
-🟡 **[使用文档](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)**
 
 | 功能                                        | 状态 |
 | ------------------------------------------- | ---- |

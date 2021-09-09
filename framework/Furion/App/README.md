@@ -150,21 +150,20 @@ public class IAppSamplesController : ControllerBase
 ### `AppSettingsOptions` 使用例子
 
 ```cs
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Furion.Samples;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class IAppSamplesController : ControllerBase
+public class AppSettingsOptionsSamplesController : ControllerBase
 {
     private readonly IOptions<AppSettingsOptions> _options;
     private readonly IOptionsSnapshot<AppSettingsOptions> _optionsSnapshot;
     private readonly IOptionsMonitor<AppSettingsOptions> _optionsMonitor;
-    public IAppSamplesController(IOptions<AppSettingsOptions> options
+    public AppSettingsOptionsSamplesController(IOptions<AppSettingsOptions> options
         , IOptionsSnapshot<AppSettingsOptions> optionsSnapshot
         , IOptionsMonitor<AppSettingsOptions> optionsMonitor)
     {

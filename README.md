@@ -1,6 +1,6 @@
 # Furion 探索版
 
-🎉 实现彻彻底底无第三方依赖的 Furion 版本。
+🎉 实现彻彻底底无第三方依赖的 Furion 版本，探索 Furion 更多未来可能性。
 
 - 作者：[百小僧](https://gitee.com/monksoul)
 - 日期：2021 年 08 月 30 日

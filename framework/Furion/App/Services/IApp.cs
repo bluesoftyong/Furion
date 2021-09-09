@@ -42,7 +42,7 @@ public interface IApp
     /// 解析服务
     /// </summary>
     /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
-    /// <returns>服务实例或 null </returns>
+    /// <returns>服务实例或 null</returns>
     TService? GetService<TService>()
        where TService : class;
 

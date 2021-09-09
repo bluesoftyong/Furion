@@ -113,6 +113,7 @@
 | 支持构造函数注入                                                               | ✅   |
 | 支持函数参数 `[FromServices]` 注入                                             | ✅   |
 | 支持属性 `[AutowiredServices]` 注入                                            | ✅   |
+| 支持字段 `[AutowiredServices]` 注入                                            | ⏳   |
 | 支持包装 `.NET` 原生 `IServiceCollection` 和 `IServiceProvider` 对象           | ✅   |
 | 支持依赖接口解析生存周期接口并注册                                             | ✅   |
 | 支持依赖接口工厂注册服务                                                       | ✅   |

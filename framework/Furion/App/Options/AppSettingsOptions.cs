@@ -11,42 +11,41 @@ using Furion.Options;
 namespace Furion;
 
 /// <summary>
-/// App 全局应用对象配置
+/// App 模块配置选项
 /// </summary>
 [AppOptions(sectionKey, ErrorOnUnknownConfiguration = true)]
 public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
 {
     /// <summary>
-    /// 节点 Key
+    /// 配置根节点名称
     /// </summary>
     internal const string sectionKey = "AppSettings";
 
     /// <summary>
-    /// 环境变量配置 Key 前缀
+    /// 环境配置提供程序节点变量前缀
     /// </summary>
     internal const string environmentVariablesPrefix = "FURION_";
 
     /// <summary>
-    /// 环境变量配置 Key 前缀
+    /// 环境配置提供程序节点变量前缀
     /// </summary>
     public string? EnvironmentVariablesPrefix { get; set; }
 
     /// <summary>
-    /// 配置文件列表
+    /// 自定义配置文件
     /// </summary>
     /// <remarks>
-    /// <para>限定特定配置文件：[...]; 不加载配置：null</para>
-    /// <para>@或~: 程序根目录（默认值）; /或!：绝对路径; &或.：程序执行目录（bin）</para>
-    /// <para>支持 *.json;*.xml;*.ini</para>
-    /// <para>支持配置 includeEnvironment、optional 和 reloadOnChange</para>
+    /// <para>*.json;*.xml;*.ini;</para>
+    /// <para>null: 不配置(缺省值);</para>
+    /// <para>@ 或 ~：入口目录(缺省值); / 或 !：绝对路径; <c>与符号</c> 或 .：执行目录(bin);</para>
+    /// <para>参数：includeEnvironment; optional; reloadOnChange;</para>
     /// </remarks>
-    /// <example>["furion.json", "@furion.json", "&furion.json", "/D:/furion.json", "furion.json optional=true reloadOnChange=true"]</example>
     public string[]? CustomizeConfigurationFiles { get; set; }
 
     /// <summary>
     /// 后期配置
     /// </summary>
-    /// <param name="options"></param>
+    /// <param name="options">当前选项对象</param>
     void IAppOptions<AppSettingsOptions>.PostConfigure(AppSettingsOptions options)
     {
         options.EnvironmentVariablesPrefix ??= environmentVariablesPrefix;

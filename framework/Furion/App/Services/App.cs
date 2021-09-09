@@ -9,36 +9,27 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 
 namespace Furion;
 
 /// <summary>
-/// App 全局应用对象实现类
+/// App 模块全局单例服务
 /// </summary>
 internal sealed partial class App : IApp
 {
     /// <summary>
-    /// 日志对象
-    /// </summary>
-    private readonly ILogger<App> _logger;
-
-    /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="serviceProvider"></param>
-    /// <param name="configuration"></param>
-    /// <param name="hostEnvironment"></param>
-    /// <param name="host"></param>
-    public App(ILogger<App> logger
-        , IServiceProvider serviceProvider
+    /// <param name="serviceProvider">服务提供器</param>
+    /// <param name="configuration">配置对象</param>
+    /// <param name="hostEnvironment">主机环境对象</param>
+    /// <param name="host">主机对象</param>
+    public App(IServiceProvider serviceProvider
         , IConfiguration configuration
         , IHostEnvironment hostEnvironment
         , IHost host)
     {
-        _logger = logger;
         ServiceProvider = serviceProvider;
         Configuration = configuration;
         Environment = hostEnvironment;
@@ -56,7 +47,7 @@ internal sealed partial class App : IApp
     public IConfiguration Configuration { get; }
 
     /// <summary>
-    /// 主机环境
+    /// 主机环境对象
     /// </summary>
     public IHostEnvironment Environment { get; }
 
@@ -69,8 +60,8 @@ internal sealed partial class App : IApp
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <returns> 服务实现类或Null </returns>
+    /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+    /// <returns>服务实例或 null </returns>
     public TService? GetService<TService>()
         where TService : class
     {
@@ -80,8 +71,9 @@ internal sealed partial class App : IApp
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <returns> 服务实现类或异常 </returns>
+    /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+    /// <remarks>服务未注册将抛异常</remarks>
+    /// <returns>服务实例</returns>
     public TService? GetRequiredService<TService>()
         where TService : class
     {

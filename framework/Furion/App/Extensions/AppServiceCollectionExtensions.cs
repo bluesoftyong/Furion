@@ -13,22 +13,22 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// App 全局应用服务拓展类
+/// App 模块服务拓展类
 /// </summary>
 internal static class AppServiceCollectionExtensions
 {
     /// <summary>
-    /// 添加 App 全局应用服务
+    /// 添加 App 模块注册
     /// </summary>
-    /// <param name="services">服务注册集合</param>
-    /// <param name="configuration">配置对象或配置节点对象</param>
-    /// <returns></returns>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="configuration">配置对象</param>
+    /// <returns>服务集合对象</returns>
     internal static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
-        // 注册 App 全局应用配置
+        // 注册 App 模块选项配置
         services.AddAppOptions<AppSettingsOptions>(configuration);
 
-        // 注册全局 IApp 对象
+        // 注册 App 模块 IApp 单例服务
         services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));
 
         return services;

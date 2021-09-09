@@ -8,7 +8,6 @@
 
 using Furion.ObjectExtensions;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -17,7 +16,7 @@ namespace System;
 /// <summary>
 /// 属性注入服务提供器
 /// </summary>
-internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider, IDisposable
+internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider
 {
     /// <summary>
     /// .NET 内置服务提供器
@@ -31,8 +30,6 @@ internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider, IDis
     public AutowiredServiceProvider(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-
-        Trace.WriteLine($"{nameof(AutowiredServiceProvider)} is initial.");
     }
 
     /// <summary>
@@ -104,13 +101,5 @@ internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider, IDis
         }
 
         return instance;
-    }
-
-    /// <summary>
-    /// 监听回收
-    /// </summary>
-    public void Dispose()
-    {
-        Trace.WriteLine($"{nameof(AutowiredServiceProvider)} is dispose.");
     }
 }

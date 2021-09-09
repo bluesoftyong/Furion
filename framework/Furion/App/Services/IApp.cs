@@ -13,7 +13,7 @@ using System;
 namespace Furion;
 
 /// <summary>
-/// App 全局应用对象接口规范
+/// App 模块全局单例服务接口
 /// </summary>
 public interface IApp
 {
@@ -28,7 +28,7 @@ public interface IApp
     IConfiguration Configuration { get; }
 
     /// <summary>
-    /// 主机环境
+    /// 主机环境对象
     /// </summary>
     IHostEnvironment Environment { get; }
 
@@ -41,16 +41,17 @@ public interface IApp
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <returns> 服务实现类或Null </returns>
+    /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+    /// <returns>服务实例或 null </returns>
     TService? GetService<TService>()
        where TService : class;
 
     /// <summary>
     /// 解析服务
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
-    /// <returns> 服务实现类或异常 </returns>
+    /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+    /// <remarks>服务未注册将抛异常</remarks>
+    /// <returns>服务实例</returns>
     TService? GetRequiredService<TService>()
        where TService : class;
 }

@@ -1,14 +1,18 @@
+[TOC]
+
 # `App` 模块
 
 🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)**
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
-`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。** 如需手动注册，可添加以下注册：
+`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。**
 
-```cs
-services.AddApp(configuration);
-```
+!!! info 如需手动注册，可添加以下注册
+
+    ```cs {.line-numbers highlight=[1]}
+    services.AddApp(configuration);
+    ```
 
 ## `IApp` 服务接口
 
@@ -27,7 +31,7 @@ services.AddApp(configuration);
 
 ### `IApp` 使用例子
 
-```cs
+```cs {.line-numbers  highlight=[12-13,21-41]}
 using Microsoft.AspNetCore.Mvc;
 
 namespace Furion.Samples.AppSamples;
@@ -88,7 +92,7 @@ public class IAppSamplesController : ControllerBase
 
 - 如果配置项以 `@` 或 `~` 开头，则默认拼接 `启动项目根目录`，如：
 
-```json
+```json {.line-numbers highlight=[3]}
 {
     "AppSettings: {
         "CustomizeConfigurationFiles": [ "@furion.json", "~furion.json" ]
@@ -100,7 +104,7 @@ public class IAppSamplesController : ControllerBase
 
 - 如果配置项以 `&` 或 `.` 开头，则默认拼接 `程序执行目录`，如：
 
-```json
+```json {.line-numbers highlight=[3]}
 {
     "AppSettings: {
         "CustomizeConfigurationFiles": [ "&furion.json", ".furion.json" ]
@@ -112,7 +116,7 @@ public class IAppSamplesController : ControllerBase
 
 - 如果配置项以 `/` 或 `!` 开头，则认为这是一个绝对路径，如：
 
-```json
+```json {.line-numbers highlight=[3]}
 {
     "AppSettings: {
         "CustomizeConfigurationFiles": [ "!D:/furion.json", "/D:/furion.json" ]
@@ -124,7 +128,7 @@ public class IAppSamplesController : ControllerBase
 
 - 除此之外，则默认拼接 `启动项目根目录`，与 `@ 或 /` 配置方式一致，如：
 
-```json
+```json {.line-numbers highlight=[3]}
 {
     "AppSettings: {
         "CustomizeConfigurationFiles": [ "furion.json", "furion.json" ]
@@ -136,7 +140,7 @@ public class IAppSamplesController : ControllerBase
 
 除了上述配置项前缀提供了语法支持外，`Furion` 框架还提供类型 `命令操作符` 的可选参数配置文件添加方式。如：
 
-```cs
+```cs {.line-numbers highlight=[3]}
 {
     "AppSettings: {
         "CustomizeConfigurationFiles": [ "furion.json includeEnvironment=true optional=false reloadOnChange=false" ]
@@ -154,7 +158,7 @@ public class IAppSamplesController : ControllerBase
 
 ### `AppSettingsOptions` 使用例子
 
-```cs
+```cs {.line-numbers highlight=[13-18,28-38]}
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

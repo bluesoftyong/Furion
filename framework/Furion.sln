@@ -14,7 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.UnitTests", "..\tests\Furion.UnitTests\Furion.UnitTests.csproj", "{365AB77E-CF51-4074-A4F5-18EFB0BBE26B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.UnitTests", "..\tests\Furion.UnitTests\Furion.UnitTests.csproj", "{365AB77E-CF51-4074-A4F5-18EFB0BBE26B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A3A3DE95-3C43-4BB2-BB19-D2590791177B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.Samples", "..\samples\Furion.Samples\Furion.Samples.csproj", "{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +34,10 @@ Global
 		{365AB77E-CF51-4074-A4F5-18EFB0BBE26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{365AB77E-CF51-4074-A4F5-18EFB0BBE26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{365AB77E-CF51-4074-A4F5-18EFB0BBE26B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2F5005E8-4F32-4DFE-8696-0CE475720072} = {D916793E-B733-4749-816E-53C9F0E2CEE5}
 		{365AB77E-CF51-4074-A4F5-18EFB0BBE26B} = {5A5E5D50-292A-4D8F-8F20-1608C96B7E0D}
+		{0FD60988-E1B5-44CC-AAFB-6FC8DDF0DE20} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E763CD91-CB16-429F-9BC5-04117852A67D}

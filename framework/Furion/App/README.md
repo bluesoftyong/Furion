@@ -28,15 +28,15 @@ services.AddApp(configuration);
 ### `IApp` 使用例子
 
 ```cs
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Furion.Samples;
+namespace Furion.Samples.AppSamples;
 
-[ApiController]
+/// <summary>
+/// App 模块 IApp 服务使用示例
+/// </summary>
 [Route("api/[controller]/[action]")]
+[ApiController]
 public class IAppSamplesController : ControllerBase
 {
     private readonly IApp _app;
@@ -50,20 +50,25 @@ public class IAppSamplesController : ControllerBase
     {
         // 解析服务
         var app = _app.ServiceProvider.GetRequiredService<IApp>();
-        var isSame = _app == app;
+        Console.WriteLine(_app == app);
 
         // 读取配置
-        var prefix = _app.Configuration["AppSettings:EnvironmentVariablesPrefix"];
+        var environmentVariablesPrefix = _app.Configuration["AppSettings:EnvironmentVariablesPrefix"];
+        Console.WriteLine(environmentVariablesPrefix);
 
         // 判断环境
-        var isDevelopment = _app.Environment.isDevelopment();
+        var isDevelopment = _app.Environment.IsDevelopment();
+        Console.WriteLine(isDevelopment);
 
         // 通过主机对象服务解析服务
         var app1 = _app.Host.Services.GetRequiredService<IApp>();
+        Console.WriteLine(app1);
 
         // 直接解析服务
-        var someService = _app.GetService<ISomeService>();
-        var otherService = _app.GetRequiredService(typeof(IOtherService));
+        var notRegisterService = _app.GetService<INotRegisterService>();
+        var registerService = _app.GetRequiredService(typeof(IRegisterService));
+        Console.WriteLine(notRegisterService);
+        Console.WriteLine(registerService);
     }
 }
 ```
@@ -150,12 +155,14 @@ public class IAppSamplesController : ControllerBase
 ### `AppSettingsOptions` 使用例子
 
 ```cs
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
 
-namespace Furion.Samples;
+namespace Furion.Samples.AppSamples;
 
+/// <summary>
+/// App 模块 AppSettingsOptions 使用示例
+/// </summary>
 [ApiController]
 [Route("api/[controller]/[action]")]
 public class AppSettingsOptionsSamplesController : ControllerBase
@@ -177,12 +184,15 @@ public class AppSettingsOptionsSamplesController : ControllerBase
     {
         // 配置更改不会刷新
         var appSettings1 = _options.Value;
+        Console.WriteLine(appSettings1.EnvironmentVariablesPrefix);
 
         // 配置更改后下次请求应用
         var appSettings2 = _optionsSnapshot.Value;
+        Console.WriteLine(appSettings2.EnvironmentVariablesPrefix);
 
         // 配置更改后，每次调用都能获取最新配置
         var appSettings3 = _optionsMonitor.CurrentValue;
+        Console.WriteLine(appSettings3.EnvironmentVariablesPrefix);
     }
 }
 ```

@@ -250,7 +250,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
             {
                 var appServiceProvider = provider.Autowired();
                 var instance = implementationFactory(appServiceProvider);
-                return appServiceProvider.ResolveAutowriedService(instance)!;
+                return appServiceProvider.Autowried(instance)!;
             }, lifetime));
 
             // 注册命名服务

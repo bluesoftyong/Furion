@@ -44,7 +44,7 @@ internal sealed class AutowiredControllerActivator : IControllerActivator
         var autowiredServiceProvider = controllerContext.HttpContext.RequestServices.Autowired();
         var controller = CreateInstance(controllerTypeInfo, autowiredServiceProvider);
 
-        return autowiredServiceProvider.ResolveAutowriedService(controller)!;
+        return autowiredServiceProvider.Autowried(controller)!;
     }
 
     /// <summary>

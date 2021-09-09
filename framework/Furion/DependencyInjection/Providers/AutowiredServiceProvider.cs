@@ -45,7 +45,7 @@ internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider
             return default;
         }
 
-        return ResolveAutowriedService(instance);
+        return Autowried(instance);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ internal sealed class AutowiredServiceProvider : IAutowiredServiceProvider
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public object? ResolveAutowriedService(object? instance)
+    public object? Autowried(object? instance)
     {
         if (instance == null)
         {

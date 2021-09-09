@@ -20,5 +20,5 @@ public interface IAutowiredServiceProvider : IServiceProvider, ISupportRequiredS
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    object? ResolveAutowriedService(object? instance);
+    object? Autowried(object? instance);
 }

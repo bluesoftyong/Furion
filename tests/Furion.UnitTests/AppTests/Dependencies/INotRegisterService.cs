@@ -1,5 +1,4 @@
-﻿
-namespace Furion.UnitTests;
+﻿namespace Furion.UnitTests;
 
 /// <summary>
 /// 没有注册的空接口

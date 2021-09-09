@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="App\appsettings.Development.json" />
-    <None Remove="App\appsettings.json" />
+    <None Remove="AppTests\appsettings.Development.json" />
+    <None Remove="AppTests\appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>

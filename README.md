@@ -5,10 +5,10 @@
 - 作者：[百小僧](https://gitee.com/monksoul)
 - 日期：2021 年 08 月 30 日
 
-## 运行环境
+## 环境
 
-- IDE：`Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1`
-- SDK：`.NET SDK 6 Daily Version`：[每日构建版](https://github.com/dotnet/installer#installers-and-binaries)
+- IDE ：`Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1`
+- SDK ：`.NET SDK 6 Daily Version`：[每日构建版](https://github.com/dotnet/installer#installers-and-binaries)
 - 语言：C#10
 
 ## 状态
@@ -113,7 +113,7 @@
 | 支持 `IHostBuilderService` 配置服务 | ✅   |
 | 支持扫描程序集自动调用              | ✅   |
 
-## 开发规范
+## 规范
 
 - 采用一切为了依赖注入的设计模式
 - 尽可能避免静态类和静态属性定义
@@ -151,6 +151,6 @@
 - 框架中所有非服务类如果实现某接口方法，须采用 `显式实现`，避免外部调用
 - 所有测试方法须以 `Test` 开头，同时建议采用 `[Theory]`，而不是 `[Fact]`
 
-## 测试规范
+## 测试
 
 参照 [https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests](https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests)

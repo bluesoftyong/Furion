@@ -60,10 +60,30 @@ internal sealed partial class App : IApp
     /// <summary>
     /// 解析服务
     /// </summary>
+    /// <param name="serviceType">服务类型</param>
+    /// <returns>object或null</returns>
+    public object? GetService(Type serviceType)
+    {
+        return ServiceProvider.GetService(serviceType);
+    }
+
+    /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <param name="serviceType">服务类型</param>
+    /// <returns>object或异常</returns>
+    public object GetRequiredService(Type serviceType)
+    {
+        return ServiceProvider.GetRequiredService(serviceType);
+    }
+
+    /// <summary>
+    /// 解析服务
+    /// </summary>
     /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
-    /// <returns>服务实例或 null </returns>
+    /// <returns>服务实例或null</returns>
     public TService? GetService<TService>()
-        where TService : class
+         where TService : class
     {
         return ServiceProvider.GetService<TService>();
     }
@@ -72,9 +92,8 @@ internal sealed partial class App : IApp
     /// 解析服务
     /// </summary>
     /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
-    /// <remarks>服务未注册将抛异常</remarks>
-    /// <returns>服务实例</returns>
-    public TService? GetRequiredService<TService>()
+    /// <returns>服务实例或异常</returns>
+    public TService GetRequiredService<TService>()
         where TService : class
     {
         return ServiceProvider.GetRequiredService<TService>();

@@ -41,8 +41,22 @@ public interface IApp
     /// <summary>
     /// 解析服务
     /// </summary>
+    /// <param name="serviceType">服务类型</param>
+    /// <returns>object或null</returns>
+    object? GetService(Type serviceType);
+
+    /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <param name="serviceType">服务类型</param>
+    /// <returns>object或异常</returns>
+    object GetRequiredService(Type serviceType);
+
+    /// <summary>
+    /// 解析服务
+    /// </summary>
     /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
-    /// <returns>服务实例或 null</returns>
+    /// <returns>服务实例或null</returns>
     TService? GetService<TService>()
        where TService : class;
 
@@ -50,8 +64,7 @@ public interface IApp
     /// 解析服务
     /// </summary>
     /// <typeparam name="TService">服务类型，约束为引用类型</typeparam>
-    /// <remarks>服务未注册将抛异常</remarks>
-    /// <returns>服务实例</returns>
-    TService? GetRequiredService<TService>()
+    /// <returns>服务实例或异常</returns>
+    TService GetRequiredService<TService>()
        where TService : class;
 }

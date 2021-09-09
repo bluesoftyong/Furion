@@ -6,27 +6,15 @@ using Xunit.Abstractions;
 namespace Furion.IntegrationTests;
 
 /// <summary>
-/// App 全局应用对象集成测试
+/// App 模块集成测试
 /// </summary>
-public class AppTests : IClassFixture<WebApplicationFactory<TestProject.FakeStartup>>
+public class AppTests : IClassFixture<WebApplicationFactory<AppTestProject.FakeStartup>>
 {
-    /// <summary>
-    /// 标准输出
-    /// </summary>
     private readonly ITestOutputHelper _output;
+    private readonly WebApplicationFactory<AppTestProject.FakeStartup> _factory;
 
-    /// <summary>
-    /// Web 应用工厂
-    /// </summary>
-    private readonly WebApplicationFactory<TestProject.FakeStartup> _factory;
-
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="output">标准输出</param>
-    /// <param name="factory">Web 应用工厂</param>
     public AppTests(ITestOutputHelper output,
-        WebApplicationFactory<TestProject.FakeStartup> factory)
+        WebApplicationFactory<AppTestProject.FakeStartup> factory)
     {
         _output = output;
         _factory = factory;
@@ -38,12 +26,45 @@ public class AppTests : IClassFixture<WebApplicationFactory<TestProject.FakeStar
     /// <param name="url"></param>
     /// <returns></returns>
     [Theory]
-    [InlineData("/AppTests/TestIsSingleton")]
-    public async Task TestIsSingleton(string url)
+    [InlineData("/TestIApp/TestIAppIsSingleton")]
+    public async Task TestIAppIsSingleton(string url)
     {
-        var content = await _factory.PostAsStringAsync(url);
-        _output.WriteLine($"{content}");
+        await _factory.PostAsync(url);
+    }
 
-        Assert.True(bool.Parse(content));
+    /// <summary>
+    /// 测试 IApp 实例
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/TestIApp/TestIAppNotPublicInstance")]
+    public async Task TestIAppNotPublicInstance(string url)
+    {
+        await _factory.PostAsync(url);
+    }
+
+    /// <summary>
+    /// 测试 IApp 属性
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/TestIApp/TestIAppProperties")]
+    public async Task TestIAppProperties(string url)
+    {
+        await _factory.PostAsync(url);
+    }
+
+    /// <summary>
+    /// 测试 IApp 方法
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    [Theory]
+    [InlineData("/TestIApp/TestIAppMethods")]
+    public async Task TestIAppMethods(string url)
+    {
+        await _factory.PostAsync(url);
     }
 }

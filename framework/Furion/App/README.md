@@ -180,6 +180,10 @@ public class IAppSamplesController : ControllerBase
 }
 ```
 
+## `App` 模块源码文档
+
+[https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App)
+
 ## `App` 模块单元测试
 
 [https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)

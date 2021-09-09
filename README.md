@@ -7,9 +7,9 @@
 
 ## 环境
 
-- IDE ：`Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1`
-- SDK ：`.NET SDK 6 Daily Version`：[每日构建版](https://github.com/dotnet/installer#installers-and-binaries)
-- 语言：C#10
+- IDE ：[Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1](https://visualstudio.microsoft.com/zh-hans/vs/preview/)
+- SDK ：[.NET SDK 6 Daily Version](https://github.com/dotnet/installer#installers-and-binaries)
+- 语言：[C# 10](https://docs.microsoft.com/zh-cn/dotnet/csharp/whats-new/csharp-10)
 
 ## 状态
 

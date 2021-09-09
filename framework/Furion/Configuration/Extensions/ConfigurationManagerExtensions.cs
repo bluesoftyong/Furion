@@ -34,7 +34,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
     {
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
@@ -53,7 +53,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="reloadOnChange">变更刷新</param>
     /// <param name="includeEnvironment">包含环境</param>
     /// <returns></returns>
-    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = true, bool includeEnvironment = true)
+    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
     {
         if (string.IsNullOrWhiteSpace(filePath))
         {
@@ -142,7 +142,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="configurationManager">配置管理对象</param>
     /// <param name="initialData">集合</param>
     /// <returns></returns>
-    public static ConfigurationManager AddKeyPerFile(this ConfigurationManager configurationManager, string directoryPath, bool optional = true, bool reloadOnChange = true)
+    public static ConfigurationManager AddKeyPerFile(this ConfigurationManager configurationManager, string directoryPath, bool optional = true, bool reloadOnChange = false)
     {
         var configurationBuilder = configurationManager as IConfigurationBuilder;
 
@@ -158,7 +158,7 @@ public static class ConfigurationManagerExtensions
     /// <param name="optional"></param>
     /// <param name="reloadOnChange"></param>
     /// <returns></returns>
-    private static FileConfigurationSource CreateFileConfigurationSource(string path, bool optional = true, bool reloadOnChange = true)
+    private static FileConfigurationSource CreateFileConfigurationSource(string path, bool optional = true, bool reloadOnChange = false)
     {
         var fileExtension = Path.GetExtension(path);
         FileConfigurationSource? fileConfigurationSource = fileExtension.ToLower() switch

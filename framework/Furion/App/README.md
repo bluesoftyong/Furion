@@ -148,9 +148,9 @@ public class IAppSamplesController : ControllerBase
 
 配置项可选参数说明：
 
-- `includeEnvironment`：是否自动将该配置文件应用与主机环境，`bool` 类型，默认 `true`。如配置了 `furion.json includeEnvironment=true`，那么自动添加 `furion.{environment}.json` 配置，根据不同环境自动切换。
+- `includeEnvironment`：是否自动将该配置文件应用与主机环境，`bool` 类型，默认 `false`。如配置了 `furion.json includeEnvironment=true`，那么自动添加 `furion.{environment}.json` 配置，根据不同环境自动切换。
 - `optional`：是否不检查配置文件存在物理硬盘，`bool` 类型，默认 `true`，也就是即使文件不存在也可以添加，同时支持文件由无到有自动刷新 `IConfiguration` 配置对象。
-- `reloadOnChange`：是否文件发生改变自动刷新 `IConfiguration` 配置对象，`bool` 类型，默认 `true`。
+- `reloadOnChange`：是否文件发生改变自动刷新 `IConfiguration` 配置对象，`bool` 类型，默认 `false`。
 
 ### `AppSettingsOptions` 使用例子
 

@@ -27,7 +27,7 @@ public class AppSettingsOptionsTests
     /// 测试 AppSettingsOptions 非空
     /// </summary>
     [Fact]
-    public async Task TestAppSettingsNotNull()
+    public async Task TestNotNull()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         builder.WebHost.UseTestServer();
@@ -61,7 +61,7 @@ public class AppSettingsOptionsTests
     /// 测试 AppSettingsOptions 特性
     /// </summary>
     [Fact]
-    public void TestAppSettingsAttributes()
+    public void TestAttributes()
     {
         var type = typeof(AppSettingsOptions);
 
@@ -79,7 +79,7 @@ public class AppSettingsOptionsTests
     /// 测试 AppSettingsOptions 接口
     /// </summary>
     [Fact]
-    public void TestAppSettingsInterfaces()
+    public void TestInterfaces()
     {
         var type = typeof(AppSettingsOptions);
         var interfaces = type.GetInterfaces();
@@ -92,7 +92,7 @@ public class AppSettingsOptionsTests
     /// 测试 AppSettingsOptions 缺省配置
     /// </summary>
     [Fact]
-    public void TestDefaultAppSettings()
+    public void TestDefaultValue()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
@@ -118,7 +118,7 @@ public class AppSettingsOptionsTests
     /// 测试 AppSettingsOptions 自定义配置
     /// </summary>
     [Fact]
-    public void TestCustomizeAppSettings()
+    public void TestCustomizeConfiguration()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
 

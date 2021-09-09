@@ -18,7 +18,7 @@ public class IAppTests
     /// </summary>
     /// <param name="app3"></param>
     [Fact]
-    public void TestIAppIsSingleton()
+    public void TestSingletonLifetime()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         using var app = builder.Build();
@@ -45,7 +45,7 @@ public class IAppTests
     /// 测试 IApp 实例
     /// </summary>
     [Fact]
-    public void TestIAppNotPublicInstance()
+    public void TestInstance()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         using var app = builder.Build();
@@ -68,7 +68,7 @@ public class IAppTests
     /// 测试 IApp 属性
     /// </summary>
     [Fact]
-    public void TestIAppProperties()
+    public void TestProperties()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         using var app = builder.Build();
@@ -101,7 +101,7 @@ public class IAppTests
     /// 测试 IApp 方法
     /// </summary>
     [Fact]
-    public void TestIAppMethods()
+    public void TestMethods()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
         using var app = builder.Build();

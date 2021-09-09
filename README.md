@@ -79,7 +79,7 @@
 | `App` 模块文档                              | ✅   |
 | `App` 模块使用例子                          | ✅   |
 
-[使用文档](./framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
+🟡 [使用文档](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
 
 ### ⏳ 配置 / Configuration
 

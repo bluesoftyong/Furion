@@ -2,7 +2,7 @@
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
-🟡 [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
+🟡 [使用文档](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)
 
 ## `IApp` 服务接口
 

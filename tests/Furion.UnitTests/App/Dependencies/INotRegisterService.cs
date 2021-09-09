@@ -1,5 +1,5 @@
 ﻿
-namespace Furion.AppTestProject.Dependencies;
+namespace Furion.UnitTests;
 
 /// <summary>
 /// 没有注册的空接口

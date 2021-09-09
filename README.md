@@ -48,6 +48,10 @@
 - 框架中所有非服务类如果实现某接口方法，须采用 `显式实现`，避免外部调用
 - 所有测试方法须以 `Test` 开头，同时建议采用 `[Theory]`，而不是 `[Fact]`
 
+## 测试规范
+
+参照 [https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests](https://github.com/dotnet/aspnetcore/tree/main/src/DefaultBuilder/test/Microsoft.AspNetCore.Tests)
+
 ## 状态
 
 我们创建了一个详细的列表来轻松显示 Furion 实验版本的状态和演变。

@@ -24,25 +24,6 @@ namespace Microsoft.Extensions.Configuration;
 public static class IConfigurationBuilderExtensions
 {
     /// <summary>
-    /// 添加文件配置
-    /// </summary>
-    /// <param name="configurationManager">配置管理对象</param>
-    /// <param name="filePath">文件路径或配置语法路径</param>
-    /// <param name="environment">环境对象</param>
-    /// <param name="optional">是否可选配置文件</param>
-    /// <param name="reloadOnChange">变更刷新</param>
-    /// <param name="includeEnvironment">包含环境</param>
-    /// <returns></returns>
-    public static ConfigurationManager AddFile(this ConfigurationManager configurationManager, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
-    {
-        var configurationBuilder = configurationManager as IConfigurationBuilder;
-
-        configurationBuilder.AddFile(filePath, environment, optional, reloadOnChange, includeEnvironment);
-
-        return configurationManager;
-    }
-
-    /// <summary>
     /// 添加配置文件
     /// </summary>
     /// <param name="configurationBuilder">配置构建对象</param>
@@ -75,7 +56,7 @@ public static class IConfigurationBuilderExtensions
         configurationBuilder.Add(CreateFileConfigurationSource(filePath, optional, reloadOnChange));
 
         // 处理包含环境标识的文件
-        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentName))
+        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentName, StringComparison.OrdinalIgnoreCase))
         {
             // 取得带环境文件名绝对路径
             var fileNameWithEnvironmentPath = ResolveRealAbsolutePath(fileNameWithEnvironmentPart.Replace("{env}", environment.EnvironmentName));
@@ -85,36 +66,6 @@ public static class IConfigurationBuilderExtensions
         }
 
         return configurationBuilder;
-    }
-
-    /// <summary>
-    /// 添加内存集合配置
-    /// </summary>
-    /// <param name="configurationManager">配置管理对象</param>
-    /// <param name="initialData">集合</param>
-    /// <returns></returns>
-    public static ConfigurationManager AddInMemoryCollection(this ConfigurationManager configurationManager, IEnumerable<KeyValuePair<string, string>> initialData)
-    {
-        var configurationBuilder = configurationManager as IConfigurationBuilder;
-
-        configurationBuilder.AddInMemoryCollection(initialData);
-
-        return configurationManager;
-    }
-
-    /// <summary>
-    /// 添加目录文件 Key-per-file 配置
-    /// </summary>
-    /// <param name="configurationManager">配置管理对象</param>
-    /// <param name="initialData">集合</param>
-    /// <returns></returns>
-    public static ConfigurationManager AddKeyPerFile(this ConfigurationManager configurationManager, string directoryPath, bool optional = true, bool reloadOnChange = false)
-    {
-        var configurationBuilder = configurationManager as IConfigurationBuilder;
-
-        configurationBuilder.AddKeyPerFile(directoryPath, optional, reloadOnChange);
-
-        return configurationManager;
     }
 
     /// <summary>
@@ -143,32 +94,25 @@ public static class IConfigurationBuilderExtensions
             throw new ArgumentNullException(nameof(fileName));
         }
 
-        // 检查文件名格式和参数格式
-        if (!Regex.IsMatch(fileName, fileNamePattern) || !Regex.IsMatch(fileName, parameterPattern))
+        // 检查文件名格式
+        if (!Regex.IsMatch(fileName, fileNamePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
         {
             throw new InvalidOperationException($"The `{fileName}` is not a valid supported file name format.");
         }
 
         // 匹配文件名部分
-        var fileNameMatch = Regex.Match(fileName, fileNamePattern);
+        var fileNameMatch = Regex.Match(fileName, fileNamePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         fileNamePart = fileNameMatch.Groups["fileName"].Value;
         // 取环境名
         environmentName = fileNameMatch.Groups["environmentName"].Value;
 
         // 生成带环境标识的文件名
-        if (!string.IsNullOrWhiteSpace(environmentName))
-        {
-            var realName = fileNameMatch.Groups["realName"].Value;
-            var extension = fileNameMatch.Groups["extension"].Value;
-            fileNameWithEnvironmentPart = $"{realName}.{{env}}.{extension}";
-        }
-        else
-        {
-            fileNameWithEnvironmentPart = string.Empty;
-        }
+        var realName = fileNameMatch.Groups["realName"].Value;
+        var extension = fileNameMatch.Groups["extension"].Value;
+        fileNameWithEnvironmentPart = $"{realName}.{{env}}{extension}";
 
         // 匹配文件名参数部分
-        parameterParts = Regex.Matches(fileName, parameterPattern).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
+        parameterParts = Regex.Matches(fileName, parameterPattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
     }
 
     /// <summary>
@@ -192,7 +136,8 @@ public static class IConfigurationBuilderExtensions
         {
             '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName[1..]),
             '/' or '!' => fileName[1..],
-            '@' or '~' or _ => Path.Combine(Directory.GetCurrentDirectory(), fileName[1..])
+            '@' or '~' => Path.Combine(Directory.GetCurrentDirectory(), fileName[1..]),
+            _ => Path.Combine(Directory.GetCurrentDirectory(), fileName)
         };
     }
 

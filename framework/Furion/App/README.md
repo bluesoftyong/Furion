@@ -4,7 +4,7 @@
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
-`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。** 如需手动注册，可添加以下注册
+`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。** 如需手动注册，可添加以下注册：
 
 ```cs
 services.AddApp(configuration);

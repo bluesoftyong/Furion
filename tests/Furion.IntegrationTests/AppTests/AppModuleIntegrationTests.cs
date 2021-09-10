@@ -7,10 +7,10 @@ namespace Furion.IntegrationTests;
 /// <summary>
 /// App Ä£¿é¼¯³É²âÊÔ
 /// </summary>
-public class AppIntegrationTests : IClassFixture<WebApplicationFactory<Furion.AppSamples.FakeStartup>>
+public class AppModuleIntegrationTests : IClassFixture<WebApplicationFactory<Furion.AppSamples.FakeStartup>>
 {
     private readonly WebApplicationFactory<Furion.AppSamples.FakeStartup> _factory;
-    public AppIntegrationTests(WebApplicationFactory<Furion.AppSamples.FakeStartup> factory)
+    public AppModuleIntegrationTests(WebApplicationFactory<Furion.AppSamples.FakeStartup> factory)
     {
         _factory = factory;
     }

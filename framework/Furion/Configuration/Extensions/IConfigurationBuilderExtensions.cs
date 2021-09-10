@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration.Xml;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -44,78 +43,45 @@ public static class IConfigurationBuilderExtensions
     }
 
     /// <summary>
-    /// 添加文件配置
+    /// 添加配置文件
     /// </summary>
-    /// <param name="configurationBuilder">配置构建器</param>
-    /// <param name="filePath">文件路径或配置语法路径</param>
+    /// <param name="configurationBuilder">配置构建对象</param>
+    /// <param name="fileName">文件名</param>
     /// <param name="environment">环境对象</param>
-    /// <param name="optional">是否可选配置文件</param>
-    /// <param name="reloadOnChange">变更刷新</param>
-    /// <param name="includeEnvironment">包含环境</param>
-    /// <returns></returns>
-    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string filePath, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
+    /// <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
+    /// <param name="reloadOnChange">是否监听文件更改</param>
+    /// <param name="includeEnvironment">是否包含环境文件格式注册</param>
+    /// <returns>IConfigurationBuilder</returns>
+    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string fileName, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            throw new ArgumentNullException(nameof(filePath));
-        }
+        // 检查文件名格式
+        CheckFileNamePattern(fileName, out var fileNamePart
+            , out var environmentName
+            , out var fileNameWithEnvironmentPart
+            , out var parameterParts);
 
-        var parameterRegex = new Regex(@"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)");
-
-        // 校验配置选项格式是否正确
-        var defineParameters = parameterRegex.IsMatch(filePath);
-        var itemSplits = filePath.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (!defineParameters && itemSplits.Length > 1)
-        {
-            throw new InvalidCastException($"The `{filePath}` is not a valid configuration format.");
-        }
-
-        var firstSplit = itemSplits[0];
-        string fileName;
-        // 解析绝对路径
-        var fileFullPath = firstSplit[0] switch
-        {
-            '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName = firstSplit[1..]),
-            '/' or '!' => fileName = firstSplit[1..],
-            '@' or '~' => Path.Combine(environment is null ? Directory.GetCurrentDirectory() : environment.ContentRootPath, fileName = firstSplit[1..]),
-            _ => Path.Combine(environment is null ? Directory.GetCurrentDirectory() : environment.ContentRootPath, fileName = firstSplit)
-        };
-
-        Trace.WriteLine(fileFullPath);
-
-        // 判断文件格式是否正确 xxx[.{environment}].(json|xml|.ini)
-        var fileNameSplits = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries);
-        if (!(fileNameSplits.Length == 2 || fileNameSplits.Length == 3))
-        {
-            throw new InvalidOperationException($"The `{fileName}` is not in a valid format of `xxx[.{{environment}}].(json|xml|.ini)`.");
-        }
+        // 获取文件名绝对路径
+        var filePath = ResolveRealAbsolutePath(fileNamePart);
 
         // 填充配置参数
-        if (defineParameters)
+        if (parameterParts.Count > 0)
         {
-            var parameters = parameterRegex.Matches(filePath)
-                                                               .ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
-
-            parameters.TryGetValue(nameof(optional), out optional);
-            parameters.TryGetValue(nameof(reloadOnChange), out reloadOnChange);
-            parameters.TryGetValue(nameof(includeEnvironment), out includeEnvironment);
+            parameterParts.TryGetValue(nameof(optional), out optional);
+            parameterParts.TryGetValue(nameof(reloadOnChange), out reloadOnChange);
+            parameterParts.TryGetValue(nameof(includeEnvironment), out includeEnvironment);
         }
 
         // 添加配置文件
-        configurationBuilder.Add(CreateFileConfigurationSource(fileFullPath, optional, reloadOnChange));
+        configurationBuilder.Add(CreateFileConfigurationSource(filePath, optional, reloadOnChange));
 
-        // 环境对象不为空且文件不带环境配置
-        if (fileNameSplits.Length == 2 && environment is not null)
+        // 处理包含环境标识的文件
+        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentName))
         {
-            // 是否带环境标识的文件名
-            var isWithEnvironmentFile = fileNameSplits.Length == 3 && fileNameSplits[1].Equals(environment.EnvironmentName, StringComparison.OrdinalIgnoreCase);
+            // 取得带环境文件名绝对路径
+            var fileNameWithEnvironmentPath = ResolveRealAbsolutePath(fileNameWithEnvironmentPart.Replace("{env}", environment.EnvironmentName));
 
             // 添加带环境配置文件
-            if (includeEnvironment || isWithEnvironmentFile)
-            {
-                var environmentFileFullPath = Path.Combine(Path.GetDirectoryName(fileFullPath)!, $"{fileNameSplits[0]}.{environment.EnvironmentName}{Path.GetExtension(fileName)}");
-                configurationBuilder.Add(CreateFileConfigurationSource(environmentFileFullPath, optional, reloadOnChange));
-            }
+            configurationBuilder.Add(CreateFileConfigurationSource(fileNameWithEnvironmentPath, optional, reloadOnChange));
         }
 
         return configurationBuilder;
@@ -152,13 +118,67 @@ public static class IConfigurationBuilderExtensions
     }
 
     /// <summary>
+    /// 文件名正则表达式
+    /// </summary>
+    private static readonly string fileNamePattern = @"^(?<fileName>(?<realName>(&|~|@|\.|/|!|[a-zA-Z])[a-zA-Z0-9\\:\.]+?)(\.(?<environmentName>[a-zA-Z][a-zA-Z0-9]*))?(?<extension>\.json|xml|ini))";
+
+    /// <summary>
+    /// 配置参数正则表达式
+    /// </summary>
+    private static readonly string parameterPattern = @"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)";
+
+    /// <summary>
+    /// 检查文件名格式是否是受支持的格式
+    /// </summary>
+    /// <param name="fileName">文件名</param>
+    /// <param name="fileNamePart">返回文件名匹配部分</param>
+    /// <param name="environmentName">环境名匹配部分</param>
+    /// <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
+    /// <param name="parameterParts">参数匹配部分</param>
+    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentName, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterParts)
+    {
+        // 空检查
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentNullException(nameof(fileName));
+        }
+
+        // 检查文件名格式和参数格式
+        if (!Regex.IsMatch(fileName, fileNamePattern) || !Regex.IsMatch(fileName, parameterPattern))
+        {
+            throw new InvalidOperationException($"The `{fileName}` is not a valid supported file name format.");
+        }
+
+        // 匹配文件名部分
+        var fileNameMatch = Regex.Match(fileName, fileNamePattern);
+        fileNamePart = fileNameMatch.Groups["fileName"].Value;
+        // 取环境名
+        environmentName = fileNameMatch.Groups["environmentName"].Value;
+
+        // 生成带环境标识的文件名
+        if (!string.IsNullOrWhiteSpace(environmentName))
+        {
+            var realName = fileNameMatch.Groups["realName"].Value;
+            var extension = fileNameMatch.Groups["extension"].Value;
+            fileNameWithEnvironmentPart = $"{realName}.{{env}}.{extension}";
+        }
+        else
+        {
+            fileNameWithEnvironmentPart = string.Empty;
+        }
+
+        // 匹配文件名参数部分
+        parameterParts = Regex.Matches(fileName, parameterPattern).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
+    }
+
+    /// <summary>
     /// 分析配置文件名并返回真实绝对路径
     /// </summary>
     /// <param name="fileName">文件名</param>
     /// <returns>返回文件绝对路径</returns>
     private static string ResolveRealAbsolutePath(string fileName)
     {
-        // 如果文件名包含 : 符号，则认为是一个绝对路径，windows 系统路径
+        // 如果文件名包含 : 符号，则认为是一个绝对路径，针对 windows 系统路径
         if (fileName.IndexOf(':') > -1)
         {
             return fileName;

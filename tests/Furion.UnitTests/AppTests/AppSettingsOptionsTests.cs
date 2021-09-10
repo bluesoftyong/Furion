@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
@@ -134,5 +136,27 @@ public class AppSettingsOptionsTests
         appSettingsOptions.Should().NotBeNull()
             .And.Match<AppSettingsOptions>(u => u.EnvironmentVariablesPrefix!.Equals("MY_FURION_"))
             .And.Match<AppSettingsOptions>(u => u.CustomizeConfigurationFiles != null && u.CustomizeConfigurationFiles.Length > 0);
+    }
+
+    /// <summary>
+    /// 测试额外属性异常
+    /// </summary>
+    [Fact]
+    public void TestExtraPropertyException()
+    {
+        var builder = WebApplication.CreateBuilder().UseFurion();
+
+        // 测试没有定义 AppSettings 属性
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+        {
+            {"AppSettings:NotDefinedProperty","NotDefined" }
+        });
+
+        using var app = builder.Build();
+        var services = app.Services;
+
+        // 测试没定义属性抛异常
+        services.Invoking(s => s.GetRequiredService<IOptions<AppSettingsOptions>>().Value).Should().Throw<InvalidOperationException>()
+            .Where(e => e.Message.Contains("NotDefinedProperty"));
     }
 }

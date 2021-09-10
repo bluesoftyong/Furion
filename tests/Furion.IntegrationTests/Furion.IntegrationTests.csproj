@@ -8,22 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AppTests\appsettings.Development.json" />
-    <None Remove="AppTests\appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0-rc.2.21459.37" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0-rc.2.21459.37" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -37,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\Furion\Furion.csproj" />
+    <ProjectReference Include="..\..\samples\Furion.AppSamples\Furion.AppSamples.csproj" />
   </ItemGroup>
 
 </Project>

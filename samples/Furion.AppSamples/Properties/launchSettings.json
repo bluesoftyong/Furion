@@ -4,17 +4,17 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:38186",
-      "sslPort": 44357
+      "applicationUrl": "http://localhost:8560",
+      "sslPort": 44311
     }
   },
   "profiles": {
-    "Furion.Samples": {
+    "Furion.AppSamples": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7172;http://localhost:5172",
+      "applicationUrl": "https://localhost:7035;http://localhost:5035",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

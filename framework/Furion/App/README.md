@@ -1,6 +1,6 @@
 # `App` 模块
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
@@ -30,45 +30,81 @@ services.AddApp(configuration);
 ```cs
 using Microsoft.AspNetCore.Mvc;
 
-namespace Furion.Samples.AppSamples;
+namespace Furion.AppSamples.Controllers;
 
 /// <summary>
 /// App 模块 IApp 服务使用示例
 /// </summary>
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class IAppSamplesController : ControllerBase
+public class IAppController : ControllerBase
 {
     private readonly IApp _app;
-    public IAppSamplesController(IApp app)
+    public IAppController(IApp app)
     {
         _app = app;
     }
 
-    [HttpPost]
-    public void Tests()
+    /// <summary>
+    /// 获取配置
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetConfiguration()
     {
-        // 解析服务
-        var app = _app.ServiceProvider.GetRequiredService<IApp>();
-        Console.WriteLine(_app == app);
+        return $"默认日志级别：{_app.Configuration["Logging:LogLevel:Default"]}";
+    }
 
-        // 读取配置
-        var environmentVariablesPrefix = _app.Configuration["AppSettings:EnvironmentVariablesPrefix"];
-        Console.WriteLine(environmentVariablesPrefix);
+    /// <summary>
+    /// 获取环境信息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetEnvironmentInfo()
+    {
+        return $"当前环境名称：{_app.Environment.EnvironmentName}，是否开发环境：{_app.Environment.IsDevelopment()}，启动目录：{_app.Environment.ContentRootPath}";
+    }
 
-        // 判断环境
-        var isDevelopment = _app.Environment.IsDevelopment();
-        Console.WriteLine(isDevelopment);
+    /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetServiceByHostServices()
+    {
+        return $"当前服务：{_app.Host.Services.GetService<IApp>()}";
+    }
 
-        // 通过主机对象服务解析服务
-        var app1 = _app.Host.Services.GetRequiredService<IApp>();
-        Console.WriteLine(app1);
+    /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetServiceByServiceProvider()
+    {
+        return $"当前服务：{_app.ServiceProvider.GetService<IServiceProvider>()}";
+    }
 
-        // 直接解析服务
-        var notRegisterService = _app.GetService<INotRegisterService>();
-        var registerService = _app.GetRequiredService(typeof(IRegisterService));
-        Console.WriteLine(notRegisterService);
-        Console.WriteLine(registerService);
+    /// <summary>
+    /// 解析服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetService()
+    {
+        // GetRequiredService 同下
+        return $"当前服务：{_app.GetService<IApp>()}";
+    }
+
+    /// <summary>
+    /// 解析不为空服务
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetRequiredService()
+    {
+        // GetService 同下
+        return $"当前服务：{_app.GetRequiredService(typeof(IApp))}";
     }
 }
 ```
@@ -152,6 +188,10 @@ public class IAppSamplesController : ControllerBase
 - `optional`：是否不检查配置文件存在物理硬盘，`bool` 类型，默认 `true`，也就是即使文件不存在也可以添加，同时支持文件由无到有自动刷新 `IConfiguration` 配置对象。
 - `reloadOnChange`：是否文件发生改变自动刷新 `IConfiguration` 配置对象，`bool` 类型，默认 `false`。
 
+### `AppSettingsOptions` 不匹配值
+
+`Furion` 框架对 `AppSettings` 配置节点做了匹配检测，一旦出现不匹配 `AppSettingsOptions` 属性的节点抛出 `InvalidOperationException` 异常。
+
 ### `AppSettingsOptions` 使用例子
 
 ```cs
@@ -165,12 +205,12 @@ namespace Furion.Samples.AppSamples;
 /// </summary>
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class AppSettingsOptionsSamplesController : ControllerBase
+public class AppSettingsOptionsController : ControllerBase
 {
     private readonly IOptions<AppSettingsOptions> _options;
     private readonly IOptionsSnapshot<AppSettingsOptions> _optionsSnapshot;
     private readonly IOptionsMonitor<AppSettingsOptions> _optionsMonitor;
-    public AppSettingsOptionsSamplesController(IOptions<AppSettingsOptions> options
+    public AppSettingsOptionsController(IOptions<AppSettingsOptions> options
         , IOptionsSnapshot<AppSettingsOptions> optionsSnapshot
         , IOptionsMonitor<AppSettingsOptions> optionsMonitor)
     {
@@ -179,20 +219,33 @@ public class AppSettingsOptionsSamplesController : ControllerBase
         _optionsMonitor = optionsMonitor;
     }
 
-    [HttpPost]
-    public void Tests()
+    /// <summary>
+    /// 获取 AppSettings 配置
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public string GetAppSettings()
     {
         // 配置更改不会刷新
         var appSettings1 = _options.Value;
-        Console.WriteLine(appSettings1.EnvironmentVariablesPrefix);
 
         // 配置更改后下次请求应用
         var appSettings2 = _optionsSnapshot.Value;
-        Console.WriteLine(appSettings2.EnvironmentVariablesPrefix);
 
         // 配置更改后，每次调用都能获取最新配置
         var appSettings3 = _optionsMonitor.CurrentValue;
-        Console.WriteLine(appSettings3.EnvironmentVariablesPrefix);
+
+        return $"{appSettings1.EnvironmentVariablesPrefix}\n{ appSettings2.EnvironmentVariablesPrefix}\n{ appSettings3.EnvironmentVariablesPrefix}";
+    }
+}
+```
+
+注：可以尝试修改 `appsettings.json` 对应的 `AppSettings` 节点值后再次请求看看值变化，如：
+
+```json
+{
+    "AppSettings": {
+        "EnvironmentVariablesPrefix": "MY_FURION_"
     }
 }
 ```

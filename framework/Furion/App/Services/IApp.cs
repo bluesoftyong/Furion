@@ -42,14 +42,14 @@ public interface IApp
     /// 解析服务
     /// </summary>
     /// <param name="serviceType">服务类型</param>
-    /// <returns>object或null</returns>
+    /// <returns>object实例或null</returns>
     object? GetService(Type serviceType);
 
     /// <summary>
     /// 解析服务
     /// </summary>
     /// <param name="serviceType">服务类型</param>
-    /// <returns>object或异常</returns>
+    /// <returns>object实例或异常</returns>
     object GetRequiredService(Type serviceType);
 
     /// <summary>

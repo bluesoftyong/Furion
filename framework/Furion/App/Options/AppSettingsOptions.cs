@@ -34,12 +34,7 @@ public sealed class AppSettingsOptions : IAppOptions<AppSettingsOptions>
     /// <summary>
     /// 自定义配置文件
     /// </summary>
-    /// <remarks>
-    /// <para>*.json;*.xml;*.ini;</para>
-    /// <para>null: 不配置(缺省值);</para>
-    /// <para>@ 或 ~：入口目录(缺省值); / 或 !：绝对路径; <c>与符号</c> 或 .：执行目录(bin);</para>
-    /// <para>参数：includeEnvironment; optional; reloadOnChange;</para>
-    /// </remarks>
+    /// <remarks>框架会在主机启动时自动装配</remarks>
     public string[]? CustomizeConfigurationFiles { get; set; }
 
     /// <summary>

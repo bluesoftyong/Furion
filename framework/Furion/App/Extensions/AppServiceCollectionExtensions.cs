@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// App 模块服务拓展类
+/// App 模块服务拓展
 /// </summary>
 public static class AppServiceCollectionExtensions
 {
@@ -22,7 +22,7 @@ public static class AppServiceCollectionExtensions
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="configuration">配置对象</param>
-    /// <returns>服务集合对象</returns>
+    /// <returns>服务集合实例</returns>
     public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册 App 模块选项配置

@@ -61,7 +61,7 @@ internal sealed partial class App : IApp
     /// 解析服务
     /// </summary>
     /// <param name="serviceType">服务类型</param>
-    /// <returns>object或null</returns>
+    /// <returns>object实例或null</returns>
     public object? GetService(Type serviceType)
     {
         return ServiceProvider.GetService(serviceType);
@@ -71,7 +71,7 @@ internal sealed partial class App : IApp
     /// 解析服务
     /// </summary>
     /// <param name="serviceType">服务类型</param>
-    /// <returns>object或异常</returns>
+    /// <returns>object实例或异常</returns>
     public object GetRequiredService(Type serviceType)
     {
         return ServiceProvider.GetRequiredService(serviceType);

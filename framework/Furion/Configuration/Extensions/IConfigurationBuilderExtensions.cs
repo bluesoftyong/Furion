@@ -20,9 +20,9 @@ using System.Text.RegularExpressions;
 namespace Microsoft.Extensions.Configuration;
 
 /// <summary>
-/// 配置主机构建器拓展类
+/// IConfigurationBuilder 接口拓展
 /// </summary>
-public static class ConfigurationManagerExtensions
+public static class IConfigurationBuilderExtensions
 {
     /// <summary>
     /// 添加文件配置
@@ -152,23 +152,27 @@ public static class ConfigurationManagerExtensions
     }
 
     /// <summary>
-    /// 创建配置源
+    /// 根据文件路径创建文件配置源
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="optional"></param>
-    /// <param name="reloadOnChange"></param>
-    /// <returns></returns>
-    private static FileConfigurationSource CreateFileConfigurationSource(string path, bool optional = true, bool reloadOnChange = false)
+    /// <param name="filePath">文件路径</param>
+    /// <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
+    /// <param name="reloadOnChange">是否监听文件更改</param>
+    /// <returns>FileConfigurationSource实例</returns>
+    private static FileConfigurationSource CreateFileConfigurationSource(string filePath, bool optional = true, bool reloadOnChange = false)
     {
-        var fileExtension = Path.GetExtension(path);
-        FileConfigurationSource? fileConfigurationSource = fileExtension.ToLower() switch
+        // 获取文件拓展名
+        var fileExtension = Path.GetExtension(filePath).ToLower();
+
+        // 创建受支持的文件配置源实例，仅支持 .json/.xml/.ini 拓展名
+        FileConfigurationSource? fileConfigurationSource = fileExtension switch
         {
-            ".json" => new JsonConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            ".xml" => new XmlConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
-            ".ini" => new IniConfigurationSource { Path = path, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".json" => new JsonConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".xml" => new XmlConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
+            ".ini" => new IniConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
             _ => throw new InvalidOperationException($"Cannot create a file `{fileExtension}` configuration source for this file type.")
         };
-        // 初始化文件提供器
+
+        // 根据文件配置源解析对应文件配置提供程序
         fileConfigurationSource.ResolveFileProvider();
 
         return fileConfigurationSource;

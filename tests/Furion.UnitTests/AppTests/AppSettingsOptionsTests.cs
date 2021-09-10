@@ -155,7 +155,7 @@ public class AppSettingsOptionsTests
         using var app = builder.Build();
         var services = app.Services;
 
-        // 测试没定义属性抛异常
+        // 测试额外（不匹配）属性抛异常
         services.Invoking(s => s.GetRequiredService<IOptions<AppSettingsOptions>>().Value).Should().Throw<InvalidOperationException>()
             .Where(e => e.Message.Contains("NotDefinedProperty"));
     }

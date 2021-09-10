@@ -152,6 +152,31 @@ public static class IConfigurationBuilderExtensions
     }
 
     /// <summary>
+    /// 分析配置文件名并返回真实绝对路径
+    /// </summary>
+    /// <param name="fileName">文件名</param>
+    /// <returns>返回文件绝对路径</returns>
+    private static string ResolveRealAbsolutePath(string fileName)
+    {
+        // 如果文件名包含 : 符号，则认为是一个绝对路径，windows 系统路径
+        if (fileName.IndexOf(':') > -1)
+        {
+            return fileName;
+        }
+
+        // 获取文件名首个字符
+        var firstChar = fileName[0];
+
+        // 拼接绝对路径
+        return firstChar switch
+        {
+            '&' or '.' => Path.Combine(AppContext.BaseDirectory, fileName[1..]),
+            '/' or '!' => fileName[1..],
+            '@' or '~' or _ => Path.Combine(Directory.GetCurrentDirectory(), fileName[1..])
+        };
+    }
+
+    /// <summary>
     /// 根据文件路径创建文件配置源
     /// </summary>
     /// <param name="filePath">文件路径</param>

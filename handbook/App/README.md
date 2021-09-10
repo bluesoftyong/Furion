@@ -14,16 +14,18 @@ services.AddApp(configuration);
 
 `IApp` 是 `App` 模块对外提供的服务接口，注册为 `单例` 服务。通过该接口可以获取主机常用服务对象，包括：
 
-- 属性
+- **属性**
   - `ServiceProvider`：获取根服务提供器，通过该属性可以解析 `单例` 服务、`瞬时` 服务以及创建新的服务范围解析 `范围` 服务。
   - `Configuration`：获取应用配置信息，包括文件配置、内存配置、环境配置、`Key-per-file` 配置以及自定义配置提供程序。
   - `Environment`：获取当前主机环境，如开发环境、生产环境等。也可以获取当前运行程序的内容根目录。
   - `Host`：获取主机对象，通过 `Services` 属性可以解析服务
-- 方法
+- **方法**
   - `GetService(Type)`：解析服务，支持已注册和未注册服务，如果服务已注册，返回 `object` 实例，否则返回 `default`。
   - `GetRequiredService(Type)`：解析服务，只支持已注册服务，如果服务已注册，返回 `object` 实例，否则抛 `InvalidOperationException` 异常。
   - `GetService<T>()`：解析服务，支持已注册和未注册服务，如果服务已注册，返回 `T` 实例，否则返回 `default`。
   - `GetRequiredService<T>()`：解析服务，只支持已注册服务，如果服务已注册，返回 `T` 实例，否则抛 `InvalidOperationException` 异常。
+
+⚠️ 注意：尽可能少使用 `GetService/GetRequiredService` 系列方法，更多采用构造函数注入所需服务。原因是该类方法会放大服务的生存周期，延缓服务释放时机，导致 `GC` 不能及时回收对象。较为明显的就是解析瞬时和范围作用域。
 
 ### `IApp` 使用例子
 

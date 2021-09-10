@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration.Xml;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -43,6 +44,7 @@ public static class IConfigurationBuilderExtensions
 
         // 获取文件名绝对路径
         var filePath = ResolveRealAbsolutePath(fileNamePart);
+        Trace.Write($"{nameof(Furion)}: configuration file path => {filePath}");
 
         // 填充配置参数
         if (parameterParts.Count > 0)
@@ -60,6 +62,7 @@ public static class IConfigurationBuilderExtensions
         {
             // 取得带环境文件名绝对路径
             var fileNameWithEnvironmentPath = ResolveRealAbsolutePath(fileNameWithEnvironmentPart.Replace("{env}", environment.EnvironmentName));
+            Trace.Write($"{nameof(Furion)}: configuration file with environment path => {fileNameWithEnvironmentPath}");
 
             // 添加带环境配置文件
             configurationBuilder.Add(CreateFileConfigurationSource(fileNameWithEnvironmentPath, optional, reloadOnChange));
@@ -71,12 +74,12 @@ public static class IConfigurationBuilderExtensions
     /// <summary>
     /// 文件名正则表达式
     /// </summary>
-    private static readonly string fileNamePattern = @"^(?<fileName>(?<realName>(&|~|@|\.|/|!|[a-zA-Z])[a-zA-Z0-9\\:\.]+?)(\.(?<environmentName>[a-zA-Z][a-zA-Z0-9]*))?(?<extension>\.json|xml|ini))";
+    private const string fileNamePattern = @"^(?<fileName>(?<realName>(&|~|@|\.|/|!|[a-zA-Z])[a-zA-Z0-9\\:\.]+?)(\.(?<environmentName>[a-zA-Z][a-zA-Z0-9]*))?(?<extension>\.json|xml|ini))";
 
     /// <summary>
     /// 配置参数正则表达式
     /// </summary>
-    private static readonly string parameterPattern = @"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)";
+    private const string parameterPattern = @"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)";
 
     /// <summary>
     /// 检查文件名格式是否是受支持的格式
@@ -122,14 +125,14 @@ public static class IConfigurationBuilderExtensions
     /// <returns>返回文件绝对路径</returns>
     private static string ResolveRealAbsolutePath(string fileName)
     {
+        // 获取文件名首个字符
+        var firstChar = fileName[0];
+
         // 如果文件名包含 : 符号，则认为是一个绝对路径，针对 windows 系统路径
-        if (fileName.IndexOf(':') > -1)
+        if (fileName.IndexOf(':') > -1 && firstChar != '/' && firstChar != '!')
         {
             return fileName;
         }
-
-        // 获取文件名首个字符
-        var firstChar = fileName[0];
 
         // 拼接绝对路径
         return firstChar switch

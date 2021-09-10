@@ -313,7 +313,7 @@ public static class OptionsServiceCollectionExtensions
         var configureOptions = postConfigureMethod.CreateDelegate(actionGenericParameterType!, default(TOptions));
 
         // 添加选项后期配置
-        services.Add(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), provider =>
+        services.TryAdd(ServiceDescriptor.Describe(typeof(IPostConfigureOptions<TOptions>), provider =>
         {
             var autowiredServiceProvider = provider.Autowired();
 

@@ -139,17 +139,17 @@ public class AppSettingsOptionsTests
     }
 
     /// <summary>
-    /// 测试额外属性异常
+    /// 测试未知属性异常
     /// </summary>
     [Fact]
-    public void TestExtraPropertyException()
+    public void TestUnknownPropertyException()
     {
         var builder = WebApplication.CreateBuilder().UseFurion();
 
         // 测试没有定义 AppSettings 属性
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
         {
-            {"AppSettings:NotDefinedProperty","NotDefined" }
+            {"AppSettings:UnknownProperty","NotDefined" }
         });
 
         using var app = builder.Build();
@@ -157,6 +157,6 @@ public class AppSettingsOptionsTests
 
         // 测试额外（不匹配）属性抛异常
         services.Invoking(s => s.GetRequiredService<IOptions<AppSettingsOptions>>().Value).Should().Throw<InvalidOperationException>()
-            .Where(e => e.Message.Contains("NotDefinedProperty"));
+            .Where(e => e.Message.Contains("UnknownProperty"));
     }
 }

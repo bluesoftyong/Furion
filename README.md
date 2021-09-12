@@ -30,17 +30,18 @@
 
 🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
 
-| 功能                                        | 状态 |
-| ------------------------------------------- | ---- |
-| `IApp` 单例服务                             | ✅   |
-| `IApp` 支持解析服务、读取配置、获取环境信息 | ✅   |
-| `AppSettingsOptions` 配置选项               | ✅   |
-| `AppSettings` 配置文件节点                  | ✅   |
-| `AppSettings` 配置节点匹配校验              | ✅   |
-| `App` 模块支持缺省和手动注册                | ✅   |
-| `App` 模块单元测试                          | ✅   |
-| `App` 模块文档                              | ✅   |
-| `App` 模块使用例子                          | ✅   |
+| 功能                                                      | 状态 |
+| --------------------------------------------------------- | ---- |
+| `IApp` 单例服务                                           | ✅   |
+| `IApp` 支持解析服务、读取配置、获取环境信息               | ✅   |
+| `AppSettingsOptions` 配置选项                             | ✅   |
+| `AppSettings` 配置文件节点                                | ✅   |
+| `AppSettings` 配置节点匹配校验                            | ✅   |
+| `App` 模块内置 `FURION_` 前缀环境配置和自定义配置文件转载 | ✅   |
+| `App` 模块支持缺省和手动注册                              | ✅   |
+| `App` 模块单元测试                                        | ✅   |
+| `App` 模块文档                                            | ✅   |
+| `App` 模块使用例子                                        | ✅   |
 
 ### ⏳ 配置 / Configuration
 

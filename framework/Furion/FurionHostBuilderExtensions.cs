@@ -9,7 +9,6 @@
 using Furion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
 using System.Diagnostics;
 
 namespace Microsoft.Extensions.Hosting;
@@ -29,7 +28,7 @@ public static class FurionHostBuilderExtensions
         // 配置框架诊断监听器
         DiagnosticListener.AllListeners.Subscribe(new FurionDiagnosticObserver());
 
-        // 配置框架初始化配置
+        // 配置 App 模块初始配置
         hostBuilder.ConfigureAppConfiguration();
 
         // 配置服务构建器
@@ -38,7 +37,7 @@ public static class FurionHostBuilderExtensions
         // 配置初始服务
         hostBuilder.ConfigureServices((context, services) =>
         {
-            // 注册 App 全局应用对象服务
+            // 注册 App 模块
             services.AddApp(context.Configuration);
 
             // 注册属性注入服务提供器

@@ -4,6 +4,7 @@
 		<Nullable>enable</Nullable>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>False</DelaySign>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21459.18" />
+		<PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21461.1" />
 	</ItemGroup>
 </Project>

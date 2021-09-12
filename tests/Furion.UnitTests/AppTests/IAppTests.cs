@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using Xunit;
 
 namespace Furion.UnitTests;
@@ -127,28 +126,5 @@ public class IAppTests
         // 测试解析非 Class 类型
         app1.Invoking(u => u.GetService(typeof(string))).Should().NotThrow();
         app1.Invoking(u => u.GetRequiredService(typeof(string))).Should().Throw<InvalidOperationException>();
-    }
-
-
-    /// <summary>
-    /// 测试重复注册 IApp
-    /// </summary>
-    [Fact]
-    public void TestRepeatRegistration()
-    {
-        var builder = WebApplication.CreateBuilder().UseFurion();
-
-        // 重复注册
-        builder.Services.AddApp(builder.Configuration);
-        builder.Services.AddApp(builder.Configuration);
-
-        using var app = builder.Build();
-        var services = app.Services;
-
-        var app1 = services.GetRequiredService<IApp>();
-        var type = app1.GetType();
-
-        // 测试重复注册
-        type.Name.Should().NotBeEquivalentTo(nameof(AppRepeat));
     }
 }

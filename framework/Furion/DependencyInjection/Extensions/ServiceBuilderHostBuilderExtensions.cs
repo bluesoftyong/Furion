@@ -11,8 +11,6 @@ using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Microsoft.Extensions.Hosting;

@@ -10,6 +10,11 @@
 	<ItemGroup>
 		<None Remove="AppTests\appsettings.Development.json" />
 		<None Remove="AppTests\appsettings.json" />
+		<None Remove="ConfigurationTests\Files\ini-file.ini" />
+		<None Remove="ConfigurationTests\Files\json-file.json" />
+		<None Remove="ConfigurationTests\Files\key-per-file\key" />
+		<None Remove="ConfigurationTests\Files\key-per-file\name" />
+		<None Remove="ConfigurationTests\Files\xml-file.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,11 +24,29 @@
 		<Content Include="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="ConfigurationTests\Files\ini-file.ini">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ConfigurationTests\Files\json-file.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ConfigurationTests\Files\key-per-file\key">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ConfigurationTests\Files\key-per-file\layer__title">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ConfigurationTests\Files\key-per-file\name">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ConfigurationTests\Files\xml-file.xml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" Version="6.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0-rc.2.21461.20" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.0-rc.2.21461.23" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">

@@ -70,7 +70,7 @@ public static class IConfigurationBuilderExtensions
     /// <summary>
     /// 文件名正则表达式
     /// </summary>
-    private const string fileNamePattern = @"^(?<fileName>(?<realName>(&|~|@|\.|/|!|[a-zA-Z])[a-zA-Z0-9\\:\.]+?)(\.(?<environmentName>[a-zA-Z][a-zA-Z0-9]*))?(?<extension>\.json|xml|ini))";
+    private const string fileNamePattern = @"(?<fileName>(?<realName>.+?)(\.(?<environmentName>\w+))?(?<extension>\.(json|xml|ini)))";
 
     /// <summary>
     /// 配置参数正则表达式

@@ -34,7 +34,7 @@ public static class IConfigurationBuilderExtensions
     {
         // 检查文件名格式
         CheckFileNamePattern(fileName, out var fileNamePart
-            , out var environmentName
+            , out var environmentNamePart
             , out var fileNameWithEnvironmentPart
             , out var parameterParts);
 
@@ -54,7 +54,7 @@ public static class IConfigurationBuilderExtensions
         configurationBuilder.Add(CreateFileConfigurationSource(filePath, optional, reloadOnChange));
 
         // 处理包含环境标识的文件
-        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentName, StringComparison.OrdinalIgnoreCase))
+        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentNamePart, StringComparison.OrdinalIgnoreCase))
         {
             // 取得带环境文件名绝对路径
             var fileNameWithEnvironmentPath = ResolveRealAbsolutePath(fileNameWithEnvironmentPart.Replace("{env}", environment.EnvironmentName));
@@ -82,10 +82,10 @@ public static class IConfigurationBuilderExtensions
     /// </summary>
     /// <param name="fileName">文件名</param>
     /// <param name="fileNamePart">返回文件名匹配部分</param>
-    /// <param name="environmentName">环境名匹配部分</param>
+    /// <param name="environmentNamePart">环境名匹配部分</param>
     /// <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
     /// <param name="parameterParts">参数匹配部分</param>
-    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentName, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterParts)
+    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentNamePart, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterParts)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(fileName))
@@ -103,7 +103,7 @@ public static class IConfigurationBuilderExtensions
         var fileNameMatch = Regex.Match(fileName, fileNamePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         fileNamePart = fileNameMatch.Groups["fileName"].Value;
         // 取环境名
-        environmentName = fileNameMatch.Groups["environmentName"].Value;
+        environmentNamePart = fileNameMatch.Groups["environmentName"].Value;
 
         // 生成带环境标识的文件名
         var realName = fileNameMatch.Groups["realName"].Value;

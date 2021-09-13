@@ -428,7 +428,7 @@ Host.CreateDefaultBuilder()
     });
 ```
 
-- 读取配置内容：
+读取配置内容：
 
 ```cs
 configuration["key"];   // => value
@@ -501,4 +501,50 @@ Host.CreateDefaultBuilder()
     {
         configurationBuilder.AddEnvironmentVariables(prefix: "YourPrefix_");
     });
+```
+
+### 命令行参数提供程序
+
+命令行参数提供程序指的应用启动时设置 `args` 命令行参数。在 `Furion` 框架中，命令行参数提供程序已默认注册。
+
+支持以下两种方式设置命令行参数：
+
+- 通过 `dotnet run` 命令行指定：
+
+```bash
+# = 号方式
+dotnet run Key="Value" Object:Title=Furion
+
+# / 斜杆方式
+dotnet run /Key "Value" /Object:Title=Furion
+
+# -- 双横杆
+dotnet run --Key "Value" --Object:Title=Furion
+```
+
+- 通过 `launchSettings.json` 指定：
+
+```json
+{
+  // ...
+  "profiles": {
+    "Furion.ConfigurationSamples": {
+      "commandName": "Project",
+      "commandLineArgs": "--Key Value --Object:Title=Furion",
+      // ...
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "commandLineArgs": "--Key Value --Object:Title=Furion",
+      // ...
+    }
+  }
+}
+```
+
+读取配置内容：
+
+```cs
+configuration["Key"];   // => Value
+configuration["Object:Title"];  // Furion
 ```

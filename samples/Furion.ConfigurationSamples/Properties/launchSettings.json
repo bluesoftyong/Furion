@@ -11,20 +11,26 @@
   "profiles": {
     "Furion.ConfigurationSamples": {
       "commandName": "Project",
+      "commandLineArgs": "--CMD cmd --CMD:Title=Furion",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7058;http://localhost:5058",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Env__Name": "Furion",
+        "FURION_Env__Title": "Furion Next"
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
+      "commandLineArgs": "--CMD cmd --CMD:Title=Furion",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Env__Name": "Furion",
+        "FURION_Env__Title": "Furion Next"
       }
     }
   }

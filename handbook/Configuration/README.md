@@ -24,18 +24,6 @@
 
 简单的来说就是将配置信息集中管控，也就是我们常说的 `配置中心`，该方式可以在多个应用之间实现 `高可用`，`实时性`，`治理`、`多环境多集群` 管理等。
 
-## 配置提供程序
-
-在 `Furion` 框架中，默认支持以下配置提供程序：
-
-- `文件配置提供程序`：支持 `.json`、`.xml`，`.ini` 配置文件。
-- `环境变量提供程序`：可从系统环境变量、用户环境变量读取配置。
-- `命令行参数提供程序`：支持命令行方式启动应用并且传入 `args` 参数。
-- `内存 .NET 对象提供程序`：支持将集合数据存在到内存中供应用读取。
-- `目录文件 Key-per-file 提供程序`：使用目录的文件作为配置键值对，该键为文件名，该值为文件内容。
-
-除此之外，`Furion` 框架也提供强大的自定义配置提供程序行为，支持从数据库、`Redis` 等任何存储介质提供配置信息。
-
 ## `IConfiguration` 接口
 
 在 `Furion` 框架中，提供 `IConfiguration` 接口读取配置信息，可在启用初始化时、运行时等地方获取其实例。
@@ -176,7 +164,7 @@ services.AddOptions<MyOptions>()
 
 ```cs
 // string 类型
-configuration.Get<string>("String");    // => String 
+configuration.Get<string>("String");    // => String
 
 // bool 类型
 configuration.Get<bool>("Boolean"); // => true
@@ -221,3 +209,162 @@ configuration.GetValue<string>("Object:Author", "百小僧"); // => 百小僧
 var obj = new YourClass();
 confiuration.Bind("Object", obj);   // => { Name: "Furion", Version: "Next" }
 ```
+
+## 配置提供程序
+
+在 `Furion` 框架中，默认支持以下配置提供程序：
+
+- `文件配置提供程序`：支持 `.json`、`.xml`，`.ini` 配置文件。
+- `环境变量提供程序`：可从系统环境变量、用户环境变量读取配置。
+- `命令行参数提供程序`：支持命令行方式启动应用并且传入 `args` 参数。
+- `内存 .NET 对象提供程序`：支持将集合数据存在到内存中供应用读取。
+- `目录文件 Key-per-file 提供程序`：使用目录的文件作为配置键值对，该键为文件名，该值为文件内容。
+
+除此之外，`Furion` 框架也提供强大的自定义配置提供程序行为，支持从数据库、`Redis` 等任何存储介质提供配置信息。
+
+### 文件配置提供程序
+
+文件配置提供程序就是将文件作为配置介质供应用读取，`Furion` 框架支持 `.json`，`.xml`，`.ini` 三种文件配置类型。使用如下：
+
+🔹 `.json` 配置文件
+
+- `json` 配置：
+
+```json
+{
+  "Key": "Value",
+  "Object": {
+    "Key": "Value"
+  }
+}
+```
+
+- 添加配置：
+
+```cs
+var jsonFile = Path.Combine(Directory.GetCurrentDirectory(), "values.json");
+
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile(jsonFile);
+builder.Configuration.AddJsonFile(jsonFile, optional: true);    // 可选（不检测文件是否存在）
+builder.Configuration.AddJsonFile(jsonFile, optional: true, reloadOnChange: true);  // 可选 + 更改监听（文件发生更改，自动刷新 IConfiguration 配置信息）
+builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.json"));    // 根据不同环境读取不同配置
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddJsonFile(jsonFile);
+        configurationBuilder.AddJsonFile(jsonFile, optional: true);
+        configurationBuilder.AddJsonFile(jsonFile, optional: true, reloadOnChange: true);
+        configurationBuilder.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.json"));
+    });
+```
+
+🔹 `.xml` 配置文件
+
+- `xml` 配置：
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <Key>Value</XML>
+	<Object>
+		<Key>Value</Title>
+	</Other>
+</configuration>
+```
+
+- 添加配置：
+
+```cs
+var xmlFile = Path.Combine(Directory.GetCurrentDirectory(), "values.xml");
+
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddXmlFile(xmlFile);
+builder.Configuration.AddXmlFile(xmlFile, optional: true);    // 可选（不检测文件是否存在）
+builder.Configuration.AddXmlFile(xmlFile, optional: true, reloadOnChange: true);  // 可选 + 更改监听（文件发生更改，自动刷新 IConfiguration 配置信息）
+builder.Configuration.AddXmlFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.xml"));    // 根据不同环境读取不同配置
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddXmlFile(xmlFile);
+        configurationBuilder.AddXmlFile(xmlFile, optional: true);
+        configurationBuilder.AddXmlFile(xmlFile, optional: true, reloadOnChange: true);
+        configurationBuilder.AddXmlFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.xml"));
+    });
+```
+
+🔹 `.ini` 配置文件
+
+- `ini` 配置：
+
+```ini
+Key=Value
+
+[Object]
+Key=Value
+```
+
+- 添加配置：
+
+```cs
+var iniFile = Path.Combine(Directory.GetCurrentDirectory(), "values.ini");
+
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddIniFile(iniFile);
+builder.Configuration.AddIniFile(iniFile, optional: true);    // 可选（不检测文件是否存在）
+builder.Configuration.AddIniFile(iniFile, optional: true, reloadOnChange: true);  // 可选 + 更改监听（文件发生更改，自动刷新 IConfiguration 配置信息）
+builder.Configuration.AddIniFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.ini"));    // 根据不同环境读取不同配置
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddIniFile(iniFile);
+        configurationBuilder.AddIniFile(iniFile, optional: true);
+        configurationBuilder.AddIniFile(iniFile, optional: true, reloadOnChange: true);
+        configurationBuilder.AddIniFile(Path.Combine(Directory.GetCurrentDirectory(), "values.Development.ini"));
+    });
+```
+
+🔹 `AddFile` 方式
+
+为了简化添加配置文件方式，`Furion` 框架提供了 `AddFile` 方法，该方法可以自动识别文件类型进行注册，同时提供了一些命令操作符可以快速配置文件路径、添加配置文件参数等。如：
+
+```cs
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddFile("values.json");
+builder.Configuration.AddFile("values.xml", optional: true);    // 可选（不检测文件是否存在）
+builder.Configuration.AddFile("values.ini", optional: true, reloadOnChange: true);  // 可选 + 更改监听（文件发生更改，自动刷新 IConfiguration 配置信息）
+builder.Configuration.AddFile("values.json", includeEnvironment: true);    // 根据不同环境读取不同配置
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddFile("values.json");
+        configurationBuilder.AddFile("values.xml", optional: true); 
+        configurationBuilder.AddFile("values.ini", optional: true, reloadOnChange: true);
+        configurationBuilder.AddFile("values.json", includeEnvironment: true);
+    });
+```
+
+同时也支持在文件路径中添加参数，格式为 `参数名=参数值`：
+
+```cs
+builder.Configuration.AddFile("values.json optional=true reloadOnChange=true includeEnvironment=true"); 
+```
+
+`AddFile` 对获取文件路径也做了一些简化，如：
+
+- 如果文件名以 `@` 或 `~` 开头，自动拼接 `Directory.GetCurrentDirectory()` 路径，如：`@furion.json` 或 `~furion.json`，最终路径为：`项目启动目录/furion.json`。
+- 如果文件名以 `&` 或 `.` 开头，自动拼接 `AppContext.BaseDirectory` 路径，如：`&furion.json` 或 `.furion.json`，最终路径为：`项目启动目录/bin/furion.json`。
+- 如果文件名以 `/` 或 `!` 开头或包含 `:`，则认为是绝对路径，如：`D:/furion.json`，`/D:/furion.json` 或 `!D:/furion.json`，最终路径为：`D:/furion.json`。
+- 如果文件名不以上述符号开头，则同 `@` 或 `~` 处理方式。

@@ -210,6 +210,8 @@ var obj = new YourClass();
 confiuration.Bind("Object", obj);   // => { Name: "Furion", Version: "Next" }
 ```
 
+**小提示：获取下级节点主要通过 `:` 实现，`:` 也称为 `分层键`。**
+
 ## 配置提供程序
 
 在 `Furion` 框架中，默认支持以下配置提供程序：
@@ -702,4 +704,15 @@ Host.CreateDefaultBuilder()
 ```cs
 configuration["TXT"];   // => VALUE
 configuration["Txt:Title"];  // FURION
+```
+
+## `ChangeToken` 配置更改监听
+
+`Furion` 框架也提供了全局静态类 `ChangeToken` 监听配置更改，如：
+
+```cs
+ChangeToken.OnChange(() => configuration.GetReloadToken(), () =>
+{
+    // ...
+});
 ```

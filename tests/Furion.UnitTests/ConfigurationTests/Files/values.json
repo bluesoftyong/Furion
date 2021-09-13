@@ -1,0 +1,27 @@
+{
+  "String": "String",
+  "Boolean": true,
+  "Boolean2": false,
+  "Int": 2,
+  "Long": 33333333333333333,
+  "Float": -20.2,
+  "Decimal": 40.32,
+  "Enum": "Male",
+  "Enum2": 0,
+  "Array": [ 1, 2, 3, 4 ],
+  "Array2": {
+    "0": "one",
+    "1": "two",
+    "2": "three",
+    "3": "four"
+  },
+  "Dictionary": {
+    "key1": "value1",
+    "key2": "value2",
+    "somekey": "someValue"
+  },
+  "Object": {
+    "Name": "Furion",
+    "Version": "Next"
+  }
+}

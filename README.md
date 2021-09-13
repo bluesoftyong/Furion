@@ -43,32 +43,26 @@
 | `App` 模块文档                                            | ✅   |
 | `App` 模块使用例子                                        | ✅   |
 
-### ⏳ 配置 / Configuration
+### ✅ 配置 / Configuration
 
 🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Configuration) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.ConfigurationSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/Configuration) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/ConfigurationTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/ConfigurationTests)**
 
-| 功能                                                        | 状态 |
-| ----------------------------------------------------------- | ---- |
-| 支持添加 `.json;.xml;.ini;` 配置文件                        | ✅   |
-| 支持 `AppSettings:CustomizeConfigurationFiles` 节点添加配置 | ✅   |
-| 支持系统环境配置（可复写配置文件内容）                      | ✅   |
-| 支持系统环境配置前缀符设置                                  | ✅   |
-| 支持命令行启动配置                                          | ✅   |
-| 支持内存配置                                                | ✅   |
-| 支持 `Key-per-file` 模式配置                                | ✅   |
-| 支持不同系统环境切换配置文件                                | ✅   |
-| 支持后期配置文件添加（物理文件不存在）                      | ✅   |
-| 支持配置文件更改通知（热更新）                              | ✅   |
-| 支持特定通配符配置文件路径，`@!~.&/`                        | ✅   |
-| 支持配置读取单个值、对象、数组、字典、枚举                  | ✅   |
-| 支持判断配置节点是否存在                                    | ✅   |
-| 支持自定义配置提供程序                                      | ✅   |
-| 内置 `EFCore` 默认配置提供程序                              | ⚠️   |
-| 支持在主机启动、任何可解析 `IConfiguration` 地方读取        | ✅   |
-| 支持不同编码正确读取，如中文（另存文件编码为 UTF-8）        | ✅   |
-| 配置集成测试                                                | ✅   |
-| 配置使用文档                                                | ⚠️   |
-| 配置使用例子                                                | ⚠️   |
+| 功能                                                | 状态 |
+| --------------------------------------------------- | ---- |
+| 支持 `文件配置提供程序`，如 `.json`、`.xml`，`.ini` | ✅   |
+| 支持 `内存 .NET 对象提供程序`                       | ✅   |
+| 支持 `目录文件提供程序`                             | ✅   |
+| 支持 `环境变量提供程序`                             | ✅   |
+| 支持 `命令行参数提供程序`                           | ✅   |
+| 支持自定义提供程序，如 `.txt` 文件提供程序          | ✅   |
+| 支持 `IConfiguration` 接口统一读取配置              | ✅   |
+| 支持 `AddFile` 自动识别文件类型及文件路径操作符解析 | ✅   |
+| 支持各种数据配置转换读取                            | ✅   |
+| 支持可选配置、基于环境配置、配置更改监听            | ✅   |
+| 支持 `ChangeToken` 配置全局更改监听                 | ✅   |
+| `Configuration` 模块单元测试                        | ✅   |
+| `Configuration` 模块文档                            | ✅   |
+| `Configuration` 模块使用例子                        | ✅   |
 
 ### ⏳ 选项 / Options
 

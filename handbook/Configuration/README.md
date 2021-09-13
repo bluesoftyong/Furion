@@ -409,7 +409,7 @@ var title = configuration["Memory:Title"]; // => Furion
 
 - 创建以下目录及文件：
 
-![](./Resources/key-per-file.png)
+![key-per-file](./Resources/key-per-file.png)
 
 - 添加目录文件提供程序
 
@@ -436,7 +436,7 @@ configuration["layer:title"];   // => Furion
 configuration["name"];  // 百小僧
 ```
 
-### 环境变量提供程序
+### 环境变量提供程序
 
 环境变量提供程序指的是将系统（用户）环境变量作为配置介质供应用读取。
 
@@ -503,7 +503,7 @@ Host.CreateDefaultBuilder()
     });
 ```
 
-### 命令行参数提供程序
+### 命令行参数提供程序
 
 命令行参数提供程序指的应用启动时设置 `args` 命令行参数。在 `Furion` 框架中，命令行参数提供程序已默认注册。
 

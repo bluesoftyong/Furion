@@ -45,9 +45,9 @@ public static class IConfigurationBuilderExtensions
         // 填充配置参数
         if (parameterParts.Count > 0)
         {
-            parameterParts.TryGetValue(nameof(optional), out optional);
-            parameterParts.TryGetValue(nameof(reloadOnChange), out reloadOnChange);
-            parameterParts.TryGetValue(nameof(includeEnvironment), out includeEnvironment);
+            TrySetParameter(parameterParts, nameof(optional), ref optional);
+            TrySetParameter(parameterParts, nameof(reloadOnChange), ref reloadOnChange);
+            TrySetParameter(parameterParts, nameof(includeEnvironment), ref includeEnvironment);
         }
 
         // 添加配置文件
@@ -165,5 +165,19 @@ public static class IConfigurationBuilderExtensions
         fileConfigurationSource.ResolveFileProvider();
 
         return fileConfigurationSource;
+    }
+
+    /// <summary>
+    /// 设置 FileConfigurationSouce 参数
+    /// </summary>
+    /// <param name="parameters">字典参数结合</param>
+    /// <param name="parameterName">参数名</param>
+    /// <param name="value">参数值</param>
+    private static void TrySetParameter(IDictionary<string, bool> parameters, string parameterName, ref bool value)
+    {
+        if (parameters.ContainsKey(parameterName))
+        {
+            value = parameters[parameterName];
+        }
     }
 }

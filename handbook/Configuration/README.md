@@ -435,3 +435,70 @@ configuration["key"];   // => value
 configuration["layer:title"];   // => Furion
 configuration["name"];  // 百小僧
 ```
+
+### 环境变量提供程序
+
+环境变量提供程序指的是将系统（用户）环境变量作为配置介质供应用读取。
+
+在 `Furion` 框架中，环境变量提供程序已默认注册，支持无前缀或 `DOTNET_` 和 `FURION_` 前缀方式，同时也可以自定义环境变量统一前缀。**注意，由于变量名不支持分层键 `:`，所以采用 `__` 双下划线代替。**
+
+- 添加环境变量 `launchSettings.json`
+
+```json
+{
+  // ...
+  "profiles": {
+    "Furion.ConfigurationSamples": {
+      // ...
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Env__Name": "Furion",
+        "FURION_Env__Title": "Furion Next"
+      }
+    },
+    "IIS Express": {
+      // ...
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Env__Name": "Furion",
+        "FURION_Env__Title": "Furion Next"
+      }
+    }
+  }
+}
+```
+
+- 读取配置内容：
+
+```cs
+configuration["ASPNETCORE_ENVIRONMENT"];   // => Development
+configuration["Env:Name"];   // => Furion
+configuration["Env:Title"];  // Furion Next
+```
+
+注意，`DOTNET_` 和 `FURION_` 是框架默认添加的环境变量前缀，如需添加其他后置，可通过下面两种方式添加：
+
+- `AppSettings` 方式：
+
+```json
+{
+    "AppSettings": {
+        "EnvironmentVariablesPrefix": "YourPrefix_"
+    }
+}
+```
+
+- 手动添加方式：
+
+```cs
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables(prefix: "YourPrefix_");
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddEnvironmentVariables(prefix: "YourPrefix_");
+    });
+```

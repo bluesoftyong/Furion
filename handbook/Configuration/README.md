@@ -134,6 +134,7 @@ services.AddOptions<MyOptions>()
 - `GetValue<T>(key)`：获取单个值，返回 `T` 类型。
 - `GetValue<T>(key, defaultValue)`：获取单个值，返回 `T` 类型，如果值不存在返回默认值。
 - `Exists(key)`：判断节点是否存在，返回 `bool` 类型
+- `Bind(key, obj)`：读取配置值并绑定到对象中
 
 除上述方法外，`IConfiguration` 接口也提供了索引获取方式，如：`configuration[key]`，该节点总是返回 `string` 类型。
 
@@ -215,4 +216,8 @@ configuration.Exists("Object:Author");  // => false
 
 // 获取单个值，如果值不存在返回默认值
 configuration.GetValue<string>("Object:Author", "百小僧"); // => 百小僧
+
+// 读取配置值并绑定到对象中
+var obj = new YourClass();
+confiuration.Bind("Object", obj);   // => { Name: "Furion", Version: "Next" }
 ```

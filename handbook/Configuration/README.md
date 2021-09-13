@@ -548,3 +548,158 @@ dotnet run --Key "Value" --Object:Title=Furion
 configuration["Key"];   // => Value
 configuration["Object:Title"];  // Furion
 ```
+
+### 自定义配置提供程序
+
+除了上面内置的配置提供程序以外，`Furion` 框架还提供强大的自定义配置提供程序功能，如下面添加 `.txt` 配置文件支持。
+
+`values.txt` 配置文件格式如下：
+
+```cs
+TXT=VALUE
+
+Txt:Title=FURION
+```
+
+1. 首先，创建 `TxtOptions` 配置选项类，用来配置 `txt` 提供程序更多信息，如：
+
+```cs
+namespace Furion.ConfigurationSamples;
+
+/// <summary>
+/// Txt 配置选项
+/// </summary>
+public class TxtOptions
+{
+    /// <summary>
+    /// 文件路径
+    /// </summary>
+    public string? Path { get; set; }
+}
+```
+
+2. 创建 `TxtConfigurationSource` 配置源，并实现 `IConfigurationSource` 接口，如：
+
+```cs
+namespace Furion.ConfigurationSamples;
+
+/// <summary>
+/// 自定义 Txt 配置源
+/// </summary>
+public class TxtConfigurationSource : IConfigurationSource
+{
+    private readonly Action<TxtOptions> _optionsAction;
+
+    public TxtConfigurationSource(Action<TxtOptions> optionsAction)
+    {
+        _optionsAction = optionsAction;
+    }
+
+    // 主机构建时会自动调用
+    public IConfigurationProvider Build(IConfigurationBuilder builder)
+    {
+        return new TxtConfigurationProvider(_optionsAction);
+    }
+}
+```
+
+3. 创建 `TxtConfigurationProvider` 提供程序并继承 `ConfigurationProvider` 抽象类，同时重写 `Load()` 方法，如：
+
+```cs
+using Microsoft.Extensions.FileProviders;
+
+namespace Furion.ConfigurationSamples;
+
+/// <summary>
+/// Txt 配置提供器
+/// </summary>
+public class TxtConfigurationProvider : ConfigurationProvider
+{
+    public TxtConfigurationProvider(Action<TxtOptions> optionsAction)
+    {
+        OptionsAction = optionsAction;
+    }
+
+    Action<TxtOptions> OptionsAction { get; }
+
+    public override void Load()
+    {
+        // 解析用户自定义配置
+        var options = new TxtOptions();
+        OptionsAction(options);
+
+        // 获取文件信息
+        var dic = Path.GetDirectoryName(options.Path);
+        var fileinfo = new PhysicalFileProvider(dic).GetFileInfo(Path.GetFileName(options.Path));
+
+        // 读取文件内容并转换成字典类型
+        using var stream = fileinfo.CreateReadStream();
+        var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        using var reader = new StreamReader(stream);
+        while (reader.Peek() > -1)
+        {
+            var lineText = reader.ReadLine()!;
+            if (string.IsNullOrWhiteSpace(lineText.Trim()))
+            {
+                continue;
+            }
+
+            var splits = lineText.Split('=', StringSplitOptions.RemoveEmptyEntries);
+            dictionary[splits[0]] = splits[1];
+        }
+
+        // 设置上下文字典数据
+        base.Data = dictionary;
+    }
+}
+```
+
+4. 添加 `TxtConfigurationExtensions` 拓展类，如：
+
+```cs
+using Furion.ConfigurationSamples;
+
+namespace Microsoft.Extensions.Configuration;
+
+/// <summary>
+/// txt 配置拓展
+/// </summary>
+public static class TxtConfigurationExtensions
+{
+    public static IConfigurationBuilder AddTxtConfiguration(this IConfigurationBuilder builder, Action<TxtOptions> optionsAction)
+    {
+        return builder.Add(new TxtConfigurationSource(optionsAction));
+    }
+}
+```
+
+5. 添加自定义配置处理程序，如：
+
+```cs
+var txtFile = Path.Combine(Directory.GetCurrentDirectory(), "values.txt");
+
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddTxtConfiguration(options =>
+{
+    options.Path = txtFile;
+});
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddTxtConfiguration(options =>
+        {
+            options.Path = txtFile;
+        });
+    });
+```
+
+读取配置：
+
+```cs
+configuration["TXT"];   // => VALUE
+configuration["Txt:Title"];  // FURION
+```

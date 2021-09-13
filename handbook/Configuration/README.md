@@ -468,7 +468,7 @@ configuration["name"];  // 百小僧
 }
 ```
 
-- 读取配置内容：
+读取配置内容：
 
 ```cs
 configuration["ASPNETCORE_ENVIRONMENT"];   // => Development

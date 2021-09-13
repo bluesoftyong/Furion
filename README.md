@@ -37,7 +37,7 @@
 | `AppSettingsOptions` 配置选项                             | ✅   |
 | `AppSettings` 配置文件节点                                | ✅   |
 | `AppSettings` 配置节点匹配校验                            | ✅   |
-| `App` 模块内置 `FURION_` 前缀环境配置和自定义配置文件转载 | ✅   |
+| `App` 模块内置 `FURION_` 前缀环境配置和自定义配置文件装载 | ✅   |
 | `App` 模块支持缺省和手动注册                              | ✅   |
 | `App` 模块单元测试                                        | ✅   |
 | `App` 模块文档                                            | ✅   |

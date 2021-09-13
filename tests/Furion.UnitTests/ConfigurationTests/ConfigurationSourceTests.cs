@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Xunit;
 
 namespace Furion.UnitTests;
@@ -116,5 +117,25 @@ public class ConfigurationSourceTests
         {
             builder.AddFile("&ConfigurationTests/Files/file.txt");
         }).Should().Throw<InvalidOperationException>();
+    }
+
+    /// <summary>
+    /// 测试自定义配置提供程序
+    /// </summary>
+    [Fact]
+    public void TestCustomizeConfigurationSource()
+    {
+        var builder = WebApplication.CreateBuilder().UseFurion();
+        builder.Configuration.AddTXTConfiguration(options =>
+        {
+            options.Path = Path.Combine(AppContext.BaseDirectory, "ConfigurationTests/Files/file.txt");
+        });
+
+        using var app = builder.Build();
+        var services = app.Services;
+
+        var configuration = services.GetRequiredService<IConfiguration>();
+        configuration["TXT"].Should().BeEquivalentTo("VALUE");
+        configuration["Other:Title"].Should().BeEquivalentTo("FURION");
     }
 }

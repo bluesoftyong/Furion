@@ -215,16 +215,18 @@ confiuration.Bind("Object", obj);   // => { Name: "Furion", Version: "Next" }
 在 `Furion` 框架中，默认支持以下配置提供程序：
 
 - `文件配置提供程序`：支持 `.json`、`.xml`，`.ini` 配置文件。
-- `环境变量提供程序`：可从系统环境变量、用户环境变量读取配置。
-- `命令行参数提供程序`：支持命令行方式启动应用并且传入 `args` 参数。
 - `内存 .NET 对象提供程序`：支持将集合数据存在到内存中供应用读取。
 - `目录文件 Key-per-file 提供程序`：使用目录的文件作为配置键值对，该键为文件名，该值为文件内容。
+- `环境变量提供程序`：可从系统环境变量、用户环境变量读取配置。
+- `命令行参数提供程序`：支持命令行方式启动应用并且传入 `args` 参数。
 
 除此之外，`Furion` 框架也提供强大的自定义配置提供程序行为，支持从数据库、`Redis` 等任何存储介质提供配置信息。
 
+**注意，越晚注册的配置提供程序存在相同的键会替换前面注册的相同键值。**
+
 ### 文件配置提供程序
 
-文件配置提供程序就是将文件作为配置介质供应用读取，`Furion` 框架支持 `.json`，`.xml`，`.ini` 三种文件配置类型。使用如下：
+文件配置提供程序指的是将文件作为配置介质供应用读取，`Furion` 框架支持 `.json`，`.xml`，`.ini` 三种文件配置类型。另外，`.NET` 泛型主机应用程序已默认添加 `appsettings.{Environment}.json` 配置文件。
 
 🔹 `.json` 配置文件
 
@@ -368,3 +370,35 @@ builder.Configuration.AddFile("values.json optional=true reloadOnChange=true inc
 - 如果文件名以 `&` 或 `.` 开头，自动拼接 `AppContext.BaseDirectory` 路径，如：`&furion.json` 或 `.furion.json`，最终路径为：`项目启动目录/bin/furion.json`。
 - 如果文件名以 `/` 或 `!` 开头或包含 `:`，则认为是绝对路径，如：`D:/furion.json`，`/D:/furion.json` 或 `!D:/furion.json`，最终路径为：`D:/furion.json`。
 - 如果文件名不以上述符号开头，则同 `@` 或 `~` 处理方式。
+
+## 内存 .NET 对象提供程序
+
+内存 .NET 对象提供程序指的是将内存字典数据作为配置介质供应用读取。如：
+
+```cs
+// WebApplicationBuilder 中使用
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>()
+{
+    ["Memory"] = "Value",
+    ["Memory:Title"] = "Furion"
+});
+
+// 在 HostBuilder 中使用
+Host.CreateDefaultBuilder()
+    .ConfigureAppConfiguration((context, configurationBuilder) =>
+    {
+        configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>()
+        {
+            ["Memory"] = "Value",
+            ["Memory:Title"] = "Furion"
+        });
+    });
+```
+
+读取配置：
+
+```cs
+var value = configuration["Memory"];    // Value
+var title = configuration["Memory:Title"]; // => Furion
+```

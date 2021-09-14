@@ -20,13 +20,13 @@ namespace Microsoft.Extensions.Options;
 public static class OptionsBuilderExtensions
 {
     /// <summary>
-    /// 配置选项构建器
+    /// 添加选项构建器
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="builderType">选项构建器类型</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type builderType)
+    public static OptionsBuilder<TOptions> AddBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type builderType)
         where TOptions : class
     {
         // 获取构建器类型接口

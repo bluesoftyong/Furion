@@ -337,7 +337,7 @@ Host.CreateDefaultBuilder()
     });
 ```
 
-🔹 `AddFile` 方式
+#### 最佳实践
 
 为了简化添加配置文件方式，`Furion` 框架提供了 `AddFile` 方法，该方法可以自动识别文件类型进行注册，同时提供了一些命令操作符可以快速配置文件路径、添加配置文件参数等。如：
 
@@ -354,7 +354,7 @@ Host.CreateDefaultBuilder()
     .ConfigureAppConfiguration((context, configurationBuilder) =>
     {
         configurationBuilder.AddFile("values.json");
-        configurationBuilder.AddFile("values.xml", optional: true); 
+        configurationBuilder.AddFile("values.xml", optional: true);
         configurationBuilder.AddFile("values.ini", optional: true, reloadOnChange: true);
         configurationBuilder.AddFile("values.json", includeEnvironment: true);
     });
@@ -363,7 +363,7 @@ Host.CreateDefaultBuilder()
 同时也支持在文件路径中添加参数，格式为 `参数名=参数值`：
 
 ```cs
-builder.Configuration.AddFile("values.json optional=true reloadOnChange=true includeEnvironment=true"); 
+builder.Configuration.AddFile("values.json optional=true reloadOnChange=true includeEnvironment=true");
 ```
 
 `AddFile` 对获取文件路径也做了一些简化，如：
@@ -442,7 +442,7 @@ configuration["name"];  // 百小僧
 
 环境变量提供程序指的是将系统（用户）环境变量作为配置介质供应用读取。
 
-在 `Furion` 框架中，环境变量提供程序已默认注册，支持无前缀或 `DOTNET_` 和 `FURION_` 前缀方式，同时也可以自定义环境变量统一前缀。**注意，由于变量名不支持分层键 `:`，所以采用 `__` 双下划线代替。**
+在  `Furion`  框架中，环境变量提供程序已默认注册，支持无前缀或  `DOTNET_`  和  `FURION_`  前缀方式，同时也可以自定义环境变量统一前缀。**注意，由于变量名不支持分层键 `:`，所以采用 `__` 双下划线代替。**
 
 - 添加环境变量 `launchSettings.json`
 
@@ -484,9 +484,9 @@ configuration["Env:Title"];  // Furion Next
 
 ```json
 {
-    "AppSettings": {
-        "EnvironmentVariablesPrefix": "YourPrefix_"
-    }
+  "AppSettings": {
+    "EnvironmentVariablesPrefix": "YourPrefix_"
+  }
 }
 ```
 
@@ -507,7 +507,7 @@ Host.CreateDefaultBuilder()
 
 ### 命令行参数提供程序
 
-命令行参数提供程序指的应用启动时设置 `args` 命令行参数。在 `Furion` 框架中，命令行参数提供程序已默认注册。
+命令行参数提供程序指的应用启动时设置 `args` 命令行参数。在  `Furion`  框架中，命令行参数提供程序已默认注册。
 
 支持以下两种方式设置命令行参数：
 
@@ -532,12 +532,12 @@ dotnet run --Key "Value" --Object:Title=Furion
   "profiles": {
     "Furion.ConfigurationSamples": {
       "commandName": "Project",
-      "commandLineArgs": "--Key Value --Object:Title=Furion",
+      "commandLineArgs": "--Key Value --Object:Title=Furion"
       // ...
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "commandLineArgs": "--Key Value --Object:Title=Furion",
+      "commandLineArgs": "--Key Value --Object:Title=Furion"
       // ...
     }
   }

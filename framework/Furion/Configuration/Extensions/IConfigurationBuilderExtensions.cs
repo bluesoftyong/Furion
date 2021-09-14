@@ -175,6 +175,7 @@ public static class IConfigurationBuilderExtensions
     /// <param name="value">参数值</param>
     private static void TrySetParameter(IDictionary<string, bool> parameters, string parameterName, ref bool value)
     {
+        // 支持包含该参数才改变值
         if (parameters.ContainsKey(parameterName))
         {
             value = parameters[parameterName];

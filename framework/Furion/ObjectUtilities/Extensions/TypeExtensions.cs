@@ -8,7 +8,7 @@
 
 using System.Reflection;
 
-namespace Furion.ObjectExtensions;
+namespace Furion.Extensions.ObjectUtilities;
 
 /// <summary>
 /// Type 类型拓展

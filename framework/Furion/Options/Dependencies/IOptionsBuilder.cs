@@ -12,7 +12,7 @@ namespace Furion.Options;
 /// 选项构建器依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
-public interface IOptionsBuilder<TOptions>
+public interface IOptionsBuilder<TOptions> : IOptionsBuilder
     where TOptions : class
 {
     /// <summary>
@@ -40,7 +40,7 @@ public interface IOptionsBuilder<TOptions>
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep">依赖服务</typeparam>
-public interface IOptionsBuilder<TOptions, TDep>
+public interface IOptionsBuilder<TOptions, TDep> : IOptionsBuilder
     where TOptions : class
     where TDep : class
 {
@@ -73,7 +73,7 @@ public interface IOptionsBuilder<TOptions, TDep>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
-public interface IOptionsBuilder<TOptions, TDep1, TDep2>
+public interface IOptionsBuilder<TOptions, TDep1, TDep2> : IOptionsBuilder
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -111,7 +111,7 @@ public interface IOptionsBuilder<TOptions, TDep1, TDep2>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
-public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3>
+public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilder
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -154,7 +154,7 @@ public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
-public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4>
+public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilder
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -202,7 +202,7 @@ public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 /// <typeparam name="TDep5">依赖服务</typeparam>
-public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>
+public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilder
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -243,4 +243,11 @@ public interface IOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5>
     /// <param name="dep5">依赖服务</param>
     /// <returns>bool</returns>
     bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4, TDep5 dep5);
+}
+
+/// <summary>
+/// 选项构建器依赖空接口
+/// </summary>
+public interface IOptionsBuilder
+{
 }

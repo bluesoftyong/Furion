@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using Furion.ObjectExtensions;
+using Furion.Extensions.ObjectUtilities;
 using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.Hosting;

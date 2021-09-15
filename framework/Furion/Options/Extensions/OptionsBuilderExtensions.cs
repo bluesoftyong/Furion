@@ -9,6 +9,9 @@
 using Furion.Extensions.ObjectUtilities;
 using Furion.Helpers.ObjectUtilities;
 using Furion.Options;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -20,59 +23,133 @@ namespace Microsoft.Extensions.Options;
 public static class OptionsBuilderExtensions
 {
     /// <summary>
-    /// 添加选项构建器
+    /// 配置选项构建器
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
-    /// <param name="builderType">选项构建器类型</param>
+    /// <param name="configuration">配置对象</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> AddBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type builderType)
+    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
         where TOptions : class
     {
-        // 获取构建器类型接口
-        var builderInterface = builderType.GetInterfaces().FirstOrDefault(u => typeof(IOptionsBuilder).IsAssignableFrom(u));
-        if (builderInterface == default)
-        {
-            return optionsBuilder;
-        }
-
-        // 获取泛型定义参数
-        var genericArguments = builderInterface.GetGenericArguments();
-
-        // 创建 Action 和 Func 参数类型
-        var actionType = TypeHelpers.CreateAction(genericArguments);
-        var funcType = TypeHelpers.CreateFunc(typeof(bool), genericArguments);
-
-        // 循环调用方法进行初始化配置
-        Array.ForEach(new[] { "Configure", "PostConfigure", "Validate" }, methodName =>
-        {
-            var argumentType = !methodName.Equals("Validate") ? actionType : funcType;
-            CallMethod(optionsBuilder, builderInterface, methodName, argumentType, genericArguments);
-        });
+        // 绑定选项配置
+        optionsBuilder.BindDefaults(configuration).ConfigureBuilder();
 
         return optionsBuilder;
     }
 
     /// <summary>
-    /// 创建表达式动态调用 OptionsBuilder{TOptions} 对应方法
+    /// 配置选项构建器
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项构建器实例</param>
+    /// <returns>OptionsBuilder{TOptions}</returns>
+    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
+        where TOptions : class
+    {
+        var optionsType = typeof(TOptions);
+        var optionsBuilderDependency = typeof(IOptionsBuilder<TOptions>);
+
+        // 获取所有构建器依赖接口
+        var builderInterfaces = optionsType.GetInterfaces().Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);
+        if (!builderInterfaces.Any())
+        {
+            return optionsBuilder;
+        }
+
+        // 循环调用
+        foreach (var builderInterface in builderInterfaces)
+        {
+            InvokeMapMethod(optionsBuilder, optionsType, builderInterface);
+        }
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
+    /// 选项配置默认绑定
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项构建器实例</param>
+    /// <param name="configuration">配置对象</param>
+    /// <returns>OptionsBuilder{TOptions}</returns>
+    public static OptionsBuilder<TOptions> BindDefaults<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
+        where TOptions : class
+    {
+        // 获取 [OptionsBuilder] 特性
+        var optionsType = typeof(TOptions);
+        var optionsBuilderAttribute = typeof(TOptions).GetTypeAttribute<OptionsBuilderAttribute>();
+
+        // 解析配置类型（自动识别是否是节点配置对象）
+        var configurationSection = configuration is IConfigurationSection section
+                                    ? section
+                                    : configuration.GetSection(
+                                          string.IsNullOrWhiteSpace(optionsBuilderAttribute?.SectionKey)
+                                              ? optionsType.Name.SubSuffix("Options")
+                                              : optionsBuilderAttribute.SectionKey
+                                       );
+
+        // 绑定配置
+        optionsBuilder.Bind(configurationSection, binderOptions =>
+        {
+            binderOptions.ErrorOnUnknownConfiguration = optionsBuilderAttribute?.ErrorOnUnknownConfiguration ?? false;
+            binderOptions.BindNonPublicProperties = optionsBuilderAttribute?.BindNonPublicProperties ?? false;
+        });
+
+        // 启动验证特性支持
+        if (optionsBuilderAttribute?.ValidateDataAnnotations == true)
+        {
+            optionsBuilder.ValidateDataAnnotations();
+        }
+
+        // 注册所有复杂验证
+        if (optionsBuilderAttribute?.ValidateOptionsTypes.IsEmpty() == false)
+        {
+            var validateOptionsType = typeof(IValidateOptions<TOptions>);
+
+            // 注册复杂选项
+            Array.ForEach(optionsBuilderAttribute.ValidateOptionsTypes!, type =>
+            {
+                optionsBuilder.Services.TryAddEnumerable(ServiceDescriptor.Singleton(validateOptionsType, type));
+            });
+        }
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
+    /// 调用 OptionsBuilder{TOptions} 对应方法
     /// </summary>
     /// <param name="optionsBuilder">选项构建器实例</param>
-    /// <param name="builderInterface">选项构建器接口</param>
-    /// <param name="methodName">方法名称</param>
-    /// <param name="argumentType">参数类型</param>
-    /// <param name="genericArguments">泛型参数</param>
-    private static void CallMethod(object optionsBuilder, Type builderInterface, string methodName, Type argumentType, params Type[]? genericArguments)
+    /// <param name="optionsType">选项类型</param>
+    /// <param name="builderInterface">构建器接口</param>
+    private static void InvokeMapMethod(object optionsBuilder, Type optionsType, Type builderInterface)
     {
+        // 获取接口对应 OptionsBuilder 方法映射信息
+        var optionsBuilderMethodMapAttribute = builderInterface.GetCustomAttribute<OptionsBuilderMethodMapAttribute>()!;
+        var methodName = optionsBuilderMethodMapAttribute.MethodName;
+
+        // 获取泛型定义参数
+        var genericArguments = builderInterface.GetGenericArguments();
+
+        // 创建参数委托类型
+        var delegateType = optionsBuilderMethodMapAttribute.VoidReturn
+            ? TypeHelpers.CreateAction(genericArguments)
+            : TypeHelpers.CreateFunc(typeof(bool), genericArguments);
+
         // 创建方法调用参数
-        var argument = builderInterface.GetTypeInfo().DeclaredMethods
-                .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName))
-                .CreateDelegate(argumentType, default);
+        var argument = optionsType.GetTypeInfo().DeclaredMethods
+                .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length)
+                .CreateDelegate(delegateType, default);
 
         // 创建委托参数表达式
-        var argumentExpression = Expression.Parameter(argumentType, "configureDelegate");
+        var argumentExpression = Expression.Parameter(delegateType, "configureDelegate");
 
         // 创建调用方法表达式
-        var callExpression = Expression.Call(Expression.Constant(optionsBuilder), methodName, genericArguments.IsEmpty() ? default : genericArguments!.Skip(1).ToArray(), new[] { argumentExpression });
+        var callExpression = Expression.Call(Expression.Constant(optionsBuilder)
+            , methodName
+            , genericArguments.IsEmpty() ? default : genericArguments!.Skip(1).ToArray()
+            , new[] { argumentExpression });
 
         // 创建调用委托
         var @delegate = Expression.Lambda(callExpression, argumentExpression).Compile();

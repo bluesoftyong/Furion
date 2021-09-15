@@ -9,6 +9,7 @@
 using Furion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -26,7 +27,7 @@ public static class AppServiceCollectionExtensions
     public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册 App 模块选项配置
-        services.Configure<AppSettingsOptions>(configuration.GetSection(AppSettingsOptions.sectionKey));
+        services.AddOptions<AppSettingsOptions>().ConfigureBuilder(configuration);
 
         // 注册 App 模块 IApp 单例服务
         services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));

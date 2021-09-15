@@ -36,11 +36,6 @@ public sealed class OptionsBuilderAttribute : Attribute
     public string? SectionKey { get; set; }
 
     /// <summary>
-    /// 选项命名
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
     /// 未知配置节点抛异常
     /// </summary>
     public bool ErrorOnUnknownConfiguration { get; set; }
@@ -56,7 +51,7 @@ public sealed class OptionsBuilderAttribute : Attribute
     public bool ValidateDataAnnotations { get; set; }
 
     /// <summary>
-    /// 选项构建器类型
+    /// 验证选项类型
     /// </summary>
-    public Type[]? OptionsBuilderTypes { get; set; }
+    public Type[]? ValidateOptionsTypes { get; set; }
 }

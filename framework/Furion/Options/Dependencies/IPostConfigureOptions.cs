@@ -6,13 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Microsoft.Extensions.Options;
+
 namespace Furion.Options;
 
 /// <summary>
 /// 选项后期配置依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
-public interface IPostConfigureOptions<TOptions> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions> : IOptionsBuilder<TOptions>
     where TOptions : class
 {
     /// <summary>
@@ -27,7 +30,8 @@ public interface IPostConfigureOptions<TOptions> : IOptionsBuilder
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep">依赖服务</typeparam>
-public interface IPostConfigureOptions<TOptions, TDep> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions, TDep> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep : class
 {
@@ -45,7 +49,8 @@ public interface IPostConfigureOptions<TOptions, TDep> : IOptionsBuilder
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -66,7 +71,8 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilder
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -90,7 +96,8 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptions
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -117,7 +124,8 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : I
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 /// <typeparam name="TDep5">依赖服务</typeparam>
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilder
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure))]
+public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class

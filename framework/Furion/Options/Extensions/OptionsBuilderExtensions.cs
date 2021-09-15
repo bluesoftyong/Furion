@@ -138,7 +138,8 @@ public static class OptionsBuilderExtensions
             : TypeHelpers.CreateFunc(typeof(bool), genericArguments);
 
         // 创建方法调用参数
-        var argument = optionsType.GetTypeInfo().DeclaredMethods
+        var bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+        var argument = optionsType.GetMethods(bindingAttr)
                 .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length)
                 .CreateDelegate(delegateType, default);
 

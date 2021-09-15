@@ -14,7 +14,7 @@ namespace Furion;
 /// App 模块配置选项
 /// </summary>
 [OptionsBuilder(sectionKey, ErrorOnUnknownConfiguration = true)]
-public sealed class AppSettingsOptions : IPostConfigureOptions<AppSettingsOptions>
+public sealed class AppSettingsOptions : IConfigureOptions<AppSettingsOptions>
 {
     /// <summary>
     /// 配置根节点名称
@@ -38,10 +38,10 @@ public sealed class AppSettingsOptions : IPostConfigureOptions<AppSettingsOption
     public string[]? CustomizeConfigurationFiles { get; set; }
 
     /// <summary>
-    /// 后期选项配置
+    /// 配置选项
     /// </summary>
-    /// <param name="options"></param>
-    void IPostConfigureOptions<AppSettingsOptions>.PostConfigure(AppSettingsOptions options)
+    /// <param name="options">选项实例</param>
+    void IConfigureOptions<AppSettingsOptions>.Configure(AppSettingsOptions options)
     {
         options.EnvironmentVariablesPrefix ??= environmentVariablesPrefix;
     }

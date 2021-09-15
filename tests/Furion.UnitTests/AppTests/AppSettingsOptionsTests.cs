@@ -65,13 +65,13 @@ public class AppSettingsOptionsTests
         var type = typeof(AppSettingsOptions);
 
         // 测试是否声明 [AppOptions] 特性
-        type.Should().BeDecoratedWith<AppOptionsAttribute>();
+        type.Should().BeDecoratedWith<OptionsBuilderAttribute>();
 
         // 测试 [AppOptions] 特性值
-        var appOptionsAttribute = type.GetCustomAttribute<AppOptionsAttribute>(false);
-        appOptionsAttribute.Should().NotBeNull()
-            .And.Match<AppOptionsAttribute>(u => !string.IsNullOrWhiteSpace(u.SectionKey) && u.SectionKey.Equals("AppSettings"))
-            .And.Match<AppOptionsAttribute>(u => u.ErrorOnUnknownConfiguration);
+        var optionsBuilderAttribute = type.GetCustomAttribute<OptionsBuilderAttribute>(false);
+        optionsBuilderAttribute.Should().NotBeNull()
+            .And.Match<OptionsBuilderAttribute>(u => !string.IsNullOrWhiteSpace(u.SectionKey) && u.SectionKey.Equals("AppSettings"))
+            .And.Match<OptionsBuilderAttribute>(u => u.ErrorOnUnknownConfiguration);
     }
 
     /// <summary>
@@ -83,8 +83,8 @@ public class AppSettingsOptionsTests
         var type = typeof(AppSettingsOptions);
         var interfaces = type.GetInterfaces();
 
-        // 测试实现 IAppOptions<AppSettingsOptions>
-        interfaces.Should().Contain(u => u == typeof(IAppOptions<AppSettingsOptions>));
+        // 测试实现 IPostConfigureOptions<AppSettingsOptions>
+        interfaces.Should().Contain(u => u == typeof(Options.IPostConfigureOptions<AppSettingsOptions>));
     }
 
     /// <summary>

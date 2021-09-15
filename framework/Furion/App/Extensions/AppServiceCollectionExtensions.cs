@@ -26,7 +26,7 @@ public static class AppServiceCollectionExtensions
     public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册 App 模块选项配置
-        services.AddAppOptions<AppSettingsOptions>(configuration);
+        services.Configure<AppSettingsOptions>(configuration.GetSection(AppSettingsOptions.sectionKey));
 
         // 注册 App 模块 IApp 单例服务
         services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));

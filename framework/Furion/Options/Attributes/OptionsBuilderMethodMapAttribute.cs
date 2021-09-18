@@ -19,7 +19,7 @@ internal sealed class OptionsBuilderMethodMapAttribute : Attribute
     /// </summary>
     /// <param name="methodName">映射方法名</param>
     /// <param name="voidReturn">无返回值</param>
-    public OptionsBuilderMethodMapAttribute(string methodName, bool voidReturn = true)
+    internal OptionsBuilderMethodMapAttribute(string methodName, bool voidReturn = true)
     {
         MethodName = methodName;
         VoidReturn = voidReturn;
@@ -28,10 +28,10 @@ internal sealed class OptionsBuilderMethodMapAttribute : Attribute
     /// <summary>
     /// 方法名称
     /// </summary>
-    public string MethodName { get; set; }
+    internal string MethodName { get; set; }
 
     /// <summary>
     /// 有无返回值
     /// </summary>
-    public bool VoidReturn { get; set; }
+    internal bool VoidReturn { get; set; }
 }

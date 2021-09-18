@@ -33,7 +33,7 @@ public static class OptionsBuilderExtensions
         where TOptions : class
     {
         // 绑定选项配置
-        optionsBuilder.BindDefaults(configuration).ConfigureBuilder();
+        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilder();
 
         return optionsBuilder;
     }
@@ -67,13 +67,13 @@ public static class OptionsBuilderExtensions
     }
 
     /// <summary>
-    /// 选项配置默认绑定
+    /// 配置选项常规默认处理
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="configuration">配置对象</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> BindDefaults<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
+    public static OptionsBuilder<TOptions> ConfigureDefaults<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
         where TOptions : class
     {
         // 获取 [OptionsBuilder] 特性
@@ -96,13 +96,13 @@ public static class OptionsBuilderExtensions
             binderOptions.BindNonPublicProperties = optionsBuilderAttribute?.BindNonPublicProperties ?? false;
         });
 
-        // 启动验证特性支持
+        // 注册验证特性支持
         if (optionsBuilderAttribute?.ValidateDataAnnotations == true)
         {
             optionsBuilder.ValidateDataAnnotations();
         }
 
-        // 注册所有复杂验证
+        // 注册复杂验证类型
         if (optionsBuilderAttribute?.ValidateOptionsTypes.IsEmpty() == false)
         {
             var validateOptionsType = typeof(IValidateOptions<TOptions>);
@@ -144,7 +144,7 @@ public static class OptionsBuilderExtensions
                 .CreateDelegate(delegateType, default);
 
         // 创建委托参数表达式
-        var argumentExpression = Expression.Parameter(delegateType, "configureDelegate");
+        var argumentExpression = Expression.Parameter(delegateType, "arg0");
 
         // 创建调用方法表达式
         var callExpression = Expression.Call(Expression.Constant(optionsBuilder)

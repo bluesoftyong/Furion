@@ -125,37 +125,78 @@ public static class OptionsBuilderExtensions
     /// <param name="builderInterface">构建器接口</param>
     private static void InvokeMapMethod(object optionsBuilder, Type optionsType, Type builderInterface)
     {
-        // 获取接口对应 OptionsBuilder 方法映射信息
+        // 获取接口对应 OptionsBuilder 方法映射特性
         var optionsBuilderMethodMapAttribute = builderInterface.GetCustomAttribute<OptionsBuilderMethodMapAttribute>()!;
         var methodName = optionsBuilderMethodMapAttribute.MethodName;
 
-        // 获取泛型定义参数
+        // 获取选项构建器接口实际泛型参数
         var genericArguments = builderInterface.GetGenericArguments();
 
-        // 创建参数委托类型
-        var delegateType = optionsBuilderMethodMapAttribute.VoidReturn
-            ? TypeHelpers.CreateActionDelegate(genericArguments)
-            : TypeHelpers.CreateFuncDelegate(typeof(bool), genericArguments);
-
-        // 创建方法调用参数
+        // 获取匹配的配置方法
         var bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-        var argumentDelegate = optionsType.GetMethods(bindingAttr)
-                .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length)
-                .CreateDelegate(delegateType, default);
+        var matchMethod = optionsType.GetMethods(bindingAttr)
+            .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length);
 
-        // 创建委托参数表达式
-        var argumentDelegateExpression = Expression.Parameter(delegateType, "arg0");
+        // 构建表达式实际传入参数
+        var parameterExpressions = BuildExpressionCallParameters(matchMethod
+            , !optionsBuilderMethodMapAttribute.VoidReturn
+            , genericArguments
+            , out var args);
 
-        // 创建调用方法表达式
+        // 创建 OptionsBuilder<TOptions> 实例对应调用方法表达式
         var callExpression = Expression.Call(Expression.Constant(optionsBuilder)
             , methodName
             , genericArguments.IsEmpty() ? default : genericArguments!.Skip(1).ToArray()
-            , new[] { argumentDelegateExpression });
+            , parameterExpressions);
 
         // 创建调用委托
-        var @delegate = Expression.Lambda(callExpression, argumentDelegateExpression).Compile();
+        var @delegate = Expression.Lambda(callExpression, parameterExpressions).Compile();
 
-        // 动态调用方法
-        @delegate.DynamicInvoke(argumentDelegate);
+        // 动态调用
+        @delegate.DynamicInvoke(args);
+    }
+
+    /// <summary>
+    /// 构建 Call 调用方法表达式参数
+    /// </summary>
+    /// <remarks>含实际传入参数</remarks>
+    /// <param name="matchMethod">表达式匹配方法</param>
+    /// <param name="isValidateMethod">是否校验方法</param>
+    /// <param name="genericArguments">泛型参数</param>
+    /// <param name="args">实际传入参数</param>
+    /// <returns>ParameterExpression[]</returns>
+    private static ParameterExpression[] BuildExpressionCallParameters(MethodInfo matchMethod, bool isValidateMethod, Type[] genericArguments, out object[] args)
+    {
+        // 创建调用方法第一个委托参数表达式
+        var delegateType = !isValidateMethod
+            ? TypeHelpers.CreateActionDelegate(genericArguments)
+            : TypeHelpers.CreateFuncDelegate(typeof(bool), genericArguments);
+        var arg0Expression = Expression.Parameter(delegateType, "arg0");
+        var arg0 = matchMethod.CreateDelegate(delegateType, default);
+
+        // 创建调用方法第二个字符串参数表达式（仅限 Validate 方法使用）
+        ParameterExpression? arg1Expression = default;
+        string? failureMessage = default;
+        if (isValidateMethod)
+        {
+            failureMessage = matchMethod.IsDefined(typeof(FailureMessageAttribute))
+                ? matchMethod.GetCustomAttribute<FailureMessageAttribute>()!.Text
+                : string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(failureMessage))
+            {
+                arg1Expression = Expression.Parameter(typeof(string), "arg1");
+            }
+        }
+
+        // 设置实际方法传入参数
+        args = arg1Expression == default
+            ? new object[] { arg0 }
+            : new object[] { arg0, failureMessage! };
+
+        // 返回方法参数定义表达式
+        return arg1Expression == default
+            ? new[] { arg0Expression }
+            : new[] { arg0Expression, arg1Expression };
     }
 }

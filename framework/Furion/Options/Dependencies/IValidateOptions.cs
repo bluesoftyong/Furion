@@ -19,11 +19,6 @@ public interface IValidateOptions<TOptions> : IOptionsBuilder<TOptions>
     where TOptions : class
 {
     /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
-    /// <summary>
     /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
@@ -40,11 +35,6 @@ public interface IValidateOptions<TOptions, TDep> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep : class
 {
-    /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
     /// <summary>
     /// 复杂验证
     /// </summary>
@@ -65,11 +55,6 @@ public interface IValidateOptions<TOptions, TDep1, TDep2> : IOptionsBuilder<TOpt
     where TDep1 : class
     where TDep2 : class
 {
-    /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
     /// <summary>
     /// 复杂验证
     /// </summary>
@@ -93,11 +78,6 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuild
     where TDep2 : class
     where TDep3 : class
 {
-    /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
     /// <summary>
     /// 复杂验证
     /// </summary>
@@ -124,11 +104,6 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptio
     where TDep3 : class
     where TDep4 : class
 {
-    /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
     /// <summary>
     /// 复杂验证
     /// </summary>
@@ -158,11 +133,6 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> :
     where TDep4 : class
     where TDep5 : class
 {
-    /// <summary>
-    /// 验证失败消息
-    /// </summary>
-    string? FailureMessage { get; }
-
     /// <summary>
     /// 复杂验证
     /// </summary>

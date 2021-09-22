@@ -12,7 +12,7 @@ namespace Furion.Options;
 /// 选项构建器依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
-public interface IOptionsBuilder<TOptions>
+public interface IOptionsBuilderDependency<TOptions>
     where TOptions : class
 {
 }

@@ -48,7 +48,7 @@ public static class OptionsBuilderExtensions
         where TOptions : class
     {
         var optionsType = typeof(TOptions);
-        var optionsBuilderDependency = typeof(IOptionsBuilder<TOptions>);
+        var optionsBuilderDependency = typeof(IOptionsBuilderDependency<TOptions>);
 
         // 获取所有构建器依赖接口
         var builderInterfaces = optionsType.GetInterfaces().Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);

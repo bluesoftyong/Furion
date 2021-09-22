@@ -57,7 +57,7 @@ public static class OptionsBuilderExtensions
             return optionsBuilder;
         }
 
-        // 循环调用
+        // 循环调用 .NET 底层选项配置方法
         foreach (var builderInterface in builderInterfaces)
         {
             InvokeMapMethod(optionsBuilder, optionsType, builderInterface);

@@ -176,14 +176,15 @@ public static class OptionsBuilderExtensions
 
         // 创建调用方法第二个字符串参数表达式（仅限 Validate 方法使用）
         ParameterExpression? arg1Expression = default;
-        string? failureMessage = default;
+        string? arg1 = default;
         if (isValidateMethod)
         {
-            failureMessage = matchMethod.IsDefined(typeof(FailureMessageAttribute))
+            // 获取 [FailureMessage] 特性配置
+            arg1 = matchMethod.IsDefined(typeof(FailureMessageAttribute))
                 ? matchMethod.GetCustomAttribute<FailureMessageAttribute>()!.Text
-                : string.Empty;
+                : default;
 
-            if (!string.IsNullOrWhiteSpace(failureMessage))
+            if (!string.IsNullOrWhiteSpace(arg1))
             {
                 arg1Expression = Expression.Parameter(typeof(string), "arg1");
             }
@@ -192,7 +193,7 @@ public static class OptionsBuilderExtensions
         // 设置实际方法传入参数
         args = arg1Expression == default
             ? new object[] { arg0 }
-            : new object[] { arg0, failureMessage! };
+            : new object[] { arg0, arg1! };
 
         // 返回方法参数定义表达式
         return arg1Expression == default

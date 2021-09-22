@@ -24,7 +24,7 @@ public interface IValidateOptions<TOptions> : IOptionsBuilder<TOptions>
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     bool Validate(TOptions options);
@@ -46,7 +46,7 @@ public interface IValidateOptions<TOptions, TDep> : IOptionsBuilder<TOptions>
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep">依赖服务</param>
@@ -71,7 +71,7 @@ public interface IValidateOptions<TOptions, TDep1, TDep2> : IOptionsBuilder<TOpt
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
@@ -99,7 +99,7 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuild
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
@@ -130,7 +130,7 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptio
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
@@ -164,7 +164,7 @@ public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> :
     string? FailureMessage { get; }
 
     /// <summary>
-    /// 选择复杂验证
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>

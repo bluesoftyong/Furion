@@ -76,7 +76,8 @@
 | 支持特性配置选项节点及 `IValidateOptions<TOptions>` 验证类型  | ✅   |
 | 支持实现 `IAppOptions<TOptions,[TDep1..5]>` 接口方式配置      | ✅   |
 | 支持选项 `IOptions/IOptionsSnapshot/IOptionsMonitor` 接口读取 | ✅   |
-| 选项集成测试                                                  | ✅   |
+| 支持多次配置                                                  | ⚠️   |
+| 选项集成测试                                                  | ⚠️   |
 | 选项使用文档                                                  | ⚠️   |
 | 选项使用例子                                                  | ⚠️   |
 

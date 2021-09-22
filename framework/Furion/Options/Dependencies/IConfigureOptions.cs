@@ -14,7 +14,7 @@ namespace Furion.Options;
 /// 选项配置依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
 {
@@ -30,7 +30,7 @@ public interface IConfigureOptions<TOptions> : IOptionsBuilderDependency<TOption
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions, TDep> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep : class
@@ -49,7 +49,7 @@ public interface IConfigureOptions<TOptions, TDep> : IOptionsBuilderDependency<T
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
@@ -71,7 +71,7 @@ public interface IConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilderDepe
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
@@ -96,7 +96,7 @@ public interface IConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuil
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
@@ -124,7 +124,7 @@ public interface IConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOpti
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 /// <typeparam name="TDep5">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure))]
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Configure), true)]
 public interface IConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class

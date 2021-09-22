@@ -1,0 +1,10 @@
+{
+  "OptionsTest": {
+    "Name": "Furion",
+    "Age": 1,
+    "Stars": 7100,
+    "Unknown": "Unknown",
+    "Private": "Private",
+    "Private2": "Private2"
+  }
+}

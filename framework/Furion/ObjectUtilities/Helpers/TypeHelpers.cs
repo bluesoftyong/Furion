@@ -16,11 +16,11 @@ namespace Furion.Helpers.ObjectUtilities;
 internal static class TypeHelpers
 {
     /// <summary>
-    /// 创建 Action 类型
+    /// 创建 Action 委托类型
     /// </summary>
-    /// <param name="inputArguments"></param>
-    /// <returns></returns>
-    internal static Type CreateAction(params Type[]? inputArguments)
+    /// <param name="inputArguments">输入参数</param>
+    /// <returns>Type</returns>
+    internal static Type CreateActionDelegate(params Type[]? inputArguments)
     {
         var actionType = typeof(Action);
         if (inputArguments.IsEmpty())
@@ -32,12 +32,12 @@ internal static class TypeHelpers
     }
 
     /// <summary>
-    /// 创建 Func 类型
+    /// 创建 Func 委托类型
     /// </summary>
-    /// <param name="outputType"></param>
-    /// <param name="inputArguments"></param>
-    /// <returns></returns>
-    internal static Type CreateFunc(Type outputType, params Type[]? inputArguments)
+    /// <param name="outputType">输出类型</param>
+    /// <param name="inputArguments">输入参数</param>
+    /// <returns>Type</returns>
+    internal static Type CreateFuncDelegate(Type outputType, params Type[]? inputArguments)
     {
         var funcType = typeof(Func<>);
         if (inputArguments.IsEmpty())

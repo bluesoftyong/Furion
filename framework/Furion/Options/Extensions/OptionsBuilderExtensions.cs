@@ -134,12 +134,12 @@ public static class OptionsBuilderExtensions
 
         // 创建参数委托类型
         var delegateType = optionsBuilderMethodMapAttribute.VoidReturn
-            ? TypeHelpers.CreateAction(genericArguments)
-            : TypeHelpers.CreateFunc(typeof(bool), genericArguments);
+            ? TypeHelpers.CreateActionDelegate(genericArguments)
+            : TypeHelpers.CreateFuncDelegate(typeof(bool), genericArguments);
 
         // 创建方法调用参数
         var bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-        var argument = optionsType.GetMethods(bindingAttr)
+        var argumentDelegate = optionsType.GetMethods(bindingAttr)
                 .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length)
                 .CreateDelegate(delegateType, default);
 
@@ -156,6 +156,6 @@ public static class OptionsBuilderExtensions
         var @delegate = Expression.Lambda(callExpression, argumentExpression).Compile();
 
         // 动态调用方法
-        @delegate.DynamicInvoke(argument);
+        @delegate.DynamicInvoke(argumentDelegate);
     }
 }

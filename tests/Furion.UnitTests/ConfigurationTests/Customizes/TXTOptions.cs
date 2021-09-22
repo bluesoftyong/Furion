@@ -2,5 +2,5 @@
 
 public class TXTOptions
 {
-    public string Path { get; set; }
+    public string? Path { get; set; }
 }

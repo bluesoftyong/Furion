@@ -36,18 +36,18 @@ public static class IConfigurationBuilderExtensions
         CheckFileNamePattern(fileName, out var fileNamePart
             , out var environmentNamePart
             , out var fileNameWithEnvironmentPart
-            , out var parameterParts);
+            , out var parameterPart);
 
         // 获取文件名绝对路径
         var filePath = ResolveRealAbsolutePath(fileNamePart);
         Trace.Write($"{nameof(Furion)}: configuration file path => {filePath}");
 
         // 填充配置参数
-        if (parameterParts.Count > 0)
+        if (parameterPart.Count > 0)
         {
-            TrySetParameter(parameterParts, nameof(optional), ref optional);
-            TrySetParameter(parameterParts, nameof(reloadOnChange), ref reloadOnChange);
-            TrySetParameter(parameterParts, nameof(includeEnvironment), ref includeEnvironment);
+            TrySetParameter(parameterPart, nameof(optional), ref optional);
+            TrySetParameter(parameterPart, nameof(reloadOnChange), ref reloadOnChange);
+            TrySetParameter(parameterPart, nameof(includeEnvironment), ref includeEnvironment);
         }
 
         // 添加配置文件
@@ -84,8 +84,8 @@ public static class IConfigurationBuilderExtensions
     /// <param name="fileNamePart">返回文件名匹配部分</param>
     /// <param name="environmentNamePart">环境名匹配部分</param>
     /// <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
-    /// <param name="parameterParts">参数匹配部分</param>
-    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentNamePart, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterParts)
+    /// <param name="parameterPart">参数匹配部分</param>
+    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentNamePart, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterPart)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(fileName))
@@ -111,7 +111,7 @@ public static class IConfigurationBuilderExtensions
         fileNameWithEnvironmentPart = $"{realName}.{{env}}{extension}";
 
         // 匹配文件名参数部分
-        parameterParts = Regex.Matches(fileName, parameterPattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
+        parameterPart = Regex.Matches(fileName, parameterPattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
     }
 
     /// <summary>

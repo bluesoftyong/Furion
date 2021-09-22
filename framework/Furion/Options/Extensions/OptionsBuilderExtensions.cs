@@ -190,12 +190,12 @@ public static class OptionsBuilderExtensions
             }
         }
 
-        // 设置实际方法传入参数
+        // 设置调用方法实际传入参数
         args = arg1Expression == default
             ? new object[] { arg0 }
             : new object[] { arg0, arg1! };
 
-        // 返回方法参数定义表达式
+        // 返回调用方法参数定义表达式
         return arg1Expression == default
             ? new[] { arg0Expression }
             : new[] { arg0Expression, arg1Expression };

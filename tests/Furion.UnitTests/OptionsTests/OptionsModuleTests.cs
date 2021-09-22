@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -115,5 +116,148 @@ public class OptionsModuleTests
         var privateProperty = typeof(TestOptions).GetProperty("Private2", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         privateProperty.Should().NotBeNull();
         privateProperty?.GetValue(testOptions).Should().NotBeNull().And.Be("Private2");
+    }
+
+    /// <summary>
+    /// 测试通过绑定方式注册选项
+    /// </summary>
+    [Fact]
+    public void TestBindOptions()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration.AddFile("&OptionsTests/Files/options.json");
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestOptions>().Bind(builder.Configuration.GetSection("OptionsTest"));
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestOptions>>();
+        // 测试取值
+        options.Value.Should().NotBeNull();
+        var testOptions = options.Value;
+        testOptions.Name.Should().BeEquivalentTo("Furion");
+        testOptions.Age.Should().Be(1);
+        testOptions.Stars.Should().Be(7100);
+    }
+
+    /// <summary>
+    /// 测试通过 Configure 配置选项
+    /// </summary>
+    [Fact]
+    public void TestConfigureOptions()
+    {
+        var builder = WebApplication.CreateBuilder();
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestOptions>().Configure(options =>
+        {
+            options.Name = "Furion1";
+            options.Age = 2;
+            options.Stars = 7111;
+        });
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestOptions>>();
+        // 测试取值
+        options.Value.Should().NotBeNull();
+        var testOptions = options.Value;
+        testOptions.Name.Should().BeEquivalentTo("Furion1");
+        testOptions.Age.Should().Be(2);
+        testOptions.Stars.Should().Be(7111);
+    }
+
+    /// <summary>
+    /// 测试通过 Configure 依赖注入配置选项
+    /// </summary>
+    [Fact]
+    public void TestConfigureOptions1()
+    {
+        var builder = WebApplication.CreateBuilder();
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestOptions>().Configure<IWebHostEnvironment>((options, enviroment) =>
+        {
+            options.Name = "Furion_" + enviroment.EnvironmentName;
+            options.Age = 2;
+            options.Stars = 7111;
+        });
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestOptions>>();
+        // 测试取值
+        options.Value.Should().NotBeNull();
+        var testOptions = options.Value;
+        testOptions.Name.Should().BeEquivalentTo("Furion_Production");
+        testOptions.Age.Should().Be(2);
+        testOptions.Stars.Should().Be(7111);
+    }
+
+    /// <summary>
+    /// 测试特性验证
+    /// </summary>
+    [Fact]
+    public void TestValidateDataAnnotations()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration.AddFile("&OptionsTests/Files/options.json");
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestValidationOptions>().Bind(builder.Configuration.GetSection("OptionsTest"))
+            .ValidateDataAnnotations();
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestValidationOptions>>();
+        options.Invoking(o => o.Value).Should().Throw<OptionsValidationException>();
+    }
+
+    /// <summary>
+    /// 测试复杂验证
+    /// </summary>
+    [Fact]
+    public void TestValidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration.AddFile("&OptionsTests/Files/options.json");
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestValidationOptions>().Bind(builder.Configuration.GetSection("OptionsTest"))
+            .Validate(options =>
+            {
+                if (options.Age < 2)
+                {
+                    return false;
+                }
+                return true;
+            }, "validate faild");
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestValidationOptions>>();
+        options.Invoking(o => o.Value).Should().Throw<OptionsValidationException>();
+    }
+
+    /// <summary>
+    /// 测试选项后期配置
+    /// </summary>
+    [Fact]
+    public void TestPostConfigure()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration.AddFile("&OptionsTests/Files/options.json");
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestOptions>().Bind(builder.Configuration.GetSection("OptionsTest"))
+            .PostConfigure<IWebHostEnvironment>((options, enviroment) =>
+            {
+                options.Name += "_" + enviroment.EnvironmentName;
+            });
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestOptions>>();
+        // 测试取值
+        options.Value.Should().NotBeNull();
+        var testOptions = options.Value;
+        testOptions.Name.Should().BeEquivalentTo("Furion_Production");
+        testOptions.Age.Should().Be(1);
+        testOptions.Stars.Should().Be(7100);
     }
 }

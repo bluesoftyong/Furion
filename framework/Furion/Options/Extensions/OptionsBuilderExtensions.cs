@@ -144,16 +144,16 @@ public static class OptionsBuilderExtensions
                 .CreateDelegate(delegateType, default);
 
         // 创建委托参数表达式
-        var argumentExpression = Expression.Parameter(delegateType, "arg0");
+        var argumentDelegateExpression = Expression.Parameter(delegateType, "arg0");
 
         // 创建调用方法表达式
         var callExpression = Expression.Call(Expression.Constant(optionsBuilder)
             , methodName
             , genericArguments.IsEmpty() ? default : genericArguments!.Skip(1).ToArray()
-            , new[] { argumentExpression });
+            , new[] { argumentDelegateExpression });
 
         // 创建调用委托
-        var @delegate = Expression.Lambda(callExpression, argumentExpression).Compile();
+        var @delegate = Expression.Lambda(callExpression, argumentDelegateExpression).Compile();
 
         // 动态调用方法
         @delegate.DynamicInvoke(argumentDelegate);

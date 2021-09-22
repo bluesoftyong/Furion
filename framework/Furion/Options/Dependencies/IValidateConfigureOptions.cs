@@ -15,7 +15,7 @@ namespace Furion.Options;
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions> : IOptionsBuilder<TOptions>
     where TOptions : class
 {
     /// <summary>
@@ -31,7 +31,7 @@ public interface IValidateConfigureOptions<TOptions> : IOptionsBuilder<TOptions>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep">依赖服务</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions, TDep> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions, TDep> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep : class
 {
@@ -50,7 +50,7 @@ public interface IValidateConfigureOptions<TOptions, TDep> : IOptionsBuilder<TOp
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions, TDep1, TDep2> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -72,7 +72,7 @@ public interface IValidateConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBui
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -97,7 +97,7 @@ public interface IValidateConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOpt
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -125,7 +125,7 @@ public interface IValidateConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 /// <typeparam name="TDep5">依赖服务</typeparam>
 [OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
-public interface IValidateConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilder<TOptions>
+public interface IValidateOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilder<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class

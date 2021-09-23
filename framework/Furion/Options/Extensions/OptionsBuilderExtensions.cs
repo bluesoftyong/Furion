@@ -171,12 +171,14 @@ public static class OptionsBuilderExtensions
         var delegateType = !isValidateMethod
             ? TypeHelpers.CreateActionDelegate(genericArguments)
             : TypeHelpers.CreateFuncDelegate(typeof(bool), genericArguments);
+
         var arg0Expression = Expression.Parameter(delegateType, "arg0");
         var arg0 = matchMethod.CreateDelegate(delegateType, default);
 
         // 创建调用方法第二个字符串参数表达式（仅限 Validate 方法使用）
         ParameterExpression? arg1Expression = default;
         string? arg1 = default;
+
         if (isValidateMethod)
         {
             // 获取 [FailureMessage] 特性配置

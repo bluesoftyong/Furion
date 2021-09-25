@@ -14,7 +14,7 @@ namespace Furion;
 /// App 模块配置选项
 /// </summary>
 [OptionsBuilder(sectionKey, ErrorOnUnknownConfiguration = true)]
-public sealed class AppSettingsOptions : IConfigureOptions<AppSettingsOptions>
+public sealed class AppSettingsOptions : IConfigureOptionsBuilder<AppSettingsOptions>
 {
     /// <summary>
     /// 配置根节点名称
@@ -41,7 +41,7 @@ public sealed class AppSettingsOptions : IConfigureOptions<AppSettingsOptions>
     /// 配置选项
     /// </summary>
     /// <param name="options">选项实例</param>
-    void IConfigureOptions<AppSettingsOptions>.Configure(AppSettingsOptions options)
+    void IConfigureOptionsBuilder<AppSettingsOptions>.Configure(AppSettingsOptions options)
     {
         options.EnvironmentVariablesPrefix ??= environmentVariablesPrefix;
     }

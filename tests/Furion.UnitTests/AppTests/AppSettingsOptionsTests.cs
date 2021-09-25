@@ -84,7 +84,7 @@ public class AppSettingsOptionsTests
         var interfaces = type.GetInterfaces();
 
         // 测试实现 IConfigureOptions<AppSettingsOptions>
-        interfaces.Should().Contain(u => u == typeof(Options.IConfigureOptions<AppSettingsOptions>));
+        interfaces.Should().Contain(u => u == typeof(IConfigureOptionsBuilder<AppSettingsOptions>));
     }
 
     /// <summary>

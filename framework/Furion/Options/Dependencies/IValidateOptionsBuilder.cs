@@ -11,93 +11,93 @@ using Microsoft.Extensions.Options;
 namespace Furion.Options;
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
-    void PostConfigure(TOptions options);
+    bool Validate(TOptions options);
 }
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions, TDep> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions, TDep> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep">依赖服务</param>
-    void PostConfigure(TOptions options, TDep dep);
+    bool Validate(TOptions options, TDep dep);
 }
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
-    void PostConfigure(TOptions options, TDep1 dep1, TDep2 dep2);
+    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2);
 }
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
     where TDep3 : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
-    void PostConfigure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3);
+    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3);
 }
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
 /// <typeparam name="TDep2">依赖服务</typeparam>
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -105,18 +105,18 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : I
     where TDep4 : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
-    void PostConfigure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4);
+    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4);
 }
 
 /// <summary>
-/// 选项后期配置依赖接口
+/// 选项验证依赖接口
 /// </summary>
 /// <typeparam name="TOptions">选项类型</typeparam>
 /// <typeparam name="TDep1">依赖服务</typeparam>
@@ -124,8 +124,8 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4> : I
 /// <typeparam name="TDep3">依赖服务</typeparam>
 /// <typeparam name="TDep4">依赖服务</typeparam>
 /// <typeparam name="TDep5">依赖服务</typeparam>
-[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.PostConfigure), true)]
-public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilderDependency<TOptions>
+[OptionsBuilderMethodMap(nameof(OptionsBuilder<TOptions>.Validate), false)]
+public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> : IOptionsBuilderDependency<TOptions>
     where TOptions : class
     where TDep1 : class
     where TDep2 : class
@@ -134,7 +134,7 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDe
     where TDep5 : class
 {
     /// <summary>
-    /// 选项后期配置
+    /// 复杂验证
     /// </summary>
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
@@ -142,5 +142,5 @@ public interface IPostConfigureOptions<TOptions, TDep1, TDep2, TDep3, TDep4, TDe
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
     /// <param name="dep5">依赖服务</param>
-    void PostConfigure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4, TDep5 dep5);
+    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4, TDep5 dep5);
 }

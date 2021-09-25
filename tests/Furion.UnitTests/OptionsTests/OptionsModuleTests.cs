@@ -260,4 +260,27 @@ public class OptionsModuleTests
         testOptions.Age.Should().Be(1);
         testOptions.Stars.Should().Be(7100);
     }
+
+    /// <summary>
+    /// 测试选项构建器
+    /// </summary>
+    [Fact]
+    public void TestOptionsBuilder()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration.AddFile("&OptionsTests/Files/options.json");
+
+        // 测试配置选项
+        builder.Services.AddOptions<TestBuilderOptions>().ConfigureBuilder(builder.Configuration);
+
+        using var app = builder.Build();
+
+        var options = app.Services.GetRequiredService<IOptions<TestBuilderOptions>>();
+        // 测试取值
+        options.Value.Should().NotBeNull();
+        var testOptions = options.Value;
+        testOptions.Name.Should().BeEquivalentTo("Furion2");
+        testOptions.Age.Should().Be(30);
+        testOptions.Stars.Should().Be(7100);
+    }
 }

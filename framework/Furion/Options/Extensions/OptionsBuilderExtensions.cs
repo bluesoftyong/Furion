@@ -76,7 +76,7 @@ public static class OptionsBuilderExtensions
             return optionsBuilder;
         }
 
-        // 循环调用 .NET 底层选项配置方法
+        // 逐条调用 .NET 底层选项配置方法
         foreach (var builderInterface in builderInterfaces)
         {
             InvokeMapMethod(optionsBuilder, optionsBuilderType, builderInterface);
@@ -101,7 +101,7 @@ public static class OptionsBuilderExtensions
             throw new ArgumentNullException(nameof(optionsBuilderTypes));
         }
 
-        // 遍历配置多个选项构建器
+        // 逐条配置选项构建器
         Array.ForEach(optionsBuilderTypes, optionsBuilderType =>
         {
             optionsBuilder.ConfigureBuilder(optionsBuilderType);
@@ -211,6 +211,12 @@ public static class OptionsBuilderExtensions
     /// <returns>ParameterExpression[]</returns>
     private static ParameterExpression[] BuildExpressionCallParameters(MethodInfo matchMethod, bool isValidateMethod, Type[] genericArguments, out object[] args)
     {
+        /*
+         * 该方法目的是构建符合 OptionsBuilder 对象的 Configure、PostConfigure、Validate 方法签名委托参数表达式，如：
+         * Configure/PostConfigure: [Method](Action<TDep1, .. TDep5>);
+         * Validate: [Method](Func<TOptions, TDep1, .. TDep5, bool>, string);
+         */
+
         // 创建调用方法第一个委托参数表达式
         var delegateType = !isValidateMethod
             ? TypeHelpers.CreateActionDelegate(genericArguments)

@@ -39,19 +39,37 @@ public static class OptionsBuilderExtensions
     }
 
     /// <summary>
+    /// 配置多个选项构建器
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项构建器实例</param>
+    /// <param name="configuration">配置对象</param>
+    /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
+    /// <returns>OptionsBuilder{TOptions}</returns>
+    public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type[] optionsBuilderTypes)
+        where TOptions : class
+    {
+        // 绑定选项配置
+        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilders(optionsBuilderTypes);
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
     /// 配置选项构建器
     /// </summary>
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
+    /// <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
+    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type? optionsBuilderType = default)
         where TOptions : class
     {
-        var optionsType = typeof(TOptions);
+        optionsBuilderType ??= typeof(TOptions);
         var optionsBuilderDependency = typeof(IOptionsBuilderDependency<TOptions>);
 
         // 获取所有构建器依赖接口
-        var builderInterfaces = optionsType.GetInterfaces().Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);
+        var builderInterfaces = optionsBuilderType.GetInterfaces().Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);
         if (!builderInterfaces.Any())
         {
             return optionsBuilder;
@@ -60,8 +78,33 @@ public static class OptionsBuilderExtensions
         // 循环调用 .NET 底层选项配置方法
         foreach (var builderInterface in builderInterfaces)
         {
-            InvokeMapMethod(optionsBuilder, optionsType, builderInterface);
+            InvokeMapMethod(optionsBuilder, optionsBuilderType, builderInterface);
         }
+
+        return optionsBuilder;
+    }
+
+    /// <summary>
+    /// 配置多个选项构建器
+    /// </summary>
+    /// <typeparam name="TOptions">选项类型</typeparam>
+    /// <param name="optionsBuilder">选项构建器实例</param>
+    /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
+    /// <returns>OptionsBuilder{TOptions}</returns>
+    public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type[] optionsBuilderTypes)
+        where TOptions : class
+    {
+        // 处理空对象或空值
+        if (optionsBuilderTypes.IsEmpty())
+        {
+            throw new ArgumentNullException(nameof(optionsBuilderTypes));
+        }
+
+        // 遍历配置多个选项构建器
+        Array.ForEach(optionsBuilderTypes, optionsBuilderType =>
+        {
+            optionsBuilder.ConfigureBuilder(optionsBuilderType);
+        });
 
         return optionsBuilder;
     }
@@ -121,9 +164,9 @@ public static class OptionsBuilderExtensions
     /// 调用 OptionsBuilder{TOptions} 对应方法
     /// </summary>
     /// <param name="optionsBuilder">选项构建器实例</param>
-    /// <param name="optionsType">选项类型</param>
+    /// <param name="optionsBuilderType">选项构建器类型</param>
     /// <param name="builderInterface">构建器接口</param>
-    private static void InvokeMapMethod(object optionsBuilder, Type optionsType, Type builderInterface)
+    private static void InvokeMapMethod(object optionsBuilder, Type optionsBuilderType, Type builderInterface)
     {
         // 获取接口对应 OptionsBuilder 方法映射特性
         var optionsBuilderMethodMapAttribute = builderInterface.GetCustomAttribute<OptionsBuilderMethodMapAttribute>()!;
@@ -134,7 +177,7 @@ public static class OptionsBuilderExtensions
 
         // 获取匹配的配置方法
         var bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-        var matchMethod = optionsType.GetMethods(bindingAttr)
+        var matchMethod = optionsBuilderType.GetMethods(bindingAttr)
             .First(u => u.Name == methodName || u.Name.EndsWith("." + methodName) && u.GetParameters().Length == genericArguments.Length);
 
         // 构建表达式实际传入参数

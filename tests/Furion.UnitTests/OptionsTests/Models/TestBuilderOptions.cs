@@ -47,3 +47,11 @@ public class TestBuilderOptionsValidation : IValidateOptions<TestBuilderOptions>
         return ValidateOptionsResult.Success;
     }
 }
+
+public class TestBuilder2 : IConfigureOptionsBuilder<TestBuilderOptions>
+{
+    public void Configure(TestBuilderOptions options)
+    {
+        options.Name = "Furion3";
+    }
+}

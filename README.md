@@ -40,6 +40,7 @@
 | `App` 模块内置 `FURION_` 前缀环境配置和自定义配置文件装载 | ✅   |
 | `App` 模块支持缺省和手动注册                              | ✅   |
 | `App` 模块单元测试                                        | ✅   |
+| `App` 模块集成测试                                        | ✅   |
 | `App` 模块文档                                            | ✅   |
 | `App` 模块使用例子                                        | ✅   |
 
@@ -61,25 +62,31 @@
 | 支持可选配置、基于环境配置、配置更改监听            | ✅   |
 | 支持 `ChangeToken` 配置全局更改监听                 | ✅   |
 | `Configuration` 模块单元测试                        | ✅   |
+| `Configuration` 模块集成测试                        | ✅   |
 | `Configuration` 模块文档                            | ✅   |
 | `Configuration` 模块使用例子                        | ✅   |
 
-### ⏳ 选项 / Options
+### ✅ 选项 / Options
 
-| 功能                                                          | 状态 |
-| ------------------------------------------------------------- | ---- |
-| 支持选项配置功能                                              | ✅   |
-| 支持公开类（选项）和节点绑定                                  | ✅   |
-| 支持选项属性特性验证（类型、必填、或溢出配置）                | ✅   |
-| 支持选项属性 `IValidateOptions<TOptions>` 复杂验证（多个）    | ✅   |
-| 支持选项后期配置（且支持最多 5 个依赖服务注入）               | ✅   |
-| 支持特性配置选项节点及 `IValidateOptions<TOptions>` 验证类型  | ✅   |
-| 支持实现 `IAppOptions<TOptions,[TDep1..5]>` 接口方式配置      | ✅   |
-| 支持选项 `IOptions/IOptionsSnapshot/IOptionsMonitor` 接口读取 | ✅   |
-| 支持多次配置                                                  | ⚠️   |
-| 选项集成测试                                                  | ⚠️   |
-| 选项使用文档                                                  | ⚠️   |
-| 选项使用例子                                                  | ⚠️   |
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Options) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.OptionsSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/Options) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/OptionsTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/OptionsTests)**
+
+| 功能                                                                                                | 状态 |
+| --------------------------------------------------------------------------------------------------- | ---- |
+| 支持配置直接绑定或转换成 `Options` 对象                                                             | ✅   |
+| 支持选项接口 `IOptions, IOptionsSnapshot, IOptionsMonitor` 读取                                     | ✅   |
+| 支持命名选项                                                                                        | ✅   |
+| 支持选项从配置绑定或通过依赖注入绑定                                                                | ✅   |
+| 支持选项配置、后期配置                                                                              | ✅   |
+| 支持选项单个值验证、多值多场景验证                                                                  | ✅   |
+| 支持特性 `[OptionsBuilder]` 配置选项                                                                | ✅   |
+| 支持单个或多个选项构建器类型配置                                                                    | ✅   |
+| 支持通过 `IConfigureOptionsBuilder, IPostConfigureOptionsBuilder,IValidateOptionsBuilder ` 配置选项 | ✅   |
+| 支持选项绑定非公开属性或字段                                                                        | ✅   |
+| 支持主机启动期间访问选项                                                                            | ✅   |
+| `Options` 模块单元测试                                                                              | ✅   |
+| `Options` 集成单元测试                                                                              | ⏳   |
+| `Options` 模块文档                                                                                  | ⏳   |
+| `Options` 模块使用例子                                                                              | ⏳   |
 
 ### ⏳ 依赖注入 / Dependency Injection
 

@@ -28,12 +28,13 @@ public static class OptionsBuilderExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="configuration">配置对象</param>
+    /// <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
+    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type? optionsBuilderType = default)
         where TOptions : class
     {
         // 配置默认处理和选项构建器
-        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilder();
+        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilder(optionsBuilderType);
 
         return optionsBuilder;
     }

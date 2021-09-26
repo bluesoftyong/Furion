@@ -16,35 +16,24 @@ namespace Furion.Helpers.ObjectUtilities;
 internal static class TypeHelpers
 {
     /// <summary>
-    /// 创建 Action 委托类型
+    /// 创建委托类型
     /// </summary>
-    /// <param name="inputArguments">输入参数</param>
-    /// <returns>Type</returns>
-    internal static Type CreateActionDelegate(params Type[]? inputArguments)
-    {
-        var actionType = typeof(Action);
-        if (inputArguments.IsEmpty())
-        {
-            return actionType;
-        }
-
-        return actionType.Assembly.GetType($"{actionType.FullName}`{inputArguments!.Length}")!.MakeGenericType(inputArguments);
-    }
-
-    /// <summary>
-    /// 创建 Func 委托类型
-    /// </summary>
+    /// <param name="inputTypes">输入类型</param>
     /// <param name="outputType">输出类型</param>
-    /// <param name="inputArguments">输入参数</param>
     /// <returns>Type</returns>
-    internal static Type CreateFuncDelegate(Type outputType, params Type[]? inputArguments)
+    internal static Type CreateDelegate(Type[] inputTypes, Type? outputType = default)
     {
-        var funcType = typeof(Func<>);
-        if (inputArguments.IsEmpty())
+        var isFuncDelegate = outputType != default;
+
+        var baseDelegateType = !isFuncDelegate ? typeof(Action) : typeof(Func<>);
+
+        if (inputTypes.IsEmpty())
         {
-            return funcType.MakeGenericType(outputType);
+            return !isFuncDelegate ? baseDelegateType : baseDelegateType.MakeGenericType(outputType!);
         }
 
-        return funcType.Assembly.GetType($"{(funcType.FullName![0..^2])}`{inputArguments!.Length + 1}")!.MakeGenericType(inputArguments.Concat(new[] { outputType }).ToArray());
+        return !isFuncDelegate
+            ? baseDelegateType.Assembly.GetType($"{baseDelegateType.FullName}`{inputTypes!.Length}")!.MakeGenericType(inputTypes)
+            : baseDelegateType.Assembly.GetType($"{(baseDelegateType.FullName![0..^2])}`{inputTypes!.Length + 1}")!.MakeGenericType(inputTypes.Concat(new[] { outputType! }).ToArray());
     }
 }

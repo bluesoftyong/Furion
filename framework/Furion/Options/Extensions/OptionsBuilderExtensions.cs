@@ -70,7 +70,9 @@ public static class OptionsBuilderExtensions
         var optionsBuilderDependency = typeof(IOptionsBuilderDependency<TOptions>);
 
         // 获取所有构建器依赖接口
-        var builderInterfaces = optionsBuilderType.GetInterfaces().Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);
+        var builderInterfaces = optionsBuilderType.GetInterfaces()
+            .Where(u => optionsBuilderDependency.IsAssignableFrom(u) && u != optionsBuilderDependency);
+
         if (!builderInterfaces.Any())
         {
             return optionsBuilder;
@@ -218,9 +220,7 @@ public static class OptionsBuilderExtensions
          */
 
         // 创建调用方法第一个委托参数表达式
-        var delegateType = !isValidateMethod
-            ? TypeHelpers.CreateActionDelegate(genericArguments)
-            : TypeHelpers.CreateFuncDelegate(typeof(bool), genericArguments);
+        var delegateType = TypeHelpers.CreateDelegate(genericArguments, !isValidateMethod ? default : typeof(bool));
 
         var arg0Expression = Expression.Parameter(delegateType, "arg0");
         var arg0 = matchMethod.CreateDelegate(delegateType, default);

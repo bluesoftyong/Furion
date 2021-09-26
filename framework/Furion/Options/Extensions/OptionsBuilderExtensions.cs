@@ -32,7 +32,7 @@ public static class OptionsBuilderExtensions
     public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
         where TOptions : class
     {
-        // 绑定选项配置
+        // 配置默认处理和选项构建器
         optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilder();
 
         return optionsBuilder;
@@ -49,7 +49,7 @@ public static class OptionsBuilderExtensions
     public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type[] optionsBuilderTypes)
         where TOptions : class
     {
-        // 绑定选项配置
+        // 配置默认处理和多个选项构建器
         optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilders(optionsBuilderTypes);
 
         return optionsBuilder;

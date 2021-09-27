@@ -8,9 +8,22 @@
 
 namespace Furion.TaskQueue;
 
+/// <summary>
+/// 后台任务队列接口
+/// </summary>
 public interface IBackgroundTaskQueue
 {
-    ValueTask QueueBackgroundWorkItemAsync(Func<CancellationToken, ValueTask> workItem);
+    /// <summary>
+    /// 将任务项压入栈
+    /// </summary>
+    /// <param name="workItem">任务处理委托</param>
+    /// <returns>ValueTask</returns>
+    ValueTask QueueAsync(Func<CancellationToken, ValueTask> workItem);
 
+    /// <summary>
+    /// 任务项出栈
+    /// </summary>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
     ValueTask<Func<CancellationToken, ValueTask>> DequeueAsync(CancellationToken cancellationToken);
 }

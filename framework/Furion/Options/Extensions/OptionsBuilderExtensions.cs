@@ -47,6 +47,7 @@ public static class OptionsBuilderExtensions
     /// <param name="configuration">配置对象</param>
     /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
+    /// <exception cref="ArgumentNullException">空选项构建器</exception>
     public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type[] optionsBuilderTypes)
         where TOptions : class
     {
@@ -94,6 +95,7 @@ public static class OptionsBuilderExtensions
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
+    /// <exception cref="ArgumentNullException">空选项构建器</exception>
     public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type[] optionsBuilderTypes)
         where TOptions : class
     {

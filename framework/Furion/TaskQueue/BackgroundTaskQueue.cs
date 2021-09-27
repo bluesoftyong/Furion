@@ -10,33 +10,58 @@ using System.Threading.Channels;
 
 namespace Furion.TaskQueue;
 
-public class BackgroundTaskQueue : IBackgroundTaskQueue
+/// <summary>
+/// 后台任务队列默认实现
+/// </summary>
+internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
 {
+    /// <summary>
+    /// 队列通道
+    /// </summary>
     private readonly Channel<Func<CancellationToken, ValueTask>> _queue;
 
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="capacity">队列通道默认容量，超过该容量进入等待</param>
     public BackgroundTaskQueue(int capacity)
     {
-        var options = new BoundedChannelOptions(capacity)
+        // 配置通道，设置超出默认容量后进入等待
+        var boundedChannelOptions = new BoundedChannelOptions(capacity)
         {
             FullMode = BoundedChannelFullMode.Wait
         };
-        _queue = Channel.CreateBounded<Func<CancellationToken, ValueTask>>(options);
+
+        // 创建有限容量通道
+        _queue = Channel.CreateBounded<Func<CancellationToken, ValueTask>>(boundedChannelOptions);
     }
 
-    public async ValueTask QueueBackgroundWorkItemAsync(Func<CancellationToken, ValueTask> workItem)
+    /// <summary>
+    /// 将任务项压入栈
+    /// </summary>
+    /// <param name="workItem">任务处理委托</param>
+    /// <returns>ValueTask</returns>
+    /// <exception cref="ArgumentNullException">如果 workItem 为空，则抛空异常</exception>
+    public async ValueTask QueueAsync(Func<CancellationToken, ValueTask> workItem)
     {
-        if (workItem == null)
+        // 空检查
+        if (workItem == default)
         {
             throw new ArgumentNullException(nameof(workItem));
         }
 
+        // 将任务想压入栈
         await _queue.Writer.WriteAsync(workItem);
     }
 
+    /// <summary>
+    /// 任务项出栈
+    /// </summary>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
     public async ValueTask<Func<CancellationToken, ValueTask>> DequeueAsync(CancellationToken cancellationToken)
     {
         var workItem = await _queue.Reader.ReadAsync(cancellationToken);
-
         return workItem;
     }
 }

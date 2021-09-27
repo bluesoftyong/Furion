@@ -11,18 +11,32 @@ using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// TaskQueue 模块服务拓展
+/// </summary>
 public static class TaskQueueServiceCollectionExtensions
 {
+    /// <summary>
+    /// 添加 TaskQueue 模块注册
+    /// </summary>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="configuration">配置对象</param>
+    /// <returns>服务集合实例</returns>
     public static IServiceCollection AddTaskQueue(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHostedService<QueuedHostedService>();
+        // 注册任务队列后台服务
+        services.AddHostedService<TaskQueuedHostedService>();
+
+        // 注册后台任务队列接口/实例为单例，采用工厂方式创建
         services.AddSingleton<IBackgroundTaskQueue>(provider =>
         {
-            if (!int.TryParse(configuration["QueueCapacity"], out var queueCapacity))
+            // 读取 TaskQueue 模块配置，并获取队列通道容量，默认为 100
+            if (!int.TryParse(configuration["TaskQueue:Capacity"], out var queueCapacity))
             {
                 queueCapacity = 100;
             }
 
+            // 创建后台队列实例
             return new BackgroundTaskQueue(queueCapacity);
         });
 

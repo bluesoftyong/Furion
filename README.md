@@ -66,7 +66,7 @@
 | `Configuration` 模块文档                            | ✅   |
 | `Configuration` 模块使用例子                        | ✅   |
 
-### ✅ 选项 / Options
+### ⏳ 选项 / Options
 
 🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Options) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.OptionsSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/Options) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/OptionsTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/OptionsTests)**
 
@@ -87,6 +87,19 @@
 | `Options` 集成单元测试                                                                              | ⏳   |
 | `Options` 模块文档                                                                                  | ⏳   |
 | `Options` 模块使用例子                                                                              | ⏳   |
+
+### ⏳ 任务队列 / TaskQueue
+
+| 功能                                               | 状态 |
+| -------------------------------------------------- | ---- |
+| 支持任务队列容量配置                               | ✅   |
+| 支持任务队列 `IBackgroundTaskQueue` 入栈、出栈操作 | ✅   |
+| 支持任务队列开始、暂停、取消操作                   | ✅   |
+| 支持任务队列异步操作                               | ✅   |
+| `TaskQueue` 模块单元测试                           | ⏳   |
+| `TaskQueue` 集成单元测试                           | ⏳   |
+| `TaskQueue` 模块文档                               | ⏳   |
+| `TaskQueue` 模块使用例子                           | ⏳   |
 
 ### ⏳ 依赖注入 / Dependency Injection
 

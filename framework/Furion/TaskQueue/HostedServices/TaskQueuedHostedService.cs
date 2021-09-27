@@ -14,7 +14,7 @@ namespace Furion.TaskQueue;
 /// <summary>
 /// 任务队列后台主机服务
 /// </summary>
-/// <remarks>用于长时间监听任务项压入栈后进行出栈调用</remarks>
+/// <remarks>用于长时间监听任务项入队后进行出队调用</remarks>
 internal sealed class TaskQueuedHostedService : BackgroundService
 {
     /// <summary>

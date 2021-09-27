@@ -42,26 +42,18 @@ internal sealed class TaskQueuedHostedService : BackgroundService
     /// <summary>
     /// 执行后台任务
     /// </summary>
-    /// <param name="stoppingToken">后台服务停止时取消任务 Token</param>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns></returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("TaskQueued Hosted Service is running.");
 
+        // 注册后台主机服务停止监听
+        stoppingToken.Register(() =>
+            _logger.LogDebug($"TaskQueued Hosted Service is stopping."));
+
         // 出栈并后台调用
         await BackgroundProcessing(stoppingToken);
-    }
-
-    /// <summary>
-    /// 监听后台主机服务停止
-    /// </summary>
-    /// <param name="stoppingToken">后台服务停止时取消任务 Token</param>
-    /// <returns>Task</returns>
-    public override async Task StopAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("TaskQueued Hosted Service is stopping.");
-
-        await base.StopAsync(stoppingToken);
     }
 
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
@@ -83,5 +75,7 @@ internal sealed class TaskQueuedHostedService : BackgroundService
                 _logger.LogError(ex, "Error occurred executing {WorkItem}.", nameof(workItem));
             }
         }
+
+        _logger.LogDebug($"TaskQueued Hosted Service is stopped.");
     }
 }

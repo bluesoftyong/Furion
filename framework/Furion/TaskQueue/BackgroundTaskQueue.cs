@@ -37,12 +37,12 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     }
 
     /// <summary>
-    /// 将任务项压入栈
+    /// 将任务项压入队列
     /// </summary>
     /// <param name="workItem">任务处理委托</param>
     /// <returns>ValueTask</returns>
     /// <exception cref="ArgumentNullException">如果 workItem 为空，则抛空异常</exception>
-    public async ValueTask QueueAsync(Func<CancellationToken, ValueTask> workItem)
+    public async ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> workItem)
     {
         // 空检查
         if (workItem == default)
@@ -55,7 +55,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     }
 
     /// <summary>
-    /// 任务项出栈
+    /// 任务项出队
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>

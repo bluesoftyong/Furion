@@ -56,12 +56,17 @@ internal sealed class TaskQueuedHostedService : BackgroundService
         await BackgroundProcessing(stoppingToken);
     }
 
+    /// <summary>
+    /// 后台调用
+    /// </summary>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+    /// <returns>Task</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
         // 监听是否已取消
         while (!stoppingToken.IsCancellationRequested)
         {
-            // 出栈
+            // 出队
             var workItem = await _taskQueue.DequeueAsync(stoppingToken);
 
             try

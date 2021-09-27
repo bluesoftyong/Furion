@@ -14,14 +14,14 @@ namespace Furion.TaskQueue;
 public interface IBackgroundTaskQueue
 {
     /// <summary>
-    /// 将任务项压入栈
+    /// 将任务项压入队列
     /// </summary>
     /// <param name="workItem">任务处理委托</param>
     /// <returns>ValueTask</returns>
-    ValueTask QueueAsync(Func<CancellationToken, ValueTask> workItem);
+    ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> workItem);
 
     /// <summary>
-    /// 任务项出栈
+    /// 任务项出队
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>

@@ -52,7 +52,7 @@ internal sealed class TaskQueuedHostedService : BackgroundService
         stoppingToken.Register(() =>
             _logger.LogDebug($"TaskQueued Hosted Service is stopping."));
 
-        // 出栈并后台调用
+        // 出队并调用
         await BackgroundProcessing(stoppingToken);
     }
 

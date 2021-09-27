@@ -14,7 +14,7 @@ namespace Furion.TaskQueue;
 public interface IBackgroundTaskQueue
 {
     /// <summary>
-    /// 将任务项压入队列
+    /// 任务项入队
     /// </summary>
     /// <param name="workItem">任务处理委托</param>
     /// <returns>ValueTask</returns>

@@ -37,7 +37,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     }
 
     /// <summary>
-    /// 将任务项压入队列
+    /// 任务项入队
     /// </summary>
     /// <param name="workItem">任务处理委托</param>
     /// <returns>ValueTask</returns>
@@ -50,7 +50,6 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
             throw new ArgumentNullException(nameof(workItem));
         }
 
-        // 将任务想压入栈
         await _queue.Writer.WriteAsync(workItem);
     }
 

@@ -57,7 +57,7 @@ internal sealed class TaskQueuedHostedService : BackgroundService
     }
 
     /// <summary>
-    /// 后台调用
+    /// 管道中任务出队并调用
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns>Task</returns>

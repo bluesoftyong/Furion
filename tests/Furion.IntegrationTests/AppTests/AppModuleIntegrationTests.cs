@@ -26,7 +26,6 @@ public class AppModuleIntegrationTests : IClassFixture<WebApplicationFactory<Fur
     [InlineData("/api/IApp/GetServiceByServiceProvider")]
     [InlineData("/api/IApp/GetService")]
     [InlineData("/api/IApp/GetRequiredService")]
-    [InlineData("/api/AppSettingsOptions/GetAppSettings")]
     public async Task TestEnsureSuccessStatusCode(string url)
     {
         using var client = _factory.CreateClient();

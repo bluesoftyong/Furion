@@ -7,9 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -22,13 +20,9 @@ public static class AppServiceCollectionExtensions
     /// 添加 App 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <param name="configuration">配置对象</param>
     /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddApp(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApp(this IServiceCollection services)
     {
-        // 注册 App 模块选项配置
-        services.AddOptions<AppSettingsOptions>().ConfigureBuilder(configuration);
-
         // 注册 App 模块 IApp 单例服务
         services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IApp), typeof(App)));
 

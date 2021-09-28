@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Furion.UnitTests;
@@ -27,7 +26,6 @@ public class AppModuleTests
 
         // 测试默认注册
         services.Invoking(s => s.GetRequiredService<IApp>()).Should().NotThrow();
-        services.Invoking(s => s.GetRequiredService<IOptions<AppSettingsOptions>>().Value).Should().NotThrow();
     }
 
     /// <summary>
@@ -37,7 +35,7 @@ public class AppModuleTests
     public void TestManualRegister()
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Services.AddApp(builder.Configuration);
+        builder.Services.AddApp();
         using var app = builder.Build();
         var services = app.Services;
 

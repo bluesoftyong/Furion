@@ -38,7 +38,7 @@ public static class FurionHostBuilderExtensions
         hostBuilder.ConfigureServices((context, services) =>
         {
             // 注册 App 模块
-            services.AddApp(context.Configuration);
+            services.AddApp();
 
             // 注册属性注入服务提供器
             services.TryAddTransient<IAutowiredServiceProvider, AutowiredServiceProvider>();

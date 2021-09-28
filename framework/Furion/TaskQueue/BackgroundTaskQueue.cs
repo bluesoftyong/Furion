@@ -50,6 +50,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
             throw new ArgumentNullException(nameof(workItem));
         }
 
+        // 写入管道队列
         await _queue.Writer.WriteAsync(workItem);
     }
 
@@ -60,6 +61,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
     public async ValueTask<Func<CancellationToken, ValueTask>> DequeueAsync(CancellationToken cancellationToken)
     {
+        // 读取管道队列
         var workItem = await _queue.Reader.ReadAsync(cancellationToken);
         return workItem;
     }

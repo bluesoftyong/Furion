@@ -4,10 +4,10 @@
 
 `App` 模块是 `Furion` 框架默认添加的模块，该模块提供了 `Furion` 框架全局配置及主机服务对象操作。
 
-`App` 模块包含 `IApp` 服务注册及 `AppSettingsOptions` 选项注册。**默认情况下无需注册该服务。** 如需手动注册，可添加以下注册：
+`App` 模块包含 `IApp` 服务注册，**默认情况下无需注册该服务。** 如需手动注册，可添加以下注册：
 
 ```cs
-services.AddApp(configuration);
+services.AddApp();
 ```
 
 ## `IApp` 服务接口
@@ -111,11 +111,11 @@ public class IAppController : ControllerBase
 }
 ```
 
-## `AppSettingsOptions` 配置选项
+## `AppSettings` 配置
 
-`AppSettingsOptions` 配置选项是 `App` 模块对外提供的配置模块，默认情况下，只能配置到 `appsettings.json` 或 `appsettings.{environment}.json` 中。配置根节点名称为：`AppSettings`。
+`AppSettings` 配置是 `App` 模块对外提供的配置模块，默认情况下，只能配置到 `appsettings.json` 或 `appsettings.{environment}.json` 中。配置根节点名称为：`AppSettings`。
 
-`AppSettingsOptions` 提供 `Furion` 框架初始化配置属性：
+`AppSettings` 支持配置属性：
 
 - `EnvironmentVariablesPrefix`：配置环境配置提供器变量（节点）前缀，`string` 类型，默认为 `FURION_`。另外，节点和下级节点采用 `__` 连接，如：`FURION_AppSettings__节点__下级节点__下下下级节点`。
 - `CustomizeConfigurationFiles`：配置框架启动自动添加的文件配置，`string[]?` 类型，默认为 `default`。
@@ -190,59 +190,7 @@ public class IAppController : ControllerBase
 - `optional`：是否不检查配置文件存在物理硬盘，`bool` 类型，默认 `true`，也就是即使文件不存在也可以添加，同时支持文件由无到有自动刷新 `IConfiguration` 配置对象。
 - `reloadOnChange`：是否文件发生改变自动刷新 `IConfiguration` 配置对象，`bool` 类型，默认 `false`。
 
-### `AppSettingsOptions` 不匹配值
-
-`Furion` 框架对 `AppSettings` 配置节点做了匹配检测，一旦出现不匹配 `AppSettingsOptions` 属性的节点抛出 `InvalidOperationException` 异常。
-
 ### `AppSettingsOptions` 使用例子
-
-```cs
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-
-namespace Furion.Samples.AppSamples;
-
-/// <summary>
-/// App 模块 AppSettingsOptions 使用示例
-/// </summary>
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class AppSettingsOptionsController : ControllerBase
-{
-    private readonly IOptions<AppSettingsOptions> _options;
-    private readonly IOptionsSnapshot<AppSettingsOptions> _optionsSnapshot;
-    private readonly IOptionsMonitor<AppSettingsOptions> _optionsMonitor;
-    public AppSettingsOptionsController(IOptions<AppSettingsOptions> options
-        , IOptionsSnapshot<AppSettingsOptions> optionsSnapshot
-        , IOptionsMonitor<AppSettingsOptions> optionsMonitor)
-    {
-        _options = options;
-        _optionsSnapshot = optionsSnapshot;
-        _optionsMonitor = optionsMonitor;
-    }
-
-    /// <summary>
-    /// 获取 AppSettings 配置
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    public string GetAppSettings()
-    {
-        // 配置更改不会刷新
-        var appSettings1 = _options.Value;
-
-        // 配置更改后下次请求应用
-        var appSettings2 = _optionsSnapshot.Value;
-
-        // 配置更改后，每次调用都能获取最新配置
-        var appSettings3 = _optionsMonitor.CurrentValue;
-
-        return $"{appSettings1.EnvironmentVariablesPrefix}\n{ appSettings2.EnvironmentVariablesPrefix}\n{ appSettings3.EnvironmentVariablesPrefix}";
-    }
-}
-```
-
-注：可以尝试修改 `appsettings.json` 对应的 `AppSettings` 节点值后再次请求看看值变化，如：
 
 ```json
 {

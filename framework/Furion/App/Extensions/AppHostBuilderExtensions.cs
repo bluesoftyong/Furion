@@ -6,7 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion;
 using Furion.Extensions.ObjectUtilities;
 using Microsoft.Extensions.Configuration;
 
@@ -17,6 +16,11 @@ namespace Microsoft.Extensions.Hosting;
 /// </summary>
 public static class AppHostBuilderExtensions
 {
+    /// <summary>
+    /// App 模块配置节点
+    /// </summary>
+    private const string ConfigurationKey = "AppSettings";
+
     /// <summary>
     /// 配置 App 模块初始配置
     /// </summary>
@@ -30,7 +34,7 @@ public static class AppHostBuilderExtensions
              var environment = context.HostingEnvironment;
 
              // 读取 AppSettings:EnvironmentVariablesPrefix 节点
-             var environmentVariablesPrefix = configuration.GetValue($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.EnvironmentVariablesPrefix)}", AppSettingsOptions.environmentVariablesPrefix);
+             var environmentVariablesPrefix = configuration.GetValue($"{ConfigurationKey}:EnvironmentVariablesPrefix", "FURION_");
              // 添加环境配置支持及前缀支持
              configurationBuilder.AddEnvironmentVariables(prefix: environmentVariablesPrefix);
 
@@ -49,7 +53,7 @@ public static class AppHostBuilderExtensions
     private static IConfigurationBuilder AddCustomizeConfigurationFiles(IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
         // 读取 AppSettings:CustomizeConfigurationFiles 节点
-        var customizeConfigurationFiles = configuration.Get<string[]>($"{AppSettingsOptions.sectionKey}:{nameof(AppSettingsOptions.CustomizeConfigurationFiles)}");
+        var customizeConfigurationFiles = configuration.Get<string[]>($"{ConfigurationKey}:CustomizeConfigurationFiles");
 
         // 配置为空则跳过
         if (customizeConfigurationFiles.IsEmpty())

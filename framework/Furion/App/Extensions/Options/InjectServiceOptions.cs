@@ -9,6 +9,7 @@
 using Furion.DataValidation;
 using Furion.FriendlyException;
 using Furion.SpecificationDocument;
+using System;
 
 namespace Furion;
 

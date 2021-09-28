@@ -11,7 +11,9 @@ using Furion.Extensions;
 using Furion.IPCChannel;
 using Furion.JsonSerialization;
 using Furion.Reflection;
+using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Furion.EventBridge;
 

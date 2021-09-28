@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.SensitiveDetection;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

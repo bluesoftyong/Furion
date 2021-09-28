@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.IPCChannel;
+using System.Threading.Tasks;
 
 namespace Furion.TaskScheduler;
 

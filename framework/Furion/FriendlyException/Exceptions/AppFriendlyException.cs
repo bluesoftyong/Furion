@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Runtime.Serialization;
 
 namespace Furion.FriendlyException;

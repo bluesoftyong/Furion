@@ -9,6 +9,7 @@
 using Furion.ConfigurableOptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Furion;
 

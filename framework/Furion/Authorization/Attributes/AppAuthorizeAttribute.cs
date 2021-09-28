@@ -8,6 +8,7 @@
 
 using Furion.Authorization;
 using Furion.DependencyInjection;
+using System;
 
 namespace Microsoft.AspNetCore.Authorization;
 

@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.JsonSerialization;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace System.Text.Json;

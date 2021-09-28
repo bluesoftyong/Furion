@@ -8,6 +8,7 @@
 
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
 
 namespace Furion.SpecificationDocument;
 

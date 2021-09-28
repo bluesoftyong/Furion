@@ -11,6 +11,7 @@ using Furion.DependencyInjection;
 using Furion.Localization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Razor;
+using System;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 

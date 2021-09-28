@@ -7,6 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.Hosting;
 

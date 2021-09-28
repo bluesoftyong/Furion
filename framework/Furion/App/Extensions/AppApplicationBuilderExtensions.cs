@@ -8,6 +8,7 @@
 
 using Furion;
 using Furion.DependencyInjection;
+using System;
 
 namespace Microsoft.AspNetCore.Builder;
 

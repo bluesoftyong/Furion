@@ -10,6 +10,7 @@ using Furion.DependencyInjection;
 using Furion.DynamicApiController;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Linq;
 
 namespace Furion.SpecificationDocument;
 

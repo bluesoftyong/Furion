@@ -9,6 +9,7 @@
 using Furion.DependencyInjection;
 using Furion.Reflection;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Furion.ViewEngine;

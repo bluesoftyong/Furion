@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.Templates.Extensions;
+using System;
 
 namespace Furion.TaskScheduler;
 

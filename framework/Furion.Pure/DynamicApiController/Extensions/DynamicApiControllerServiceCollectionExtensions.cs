@@ -11,6 +11,9 @@ using Furion.DependencyInjection;
 using Furion.DynamicApiController;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -61,8 +64,8 @@ public static class DynamicApiControllerServiceCollectionExtensions
         // 配置 Mvc 选项
         services.Configure<MvcOptions>(options =>
         {
-                // 添加应用模型转换器
-                options.Conventions.Add(new DynamicApiControllerApplicationModelConvention());
+            // 添加应用模型转换器
+            options.Conventions.Add(new DynamicApiControllerApplicationModelConvention());
         });
 
         return services;

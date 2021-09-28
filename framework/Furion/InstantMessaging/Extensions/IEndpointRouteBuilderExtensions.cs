@@ -13,6 +13,8 @@ using Furion.InstantMessaging;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Microsoft.AspNetCore.Builder;

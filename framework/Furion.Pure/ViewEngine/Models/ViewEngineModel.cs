@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Furion.ViewEngine;
 

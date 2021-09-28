@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Furion.DatabaseAccessor;
 

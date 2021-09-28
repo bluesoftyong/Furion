@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Dapper;
+using System;
 using System.Data;
 
 namespace Microsoft.Extensions.DependencyInjection;

@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using System;
 using System.Reflection;
 
 namespace Furion.VirtualFileServer;

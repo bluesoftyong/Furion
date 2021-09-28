@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
 using Serilog.Events;
+using System;
+using System.IO;
 using System.Text;
 
 namespace Microsoft.Extensions.Hosting;

@@ -7,6 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Furion.DatabaseAccessor;
 

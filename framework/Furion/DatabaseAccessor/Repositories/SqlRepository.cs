@@ -10,6 +10,7 @@ using Furion.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Furion.DatabaseAccessor;
 

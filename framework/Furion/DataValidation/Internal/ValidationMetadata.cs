@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
 
 namespace Furion.DataValidation;
 

@@ -1,3 +1,5 @@
+using System;
+
 namespace FurionBlazorApi.Web.Core;
 
 public class WeatherForecast

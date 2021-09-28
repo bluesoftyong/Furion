@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.CodeAnalysis;
+using System;
 using System.Reflection;
 
 namespace Furion.ViewEngine;

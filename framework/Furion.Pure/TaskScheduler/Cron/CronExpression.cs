@@ -7,6 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 

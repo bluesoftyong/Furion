@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.DynamicApiController;
+using System;
 
 namespace Microsoft.AspNetCore.Mvc;
 

@@ -9,6 +9,7 @@
 using Furion.DependencyInjection;
 using Furion.VirtualFileServer;
 using Microsoft.Extensions.FileProviders;
+using System;
 using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;

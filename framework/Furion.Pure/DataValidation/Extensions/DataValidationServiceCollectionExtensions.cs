@@ -9,6 +9,7 @@
 using Furion.DataValidation;
 using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

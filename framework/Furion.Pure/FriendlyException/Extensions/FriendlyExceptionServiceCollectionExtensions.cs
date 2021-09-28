@@ -9,6 +9,7 @@
 using Furion.DependencyInjection;
 using Furion.FriendlyException;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

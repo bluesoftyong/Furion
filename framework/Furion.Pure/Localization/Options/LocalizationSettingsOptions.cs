@@ -9,6 +9,7 @@
 using Furion.ConfigurableOptions;
 using Furion.Reflection;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Furion.Localization;
 

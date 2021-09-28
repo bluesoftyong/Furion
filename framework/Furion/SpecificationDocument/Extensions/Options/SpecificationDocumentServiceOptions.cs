@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 
 namespace Furion.SpecificationDocument;
 

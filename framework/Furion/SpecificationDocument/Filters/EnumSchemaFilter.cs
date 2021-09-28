@@ -10,7 +10,9 @@ using Furion.DependencyInjection;
 using Furion.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -40,7 +42,7 @@ public class EnumSchemaFilter : ISchemaFilter
 
             var enumValues = Enum.GetValues(type);
             // 获取枚举实际值类型
-            var enumValueType = type.GetFields().First().FieldType;
+            var enumValueType = type.GetField("value__").FieldType;
 
             foreach (var value in enumValues)
             {

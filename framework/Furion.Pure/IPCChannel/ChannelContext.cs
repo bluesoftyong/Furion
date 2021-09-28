@@ -8,7 +8,9 @@
 
 using Furion.DependencyInjection;
 using Furion.FriendlyException;
+using System;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace Furion.IPCChannel;
 

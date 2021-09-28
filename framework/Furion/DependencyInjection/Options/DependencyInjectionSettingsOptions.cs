@@ -8,6 +8,7 @@
 
 using Furion.ConfigurableOptions;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Furion.DependencyInjection;
 

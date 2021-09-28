@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Furion.Logging;
 

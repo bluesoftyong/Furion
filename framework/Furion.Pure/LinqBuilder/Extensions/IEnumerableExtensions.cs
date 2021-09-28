@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using Furion.LinqBuilder;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace System.Linq;

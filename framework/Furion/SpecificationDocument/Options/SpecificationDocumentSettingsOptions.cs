@@ -11,6 +11,8 @@ using Furion.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Linq;
 
 namespace Furion.SpecificationDocument;
 

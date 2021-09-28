@@ -11,8 +11,13 @@ using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Furion.ViewEngine;
 
@@ -306,9 +311,9 @@ public class ViewEngine : IViewEngine
             options.ReferencedAssemblies
                 .Select(ass =>
                 {
-                        // MetadataReference.CreateFromFile(ass.Location)
+                    // MetadataReference.CreateFromFile(ass.Location)
 
-                        unsafe
+                    unsafe
                     {
                         ass.TryGetRawMetadata(out var blob, out var length);
                         var moduleMetadata = ModuleMetadata.CreateFromMetadata((IntPtr)blob, length);

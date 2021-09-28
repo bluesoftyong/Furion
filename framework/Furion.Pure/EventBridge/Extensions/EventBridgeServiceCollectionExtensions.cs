@@ -11,6 +11,8 @@ using Furion.DependencyInjection;
 using Furion.EventBridge;
 using Furion.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

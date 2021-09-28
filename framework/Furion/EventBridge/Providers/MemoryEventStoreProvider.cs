@@ -7,7 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.DependencyInjection;
+using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Furion.EventBridge;
 

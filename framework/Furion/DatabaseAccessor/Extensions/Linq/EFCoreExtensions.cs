@@ -8,6 +8,8 @@
 
 using Furion.DependencyInjection;
 using Microsoft.EntityFrameworkCore.Query;
+using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Microsoft.EntityFrameworkCore;

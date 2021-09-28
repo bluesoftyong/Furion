@@ -7,6 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace Furion.DatabaseAccessor;
 

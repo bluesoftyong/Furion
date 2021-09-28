@@ -8,6 +8,7 @@
 
 using Furion.DependencyInjection;
 using System.Text.RegularExpressions;
+using System;
 
 namespace Furion.DataValidation;
 

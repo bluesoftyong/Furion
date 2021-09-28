@@ -10,6 +10,7 @@ using Furion.DependencyInjection;
 using Furion.Extensions;
 using Furion.UnifyResult;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Microsoft.AspNetCore.Mvc;
 

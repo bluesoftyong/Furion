@@ -9,6 +9,7 @@
 using Furion.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace Furion.Authorization;
 

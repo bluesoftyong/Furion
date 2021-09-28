@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 namespace Furion.DependencyInjection;
+using System;
 
 /// <summary>
 /// 跳过全局代理

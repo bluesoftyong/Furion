@@ -17,9 +17,9 @@ namespace Furion.SchedulerTask;
 internal sealed class SchedulerTaskHostedService : BackgroundService
 {
     /// <summary>
-    /// 避免由 CLR 的终结器捕获该异常重而终止应用程序，让所有未觉察异常被觉察
+    /// 避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
     /// </summary>
-    public event EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskException;
+    internal event EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskException;
 
     /// <summary>
     /// 日志对象

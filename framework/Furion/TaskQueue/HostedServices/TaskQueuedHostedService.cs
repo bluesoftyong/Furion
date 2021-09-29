@@ -18,6 +18,11 @@ namespace Furion.TaskQueue;
 internal sealed class TaskQueuedHostedService : BackgroundService
 {
     /// <summary>
+    /// 避免由 CLR 的终结器捕获该异常重而终止应用程序，让所有未觉察异常被觉察
+    /// </summary>
+    public event EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskException;
+
+    /// <summary>
     /// 日志对象
     /// </summary>
     private readonly ILogger<TaskQueuedHostedService> _logger;
@@ -76,6 +81,12 @@ internal sealed class TaskQueuedHostedService : BackgroundService
             }
             catch (Exception ex)
             {
+                // 捕获 Task 任务异常信息并统计所有异常
+                var args = new UnobservedTaskExceptionEventArgs(
+                        ex as AggregateException ?? new AggregateException(ex));
+
+                UnobservedTaskException?.Invoke(this, args);
+
                 // 输出异常日志
                 _logger.LogError(ex, "Error occurred executing {WorkItem}.", nameof(workItem));
             }

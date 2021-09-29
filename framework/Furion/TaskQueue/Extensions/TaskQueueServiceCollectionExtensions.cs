@@ -27,6 +27,47 @@ public static class TaskQueueServiceCollectionExtensions
         // 注册任务队列后台服务
         services.AddHostedService<TaskQueuedHostedService>();
 
+        // 注册 BackgroundTaskQueue 服务
+        services.AddBackgroundTaskQueue(configuration);
+
+        return services;
+    }
+
+    /// <summary>
+    /// 添加 TaskQueue 模块注册
+    /// </summary>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="configuration">配置对象</param>
+    /// <param name="unobservedTaskExceptionHandler">未察觉任务异常事件处理程序</param>
+    /// <returns>服务集合实例</returns>
+    public static IServiceCollection AddTaskQueue(this IServiceCollection services, IConfiguration configuration, EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler)
+    {
+        // 通过工厂模式创建
+        services.AddHostedService(serviceProvider =>
+        {
+            // 创建服务对象
+            var taskQueuedHostedService = ActivatorUtilities.CreateInstance<TaskQueuedHostedService>(serviceProvider);
+
+            // 订阅未察觉任务异常事件
+            taskQueuedHostedService.UnobservedTaskException += unobservedTaskExceptionHandler;
+
+            return taskQueuedHostedService;
+        });
+
+        // 注册 BackgroundTaskQueue 服务
+        services.AddBackgroundTaskQueue(configuration);
+
+        return services;
+    }
+
+    /// <summary>
+    /// 注册 BackgroundTaskQueue 服务
+    /// </summary>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="configuration">配置对象</param>
+    /// <returns>服务集合实例</returns>
+    private static IServiceCollection AddBackgroundTaskQueue(this IServiceCollection services, IConfiguration configuration)
+    {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
         services.AddSingleton<IBackgroundTaskQueue>(provider =>
         {

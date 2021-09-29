@@ -16,12 +16,12 @@ internal sealed class CronSchedulerTaskWrapper : SchedulerTaskWrapper
     /// <summary>
     /// Cron 表达式
     /// </summary>
-    public CrontabSchedule? Schedule { get; set; }
+    internal CrontabSchedule? Schedule { get; set; }
 
     /// <summary>
     /// 设置最近运行时间和下一次运行时间增量
     /// </summary>
-    public override void Increment()
+    internal override void Increment()
     {
         LastRunTime = NextRunTime;
         NextRunTime = Schedule!.GetNextOccurrence(NextRunTime);

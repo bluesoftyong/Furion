@@ -16,29 +16,29 @@ internal abstract class SchedulerTaskWrapper
     /// <summary>
     /// 具体执行任务对象
     /// </summary>
-    public IScheduledTask? Task { get; set; }
+    internal IScheduledTask? Task { get; set; }
 
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public DateTime LastRunTime { get; set; }
+    internal DateTime LastRunTime { get; set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    public DateTime NextRunTime { get; set; }
+    internal DateTime NextRunTime { get; set; }
 
     /// <summary>
     /// 设置最近运行时间和下一次运行时间增量
     /// </summary>
-    public abstract void Increment();
+    internal abstract void Increment();
 
     /// <summary>
     /// 是否开始执行任务
     /// </summary>
     /// <param name="currentTime">当前时间</param>
     /// <returns>bool</returns>
-    public virtual bool ShouldRun(DateTime currentTime)
+    internal virtual bool ShouldRun(DateTime currentTime)
     {
         return NextRunTime < currentTime && LastRunTime != NextRunTime;
     }

@@ -16,12 +16,12 @@ internal sealed class IntervalSchedulerTaskWrapper : SchedulerTaskWrapper
     /// <summary>
     /// 间隔时间（分钟）
     /// </summary>
-    public int Interval { get; set; }
+    internal int Interval { get; set; }
 
     /// <summary>
     /// 设置最近运行时间和下一次运行时间增量
     /// </summary>
-    public override void Increment()
+    internal override void Increment()
     {
         LastRunTime = NextRunTime;
         NextRunTime = DateTime.UtcNow.AddMinutes(Interval);

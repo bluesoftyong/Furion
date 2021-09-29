@@ -36,10 +36,9 @@ public static class AppHostBuilderExtensions
              // 读取 AppSettings:EnvironmentVariablesPrefix 节点
              var environmentVariablesPrefix = configuration.GetValue($"{ConfigurationKey}:EnvironmentVariablesPrefix", "FURION_");
              // 添加环境配置支持及前缀支持
-             configurationBuilder.AddEnvironmentVariables(prefix: environmentVariablesPrefix);
-
-             // 添加自定义配置文件
-             AddCustomizeConfigurationFiles(configurationBuilder, configuration, environment);
+             configurationBuilder.AddEnvironmentVariables(prefix: environmentVariablesPrefix)
+                                 // 添加自定义配置文件
+                                 .AddCustomizeConfigurationFiles(configuration, environment);
          });
     }
 
@@ -50,7 +49,7 @@ public static class AppHostBuilderExtensions
     /// <param name="configuration">配置对象</param>
     /// <param name="environment">环境对象</param>
     /// <returns>IConfigurationBuilder</returns>
-    private static IConfigurationBuilder AddCustomizeConfigurationFiles(IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
+    private static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
     {
         // 读取 AppSettings:CustomizeConfigurationFiles 节点
         var customizeConfigurationFiles = configuration.Get<string[]>($"{ConfigurationKey}:CustomizeConfigurationFiles");

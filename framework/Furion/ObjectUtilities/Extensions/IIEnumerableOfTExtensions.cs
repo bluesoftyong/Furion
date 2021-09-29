@@ -16,9 +16,9 @@ internal static class IIEnumerableOfTExtensions
     /// <summary>
     /// 判断集合是否为空
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="collection"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">元素类型</typeparam>
+    /// <param name="collection">集合对象</param>
+    /// <returns>bool</returns>
     internal static bool IsEmpty<T>(this IEnumerable<T>? collection)
     {
         return collection == null || !collection.Any();

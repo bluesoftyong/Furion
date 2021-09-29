@@ -19,34 +19,39 @@ internal static class StringExtensions
     /// <param name="str">字符串</param>
     /// <param name="suffix">后缀字符串</param>
     /// <param name="comparisonType">字符串比较方式</param>
-    /// <returns></returns>
-    internal static string SubSuffix(this string? str, string suffix, StringComparison comparisonType = StringComparison.Ordinal)
+    /// <returns>string</returns>
+    internal static string DetachSuffix(this string? str, string suffix, StringComparison comparisonType = StringComparison.Ordinal)
     {
+        // 空检查
         if (str == null)
         {
             throw new ArgumentNullException(nameof(str));
         }
 
+        // 判断字符串是否以制定后缀结尾
         if (!str.EndsWith(suffix, comparisonType))
         {
             return str;
         }
 
+        // 切割字符串
         return str[0..^suffix.Length];
     }
 
     /// <summary>
-    /// 首字母大写
+    /// 转换字符串首字母大写
     /// </summary>
     /// <param name="str">字符串</param>
-    /// <returns></returns>
+    /// <returns>string</returns>
     internal static string ToTitleCase(this string? str)
     {
+        // 空检查
         if (str == null)
         {
             throw new ArgumentNullException(nameof(str));
         }
 
+        // 输出首字母大写字符串
         return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(str);
     }
 }

@@ -133,7 +133,7 @@ public static class OptionsBuilderExtensions
                                     ? section
                                     : configuration.GetSection(
                                           string.IsNullOrWhiteSpace(optionsBuilderAttribute?.SectionKey)
-                                              ? optionsType.Name.SubSuffix("Options")
+                                              ? optionsType.Name.DetachSuffix("Options")
                                               : optionsBuilderAttribute.SectionKey
                                        );
 

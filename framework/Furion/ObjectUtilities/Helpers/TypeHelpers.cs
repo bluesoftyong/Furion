@@ -25,15 +25,21 @@ internal static class TypeHelpers
     {
         var isFuncDelegate = outputType != default;
 
+        // 获取基础委托类型，通过是否带返回值判断
         var baseDelegateType = !isFuncDelegate ? typeof(Action) : typeof(Func<>);
 
+        // 处理无输入参数委托类型
         if (inputTypes.IsEmpty())
         {
-            return !isFuncDelegate ? baseDelegateType : baseDelegateType.MakeGenericType(outputType!);
+            return !isFuncDelegate
+                ? baseDelegateType
+                : baseDelegateType.MakeGenericType(outputType!);
         }
 
+        // 处理含输入参数委托类型
         return !isFuncDelegate
             ? baseDelegateType.Assembly.GetType($"{baseDelegateType.FullName}`{inputTypes!.Length}")!.MakeGenericType(inputTypes)
-            : baseDelegateType.Assembly.GetType($"{(baseDelegateType.FullName![0..^2])}`{inputTypes!.Length + 1}")!.MakeGenericType(inputTypes.Concat(new[] { outputType! }).ToArray());
+            : baseDelegateType.Assembly.GetType($"{(baseDelegateType.FullName![0..^2])}`{inputTypes!.Length + 1}")
+                !.MakeGenericType(inputTypes.Concat(new[] { outputType! }).ToArray());
     }
 }

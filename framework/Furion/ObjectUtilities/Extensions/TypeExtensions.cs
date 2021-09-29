@@ -25,11 +25,13 @@ internal static class TypeExtensions
     internal static TAttribute? GetTypeAttribute<TAttribute>(this Type? type, bool inherit = false)
         where TAttribute : Attribute
     {
+        // 空检查
         if (type == null)
         {
             throw new ArgumentNullException(nameof(type));
         }
 
+        // 检查特性并获取特性对象
         return type.IsDefined(typeof(TAttribute), inherit)
             ? type.GetCustomAttribute<TAttribute>(inherit)
             : default;
@@ -49,24 +51,27 @@ internal static class TypeExtensions
     /// <summary>
     /// 设置属性值
     /// </summary>
-    /// <param name="property"></param>
-    /// <param name="target"></param>
-    /// <param name="value"></param>
-    internal static void SetPropertyValue(this PropertyInfo property, object target, object? value)
+    /// <param name="propertyInfo">属性对象</param>
+    /// <param name="target">目标对象</param>
+    /// <param name="value">要设置的属性值</param>
+    internal static void SetPropertyValue(this PropertyInfo propertyInfo, object target, object? value)
     {
+        // 空检查
         if (target == default)
         {
             throw new ArgumentNullException(nameof(target));
         }
 
-        if (property.SetMethod == null)
+        // 判断是否是只读属性
+        if (propertyInfo.SetMethod == null)
         {
-            target.GetType().GetField($"<{property.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
+            target.GetType().GetField($"<{propertyInfo.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
                   ?.SetValue(target, value);
         }
+        // 可写属性
         else
         {
-            property.SetValue(target, value);
+            propertyInfo.SetValue(target, value);
         }
     }
 }

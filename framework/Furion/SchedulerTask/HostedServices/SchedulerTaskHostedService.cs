@@ -81,12 +81,13 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
         stoppingToken.Register(() =>
             _logger.LogDebug($"SchedulerTask Hosted Service is stopping."));
 
+        // 监听服务是否取消
         while (!stoppingToken.IsCancellationRequested)
         {
             // 执行具体任务
             await BackgroundProcessing(stoppingToken);
 
-            // 最低限制，不阻塞延迟1分钟检查
+            // 最低限制，不阻塞延迟1分钟检查，不再接受秒级调度任务，避免频繁检查导致 CPU 占用过高
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
 
@@ -96,7 +97,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
     /// <summary>
     /// 后台调用具体任务
     /// </summary>
-    /// <param name="stoppingToken"></param>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns>Task</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {

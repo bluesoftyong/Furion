@@ -57,8 +57,14 @@ internal sealed class TaskQueuedHostedService : BackgroundService
         stoppingToken.Register(() =>
             _logger.LogDebug($"TaskQueued Hosted Service is stopping."));
 
-        // 出队并调用
-        await BackgroundProcessing(stoppingToken);
+        // 监听服务是否取消
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            // 出队并调用
+            await BackgroundProcessing(stoppingToken);
+        }
+
+        _logger.LogDebug($"TaskQueued Hosted Service is stopped.");
     }
 
     /// <summary>
@@ -68,30 +74,24 @@ internal sealed class TaskQueuedHostedService : BackgroundService
     /// <returns>Task</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
-        // 监听是否已取消
-        while (!stoppingToken.IsCancellationRequested)
+        // 出队
+        var taskHandler = await _taskQueue.DequeueAsync(stoppingToken);
+
+        try
         {
-            // 出队
-            var workItem = await _taskQueue.DequeueAsync(stoppingToken);
-
-            try
-            {
-                // 调用任务处理委托
-                await workItem(stoppingToken);
-            }
-            catch (Exception ex)
-            {
-                // 捕获 Task 任务异常信息并统计所有异常
-                var args = new UnobservedTaskExceptionEventArgs(
-                        ex as AggregateException ?? new AggregateException(ex));
-
-                UnobservedTaskException?.Invoke(this, args);
-
-                // 输出异常日志
-                _logger.LogError(ex, "Error occurred executing {WorkItem}.", nameof(workItem));
-            }
+            // 调用任务处理委托
+            await taskHandler(stoppingToken);
         }
+        catch (Exception ex)
+        {
+            // 捕获 Task 任务异常信息并统计所有异常
+            var args = new UnobservedTaskExceptionEventArgs(
+                    ex as AggregateException ?? new AggregateException(ex));
 
-        _logger.LogDebug($"TaskQueued Hosted Service is stopped.");
+            UnobservedTaskException?.Invoke(this, args);
+
+            // 输出异常日志
+            _logger.LogError(ex, "Error occurred executing {TaskHandler}.", nameof(taskHandler));
+        }
     }
 }

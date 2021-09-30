@@ -72,13 +72,13 @@ public static class TaskQueueServiceCollectionExtensions
         services.AddSingleton<IBackgroundTaskQueue>(provider =>
         {
             // 读取 TaskQueue 模块配置，并获取队列通道容量，默认为 100
-            if (!int.TryParse(configuration["TaskQueue:Capacity"], out var queueCapacity))
+            if (!int.TryParse(configuration["TaskQueue:Capacity"], out var capacity))
             {
-                queueCapacity = 100;
+                capacity = 100;
             }
 
             // 创建后台队列实例
-            return new BackgroundTaskQueue(queueCapacity);
+            return new BackgroundTaskQueue(capacity);
         });
 
         return services;

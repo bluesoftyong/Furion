@@ -16,9 +16,9 @@ public interface IBackgroundTaskQueue
     /// <summary>
     /// 任务项入队
     /// </summary>
-    /// <param name="workItem">任务处理委托</param>
+    /// <param name="taskHandler">任务处理委托</param>
     /// <returns>ValueTask</returns>
-    ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> workItem);
+    ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> taskHandler);
 
     /// <summary>
     /// 任务项出队

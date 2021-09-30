@@ -39,19 +39,19 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     /// <summary>
     /// 任务项入队
     /// </summary>
-    /// <param name="workItem">任务处理委托</param>
+    /// <param name="taskHandler">任务处理委托</param>
     /// <returns>ValueTask</returns>
     /// <exception cref="ArgumentNullException">如果 workItem 为空，则抛空异常</exception>
-    public async ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> workItem)
+    public async ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> taskHandler)
     {
         // 空检查
-        if (workItem == default)
+        if (taskHandler == default)
         {
-            throw new ArgumentNullException(nameof(workItem));
+            throw new ArgumentNullException(nameof(taskHandler));
         }
 
         // 写入管道队列
-        await _queue.Writer.WriteAsync(workItem);
+        await _queue.Writer.WriteAsync(taskHandler);
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     public async ValueTask<Func<CancellationToken, ValueTask>> DequeueAsync(CancellationToken cancellationToken)
     {
         // 读取管道队列
-        var workItem = await _queue.Reader.ReadAsync(cancellationToken);
-        return workItem;
+        var taskHandler = await _queue.Reader.ReadAsync(cancellationToken);
+        return taskHandler;
     }
 }

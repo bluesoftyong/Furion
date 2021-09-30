@@ -42,7 +42,7 @@ public static class TaskQueueServiceCollectionExtensions
     private static IServiceCollection AddBackgroundTaskQueue(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
-        services.AddSingleton<IBackgroundTaskQueue>(provider =>
+        services.AddSingleton<IBackgroundTaskQueue>(_ =>
         {
             // 读取 TaskQueue 模块配置，并获取队列通道容量，默认为 100
             if (!int.TryParse(configuration["TaskQueue:Capacity"], out var capacity))

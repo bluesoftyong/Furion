@@ -86,7 +86,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
             // 执行具体任务
             await BackgroundProcessing(stoppingToken);
 
-            // 最低限制，一分钟执行一次
+            // 最低限制，不阻塞延迟1分钟检查
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
 
@@ -106,7 +106,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 获取所有到达执行时间的任务
-        var tasksThatShouldRun = _scheduledTasks.Where(t => t.ShouldRun(referenceTime)).ToList();
+        var tasksThatShouldRun = _scheduledTasks.Where(t => t.ShouldRun(referenceTime));
 
         // 逐条创建新线程调用
         foreach (var taskThatShouldRun in tasksThatShouldRun)

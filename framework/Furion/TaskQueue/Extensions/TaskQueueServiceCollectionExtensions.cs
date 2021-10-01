@@ -28,21 +28,21 @@ public static class TaskQueueServiceCollectionExtensions
         services.AddHostedService<TaskQueuedHostedService>();
 
         // 注册 BackgroundTaskQueue 服务
-        services.AddBackgroundTaskQueue(configuration);
+        services.AddTaskQueueService(configuration);
 
         return services;
     }
 
     /// <summary>
-    /// 注册 BackgroundTaskQueue 服务
+    /// 注册 TaskQueue 服务
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="configuration">配置对象</param>
     /// <returns>服务集合实例</returns>
-    private static IServiceCollection AddBackgroundTaskQueue(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddTaskQueueService(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
-        services.AddSingleton<IBackgroundTaskQueue>(_ =>
+        services.AddSingleton<ITaskQueue>(_ =>
         {
             // 读取 TaskQueue 模块配置，并获取队列通道容量，默认为 100
             if (!int.TryParse(configuration["TaskQueue:Capacity"], out var capacity))
@@ -51,7 +51,7 @@ public static class TaskQueueServiceCollectionExtensions
             }
 
             // 创建后台队列实例
-            return new BackgroundTaskQueue(capacity);
+            return new TaskQueue(capacity);
         });
 
         return services;

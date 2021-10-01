@@ -9,9 +9,9 @@
 namespace Furion.TaskQueue;
 
 /// <summary>
-/// 后台任务队列接口
+/// 任务队列接口
 /// </summary>
-public interface IBackgroundTaskQueue
+public interface ITaskQueue
 {
     /// <summary>
     /// 任务项入队

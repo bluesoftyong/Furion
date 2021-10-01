@@ -11,9 +11,9 @@ using System.Threading.Channels;
 namespace Furion.TaskQueue;
 
 /// <summary>
-/// 后台任务队列默认实现
+/// 任务队列默认实现
 /// </summary>
-internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
+internal sealed class TaskQueue : ITaskQueue
 {
     /// <summary>
     /// 队列通道
@@ -24,7 +24,7 @@ internal sealed class BackgroundTaskQueue : IBackgroundTaskQueue
     /// 构造函数
     /// </summary>
     /// <param name="capacity">队列通道默认容量，超过该容量进入等待</param>
-    public BackgroundTaskQueue(int capacity)
+    public TaskQueue(int capacity)
     {
         // 配置通道，设置超出默认容量后进入等待
         var boundedChannelOptions = new BoundedChannelOptions(capacity)

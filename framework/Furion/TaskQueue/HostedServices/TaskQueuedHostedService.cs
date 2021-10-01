@@ -25,7 +25,7 @@ internal sealed class TaskQueuedHostedService : BackgroundService
     /// <summary>
     /// 后台任务队列
     /// </summary>
-    private readonly IBackgroundTaskQueue _taskQueue;
+    private readonly ITaskQueue _taskQueue;
 
     /// <summary>
     /// 构造函数
@@ -33,7 +33,7 @@ internal sealed class TaskQueuedHostedService : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="taskQueue">后台任务队列</param>
     public TaskQueuedHostedService(ILogger<TaskQueuedHostedService> logger
-        , IBackgroundTaskQueue taskQueue)
+        , ITaskQueue taskQueue)
     {
         _logger = logger;
         _taskQueue = taskQueue;

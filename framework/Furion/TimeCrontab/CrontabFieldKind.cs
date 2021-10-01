@@ -1,4 +1,4 @@
-Ôªø// Copyright (c) 2020-2021 ÁôæÂ∞èÂÉß, Baiqian Co.,Ltd.
+// Copyright (c) 2020-2021 ∞Ÿ–°…Æ, Baiqian Co.,Ltd.
 // Furion is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
@@ -6,15 +6,35 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.SchedulerTask;
+namespace Furion.TimeCrontab;
 
 /// <summary>
-/// ÊâßË°å Cron Ë°®ËææÂºè‰ªªÂä°
+/// Cron ±Ì¥Ô Ω◊÷∂Œ÷÷¿‡
 /// </summary>
-public interface ICronScheduledTask : IScheduledTask
+public enum CrontabFieldKind
 {
     /// <summary>
-    /// Cron Ë°®ËææÂºè
+    /// ∑÷÷”
     /// </summary>
-    string Schedule { get; }
+    Minute,
+
+    /// <summary>
+    /// –° ±
+    /// </summary>
+    Hour,
+
+    /// <summary>
+    /// ÃÏ
+    /// </summary>
+    Day,
+
+    /// <summary>
+    /// ‘¬
+    /// </summary>
+    Month,
+
+    /// <summary>
+    /// –«∆⁄
+    /// </summary>
+    DayOfWeek
 }

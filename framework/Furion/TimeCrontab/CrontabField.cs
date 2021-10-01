@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Globalization;
 
-namespace Furion.SchedulerTask;
+namespace Furion.TimeCrontab;
 
 /// <summary>
 /// Represents a single crontab field.
@@ -10,11 +10,11 @@ namespace Furion.SchedulerTask;
 public sealed class CrontabField
 {
     private readonly BitArray _bits;
-    private readonly CrontabFieldImpl _impl;
+    private readonly CrontabFieldCounter _impl;
     private /* readonly */ int _maxValueSet;
     private /* readonly */ int _minValueSet;
 
-    private CrontabField(CrontabFieldImpl impl, string expression)
+    private CrontabField(CrontabFieldCounter impl, string expression)
     {
         _impl = impl ?? throw new ArgumentNullException(nameof(impl));
         _bits = new BitArray(impl.ValueCount);
@@ -72,7 +72,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField Parse(CrontabFieldKind kind, string expression)
     {
-        return new CrontabField(CrontabFieldImpl.FromKind(kind), expression);
+        return new CrontabField(CrontabFieldCounter.FromKind(kind), expression);
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField Minutes(string expression)
     {
-        return new CrontabField(CrontabFieldImpl.Minute, expression);
+        return new CrontabField(CrontabFieldCounter.Minute, expression);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField Hours(string expression)
     {
-        return new CrontabField(CrontabFieldImpl.Hour, expression);
+        return new CrontabField(CrontabFieldCounter.Hour, expression);
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField Days(string expression)
     {
-        return new CrontabField(CrontabFieldImpl.Day, expression);
+        return new CrontabField(CrontabFieldCounter.Day, expression);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField Months(string expression)
     {
-        return new CrontabField(CrontabFieldImpl.Month, expression);
+        return new CrontabField(CrontabFieldCounter.Month, expression);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public sealed class CrontabField
     /// </summary>
     public static CrontabField DaysOfWeek(string expression)
     {
-        return new CrontabField(CrontabFieldImpl.DayOfWeek, expression);
+        return new CrontabField(CrontabFieldCounter.DayOfWeek, expression);
     }
 
     private int IndexToValue(int index)

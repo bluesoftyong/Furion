@@ -9,21 +9,12 @@
 namespace Furion.SchedulerTask;
 
 /// <summary>
-/// Cron 调度任务包装类
+/// 执行 Cron 表达式任务
 /// </summary>
-internal sealed class CronSchedulerTaskWrapper : SchedulerTaskWrapper
+public interface ICrontabScheduledTask : IScheduledTask
 {
     /// <summary>
     /// Cron 表达式
     /// </summary>
-    internal CrontabSchedule? Schedule { get; set; }
-
-    /// <summary>
-    /// 设置最近运行时间和下一次运行时间增量
-    /// </summary>
-    internal override void Increment()
-    {
-        LastRunTime = NextRunTime;
-        NextRunTime = Schedule!.GetNextOccurrence(NextRunTime);
-    }
+    string Schedule { get; }
 }

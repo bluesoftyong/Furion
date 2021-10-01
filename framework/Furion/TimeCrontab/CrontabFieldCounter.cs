@@ -1,17 +1,23 @@
-using System.Diagnostics;
+// Copyright (c) 2020-2021 °ÙÐ¡É®, Baiqian Co.,Ltd.
+// Furion is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//             https://gitee.com/dotnetchina/Furion/blob/master/LICENSE
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace Furion.SchedulerTask;
+namespace Furion.TimeCrontab;
 
-[Serializable]
-public sealed class CrontabFieldImpl : IObjectReference
+public sealed class CrontabFieldCounter : IObjectReference
 {
-    public static readonly CrontabFieldImpl Minute = new CrontabFieldImpl(CrontabFieldKind.Minute, 0, 59, null);
-    public static readonly CrontabFieldImpl Hour = new CrontabFieldImpl(CrontabFieldKind.Hour, 0, 23, null);
-    public static readonly CrontabFieldImpl Day = new CrontabFieldImpl(CrontabFieldKind.Day, 1, 31, null);
+    public static readonly CrontabFieldCounter Minute = new(CrontabFieldKind.Minute, 0, 59, null);
+    public static readonly CrontabFieldCounter Hour = new(CrontabFieldKind.Hour, 0, 23, null);
+    public static readonly CrontabFieldCounter Day = new(CrontabFieldKind.Day, 1, 31, null);
 
-    public static readonly CrontabFieldImpl Month = new CrontabFieldImpl(CrontabFieldKind.Month, 1, 12,
+    public static readonly CrontabFieldCounter Month = new(CrontabFieldKind.Month, 1, 12,
         new[]
         {
                 "January", "February", "March", "April",
@@ -20,7 +26,7 @@ public sealed class CrontabFieldImpl : IObjectReference
                 "December"
         });
 
-    public static readonly CrontabFieldImpl DayOfWeek = new CrontabFieldImpl(CrontabFieldKind.DayOfWeek, 0, 6,
+    public static readonly CrontabFieldCounter DayOfWeek = new(CrontabFieldKind.DayOfWeek, 0, 6,
         new[]
         {
                 "Sunday", "Monday", "Tuesday",
@@ -28,7 +34,7 @@ public sealed class CrontabFieldImpl : IObjectReference
                 "Saturday"
         });
 
-    private static readonly CrontabFieldImpl[] FieldByKind = { Minute, Hour, Day, Month, DayOfWeek };
+    private static readonly CrontabFieldCounter[] FieldByKind = { Minute, Hour, Day, Month, DayOfWeek };
 
     private static readonly CompareInfo Comparer = CultureInfo.InvariantCulture.CompareInfo;
     private static readonly char[] Comma = { ',' };
@@ -38,13 +44,8 @@ public sealed class CrontabFieldImpl : IObjectReference
     private readonly int _minValue;
     private readonly string[] _names;
 
-    private CrontabFieldImpl(CrontabFieldKind kind, int minValue, int maxValue, string[] names)
+    private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[] names)
     {
-        Debug.Assert(Enum.IsDefined(typeof(CrontabFieldKind), kind));
-        Debug.Assert(minValue >= 0);
-        Debug.Assert(maxValue >= minValue);
-        Debug.Assert(names == null || names.Length == (maxValue - minValue + 1));
-
         _kind = kind;
         _minValue = minValue;
         _maxValue = maxValue;
@@ -76,7 +77,7 @@ public sealed class CrontabFieldImpl : IObjectReference
 
     #endregion
 
-    public static CrontabFieldImpl FromKind(CrontabFieldKind kind)
+    public static CrontabFieldCounter FromKind(CrontabFieldKind kind)
     {
         if (!Enum.IsDefined(typeof(CrontabFieldKind), kind))
         {
@@ -137,8 +138,6 @@ public sealed class CrontabFieldImpl : IObjectReference
 
     private void FormatValue(int value, TextWriter writer, bool noNames)
     {
-        Debug.Assert(writer != null);
-
         if (noNames || _names == null)
         {
             if (value >= 0 && value < 100)
@@ -159,9 +158,6 @@ public sealed class CrontabFieldImpl : IObjectReference
 
     private static void FastFormatNumericValue(int value, TextWriter writer)
     {
-        Debug.Assert(value >= 0 && value < 100);
-        Debug.Assert(writer != null);
-
         if (value >= 10)
         {
             writer.Write((char)('0' + (value / 10)));
@@ -173,17 +169,17 @@ public sealed class CrontabFieldImpl : IObjectReference
         }
     }
 
-    public void Parse(string str, CrontabFieldAccumulator acc)
+    public void Parse(string str, Action<int, int, int> accumulator)
     {
-        if (acc == null)
-            throw new ArgumentNullException(nameof(acc));
+        if (accumulator == null)
+            throw new ArgumentNullException(nameof(accumulator));
 
         if (string.IsNullOrEmpty(str))
             return;
 
         try
         {
-            InternalParse(str, acc);
+            InternalParse(str, accumulator);
         }
         catch (FormatException e)
         {
@@ -193,18 +189,12 @@ public sealed class CrontabFieldImpl : IObjectReference
 
     private static void ThrowParseException(Exception innerException, string str)
     {
-        Debug.Assert(str != null);
-        Debug.Assert(innerException != null);
-
         throw new FormatException(string.Format("'{0}' is not a valid crontab field expression.", str),
             innerException);
     }
 
-    private void InternalParse(string str, CrontabFieldAccumulator acc)
+    private void InternalParse(string str, Action<int, int, int> accumulator)
     {
-        Debug.Assert(str != null);
-        Debug.Assert(acc != null);
-
         if (str.Length == 0)
             throw new FormatException("A crontab field value cannot be empty.");
 
@@ -217,7 +207,7 @@ public sealed class CrontabFieldImpl : IObjectReference
         if (commaIndex > 0)
         {
             foreach (var token in str.Split(Comma))
-                InternalParse(token, acc);
+                InternalParse(token, accumulator);
         }
         else
         {
@@ -241,7 +231,7 @@ public sealed class CrontabFieldImpl : IObjectReference
 
             if (str.Length == 1 && str[0] == '*')
             {
-                acc(-1, -1, every);
+                accumulator(-1, -1, every);
                 return;
             }
 
@@ -256,7 +246,7 @@ public sealed class CrontabFieldImpl : IObjectReference
                 var first = ParseValue(str.Substring(0, dashIndex));
                 var last = ParseValue(str.Substring(dashIndex + 1));
 
-                acc(first, last, every);
+                accumulator(first, last, every);
                 return;
             }
 
@@ -268,21 +258,17 @@ public sealed class CrontabFieldImpl : IObjectReference
 
             if (every == 1)
             {
-                acc(value, value, 1);
+                accumulator(value, value, 1);
             }
             else
             {
-                Debug.Assert(every != 0);
-
-                acc(value, _maxValue, every);
+                accumulator(value, _maxValue, every);
             }
         }
     }
 
     private int ParseValue(string str)
     {
-        Debug.Assert(str != null);
-
         if (str.Length == 0)
             throw new FormatException("A crontab field value cannot be empty.");
 

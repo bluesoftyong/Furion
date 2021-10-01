@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion.TimeCrontab;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -36,10 +37,10 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="intervalScheduledTasks">间隔定时任务集合</param>
-    /// <param name="cronScheduledTasks">Cron 表达式定时任务集合</param>
+    /// <param name="crontabScheduledTasks">Cron 表达式定时任务集合</param>
     public SchedulerTaskHostedService(ILogger<SchedulerTaskHostedService> logger
         , IEnumerable<IIntervalScheduledTask> intervalScheduledTasks
-        , IEnumerable<ICronScheduledTask> cronScheduledTasks)
+        , IEnumerable<ICrontabScheduledTask> crontabScheduledTasks)
     {
         _logger = logger;
 
@@ -57,9 +58,9 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
         }
 
         // 添加 Cron 表达式任务到 HashSet 中
-        foreach (var scheduledTask in cronScheduledTasks)
+        foreach (var scheduledTask in crontabScheduledTasks)
         {
-            _scheduledTasks.Add(new CronSchedulerTaskWrapper
+            _scheduledTasks.Add(new CrontabSchedulerTaskWrapper
             {
                 Schedule = CrontabSchedule.Parse(scheduledTask.Schedule),
                 Task = scheduledTask,

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Furion.SchedulerTask;
+namespace Furion.TimeCrontab;
 
 /// <summary>
 /// Represents a schedule initialized from the crontab expression.

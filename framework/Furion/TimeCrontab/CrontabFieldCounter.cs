@@ -13,9 +13,9 @@ namespace Furion.TimeCrontab;
 
 public sealed class CrontabFieldCounter : IObjectReference
 {
-    public static readonly CrontabFieldCounter Minute = new(CrontabFieldKind.Minute, 0, 59, null);
-    public static readonly CrontabFieldCounter Hour = new(CrontabFieldKind.Hour, 0, 23, null);
-    public static readonly CrontabFieldCounter Day = new(CrontabFieldKind.Day, 1, 31, null);
+    public static readonly CrontabFieldCounter Minute = new(CrontabFieldKind.Minute, 0, 59, default);
+    public static readonly CrontabFieldCounter Hour = new(CrontabFieldKind.Hour, 0, 23, default);
+    public static readonly CrontabFieldCounter Day = new(CrontabFieldKind.Day, 1, 31, default);
 
     public static readonly CrontabFieldCounter Month = new(CrontabFieldKind.Month, 1, 12,
         new[]
@@ -39,34 +39,24 @@ public sealed class CrontabFieldCounter : IObjectReference
     private static readonly CompareInfo Comparer = CultureInfo.InvariantCulture.CompareInfo;
     private static readonly char[] Comma = { ',' };
 
-    private readonly CrontabFieldKind _kind;
-    private readonly int _maxValue;
-    private readonly int _minValue;
-    private readonly string[] _names;
-
-    private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[] names)
+    private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[]? names)
     {
-        _kind = kind;
-        _minValue = minValue;
-        _maxValue = maxValue;
-        _names = names;
+        Kind = kind;
+        MinValue = minValue;
+        MaxValue = maxValue;
+        ValueCount = maxValue - minValue + 1;
+        Names = names;
     }
 
-    public CrontabFieldKind Kind {
-        get { return _kind; }
-    }
+    public CrontabFieldKind Kind { get; }
 
-    public int MinValue {
-        get { return _minValue; }
-    }
+    public int MinValue { get; }
 
-    public int MaxValue {
-        get { return _maxValue; }
-    }
+    public int MaxValue { get; }
 
-    public int ValueCount {
-        get { return _maxValue - _minValue + 1; }
-    }
+    public int ValueCount { get; }
+
+    public string[]? Names { get; }
 
     #region IObjectReference Members
 
@@ -112,7 +102,7 @@ public sealed class CrontabFieldCounter : IObjectReference
             } while (next - last == 1);
 
             if (count == 0
-                && first == _minValue && last == _maxValue)
+                && first == MinValue && last == MaxValue)
             {
                 writer.Write('*');
                 return;
@@ -138,7 +128,7 @@ public sealed class CrontabFieldCounter : IObjectReference
 
     private void FormatValue(int value, TextWriter writer, bool noNames)
     {
-        if (noNames || _names == null)
+        if (noNames || Names == null)
         {
             if (value >= 0 && value < 100)
             {
@@ -151,8 +141,8 @@ public sealed class CrontabFieldCounter : IObjectReference
         }
         else
         {
-            var index = value - _minValue;
-            writer.Write((string)_names[index]);
+            var index = value - MinValue;
+            writer.Write((string)Names[index]);
         }
     }
 
@@ -262,7 +252,7 @@ public sealed class CrontabFieldCounter : IObjectReference
             }
             else
             {
-                accumulator(value, _maxValue, every);
+                accumulator(value, MaxValue, every);
             }
         }
     }
@@ -277,21 +267,21 @@ public sealed class CrontabFieldCounter : IObjectReference
         if (firstChar >= '0' && firstChar <= '9')
             return int.Parse(str, CultureInfo.InvariantCulture);
 
-        if (_names == null)
+        if (Names == null)
         {
             throw new FormatException(string.Format(
                 "'{0}' is not a valid value for this crontab field. It must be a numeric value between {1} and {2} (all inclusive).",
-                str, _minValue, _maxValue));
+                str, MinValue, MaxValue));
         }
 
-        for (var i = 0; i < _names.Length; i++)
+        for (var i = 0; i < Names.Length; i++)
         {
-            if (Comparer.IsPrefix(_names[i], str, CompareOptions.IgnoreCase))
-                return i + _minValue;
+            if (Comparer.IsPrefix(Names[i], str, CompareOptions.IgnoreCase))
+                return i + MinValue;
         }
 
         throw new FormatException(string.Format(
             "'{0}' is not a known value name. Use one of the following: {1}.",
-            str, string.Join(", ", _names)));
+            str, string.Join(", ", Names)));
     }
 }

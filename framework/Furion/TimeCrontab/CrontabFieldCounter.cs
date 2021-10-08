@@ -54,11 +54,31 @@ internal sealed class CrontabFieldCounter : IObjectReference
                 "Saturday"
         });
 
+    /// <summary>
+    /// Cron 表达式各个字段计算器数组
+    /// </summary>
+    /// <remarks>解决对象多次 new 内存引用问题</remarks>
     private static readonly CrontabFieldCounter[] FieldByKind = { Minute, Hour, Day, Month, DayOfWeek };
 
+    /// <summary>
+    /// 带区域性字符串比较操作类
+    /// </summary>
+    /// <remarks>解决字符在不同区域中表现形式不一致从而导致字符串比较失败问题</remarks>
     private static readonly CompareInfo Comparer = CultureInfo.InvariantCulture.CompareInfo;
+
+    /// <summary>
+    /// 逗号字符常量
+    /// </summary>
     private static readonly char[] Comma = { ',' };
 
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <remarks>私有构造函数，只能通过 <see cref="FromKind(CrontabFieldKind)"/> 方法创建对应计算器</remarks>
+    /// <param name="kind">Cron 表达式字段种类</param>
+    /// <param name="minValue">Cron 表达式字段取值范围最小值</param>
+    /// <param name="maxValue">Cron 表达式字段取值范围最大值</param>
+    /// <param name="names">Cron 表达式字段可选字符串名称</param>
     private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[]? names = default)
     {
         Kind = kind;
@@ -68,23 +88,51 @@ internal sealed class CrontabFieldCounter : IObjectReference
         Names = names;
     }
 
-    public CrontabFieldKind Kind { get; }
+    /// <summary>
+    /// Cron 表达式字段种类
+    /// </summary>
+    internal CrontabFieldKind Kind { get; }
 
-    public int MinValue { get; }
+    /// <summary>
+    /// Cron 表达式字段取值范围最小值
+    /// </summary>
+    internal int MinValue { get; }
 
-    public int MaxValue { get; }
+    /// <summary>
+    /// Cron 表达式字段取值范围最大值
+    /// </summary>
+    internal int MaxValue { get; }
 
-    public int ValueCount { get; }
+    /// <summary>
+    /// Cron 表达式字段可选值数量
+    /// </summary>
+    internal int ValueCount { get; }
 
-    public string[]? Names { get; }
+    /// <summary>
+    /// Cron 表达式字段可选字符串名称
+    /// </summary>
+    internal string[]? Names { get; }
 
+    /// <summary>
+    /// 返回真实的对象引用
+    /// </summary>
+    /// <param name="context">对象上下文流</param>
+    /// <remarks>避免多次 new <see cref="CrontabFieldCounter"/> 导致内存占用过多</remarks>
+    /// <returns>object</returns>
     object IObjectReference.GetRealObject(StreamingContext context)
     {
         return FromKind(Kind);
     }
 
-    public static CrontabFieldCounter FromKind(CrontabFieldKind kind)
+    /// <summary>
+    /// 根据 Cron 表达式种类获取对应的计算器对象
+    /// </summary>
+    /// <param name="kind">Cron 表达式字段种类</param>
+    /// <returns>CrontabFieldCounter</returns>
+    /// <exception cref="ArgumentException">空异常</exception>
+    internal static CrontabFieldCounter FromKind(CrontabFieldKind kind)
     {
+        // 判断当前 Cron 表达式种类是受支持的
         if (!Enum.IsDefined(typeof(CrontabFieldKind), kind))
         {
             throw new ArgumentException(string.Format(
@@ -92,6 +140,7 @@ internal sealed class CrontabFieldCounter : IObjectReference
                 string.Join(", ", Enum.GetNames(typeof(CrontabFieldKind)))), nameof(kind));
         }
 
+        // 通过 Cron 字段种类计算器数组中获取对应的对象，避免重复创建
         return FieldByKind[(int)kind];
     }
 
@@ -213,7 +262,9 @@ internal sealed class CrontabFieldCounter : IObjectReference
         if (commaIndex > 0)
         {
             foreach (var token in str.Split(Comma))
+            {
                 InternalParse(token, accumulator);
+            }
         }
         else
         {

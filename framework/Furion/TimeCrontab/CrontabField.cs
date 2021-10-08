@@ -32,7 +32,9 @@ internal sealed class CrontabField
     /// </summary>
     public int GetFirst()
     {
-        return _minValueSet < int.MaxValue ? _minValueSet : -1;
+        return _minValueSet < int.MaxValue
+            ? _minValueSet
+            : -1;
     }
 
     /// <summary>

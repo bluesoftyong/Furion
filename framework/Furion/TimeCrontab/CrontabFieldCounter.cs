@@ -11,13 +11,30 @@ using System.Runtime.Serialization;
 
 namespace Furion.TimeCrontab;
 
-public sealed class CrontabFieldCounter : IObjectReference
+/// <summary>
+/// Cron 表达式字段分析器
+/// </summary>
+internal sealed class CrontabFieldCounter : IObjectReference
 {
-    public static readonly CrontabFieldCounter Minute = new(CrontabFieldKind.Minute, 0, 59, default);
-    public static readonly CrontabFieldCounter Hour = new(CrontabFieldKind.Hour, 0, 23, default);
-    public static readonly CrontabFieldCounter Day = new(CrontabFieldKind.Day, 1, 31, default);
+    /// <summary>
+    /// Cron 表达式 分钟 字段分析器
+    /// </summary>
+    internal static readonly CrontabFieldCounter Minute = new(CrontabFieldKind.Minute, 0, 59);
 
-    public static readonly CrontabFieldCounter Month = new(CrontabFieldKind.Month, 1, 12,
+    /// <summary>
+    /// Cron 表达式 时 字段分析器
+    /// </summary>
+    internal static readonly CrontabFieldCounter Hour = new(CrontabFieldKind.Hour, 0, 23);
+
+    /// <summary>
+    /// Cron 表达式 天 字段分析器
+    /// </summary>
+    internal static readonly CrontabFieldCounter Day = new(CrontabFieldKind.Day, 1, 31);
+
+    /// <summary>
+    /// Cron 表达式 月 字段分析器
+    /// </summary>
+    internal static readonly CrontabFieldCounter Month = new(CrontabFieldKind.Month, 1, 12,
         new[]
         {
                 "January", "February", "March", "April",
@@ -26,7 +43,10 @@ public sealed class CrontabFieldCounter : IObjectReference
                 "December"
         });
 
-    public static readonly CrontabFieldCounter DayOfWeek = new(CrontabFieldKind.DayOfWeek, 0, 6,
+    /// <summary>
+    /// Cron 表达式 周 字段分析器
+    /// </summary>
+    internal static readonly CrontabFieldCounter DayOfWeek = new(CrontabFieldKind.DayOfWeek, 0, 6,
         new[]
         {
                 "Sunday", "Monday", "Tuesday",
@@ -39,7 +59,7 @@ public sealed class CrontabFieldCounter : IObjectReference
     private static readonly CompareInfo Comparer = CultureInfo.InvariantCulture.CompareInfo;
     private static readonly char[] Comma = { ',' };
 
-    private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[]? names)
+    private CrontabFieldCounter(CrontabFieldKind kind, int minValue, int maxValue, string[]? names = default)
     {
         Kind = kind;
         MinValue = minValue;
@@ -58,14 +78,10 @@ public sealed class CrontabFieldCounter : IObjectReference
 
     public string[]? Names { get; }
 
-    #region IObjectReference Members
-
     object IObjectReference.GetRealObject(StreamingContext context)
     {
         return FromKind(Kind);
     }
-
-    #endregion
 
     public static CrontabFieldCounter FromKind(CrontabFieldKind kind)
     {
@@ -211,7 +227,7 @@ public sealed class CrontabFieldCounter : IObjectReference
 
             if (slashIndex > 0)
             {
-                every = int.Parse(str.Substring(slashIndex + 1), CultureInfo.InvariantCulture);
+                every = int.Parse(str[(slashIndex + 1)..], CultureInfo.InvariantCulture);
                 str = str.Substring(0, slashIndex);
             }
 
@@ -234,7 +250,7 @@ public sealed class CrontabFieldCounter : IObjectReference
             if (dashIndex > 0)
             {
                 var first = ParseValue(str.Substring(0, dashIndex));
-                var last = ParseValue(str.Substring(dashIndex + 1));
+                var last = ParseValue(str[(dashIndex + 1)..]);
 
                 accumulator(first, last, every);
                 return;

@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.AppSamples", "..\sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.IntegrationTests", "..\tests\Furion.IntegrationTests\Furion.IntegrationTests.csproj", "{622976EA-C8FF-4E37-9B4B-D7C7AAB601C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.ConfigurationSamples", "..\samples\Furion.ConfigurationSamples\Furion.ConfigurationSamples.csproj", "{99A92220-A9A9-410C-968C-D8340176A311}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.ConfigurationSamples", "..\samples\Furion.ConfigurationSamples\Furion.ConfigurationSamples.csproj", "{99A92220-A9A9-410C-968C-D8340176A311}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

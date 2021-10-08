@@ -6,7 +6,6 @@ namespace Furion.TimeCrontab;
 /// <summary>
 /// Represents a schedule initialized from the crontab expression.
 /// </summary>
-[Serializable]
 public sealed class CrontabSchedule
 {
     private static readonly char[] Separators = { ' ' };

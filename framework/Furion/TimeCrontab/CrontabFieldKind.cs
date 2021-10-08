@@ -11,7 +11,7 @@ namespace Furion.TimeCrontab;
 /// <summary>
 /// Cron 表达式字段种类
 /// </summary>
-public enum CrontabFieldKind
+internal enum CrontabFieldKind
 {
     /// <summary>
     /// 分钟

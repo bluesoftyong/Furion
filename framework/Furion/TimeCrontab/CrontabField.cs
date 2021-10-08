@@ -6,8 +6,7 @@ namespace Furion.TimeCrontab;
 /// <summary>
 /// Represents a single crontab field.
 /// </summary>
-[Serializable]
-public sealed class CrontabField
+internal sealed class CrontabField
 {
     private readonly BitArray _bits;
     private readonly CrontabFieldCounter _impl;
@@ -249,7 +248,7 @@ public sealed class CrontabField
         return ToString(null);
     }
 
-    public string ToString(string format)
+    public string ToString(string? format)
     {
         var writer = new StringWriter(CultureInfo.InvariantCulture);
 

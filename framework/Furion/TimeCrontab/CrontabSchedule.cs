@@ -1,218 +1,430 @@
-using System.Diagnostics;
-using System.Globalization;
+﻿// Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
+// Furion is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//             https://gitee.com/dotnetchina/Furion/blob/master/LICENSE
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
 
 namespace Furion.TimeCrontab;
 
-/// <summary>
-/// Represents a schedule initialized from the crontab expression.
-/// </summary>
 public sealed class CrontabSchedule
 {
-    private static readonly char[] Separators = { ' ' };
-    private readonly CrontabField _days;
-    private readonly CrontabField _daysOfWeek;
-    private readonly CrontabField _hours;
-    private readonly CrontabField _minutes;
-    private readonly CrontabField _months;
+    private Dictionary<CrontabFieldKind, List<ICronFilter>> Filters { get; set; }
 
-    private CrontabSchedule(string expression)
+    // In the event a developer creates their own instance
+    public CrontabSchedule()
     {
-        Debug.Assert(expression != null);
-
-        var fields = expression.Split((char[])Separators, StringSplitOptions.RemoveEmptyEntries);
-
-        if (fields.Length != 5)
-        {
-            throw new FormatException(string.Format(
-                "'{0}' is not a valid crontab expression. It must contain at least 5 components of a schedule "
-                + "(in the sequence of minutes, hours, days, months, days of week).",
-                expression));
-        }
-
-        _minutes = CrontabField.Minutes(fields[0]);
-        _hours = CrontabField.Hours(fields[1]);
-        _days = CrontabField.Days(fields[2]);
-        _months = CrontabField.Months(fields[3]);
-        _daysOfWeek = CrontabField.DaysOfWeek(fields[4]);
+        Filters = new Dictionary<CrontabFieldKind, List<ICronFilter>>();
+        Format = CronStringFormat.Default;
     }
 
-    private static Calendar Calendar {
-        get { return CultureInfo.InvariantCulture.Calendar; }
+    public CronStringFormat Format { get; set; }
+
+    public override string ToString()
+    {
+        var paramList = new List<string>();
+
+        if (Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears)
+            JoinFilters(paramList, CrontabFieldKind.Second);
+
+        JoinFilters(paramList, CrontabFieldKind.Minute);
+        JoinFilters(paramList, CrontabFieldKind.Hour);
+        JoinFilters(paramList, CrontabFieldKind.Day);
+        JoinFilters(paramList, CrontabFieldKind.Month);
+        JoinFilters(paramList, CrontabFieldKind.DayOfWeek);
+
+        if (Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears)
+            JoinFilters(paramList, CrontabFieldKind.Year);
+
+        return string.Join(" ", paramList.ToArray());
     }
 
-    public static CrontabSchedule Parse(string expression)
+    public DateTime GetNextOccurrence(DateTime baseValue)
     {
-        if (expression == null)
-        {
-            throw new ArgumentNullException(nameof(expression));
-        }
+        return GetNextOccurrence(baseValue, DateTime.MaxValue);
+    }
 
-        return new CrontabSchedule(expression);
+    public DateTime GetNextOccurrence(DateTime baseValue, DateTime endValue)
+    {
+        return InternalGetNextOccurence(baseValue, endValue);
     }
 
     public IEnumerable<DateTime> GetNextOccurrences(DateTime baseTime, DateTime endTime)
     {
         for (var occurrence = GetNextOccurrence(baseTime, endTime);
-            occurrence < endTime;
-            occurrence = GetNextOccurrence(occurrence, endTime))
+             occurrence < endTime;
+             occurrence = GetNextOccurrence(occurrence, endTime))
         {
             yield return occurrence;
         }
     }
 
-    public DateTime GetNextOccurrence(DateTime baseTime)
+    private static int Increment(IEnumerable<ITimeFilter> filters, int value, int defaultValue, out bool overflow)
     {
-        return GetNextOccurrence(baseTime, DateTime.MaxValue);
+        var nextValue = filters.Select(x => x.Next(value)).Where(x => x > value).Min() ?? defaultValue;
+        overflow = nextValue <= value;
+        return nextValue;
     }
 
-    public DateTime GetNextOccurrence(DateTime baseTime, DateTime endTime)
+    private static DateTime MinDate(DateTime newValue, DateTime endValue)
     {
-        const int nil = -1;
-
-        var baseYear = baseTime.Year;
-        var baseMonth = baseTime.Month;
-        var baseDay = baseTime.Day;
-        var baseHour = baseTime.Hour;
-        var baseMinute = baseTime.Minute;
-
-        var endYear = endTime.Year;
-        var endMonth = endTime.Month;
-        var endDay = endTime.Day;
-
-        var year = baseYear;
-        var month = baseMonth;
-        var day = baseDay;
-        var hour = baseHour;
-        var minute = baseMinute + 1;
-
-        //
-        // Minute
-        //
-
-        minute = _minutes.Next(minute);
-
-        if (minute == nil)
-        {
-            minute = _minutes.GetFirst();
-            hour++;
-        }
-
-        //
-        // Hour
-        //
-
-        hour = _hours.Next(hour);
-
-        if (hour == nil)
-        {
-            minute = _minutes.GetFirst();
-            hour = _hours.GetFirst();
-            day++;
-        }
-        else if (hour > baseHour)
-        {
-            minute = _minutes.GetFirst();
-        }
-
-        //
-        // Day
-        //
-
-        day = _days.Next(day);
-
-    RetryDayMonth:
-
-        if (day == nil)
-        {
-            minute = _minutes.GetFirst();
-            hour = _hours.GetFirst();
-            day = _days.GetFirst();
-            month++;
-        }
-        else if (day > baseDay)
-        {
-            minute = _minutes.GetFirst();
-            hour = _hours.GetFirst();
-        }
-
-        //
-        // Month
-        //
-
-        month = _months.Next(month);
-
-        if (month == nil)
-        {
-            minute = _minutes.GetFirst();
-            hour = _hours.GetFirst();
-            day = _days.GetFirst();
-            month = _months.GetFirst();
-            year++;
-        }
-        else if (month > baseMonth)
-        {
-            minute = _minutes.GetFirst();
-            hour = _hours.GetFirst();
-            day = _days.GetFirst();
-        }
-
-        //
-        // The day field in a cron expression spans the entire range of days
-        // in a month, which is from 1 to 31. However, the number of days in
-        // a month tend to be variable depending on the month (and the year
-        // in case of February). So a check is needed here to see if the
-        // date is a border case. If the day happens to be beyond 28
-        // (meaning that we're dealing with the suspicious range of 29-31)
-        // and the date part has changed then we need to determine whether
-        // the day still makes sense for the given year and month. If the
-        // day is beyond the last possible value, then the day/month part
-        // for the schedule is re-evaluated. So an expression like "0 0
-        // 15,31 * *" will yield the following sequence starting on midnight
-        // of Jan 1, 2000:
-        //
-        //  Jan 15, Jan 31, Feb 15, Mar 15, Apr 15, Apr 31, ...
-        //
-
-        var dateChanged = day != baseDay || month != baseMonth || year != baseYear;
-
-        if (day > 28 && dateChanged && day > Calendar.GetDaysInMonth(year, month))
-        {
-            if (year >= endYear && month >= endMonth && day >= endDay)
-                return endTime;
-
-            day = nil;
-            goto RetryDayMonth;
-        }
-
-        var nextTime = new DateTime(year, month, day, hour, minute, 0, 0, baseTime.Kind);
-
-        if (nextTime >= endTime)
-            return endTime;
-
-        //
-        // Day of week
-        //
-
-        if (_daysOfWeek.Contains((int)nextTime.DayOfWeek))
-            return nextTime;
-
-        return GetNextOccurrence(new DateTime(year, month, day, 23, 59, 0, 0, baseTime.Kind), endTime);
+        return newValue >= endValue ? endValue : newValue;
     }
 
-    public override string ToString()
+    private DateTime InternalGetNextOccurence(DateTime baseValue, DateTime endValue)
     {
-        var writer = new StringWriter(CultureInfo.InvariantCulture);
+        var newValue = baseValue;
+        var overflow = true;
 
-        _minutes.Format(writer, true);
-        writer.Write(' ');
-        _hours.Format(writer, true);
-        writer.Write(' ');
-        _days.Format(writer, true);
-        writer.Write(' ');
-        _months.Format(writer, true);
-        writer.Write(' ');
-        _daysOfWeek.Format(writer, true);
+        var isSecondFormat = Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears;
+        var isYearFormat = Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears;
 
-        return writer.ToString();
+        // First things first - trim off any time components we don't need
+        newValue = newValue.AddMilliseconds(-newValue.Millisecond);
+        if (!isSecondFormat) newValue = newValue.AddSeconds(-newValue.Second);
+
+        var minuteFilters = Filters[CrontabFieldKind.Minute].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+        var hourFilters = Filters[CrontabFieldKind.Hour].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+
+        var firstSecondValue = newValue.Second;
+        var firstMinuteValue = minuteFilters.Select(x => x.First()).Min();
+        var firstHourValue = hourFilters.Select(x => x.First()).Min();
+
+        var newSeconds = newValue.Second;
+        if (isSecondFormat)
+        {
+            var secondFilters = Filters[CrontabFieldKind.Second].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+            firstSecondValue = secondFilters.Select(x => x.First()).Min();
+            newSeconds = Increment(secondFilters, newValue.Second, firstSecondValue, out overflow);
+            newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newValue.Minute, newSeconds);
+            if (!overflow && !IsMatch(newValue))
+            {
+                newSeconds = firstSecondValue;
+                newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newValue.Minute, newSeconds);
+                overflow = true;
+            }
+            if (!overflow) return MinDate(newValue, endValue);
+        }
+
+        var newMinutes = Increment(minuteFilters, newValue.Minute + (overflow ? 0 : -1), firstMinuteValue, out overflow);
+        newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newMinutes, overflow ? firstSecondValue : newSeconds);
+        if (!overflow && !IsMatch(newValue))
+        {
+            newSeconds = firstSecondValue;
+            newMinutes = firstMinuteValue;
+            newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newMinutes, firstSecondValue);
+            overflow = true;
+        }
+        if (!overflow) return MinDate(newValue, endValue);
+
+        var newHours = Increment(hourFilters, newValue.Hour + (overflow ? 0 : -1), firstHourValue, out overflow);
+        newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newHours,
+            overflow ? firstMinuteValue : newMinutes,
+            overflow ? firstSecondValue : newSeconds);
+
+        if (!overflow && !IsMatch(newValue))
+        {
+            newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, firstHourValue, firstMinuteValue, firstSecondValue);
+            overflow = true;
+        }
+
+        if (!overflow) return MinDate(newValue, endValue);
+
+        List<ITimeFilter>? yearFilters = null;
+        if (isYearFormat) yearFilters = Filters[CrontabFieldKind.Year].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+
+        // Sooo, this is where things get more complicated.
+        // Since the filtering of days relies on what month/year you're in
+        // (for weekday/nth day filters), we'll only increment the day, and
+        // check all day/month/year filters.  Might be a litle slow, but we
+        // won't miss any days that way.
+
+        // Also, if we increment to the next day, we need to set the hour, minute and second
+        // fields to their "first" values, since that would be the earliest they'd run.  We
+        // only have to do this after the initial AddDays call.  FYI - they're already at their
+        // first values if overflowHour = True.  :-)
+
+        // This feels so dirty.  This is to catch the odd case where you specify
+        // 12/31/9999 23:59:59.999 as your end date, and you don't have any matches,
+        // so it reaches the max value of DateTime and throws an exception.
+        try { newValue = newValue.AddDays(1); } catch { return endValue; }
+
+        while (!(IsMatch(newValue, CrontabFieldKind.Day) && IsMatch(newValue, CrontabFieldKind.DayOfWeek) && IsMatch(newValue, CrontabFieldKind.Month) && (!isYearFormat || IsMatch(newValue, CrontabFieldKind.Year))))
+        {
+            if (newValue >= endValue) return MinDate(newValue, endValue);
+
+            // In instances where the year is filtered, this will speed up the path to get to endValue
+            // (without having to actually go to endValue)
+            if (isYearFormat && yearFilters!.Select(x => x.Next(newValue.Year - 1)).All(x => x == null)) return endValue;
+
+            // Ugh...have to do the try/catch again...
+            try { newValue = newValue.AddDays(1); } catch { return endValue; }
+        }
+
+        return MinDate(newValue, endValue);
     }
+
+    private bool IsMatch(DateTime value)
+    {
+        return Filters.All(fieldKind =>
+            fieldKind.Value.Any(filter => filter.IsMatch(value))
+        );
+    }
+
+    private bool IsMatch(DateTime value, CrontabFieldKind kind)
+    {
+        return Filters.Where(x => x.Key == kind).SelectMany(x => x.Value).Any(filter => filter.IsMatch(value));
+    }
+
+    private void JoinFilters(List<string> paramList, CrontabFieldKind kind)
+    {
+        paramList.Add(
+            string.Join(",", Filters
+                .Where(x => x.Key == kind)
+                .SelectMany(x => x.Value.Select(y => y.ToString())).ToArray()
+            )
+        );
+    }
+
+
+    #region Static Methods
+
+    public static CrontabSchedule Parse(string expression, CronStringFormat format = CronStringFormat.Default)
+    {
+        return new CrontabSchedule
+        {
+            Format = format,
+            Filters = ParseToDictionary(expression, format)
+        };
+    }
+
+    public static CrontabSchedule? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
+    {
+        try
+        {
+            return Parse(expression, format);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    private static void CheckForIllegalFilters(Dictionary<CrontabFieldKind, List<ICronFilter>> filters)
+    {
+        var monthSingle = GetSpecificFilters(filters, CrontabFieldKind.Month);
+        var daySingle = GetSpecificFilters(filters, CrontabFieldKind.Day);
+
+        if (monthSingle.Any() && monthSingle.All(x => x.SpecificValue == 2))
+        {
+            if (daySingle.Any() && daySingle.All(x => (x.SpecificValue == 30) || (x.SpecificValue == 31)))
+                throw new CrontabException("Nice try, but February 30 and 31 don't exist.");
+        }
+    }
+
+    private static List<SpecificFilter> GetSpecificFilters(Dictionary<CrontabFieldKind, List<ICronFilter>> filters, CrontabFieldKind kind)
+    {
+        return filters[kind].Where(x => x.GetType() == typeof(SpecificFilter)).Cast<SpecificFilter>().Union(
+            filters[kind].Where(x => x.GetType() == typeof(RangeFilter)).SelectMany(x => ((RangeFilter)x).SpecificFilters)
+            ).Union(
+                filters[kind].Where(x => x.GetType() == typeof(StepFilter)).SelectMany(x => ((StepFilter)x).SpecificFilters)
+            ).ToList();
+    }
+
+    private static Dictionary<CrontabFieldKind, List<ICronFilter>> ParseToDictionary(string cron, CronStringFormat format)
+    {
+        if (string.IsNullOrWhiteSpace(cron))
+            throw new CrontabException("The provided cron string is null, empty or contains only whitespace");
+
+        var fields = new Dictionary<CrontabFieldKind, List<ICronFilter>>();
+
+        var instructions = cron.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        var expectedCount = Constants.ExpectedFieldCounts[format];
+        if (instructions.Length > expectedCount)
+            throw new CrontabException(string.Format("The provided cron string <{0}> has too many parameters", cron));
+        if (instructions.Length < expectedCount)
+            throw new CrontabException(string.Format("The provided cron string <{0}> has too few parameters", cron));
+
+        var defaultFieldOffset = 0;
+        if (format == CronStringFormat.WithSeconds || format == CronStringFormat.WithSecondsAndYears)
+        {
+            fields.Add(CrontabFieldKind.Second, ParseField(instructions[0], CrontabFieldKind.Second));
+            defaultFieldOffset = 1;
+        }
+
+        fields.Add(CrontabFieldKind.Minute, ParseField(instructions[defaultFieldOffset + 0], CrontabFieldKind.Minute));
+        fields.Add(CrontabFieldKind.Hour, ParseField(instructions[defaultFieldOffset + 1], CrontabFieldKind.Hour));
+        fields.Add(CrontabFieldKind.Day, ParseField(instructions[defaultFieldOffset + 2], CrontabFieldKind.Day));
+        fields.Add(CrontabFieldKind.Month, ParseField(instructions[defaultFieldOffset + 3], CrontabFieldKind.Month));
+        fields.Add(CrontabFieldKind.DayOfWeek, ParseField(instructions[defaultFieldOffset + 4], CrontabFieldKind.DayOfWeek));
+
+        if (format == CronStringFormat.WithYears || format == CronStringFormat.WithSecondsAndYears)
+            fields.Add(CrontabFieldKind.Year, ParseField(instructions[defaultFieldOffset + 5], CrontabFieldKind.Year));
+
+        CheckForIllegalFilters(fields);
+
+        return fields;
+    }
+
+    private static List<ICronFilter> ParseField(string field, CrontabFieldKind kind)
+    {
+        try
+        {
+            return field.Split(',').Select(filter => ParseFilter(filter, kind)).ToList();
+        }
+        catch (Exception e)
+        {
+            throw new CrontabException(string.Format("There was an error parsing '{0}' for the {1} field", field, Enum.GetName(typeof(CrontabFieldKind), kind)), e);
+        }
+    }
+
+    private static ICronFilter ParseFilter(string filter, CrontabFieldKind kind)
+    {
+        var newFilter = filter.ToUpper();
+
+        try
+        {
+            if (newFilter.StartsWith("*", StringComparison.OrdinalIgnoreCase))
+            {
+                newFilter = newFilter[1..];
+                if (newFilter.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+                {
+                    newFilter = newFilter[1..];
+                    var steps = GetValue(ref newFilter, kind);
+                    return new StepFilter(0, steps, kind);
+                }
+                return new AnyFilter(kind);
+            }
+
+            // * * LW * *
+            // * * L * *
+            if (newFilter.StartsWith("L") && kind == CrontabFieldKind.Day)
+            {
+                newFilter = newFilter[1..];
+                if (newFilter == "W")
+                    return new LastWeekdayOfMonthFilter(kind);
+                else
+                    return new LastDayOfMonthFilter(kind);
+            }
+
+            if (newFilter == "?")
+                return new BlankDayOfMonthOrWeekFilter(kind);
+
+            var firstValue = GetValue(ref newFilter, kind);
+
+            if (string.IsNullOrEmpty(newFilter))
+            {
+                if (kind == CrontabFieldKind.Year)
+                    return new SpecificYearFilter(firstValue, kind);
+                else
+                    return new SpecificFilter(firstValue, kind);
+            }
+
+            switch (newFilter[0])
+            {
+                case '/':
+                    {
+                        newFilter = newFilter[1..];
+                        var secondValue = GetValue(ref newFilter, kind);
+                        return new StepFilter(firstValue, secondValue, kind);
+                    }
+                case '-':
+                    {
+                        newFilter = newFilter[1..];
+                        var secondValue = GetValue(ref newFilter, kind);
+                        int? steps = null;
+                        if (newFilter.StartsWith("/"))
+                        {
+                            newFilter = newFilter[1..];
+                            steps = GetValue(ref newFilter, kind);
+                        }
+                        return new RangeFilter(firstValue, secondValue, steps, kind);
+                    }
+                case '#':
+                    {
+                        newFilter = newFilter[1..];
+                        var secondValue = GetValue(ref newFilter, kind);
+
+                        if (!string.IsNullOrEmpty(newFilter))
+                            throw new CrontabException(string.Format("Invalid filter '{0}'", filter));
+
+                        return new SpecificDayOfWeekInMonthFilter(firstValue, secondValue, kind);
+                    }
+                default:
+                    if (newFilter == "L" && kind == CrontabFieldKind.DayOfWeek)
+                    {
+                        return new LastDayOfWeekInMonthFilter(firstValue, kind);
+                    }
+                    else if (newFilter == "W" && kind == CrontabFieldKind.Day)
+                    {
+                        return new NearestWeekdayFilter(firstValue, kind);
+                    }
+                    break;
+            }
+
+            throw new CrontabException(string.Format("Invalid filter '{0}'", filter));
+        }
+        catch (Exception e)
+        {
+            throw new CrontabException(string.Format("Invalid filter '{0}'.  See inner exception for details.", filter), e);
+        }
+    }
+
+    private static int GetValue(ref string filter, CrontabFieldKind kind)
+    {
+        var maxValue = Constants.MaximumDateTimeValues[kind];
+
+        if (string.IsNullOrEmpty(filter))
+            throw new CrontabException("Expected number, but filter was empty.");
+
+        int i;
+        var isDigit = char.IsDigit(filter[0]);
+        var isLetter = char.IsLetter(filter[0]);
+
+        // Because this could either numbers, or letters, but not a combination,
+        // check each condition separately.
+        for (i = 0; i < filter.Length; i++)
+            if ((isDigit && !char.IsDigit(filter[i])) || (isLetter && !char.IsLetter(filter[i]))) break;
+
+        var valueToParse = filter[..i];
+        if (int.TryParse(valueToParse, out var value))
+        {
+            filter = filter[i..];
+            var returnValue = value;
+            if (returnValue > maxValue)
+                throw new CrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+            return returnValue;
+        }
+        else
+        {
+            List<KeyValuePair<string, int>>? replaceVal = null;
+
+            if (kind == CrontabFieldKind.DayOfWeek)
+                replaceVal = Constants.Days.Where(x => valueToParse.StartsWith(x.Key)).ToList();
+            else if (kind == CrontabFieldKind.Month)
+                replaceVal = Constants.Months.Where(x => valueToParse.StartsWith(x.Key)).ToList();
+
+            if (replaceVal != null && replaceVal.Count == 1)
+            {
+                // missingFilter addresses when a filter string of "SUNL" is passed in,
+                // which causes the isDigit/isLetter loop above to iterate through the end
+                // of the string.  This catches the edge case, and re-appends L to the end.
+                var missingFilter = "";
+                if (filter.Length == i && filter.EndsWith("L") && kind == CrontabFieldKind.DayOfWeek)
+                    missingFilter = "L";
+
+                filter = filter[i..] + missingFilter;
+                var returnValue = replaceVal.First().Value;
+                if (returnValue > maxValue)
+                    throw new CrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+                return returnValue;
+            }
+        }
+
+        throw new CrontabException("Filter does not contain expected number");
+    }
+
+    #endregion
 }

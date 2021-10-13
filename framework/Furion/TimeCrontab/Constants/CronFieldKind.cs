@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 ∞Ÿ–°…Æ, Baiqian Co.,Ltd.
+Ôªø// Copyright (c) 2020-2021 ÁôæÂ∞èÂÉß, Baiqian Co.,Ltd.
 // Furion is licensed under Mulan PSL v2.
 // You can use this software according to the terms and conditions of the Mulan PSL v2.
 // You may obtain a copy of Mulan PSL v2 at:
@@ -8,33 +8,13 @@
 
 namespace Furion.TimeCrontab;
 
-/// <summary>
-/// Cron ±Ì¥Ô Ω◊÷∂Œ÷÷¿‡
-/// </summary>
 internal enum CrontabFieldKind
 {
-    /// <summary>
-    /// ∑÷÷”
-    /// </summary>
-    Minute,
-
-    /// <summary>
-    /// –° ±
-    /// </summary>
-    Hour,
-
-    /// <summary>
-    /// ÃÏ
-    /// </summary>
-    Day,
-
-    /// <summary>
-    /// ‘¬
-    /// </summary>
-    Month,
-
-    /// <summary>
-    /// –«∆⁄
-    /// </summary>
-    DayOfWeek
+    Second = 0, // Keep in order of appearance in expression
+    Minute = 1,
+    Hour = 2,
+    Day = 3,
+    Month = 4,
+    DayOfWeek = 5,
+    Year = 6
 }

@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.IntegrationTests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.ConfigurationSamples", "..\samples\Furion.ConfigurationSamples\Furion.ConfigurationSamples.csproj", "{99A92220-A9A9-410C-968C-D8340176A311}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.Web", "Furion.Web\Furion.Web.csproj", "{EFD908B2-8671-4400-B75A-3BD1FEC04585}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{99A92220-A9A9-410C-968C-D8340176A311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99A92220-A9A9-410C-968C-D8340176A311}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99A92220-A9A9-410C-968C-D8340176A311}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD908B2-8671-4400-B75A-3BD1FEC04585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD908B2-8671-4400-B75A-3BD1FEC04585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD908B2-8671-4400-B75A-3BD1FEC04585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD908B2-8671-4400-B75A-3BD1FEC04585}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{7D8B88D0-8E6D-4B86-86D8-3DC00506A83C} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
 		{622976EA-C8FF-4E37-9B4B-D7C7AAB601C9} = {5A5E5D50-292A-4D8F-8F20-1608C96B7E0D}
 		{99A92220-A9A9-410C-968C-D8340176A311} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
+		{EFD908B2-8671-4400-B75A-3BD1FEC04585} = {D916793E-B733-4749-816E-53C9F0E2CEE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E763CD91-CB16-429F-9BC5-04117852A67D}

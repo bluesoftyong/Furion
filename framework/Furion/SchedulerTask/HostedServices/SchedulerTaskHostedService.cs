@@ -62,7 +62,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
         {
             _scheduledTasks.Add(new CrontabSchedulerTaskWrapper
             {
-                Schedule = CrontabSchedule.Parse(scheduledTask.Schedule),
+                Schedule = CrontabSchedule.Parse(scheduledTask.Schedule, scheduledTask.Format),
                 Task = scheduledTask,
                 NextRunTime = referenceTime
             });

@@ -9,7 +9,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace Furion;
+namespace Furion.App;
 
 /// <summary>
 /// App 模块全局单例服务接口

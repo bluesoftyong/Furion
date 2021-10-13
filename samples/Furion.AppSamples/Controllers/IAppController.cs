@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Furion.App;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Furion.AppSamples.Controllers;
 

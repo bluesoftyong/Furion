@@ -306,7 +306,7 @@ internal sealed class ServiceBuilder : IServiceBuilder
     {
         _additionAssemblies.Clear();
         _serviceDescriptors.Clear();
-        _context.Properties.Remove(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER);
+        _context.Properties.Remove(Constants.HOST_PROPERTIES_SERVICE_BUILDER);
     }
 
     /// <summary>

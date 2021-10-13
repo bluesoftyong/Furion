@@ -6,26 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion;
+namespace Furion.App;
 
 /// <summary>
-/// 订阅框架诊断器消息
+/// 模块常量静态类
 /// </summary>
-public class FurionKeyValueObserver : IObserver<KeyValuePair<string, object>>
+internal static class Constants
 {
-    public void OnCompleted()
-    {
-    }
-
-    public void OnError(Exception error)
-    {
-    }
-
-    public void OnNext(KeyValuePair<string, object> value)
-    {
-        if (value.Key == FurionConsts.DIAGNOSTIC_BUILD_SERVICE_PROVIDER)
-        {
-            Console.WriteLine($"Furion is initializing {nameof(AutowiredServiceProvider)}.");
-        }
-    }
+    /// <summary>
+    /// App 模块配置节点
+    /// </summary>
+    internal const string ConfigurationKey = "AppSettings";
 }

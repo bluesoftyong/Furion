@@ -9,11 +9,23 @@
 namespace Furion;
 
 /// <summary>
-/// 框架常量
+/// 订阅框架诊断器消息
 /// </summary>
-internal class FurionConsts
+public class FurionKeyValueObserver : IObserver<KeyValuePair<string, object>>
 {
-    internal const string DIAGNOSTIC_BUILD_SERVICE_PROVIDER = nameof(DIAGNOSTIC_BUILD_SERVICE_PROVIDER);
+    public void OnCompleted()
+    {
+    }
 
-    internal const string HOST_PROPERTIES_SERVICE_BUILDER = nameof(HOST_PROPERTIES_SERVICE_BUILDER);
+    public void OnError(Exception error)
+    {
+    }
+
+    public void OnNext(KeyValuePair<string, object> value)
+    {
+        if (value.Key == Constants.DIAGNOSTIC_BUILD_SERVICE_PROVIDER)
+        {
+            Console.WriteLine($"Furion is initializing {nameof(AutowiredServiceProvider)}.");
+        }
+    }
 }

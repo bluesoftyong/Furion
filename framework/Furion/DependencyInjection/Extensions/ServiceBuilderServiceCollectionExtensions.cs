@@ -25,6 +25,6 @@ public static class ServiceBuilderServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceBuilder AsServiceBuilder(this IServiceCollection _, HostBuilderContext context)
     {
-        return (context.Properties[FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
+        return (context.Properties[Constants.HOST_PROPERTIES_SERVICE_BUILDER] as IServiceBuilder)!;
     }
 }

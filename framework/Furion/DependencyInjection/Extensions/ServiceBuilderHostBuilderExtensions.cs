@@ -48,7 +48,7 @@ internal static class ServiceBuilderHostBuilderExtensions
     internal static void AddServiceBuilderProvider(this IServiceCollection services, HostBuilderContext context)
     {
         var serviceBuilder = new ServiceBuilder(context);
-        context.Properties.Add(FurionConsts.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
+        context.Properties.Add(Constants.HOST_PROPERTIES_SERVICE_BUILDER, serviceBuilder);
 
         serviceBuilder.AddAssemblies(Assembly.GetEntryAssembly()!);
         serviceBuilder.Build(services);

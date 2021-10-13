@@ -30,6 +30,7 @@ services.AddApp();
 ### `IApp` 使用例子
 
 ```cs
+using Furion.App;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Furion.AppSamples.Controllers;

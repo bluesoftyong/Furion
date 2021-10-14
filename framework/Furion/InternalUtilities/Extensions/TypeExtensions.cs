@@ -8,10 +8,10 @@
 
 using System.Reflection;
 
-namespace Furion.Extensions.ObjectUtilities;
+namespace Furion.Extensions.InternalUtilities;
 
 /// <summary>
-/// Type 类型拓展
+/// <see cref="Type"/> 类型拓展
 /// </summary>
 internal static class TypeExtensions
 {
@@ -40,9 +40,9 @@ internal static class TypeExtensions
     /// <summary>
     /// 判断类型是否实现泛型接口
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="genericInterface"></param>
-    /// <returns></returns>
+    /// <param name="type">类型</param>
+    /// <param name="genericInterface">泛型接口</param>
+    /// <returns><see cref="bool"/> 实例，true 表示实现泛型接口，false 表示未实现泛型接口</returns>
     internal static bool IsGenericAssignableTo(this Type type, Type genericInterface)
     {
         return Array.Exists(type.GetInterfaces(), t => t.IsGenericType && t.GetGenericTypeDefinition() == genericInterface);
@@ -54,7 +54,9 @@ internal static class TypeExtensions
     /// <param name="propertyInfo">属性对象</param>
     /// <param name="target">目标对象</param>
     /// <param name="value">要设置的属性值</param>
-    internal static void SetPropertyValue(this PropertyInfo propertyInfo, object target, object? value)
+    internal static void SetPropertyValue(this PropertyInfo propertyInfo
+        , object target
+        , object? value)
     {
         // 空检查
         if (target == default)

@@ -6,8 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.Extensions.ObjectUtilities;
-using Furion.Helpers.ObjectUtilities;
+using Furion.Extensions.InternalUtilities;
+using Furion.Helpers.InternalUtilities;
 using Furion.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,11 +30,14 @@ public static class OptionsBuilderExtensions
     /// <param name="configuration">配置对象</param>
     /// <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
     /// <returns>OptionsBuilder{TOptions}</returns>
-    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type? optionsBuilderType = default)
+    public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder
+        , IConfiguration configuration
+        , Type? optionsBuilderType = default)
         where TOptions : class
     {
         // 配置默认处理和选项构建器
-        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilder(optionsBuilderType);
+        optionsBuilder.ConfigureDefaults(configuration)
+            .ConfigureBuilder(optionsBuilderType);
 
         return optionsBuilder;
     }
@@ -48,11 +51,14 @@ public static class OptionsBuilderExtensions
     /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
     /// <returns>OptionsBuilder{TOptions}</returns>
     /// <exception cref="ArgumentNullException">空选项构建器</exception>
-    public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration, Type[] optionsBuilderTypes)
+    public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder
+        , IConfiguration configuration
+        , Type[] optionsBuilderTypes)
         where TOptions : class
     {
         // 配置默认处理和多个选项构建器
-        optionsBuilder.ConfigureDefaults(configuration).ConfigureBuilders(optionsBuilderTypes);
+        optionsBuilder.ConfigureDefaults(configuration)
+            .ConfigureBuilders(optionsBuilderTypes);
 
         return optionsBuilder;
     }
@@ -133,7 +139,7 @@ public static class OptionsBuilderExtensions
                                     ? section
                                     : configuration.GetSection(
                                           string.IsNullOrWhiteSpace(optionsBuilderAttribute?.SectionKey)
-                                              ? optionsType.Name.DetachSuffix("Options")
+                                              ? optionsType.Name.DetachSuffix(Constants.OptionsTypeSuffix)
                                               : optionsBuilderAttribute.SectionKey
                                        );
 
@@ -171,7 +177,9 @@ public static class OptionsBuilderExtensions
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="optionsBuilderType">选项构建器类型</param>
     /// <param name="builderInterface">构建器接口</param>
-    private static void InvokeMapMethod(object optionsBuilder, Type optionsBuilderType, Type builderInterface)
+    private static void InvokeMapMethod(object optionsBuilder
+        , Type optionsBuilderType
+        , Type builderInterface)
     {
         // 获取接口对应 OptionsBuilder 方法映射特性
         var optionsBuilderMethodMapAttribute = builderInterface.GetCustomAttribute<OptionsBuilderMethodMapAttribute>()!;
@@ -213,7 +221,10 @@ public static class OptionsBuilderExtensions
     /// <param name="genericArguments">泛型参数</param>
     /// <param name="args">实际传入参数</param>
     /// <returns>ParameterExpression[]</returns>
-    private static ParameterExpression[] BuildExpressionCallParameters(MethodInfo matchMethod, bool isValidateMethod, Type[] genericArguments, out object[] args)
+    private static ParameterExpression[] BuildExpressionCallParameters(MethodInfo matchMethod
+        , bool isValidateMethod
+        , Type[] genericArguments
+        , out object[] args)
     {
         /*
          * 该方法目的是构建符合 OptionsBuilder 对象的 Configure、PostConfigure、Validate 方法签名委托参数表达式，如：

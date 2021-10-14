@@ -6,11 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion.Configuration;
 using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Xml;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Extensions.Configuration;
@@ -29,53 +29,59 @@ public static class IConfigurationBuilderExtensions
     /// <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
     /// <param name="reloadOnChange">是否监听文件更改</param>
     /// <param name="includeEnvironment">是否包含环境文件格式注册</param>
-    /// <returns>IConfigurationBuilder</returns>
-    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder, string fileName, IHostEnvironment? environment = default, bool optional = true, bool reloadOnChange = false, bool includeEnvironment = false)
+    /// <returns>配置构建对象</returns>
+    public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder
+        , string fileName
+        , IHostEnvironment? environment = default
+        , bool optional = true
+        , bool reloadOnChange = false
+        , bool includeEnvironment = false)
     {
         // 检查文件名格式
-        CheckFileNamePattern(fileName, out var fileNamePart
+        CheckFileNamePattern(fileName
+            , out var fileNamePart
             , out var environmentNamePart
             , out var fileNameWithEnvironmentPart
             , out var parameterPart);
 
         // 获取文件名绝对路径
         var filePath = ResolveRealAbsolutePath(fileNamePart);
-        Trace.Write($"{nameof(Furion)}: configuration file path => {filePath}");
 
         // 填充配置参数
         if (parameterPart.Count > 0)
         {
-            TrySetParameter(parameterPart, nameof(optional), ref optional);
-            TrySetParameter(parameterPart, nameof(reloadOnChange), ref reloadOnChange);
-            TrySetParameter(parameterPart, nameof(includeEnvironment), ref includeEnvironment);
+            TrySetParameter(parameterPart
+                , nameof(optional)
+                , ref optional);
+            TrySetParameter(parameterPart
+                , nameof(reloadOnChange)
+                , ref reloadOnChange);
+            TrySetParameter(parameterPart
+                , nameof(includeEnvironment)
+                , ref includeEnvironment);
         }
 
         // 添加配置文件
-        configurationBuilder.Add(CreateFileConfigurationSource(filePath, optional, reloadOnChange));
+        configurationBuilder.Add(CreateFileConfigurationSource(filePath
+            , optional
+            , reloadOnChange));
 
         // 处理包含环境标识的文件
-        if (environment is not null && includeEnvironment && !environment.EnvironmentName.Equals(environmentNamePart, StringComparison.OrdinalIgnoreCase))
+        if (environment is not null
+            && includeEnvironment
+            && !environment.EnvironmentName.Equals(environmentNamePart, StringComparison.OrdinalIgnoreCase))
         {
             // 取得带环境文件名绝对路径
             var fileNameWithEnvironmentPath = ResolveRealAbsolutePath(fileNameWithEnvironmentPart.Replace("{env}", environment.EnvironmentName));
-            Trace.Write($"{nameof(Furion)}: configuration file with environment path => {fileNameWithEnvironmentPath}");
 
             // 添加带环境配置文件
-            configurationBuilder.Add(CreateFileConfigurationSource(fileNameWithEnvironmentPath, optional, reloadOnChange));
+            configurationBuilder.Add(CreateFileConfigurationSource(fileNameWithEnvironmentPath
+                , optional
+                , reloadOnChange));
         }
 
         return configurationBuilder;
     }
-
-    /// <summary>
-    /// 文件名正则表达式
-    /// </summary>
-    private const string fileNamePattern = @"(?<fileName>(?<realName>.+?)(\.(?<environmentName>\w+))?(?<extension>\.(json|xml|ini)))";
-
-    /// <summary>
-    /// 配置参数正则表达式
-    /// </summary>
-    private const string parameterPattern = @"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)";
 
     /// <summary>
     /// 检查文件名格式是否是受支持的格式
@@ -85,7 +91,11 @@ public static class IConfigurationBuilderExtensions
     /// <param name="environmentNamePart">环境名匹配部分</param>
     /// <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
     /// <param name="parameterPart">参数匹配部分</param>
-    private static void CheckFileNamePattern(string fileName, out string fileNamePart, out string environmentNamePart, out string fileNameWithEnvironmentPart, out IDictionary<string, bool> parameterPart)
+    private static void CheckFileNamePattern(string fileName
+        , out string fileNamePart
+        , out string environmentNamePart
+        , out string fileNameWithEnvironmentPart
+        , out IDictionary<string, bool> parameterPart)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(fileName))
@@ -94,13 +104,17 @@ public static class IConfigurationBuilderExtensions
         }
 
         // 检查文件名格式
-        if (!Regex.IsMatch(fileName, fileNamePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
+        if (!Regex.IsMatch(fileName
+            , Constants.Patterns.ConfigurationFileName
+            , RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
         {
-            throw new InvalidOperationException($"The `{fileName}` is not a valid supported file name format.");
+            throw new InvalidOperationException($"The <{fileName}> is not a valid supported file name format.");
         }
 
         // 匹配文件名部分
-        var fileNameMatch = Regex.Match(fileName, fileNamePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+        var fileNameMatch = Regex.Match(fileName
+            , Constants.Patterns.ConfigurationFileName
+            , RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         fileNamePart = fileNameMatch.Groups["fileName"].Value;
         // 取环境名
         environmentNamePart = fileNameMatch.Groups["environmentName"].Value;
@@ -111,7 +125,10 @@ public static class IConfigurationBuilderExtensions
         fileNameWithEnvironmentPart = $"{realName}.{{env}}{extension}";
 
         // 匹配文件名参数部分
-        parameterPart = Regex.Matches(fileName, parameterPattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
+        parameterPart = Regex.Matches(fileName
+            , Constants.Patterns.ConfigurationFileParameter
+            , RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)
+            .ToDictionary(u => u.Groups["parameter"].Value, u => bool.Parse(u.Groups["value"].Value));
     }
 
     /// <summary>
@@ -125,7 +142,9 @@ public static class IConfigurationBuilderExtensions
         var firstChar = fileName[0];
 
         // 如果文件名包含 : 符号，则认为是一个绝对路径，针对 windows 系统路径
-        if (fileName.IndexOf(':') > -1 && firstChar != '/' && firstChar != '!')
+        if (fileName.IndexOf(':') > -1
+            && firstChar != '/'
+            && firstChar != '!')
         {
             return fileName;
         }
@@ -146,8 +165,10 @@ public static class IConfigurationBuilderExtensions
     /// <param name="filePath">文件路径</param>
     /// <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
     /// <param name="reloadOnChange">是否监听文件更改</param>
-    /// <returns>FileConfigurationSource实例</returns>
-    private static FileConfigurationSource CreateFileConfigurationSource(string filePath, bool optional = true, bool reloadOnChange = false)
+    /// <returns><see cref="FileConfigurationSource"/> 实例</returns>
+    private static FileConfigurationSource CreateFileConfigurationSource(string filePath
+        , bool optional = true
+        , bool reloadOnChange = false)
     {
         // 获取文件拓展名
         var fileExtension = Path.GetExtension(filePath).ToLower();
@@ -158,7 +179,7 @@ public static class IConfigurationBuilderExtensions
             ".json" => new JsonConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
             ".xml" => new XmlConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
             ".ini" => new IniConfigurationSource { Path = filePath, Optional = optional, ReloadOnChange = reloadOnChange },
-            _ => throw new InvalidOperationException($"Cannot create a file `{fileExtension}` configuration source for this file type.")
+            _ => throw new InvalidOperationException($"Cannot create a file <{fileExtension}> configuration source for this file type.")
         };
 
         // 根据文件配置源解析对应文件配置提供程序
@@ -173,7 +194,9 @@ public static class IConfigurationBuilderExtensions
     /// <param name="parameters">字典参数结合</param>
     /// <param name="parameterName">参数名</param>
     /// <param name="value">参数值</param>
-    private static void TrySetParameter(IDictionary<string, bool> parameters, string parameterName, ref bool value)
+    private static void TrySetParameter(IDictionary<string, bool> parameters
+        , string parameterName
+        , ref bool value)
     {
         // 只有包含该参数才改变值
         if (parameters.ContainsKey(parameterName))

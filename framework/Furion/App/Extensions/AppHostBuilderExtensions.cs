@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.App;
-using Furion.Extensions.ObjectUtilities;
+using Furion.Extensions.InternalUtilities;
 using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.Hosting;
@@ -21,21 +21,23 @@ public static class AppHostBuilderExtensions
     /// 配置 App 模块初始配置
     /// </summary>
     /// <param name="hostBuilder">主机构建器</param>
-    /// <returns>IHostBuilder</returns>
+    /// <returns>主机构建器</returns>
     public static IHostBuilder ConfigureAppConfiguration(this IHostBuilder hostBuilder)
     {
         return hostBuilder.ConfigureAppConfiguration((context, configurationBuilder) =>
-         {
-             var configuration = context.Configuration;
-             var environment = context.HostingEnvironment;
+        {
+            // 获取配置构建器和主机环境
+            var configuration = context.Configuration;
+            var environment = context.HostingEnvironment;
 
-             // 读取 AppSettings:EnvironmentVariablesPrefix 节点
-             var environmentVariablesPrefix = configuration.GetValue($"{Constants.ConfigurationKey}:EnvironmentVariablesPrefix", "FURION_");
-             // 添加环境配置支持及前缀支持
-             configurationBuilder.AddEnvironmentVariables(prefix: environmentVariablesPrefix)
-                                 // 添加自定义配置文件
-                                 .AddCustomizeConfigurationFiles(configuration, environment);
-         });
+            // 读取 AppSettings:EnvironmentVariablesPrefix 节点
+            var environmentVariablesPrefix = configuration.GetValue(Constants.Keys.EnvironmentVariablesPrefix, Constants.Values.EnvironmentVariablesPrefix);
+
+            // 添加环境配置支持及前缀支持
+            configurationBuilder.AddEnvironmentVariables(prefix: environmentVariablesPrefix)
+                                // 添加自定义配置文件
+                                .AddCustomizeConfigurationFiles(configuration, environment);
+        });
     }
 
     /// <summary>
@@ -44,11 +46,13 @@ public static class AppHostBuilderExtensions
     /// <param name="configurationBuilder">配置构建对象</param>
     /// <param name="configuration">配置对象</param>
     /// <param name="environment">环境对象</param>
-    /// <returns>IConfigurationBuilder</returns>
-    private static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder, IConfiguration configuration, IHostEnvironment? environment = default)
+    /// <returns>配置构建对象</returns>
+    private static IConfigurationBuilder AddCustomizeConfigurationFiles(this IConfigurationBuilder configurationBuilder
+        , IConfiguration configuration
+        , IHostEnvironment? environment = default)
     {
         // 读取 AppSettings:CustomizeConfigurationFiles 节点
-        var customizeConfigurationFiles = configuration.Get<string[]>($"{Constants.ConfigurationKey}:CustomizeConfigurationFiles");
+        var customizeConfigurationFiles = configuration.Get<string[]>(Constants.Keys.CustomizeConfigurationFiles);
 
         // 配置为空则跳过
         if (customizeConfigurationFiles.IsEmpty())

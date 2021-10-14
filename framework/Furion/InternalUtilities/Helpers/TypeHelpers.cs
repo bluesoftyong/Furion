@@ -6,9 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.Extensions.ObjectUtilities;
+using Furion.Extensions.InternalUtilities;
 
-namespace Furion.Helpers.ObjectUtilities;
+namespace Furion.Helpers.InternalUtilities;
 
 /// <summary>
 /// 类型帮助类
@@ -20,7 +20,7 @@ internal static class TypeHelpers
     /// </summary>
     /// <param name="inputTypes">输入类型</param>
     /// <param name="outputType">输出类型</param>
-    /// <returns>Type</returns>
+    /// <returns>Action或Func 委托类型</returns>
     internal static Type CreateDelegate(Type[] inputTypes, Type? outputType = default)
     {
         var isFuncDelegate = outputType != default;

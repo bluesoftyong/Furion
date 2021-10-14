@@ -61,7 +61,9 @@ public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2> : IOptionsBuild
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
-    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2);
+    bool Validate(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2);
 }
 
 /// <summary>
@@ -85,7 +87,10 @@ public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3> : IOptio
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
-    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3);
+    bool Validate(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3);
 }
 
 /// <summary>
@@ -112,7 +117,11 @@ public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4> :
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
-    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4);
+    bool Validate(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3
+        , TDep4 dep4);
 }
 
 /// <summary>
@@ -142,5 +151,10 @@ public interface IValidateOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, T
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
     /// <param name="dep5">依赖服务</param>
-    bool Validate(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4, TDep5 dep5);
+    bool Validate(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3
+        , TDep4 dep4
+        , TDep5 dep5);
 }

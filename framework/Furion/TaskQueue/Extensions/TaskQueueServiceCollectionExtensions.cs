@@ -45,9 +45,9 @@ public static class TaskQueueServiceCollectionExtensions
         services.AddSingleton<ITaskQueue>(_ =>
         {
             // 读取 TaskQueue 模块配置，并获取队列通道容量，默认为 100
-            if (!int.TryParse(configuration["TaskQueue:Capacity"], out var capacity))
+            if (!int.TryParse(configuration[Constants.Keys.Capacity], out var capacity))
             {
-                capacity = 100;
+                capacity = Constants.Values.Capacity;
             }
 
             // 创建后台队列实例

@@ -6,21 +6,26 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.Extensions.ObjectUtilities;
+namespace Furion.Configuration;
 
 /// <summary>
-/// IEnumerable{T} 拓展类
+/// Configuration 模块常量
 /// </summary>
-internal static class IIEnumerableOfTExtensions
+internal static class Constants
 {
     /// <summary>
-    /// 判断集合是否为空
+    /// 正则表达式常量
     /// </summary>
-    /// <typeparam name="T">元素类型</typeparam>
-    /// <param name="collection">集合对象</param>
-    /// <returns>bool</returns>
-    internal static bool IsEmpty<T>(this IEnumerable<T>? collection)
+    internal static class Patterns
     {
-        return collection == null || !collection.Any();
+        /// <summary>
+        /// 配置文件名
+        /// </summary>
+        internal const string ConfigurationFileName = @"(?<fileName>(?<realName>.+?)(\.(?<environmentName>\w+))?(?<extension>\.(json|xml|ini)))";
+
+        /// <summary>
+        /// 配置文件参数
+        /// </summary>
+        internal const string ConfigurationFileParameter = @"\s+(?<parameter>\b\w+\b)\s*=\s*(?<value>\btrue\b|\bfalse\b)";
     }
 }

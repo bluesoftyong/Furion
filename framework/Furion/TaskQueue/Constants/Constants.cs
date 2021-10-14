@@ -6,10 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.App;
+namespace Furion.TaskQueue;
 
 /// <summary>
-/// App 模块常量
+/// TaskQueue 模块常量
 /// </summary>
 internal static class Constants
 {
@@ -19,19 +19,14 @@ internal static class Constants
     internal static class Keys
     {
         /// <summary>
-        /// App 模块配置根节点
+        /// TaskQueue 模块配置根节点
         /// </summary>
-        internal const string Root = "AppSettings";
+        internal const string Root = "TaskQueueSettings";
 
         /// <summary>
-        /// 环境配置变量前缀节点
+        /// 队列通道容量
         /// </summary>
-        internal const string EnvironmentVariablesPrefix = $"{Root}:EnvironmentVariablesPrefix";
-
-        /// <summary>
-        /// 自定义配置文件节点
-        /// </summary>
-        internal const string CustomizeConfigurationFiles = $"{Root}:CustomizeConfigurationFiles";
+        internal const string Capacity = $"{Root}:Capacity";
     }
 
     /// <summary>
@@ -40,8 +35,8 @@ internal static class Constants
     internal static class Values
     {
         /// <summary>
-        /// <see cref="Keys.EnvironmentVariablesPrefix"/> 默认值
+        /// <see cref="Keys.Capacity"/> 默认值
         /// </summary>
-        internal const string EnvironmentVariablesPrefix = "FURION_";
+        internal const int Capacity = 100;
     }
 }

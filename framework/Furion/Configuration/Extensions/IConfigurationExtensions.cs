@@ -44,7 +44,9 @@ public static class IConfigurationExtensions
     /// <param name="key">节点路径</param>
     /// <param name="configureOptions">配置值绑定到指定类型额外配置</param>
     /// <returns>节点类型实例</returns>
-    public static T Get<T>(this IConfiguration configuration, string key, Action<BinderOptions> configureOptions)
+    public static T Get<T>(this IConfiguration configuration
+        , string key
+        , Action<BinderOptions> configureOptions)
     {
         return configuration.GetSection(key).Get<T>(configureOptions);
     }
@@ -55,8 +57,10 @@ public static class IConfigurationExtensions
     /// <param name="configuration">配置对象</param>
     /// <param name="key">节点路径</param>
     /// <param name="type">节点类型</param>
-    /// <returns>object实例</returns>
-    public static object Get(this IConfiguration configuration, string key, Type type)
+    /// <returns><see cref="object"/> 实例</returns>
+    public static object Get(this IConfiguration configuration
+        , string key
+        , Type type)
     {
         return configuration.GetSection(key).Get(type);
     }
@@ -68,8 +72,11 @@ public static class IConfigurationExtensions
     /// <param name="key">节点路径</param>
     /// <param name="type">节点类型</param>
     /// <param name="configureOptions">配置值绑定到指定类型额外配置</param>
-    /// <returns>object实例</returns>
-    public static object Get(this IConfiguration configuration, string key, Type type, Action<BinderOptions> configureOptions)
+    /// <returns><see cref="object"/> 实例</returns>
+    public static object Get(this IConfiguration configuration
+        , string key
+        , Type type
+        , Action<BinderOptions> configureOptions)
     {
         return configuration.GetSection(key).Get(type, configureOptions);
     }

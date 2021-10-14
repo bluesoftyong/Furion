@@ -61,7 +61,9 @@ public interface IConfigureOptionsBuilder<TOptions, TDep1, TDep2> : IOptionsBuil
     /// <param name="options">选项实例</param>
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
-    void Configure(TOptions options, TDep1 dep1, TDep2 dep2);
+    void Configure(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2);
 }
 
 /// <summary>
@@ -85,7 +87,10 @@ public interface IConfigureOptionsBuilder<TOptions, TDep1, TDep2, TDep3> : IOpti
     /// <param name="dep1">依赖服务</param>
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
-    void Configure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3);
+    void Configure(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3);
 }
 
 /// <summary>
@@ -112,7 +117,11 @@ public interface IConfigureOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4> 
     /// <param name="dep2">依赖服务</param>
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
-    void Configure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4);
+    void Configure(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3
+        , TDep4 dep4);
 }
 
 /// <summary>
@@ -142,5 +151,10 @@ public interface IConfigureOptionsBuilder<TOptions, TDep1, TDep2, TDep3, TDep4, 
     /// <param name="dep3">依赖服务</param>
     /// <param name="dep4">依赖服务</param>
     /// <param name="dep5">依赖服务</param>
-    void Configure(TOptions options, TDep1 dep1, TDep2 dep2, TDep3 dep3, TDep4 dep4, TDep5 dep5);
+    void Configure(TOptions options
+        , TDep1 dep1
+        , TDep2 dep2
+        , TDep3 dep3
+        , TDep4 dep4
+        , TDep5 dep5);
 }

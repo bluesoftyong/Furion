@@ -30,6 +30,8 @@ public static class IConfigurationBuilderExtensions
     /// <param name="reloadOnChange">是否监听文件更改</param>
     /// <param name="includeEnvironment">是否包含环境文件格式注册</param>
     /// <returns>配置构建对象</returns>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
     public static IConfigurationBuilder AddFile(this IConfigurationBuilder configurationBuilder
         , string fileName
         , IHostEnvironment? environment = default
@@ -91,6 +93,8 @@ public static class IConfigurationBuilderExtensions
     /// <param name="environmentNamePart">环境名匹配部分</param>
     /// <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
     /// <param name="parameterPart">参数匹配部分</param>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
     private static void CheckFileNamePattern(string fileName
         , out string fileNamePart
         , out string environmentNamePart
@@ -166,6 +170,7 @@ public static class IConfigurationBuilderExtensions
     /// <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
     /// <param name="reloadOnChange">是否监听文件更改</param>
     /// <returns><see cref="FileConfigurationSource"/> 实例</returns>
+    /// <exception cref="InvalidOperationException" />
     private static FileConfigurationSource CreateFileConfigurationSource(string filePath
         , bool optional = true
         , bool reloadOnChange = false)

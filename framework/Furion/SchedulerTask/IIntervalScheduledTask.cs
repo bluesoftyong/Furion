@@ -16,5 +16,5 @@ public interface IIntervalScheduledTask : IScheduledTask
     /// <summary>
     /// 间隔时间（分钟）
     /// </summary>
-    int IInterval { get; }
+    int Interval { get; }
 }

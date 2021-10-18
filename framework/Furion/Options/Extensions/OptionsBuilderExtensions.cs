@@ -29,7 +29,7 @@ public static class OptionsBuilderExtensions
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="configuration">配置对象</param>
     /// <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
-    /// <returns>OptionsBuilder{TOptions}</returns>
+    /// <returns>选项构建器实例</returns>
     public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder
         , IConfiguration configuration
         , Type? optionsBuilderType = default)
@@ -49,8 +49,8 @@ public static class OptionsBuilderExtensions
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="configuration">配置对象</param>
     /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
-    /// <returns>OptionsBuilder{TOptions}</returns>
-    /// <exception cref="ArgumentNullException">空选项构建器</exception>
+    /// <returns>选项构建器实例</returns>
+    /// <exception cref="ArgumentNullException" />
     public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder
         , IConfiguration configuration
         , Type[] optionsBuilderTypes)
@@ -69,7 +69,7 @@ public static class OptionsBuilderExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
-    /// <returns>OptionsBuilder{TOptions}</returns>
+    /// <returns>选项构建器实例</returns>
     public static OptionsBuilder<TOptions> ConfigureBuilder<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type? optionsBuilderType = default)
         where TOptions : class
     {
@@ -100,8 +100,8 @@ public static class OptionsBuilderExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="optionsBuilderTypes">配置多个选项构建器</param>
-    /// <returns>OptionsBuilder{TOptions}</returns>
-    /// <exception cref="ArgumentNullException">空选项构建器</exception>
+    /// <returns>选项构建器实例</returns>
+    /// <exception cref="ArgumentNullException" />
     public static OptionsBuilder<TOptions> ConfigureBuilders<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, Type[] optionsBuilderTypes)
         where TOptions : class
     {
@@ -126,7 +126,7 @@ public static class OptionsBuilderExtensions
     /// <typeparam name="TOptions">选项类型</typeparam>
     /// <param name="optionsBuilder">选项构建器实例</param>
     /// <param name="configuration">配置对象</param>
-    /// <returns>OptionsBuilder{TOptions}</returns>
+    /// <returns>选项构建器实例</returns>
     public static OptionsBuilder<TOptions> ConfigureDefaults<TOptions>(this OptionsBuilder<TOptions> optionsBuilder, IConfiguration configuration)
         where TOptions : class
     {
@@ -220,7 +220,7 @@ public static class OptionsBuilderExtensions
     /// <param name="isValidateMethod">是否校验方法</param>
     /// <param name="genericArguments">泛型参数</param>
     /// <param name="args">实际传入参数</param>
-    /// <returns>ParameterExpression[]</returns>
+    /// <returns>调用参数表达式数组</returns>
     private static ParameterExpression[] BuildExpressionCallParameters(MethodInfo matchMethod
         , bool isValidateMethod
         , Type[] genericArguments

@@ -13,7 +13,7 @@ namespace Furion.TaskQueue;
 /// <summary>
 /// 任务队列默认实现
 /// </summary>
-internal sealed class TaskQueue : ITaskQueue
+internal sealed partial class TaskQueue : ITaskQueue
 {
     /// <summary>
     /// 队列通道

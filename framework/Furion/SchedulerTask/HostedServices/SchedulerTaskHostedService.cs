@@ -51,7 +51,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
         {
             _scheduledTasks.Add(new IntervalSchedulerTaskWrapper
             {
-                Interval = scheduledTask.IInterval,
+                Interval = scheduledTask.Interval,
                 Task = scheduledTask,
                 NextRunTime = referenceTime
             });
@@ -73,7 +73,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
     /// 执行后台任务
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-    /// <returns>Task</returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("SchedulerTask Hosted Service is running.");
@@ -99,7 +99,7 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
     /// 后台调用具体任务
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-    /// <returns>Task</returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
         var referenceTime = DateTime.UtcNow;

@@ -30,6 +30,9 @@ public static class EventBusServiceCollectionExtensions
         // 注册事件总线后台服务
         services.AddHostedService<EventBusHostedService>();
 
+        // 注册事件服务
+        services.AddSingleton<IEventService, EventService>();
+
         return services;
     }
 
@@ -46,7 +49,7 @@ public static class EventBusServiceCollectionExtensions
         services.AddEventStoreChannelService(configuration);
 
         // 通过工厂模式创建
-        return services.AddHostedService(serviceProvider =>
+        services.AddHostedService(serviceProvider =>
         {
             // 创建事件总线后台服务对象
             var eventBusHostedService = ActivatorUtilities.CreateInstance<EventBusHostedService>(serviceProvider);
@@ -56,6 +59,11 @@ public static class EventBusServiceCollectionExtensions
 
             return eventBusHostedService;
         });
+
+        // 注册事件服务
+        services.AddSingleton<IEventService, EventService>();
+
+        return services;
     }
 
     /// <summary>

@@ -8,7 +8,17 @@
 
 namespace Furion.EventBus;
 
-internal interface IEventService
+/// <summary>
+/// 事件服务接口
+/// </summary>
+public interface IEventService
 {
+    /// <summary>
+    /// 发送一条消息
+    /// </summary>
+    /// <param name="eventId">事件 Id</param>
+    /// <param name="payload">事件承载（携带）数据</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns><see cref="Task"/></returns>
     Task EmitAsync(string eventId, object? payload, CancellationToken cancellationToken = default);
 }

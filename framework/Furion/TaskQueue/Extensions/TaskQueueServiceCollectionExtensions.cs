@@ -24,22 +24,22 @@ public static class TaskQueueServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddTaskQueue(this IServiceCollection services, IConfiguration configuration)
     {
+        // 注册内部服务
+        services.AddInternalService(configuration);
+
         // 注册任务队列后台服务
         services.AddHostedService<TaskQueuedHostedService>();
-
-        // 注册 BackgroundTaskQueue 服务
-        services.AddTaskQueueService(configuration);
 
         return services;
     }
 
     /// <summary>
-    /// 注册 TaskQueue 服务
+    /// 注册内部服务
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="configuration">配置对象</param>
     /// <returns>服务集合实例</returns>
-    private static IServiceCollection AddTaskQueueService(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddInternalService(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
         services.AddSingleton<ITaskQueue>(_ =>

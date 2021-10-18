@@ -11,7 +11,7 @@ using System.Threading.Channels;
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件存储器依赖接口
+/// 事件存储器默认实现
 /// </summary>
 /// <remarks>
 /// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>

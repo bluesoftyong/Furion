@@ -34,7 +34,9 @@ internal sealed partial class EventService : IEventService
     /// <param name="payload">事件承载（携带）数据</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/></returns>
-    public async Task EmitAsync(string eventId, object? payload, CancellationToken cancellationToken = default)
+    public async Task EmitAsync(string eventId
+        , object? payload
+        , CancellationToken cancellationToken = default)
     {
         await _eventStoreChannel.WriteAsync(new EventSource(eventId)
         {

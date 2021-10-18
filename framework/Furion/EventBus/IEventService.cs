@@ -20,5 +20,7 @@ public interface IEventService
     /// <param name="payload">事件承载（携带）数据</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/></returns>
-    Task EmitAsync(string eventId, object? payload, CancellationToken cancellationToken = default);
+    Task EmitAsync(string eventId
+        , object? payload
+        , CancellationToken cancellationToken = default);
 }

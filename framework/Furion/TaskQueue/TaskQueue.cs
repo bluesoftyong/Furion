@@ -41,7 +41,7 @@ internal sealed partial class TaskQueue : ITaskQueue
     /// </summary>
     /// <param name="taskHandler">任务处理委托</param>
     /// <returns>ValueTask</returns>
-    /// <exception cref="ArgumentNullException">如果 workItem 为空，则抛空异常</exception>
+    /// <exception cref="ArgumentNullException" />
     public async ValueTask EnqueueAsync(Func<CancellationToken, ValueTask> taskHandler)
     {
         // 空检查

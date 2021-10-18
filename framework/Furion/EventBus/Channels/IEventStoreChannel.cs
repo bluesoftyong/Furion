@@ -9,7 +9,7 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件存储器依赖接口
+/// 事件存取器依赖接口
 /// </summary>
 /// <remarks>
 /// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
@@ -18,14 +18,14 @@ namespace Furion.EventBus;
 public interface IEventStoreChannel
 {
     /// <summary>
-    /// 将事件源写入存储器
+    /// 将事件源写入存取器
     /// </summary>
     /// <param name="eventSource">事件源对象</param>
     /// <returns><see cref="ValueTask"/></returns>
     ValueTask WriteAsync(EventSource eventSource);
 
     /// <summary>
-    /// 从存储器中读取一条事件源
+    /// 从存取器中读取一条事件源
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>事件源对象</returns>

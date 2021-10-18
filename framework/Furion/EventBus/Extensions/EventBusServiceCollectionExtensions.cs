@@ -75,7 +75,7 @@ public static class EventBusServiceCollectionExtensions
                 capacity = Constants.Values.Capacity;
             }
 
-            // 创建事件存储器对象
+            // 创建事件存取器对象
             return new EventStoreChannel(capacity);
         });
 

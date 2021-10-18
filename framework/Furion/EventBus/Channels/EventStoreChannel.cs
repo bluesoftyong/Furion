@@ -11,7 +11,7 @@ using System.Threading.Channels;
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件存储器默认实现
+/// 事件存取器默认实现
 /// </summary>
 /// <remarks>
 /// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
@@ -20,14 +20,14 @@ namespace Furion.EventBus;
 internal sealed partial class EventStoreChannel : IEventStoreChannel
 {
     /// <summary>
-    /// 内存通道事件源存储器
+    /// 内存通道事件源存取器
     /// </summary>
     private readonly Channel<EventSource> _memoryEventChannel;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="capacity">存储器最多能够处理多少消息，超过该容量进入等待写入</param>
+    /// <param name="capacity">存取器最多能够处理多少消息，超过该容量进入等待写入</param>
     public EventStoreChannel(int capacity)
     {
         // 配置通道，设置超出默认容量后进入等待
@@ -41,7 +41,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
     }
 
     /// <summary>
-    /// 将事件源写入存储器
+    /// 将事件源写入存取器
     /// </summary>
     /// <param name="eventSource">事件源对象</param>
     /// <returns><see cref="ValueTask"/></returns>
@@ -53,12 +53,12 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
             throw new ArgumentNullException(nameof(eventSource));
         }
 
-        // 写入存储器
+        // 写入存取器
         await _memoryEventChannel.Writer.WriteAsync(eventSource);
     }
 
     /// <summary>
-    /// 从存储器中读取一条事件源
+    /// 从存取器中读取一条事件源
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>事件源对象</returns>

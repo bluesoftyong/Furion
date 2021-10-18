@@ -28,7 +28,7 @@ internal sealed class EventBusHostedService : BackgroundService
     private readonly ILogger<EventBusHostedService> _logger;
 
     /// <summary>
-    /// 事件存储器
+    /// 事件存取器
     /// </summary>
     private readonly IEventStoreChannel _eventStoreChannel;
 
@@ -41,7 +41,7 @@ internal sealed class EventBusHostedService : BackgroundService
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    /// <param name="eventStoreChannel">事件存储器</param>
+    /// <param name="eventStoreChannel">事件存取器</param>
     /// <param name="eventHandlers">事件处理程序（未包装）</param>
     public EventBusHostedService(ILogger<EventBusHostedService> logger
         , IEventStoreChannel eventStoreChannel
@@ -115,7 +115,7 @@ internal sealed class EventBusHostedService : BackgroundService
         // 创建一个任务工厂
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
-        // 从事件存储器中读取一条
+        // 从事件存取器中读取一条
         var eventSource = await _eventStoreChannel.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序

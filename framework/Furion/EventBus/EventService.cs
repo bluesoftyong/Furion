@@ -14,14 +14,14 @@ namespace Furion.EventBus;
 internal sealed partial class EventService : IEventService
 {
     /// <summary>
-    /// 事件存储器
+    /// 事件存取器
     /// </summary>
     private readonly IEventStoreChannel _eventStoreChannel;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="eventStoreChannel">事件存储器</param>
+    /// <param name="eventStoreChannel">事件存取器</param>
     public EventService(IEventStoreChannel eventStoreChannel)
     {
         _eventStoreChannel = eventStoreChannel;

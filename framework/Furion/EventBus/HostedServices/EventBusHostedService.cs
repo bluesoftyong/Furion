@@ -12,6 +12,9 @@ using System.Reflection;
 
 namespace Furion.EventBus;
 
+/// <summary>
+/// 事件总线后台主机服务
+/// </summary>
 internal sealed class EventBusHostedService : BackgroundService
 {
     /// <summary>
@@ -24,7 +27,10 @@ internal sealed class EventBusHostedService : BackgroundService
     /// </summary>
     private readonly ILogger<EventBusHostedService> _logger;
 
-    private readonly IEventChannel _eventChannel;
+    /// <summary>
+    /// 事件存储器
+    /// </summary>
+    private readonly IEventStoreChannel _eventStoreChannel;
 
     /// <summary>
     /// 事件处理程序集合
@@ -35,31 +41,42 @@ internal sealed class EventBusHostedService : BackgroundService
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    /// <param name="eventChannel"></param>
-    /// <param name="eventHandlers"></param>
+    /// <param name="eventStoreChannel">事件存储器</param>
+    /// <param name="eventHandlers">事件处理程序（未包装）</param>
     public EventBusHostedService(ILogger<EventBusHostedService> logger
-        , IEventChannel eventChannel
+        , IEventStoreChannel eventStoreChannel
         , IEnumerable<IEventHandler> eventHandlers)
     {
         _logger = logger;
-        _eventChannel = eventChannel;
+        _eventStoreChannel = eventStoreChannel;
 
         // 添加事件处理程序到 HashSet 中
         foreach (var eventHandler in eventHandlers)
         {
-            // 查找所有公开、非静态实例方法，且贴有 [EventSource] 特性，且符合 Func<EventSource, CancellationToken, Task> 签名
+            // 获取事件处理程序类型
             var eventHandlerType = eventHandler.GetType();
-            // 这里粗略判断
-            var methods = eventHandlerType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(u => u.IsDefined(typeof(EventSubscribeAttribute), false));
 
-            foreach (var method in methods)
+            // 查找所有公开且贴有 [EventSubscribe] 的实例方法
+            var bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+            var eventHandlerMethods = eventHandlerType.GetMethods(bindingAttr)
+                .Where(u => u.IsDefined(typeof(EventSubscribeAttribute), false));
+
+            // 遍历所有处理程序方法
+            foreach (var eventHandlerMethod in eventHandlerMethods)
             {
-                var func = method.CreateDelegate<Func<EventSource, CancellationToken, Task>>(eventHandler);
-                var eventSubscribeAttributes = method.GetCustomAttributes<EventSubscribeAttribute>(false);
+                // 将方法转换成 Func<EventSource, CancellationToken, Task> 委托
+                var @delegate = eventHandlerMethod.CreateDelegate<Func<EventSource, CancellationToken, Task>>(eventHandler);
 
-                foreach (var eventSource in eventSubscribeAttributes)
+                // 处理同一个事件处理程序支持多个事件 Id 情况
+                var eventSubscribeAttribute = eventHandlerMethod.GetCustomAttributes<EventSubscribeAttribute>(false);
+
+                // 逐条包装并添加到 HashSet 集合中
+                foreach (var eventSubscribe in eventSubscribeAttribute)
                 {
-                    _eventHandlers.Add(new EventHandlerWrapper(eventSource.EventId) { Handler = func });
+                    _eventHandlers.Add(new EventHandlerWrapper(eventSubscribe.EventId)
+                    {
+                        Handler = @delegate
+                    });
                 }
             }
         }
@@ -83,16 +100,13 @@ internal sealed class EventBusHostedService : BackgroundService
         {
             // 执行具体任务
             await BackgroundProcessing(stoppingToken);
-
-            // 最低限制，不阻塞延迟1分钟检查，不再接受秒级调度任务，避免频繁检查导致 CPU 占用过高
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
 
         _logger.LogDebug($"EventBus Hosted Service is stopped.");
     }
 
     /// <summary>
-    /// 后台调用具体任务
+    /// 后台调用事件处理程序
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
@@ -101,19 +115,22 @@ internal sealed class EventBusHostedService : BackgroundService
         // 创建一个任务工厂
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
-        var eventSource = await _eventChannel.ReadAsync(stoppingToken);
-        var handlerTahtShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
+        // 从事件存储器中读取一条
+        var eventSource = await _eventStoreChannel.ReadAsync(stoppingToken);
+
+        // 查找事件 Id 匹配的事件处理程序
+        var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
 
         // 逐条创建新线程调用
-        foreach (var handlerThatShouldRun in handlerTahtShouldRun)
+        foreach (var eventHandlerThatShouldRun in eventHandlersThatShouldRun)
         {
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
             {
                 try
                 {
-                    // 调用任务处理程序（这里的 Token 有点问题）
-                    await handlerThatShouldRun.Handler!(eventSource, eventSource.CancellationToken);
+                    // 调用事件处理程序
+                    await eventHandlerThatShouldRun.Handler!(eventSource, eventSource.CancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -124,7 +141,7 @@ internal sealed class EventBusHostedService : BackgroundService
                     UnobservedTaskException?.Invoke(this, args);
 
                     // 输出异常日志
-                    _logger.LogError(ex, "Error occurred executing {Task}.", handlerThatShouldRun.Handler!.ToString());
+                    _logger.LogError(ex, "Error occurred executing {Task}.", eventHandlerThatShouldRun.Handler!.ToString());
                 }
             }, stoppingToken);
         }

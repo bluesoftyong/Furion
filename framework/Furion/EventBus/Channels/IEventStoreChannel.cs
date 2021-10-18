@@ -9,21 +9,25 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件通道依赖接口
+/// 事件存储器依赖接口
 /// </summary>
-internal interface IEventChannel
+/// <remarks>
+/// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
+/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 kafka，sqlserver 等</para>
+/// </remarks>
+public interface IEventStoreChannel
 {
     /// <summary>
-    /// 写入事件源
+    /// 将事件源写入存储器
     /// </summary>
-    /// <param name="eventSource">事件源委托</param>
-    /// <returns>ValueTask</returns>
+    /// <param name="eventSource">事件源对象</param>
+    /// <returns><see cref="ValueTask"/></returns>
     ValueTask WriteAsync(EventSource eventSource);
 
     /// <summary>
-    /// 读取事件源
+    /// 从存储器中读取一条事件源
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
+    /// <returns>事件源对象</returns>
     ValueTask<EventSource> ReadAsync(CancellationToken cancellationToken);
 }

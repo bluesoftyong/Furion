@@ -8,6 +8,10 @@
 
 namespace Furion.EventBus;
 
+/// <summary>
+/// 事件处理程序包装器
+/// </summary>
+/// <remarks>主要用于主机服务启动时将所有处理程序和事件 Id进行包装绑定</remarks>
 internal sealed class EventHandlerWrapper
 {
     /// <summary>
@@ -20,7 +24,7 @@ internal sealed class EventHandlerWrapper
     }
 
     /// <summary>
-    /// 事件Id
+    /// 事件 Id
     /// </summary>
     internal string EventId { get; set; }
 
@@ -30,10 +34,10 @@ internal sealed class EventHandlerWrapper
     internal Func<EventSource, CancellationToken, Task>? Handler { get; set; }
 
     /// <summary>
-    /// 判断当前事件处理程序是否符合执行
+    /// 是否符合条件执行处理程序
     /// </summary>
-    /// <param name="eventId"></param>
-    /// <returns></returns>
+    /// <param name="eventId">事件 Id</param>
+    /// <returns><see cref="bool"/></returns>
     internal bool ShouldRun(string eventId)
     {
         return EventId == eventId;

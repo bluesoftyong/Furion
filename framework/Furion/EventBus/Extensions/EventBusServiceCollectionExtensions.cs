@@ -20,10 +20,14 @@ public static class EventBusServiceCollectionExtensions
     /// 添加 EventBus 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
+    /// <param name="configuration">配置对象</param>
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddEventChannelService(configuration);
+        // 注册 EventStoreChannel 服务
+        services.AddEventStoreChannelService(configuration);
+
+        // 注册事件总线后台服务
         services.AddHostedService<EventBusHostedService>();
 
         return services;
@@ -33,16 +37,18 @@ public static class EventBusServiceCollectionExtensions
     /// 添加 EventBus 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
+    /// <<param name="configuration">配置对象</param>
     /// <param name="unobservedTaskExceptionHandler">未察觉任务异常事件处理程序</param>
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration, EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler)
     {
-        services.AddEventChannelService(configuration);
+        // 注册 EventStoreChannel 服务
+        services.AddEventStoreChannelService(configuration);
 
         // 通过工厂模式创建
         return services.AddHostedService(serviceProvider =>
         {
-            // 创建服务对象
+            // 创建事件总线后台服务对象
             var eventBusHostedService = ActivatorUtilities.CreateInstance<EventBusHostedService>(serviceProvider);
 
             // 订阅未察觉任务异常事件
@@ -53,15 +59,15 @@ public static class EventBusServiceCollectionExtensions
     }
 
     /// <summary>
-    /// 注册 EventChannel 服务
+    /// 注册 EventStoreChannel 服务
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="configuration">配置对象</param>
     /// <returns>服务集合实例</returns>
-    private static IServiceCollection AddEventChannelService(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddEventStoreChannelService(this IServiceCollection services, IConfiguration configuration)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
-        services.AddSingleton<IEventChannel>(_ =>
+        services.AddSingleton<IEventStoreChannel>(_ =>
         {
             // 读取 EventBus 模块配置，并获取队列通道容量，默认为 100
             if (!int.TryParse(configuration[Constants.Keys.Capacity], out var capacity))
@@ -69,8 +75,8 @@ public static class EventBusServiceCollectionExtensions
                 capacity = Constants.Values.Capacity;
             }
 
-            // 创建后台队列实例
-            return new EventChannel(capacity);
+            // 创建事件存储器对象
+            return new EventStoreChannel(capacity);
         });
 
         return services;

@@ -11,20 +11,24 @@ using System.Threading.Channels;
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件通道依赖接口
+/// 事件存储器依赖接口
 /// </summary>
-internal sealed partial class EventChannel : IEventChannel
+/// <remarks>
+/// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
+/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 kafka，sqlserver 等</para>
+/// </remarks>
+internal sealed partial class EventStoreChannel : IEventStoreChannel
 {
     /// <summary>
-    /// 事件源通道
+    /// 内存通道事件源存储器
     /// </summary>
-    private readonly Channel<EventSource> _channel;
+    private readonly Channel<EventSource> _memoryEventChannel;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="capacity">队列通道默认容量，超过该容量进入等待</param>
-    public EventChannel(int capacity)
+    /// <param name="capacity">存储器最多能够处理多少消息，超过该容量进入等待写入</param>
+    public EventStoreChannel(int capacity)
     {
         // 配置通道，设置超出默认容量后进入等待
         var boundedChannelOptions = new BoundedChannelOptions(capacity)
@@ -33,14 +37,14 @@ internal sealed partial class EventChannel : IEventChannel
         };
 
         // 创建有限容量通道
-        _channel = Channel.CreateBounded<EventSource>(boundedChannelOptions);
+        _memoryEventChannel = Channel.CreateBounded<EventSource>(boundedChannelOptions);
     }
 
     /// <summary>
-    /// 写入事件源
+    /// 将事件源写入存储器
     /// </summary>
-    /// <param name="eventSource">事件源委托</param>
-    /// <returns>ValueTask</returns>
+    /// <param name="eventSource">事件源对象</param>
+    /// <returns><see cref="ValueTask"/></returns>
     public async ValueTask WriteAsync(EventSource eventSource)
     {
         // 空检查
@@ -49,19 +53,19 @@ internal sealed partial class EventChannel : IEventChannel
             throw new ArgumentNullException(nameof(eventSource));
         }
 
-        // 写入管道队列
-        await _channel.Writer.WriteAsync(eventSource);
+        // 写入存储器
+        await _memoryEventChannel.Writer.WriteAsync(eventSource);
     }
 
     /// <summary>
-    /// 读取事件源
+    /// 从存储器中读取一条事件源
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
+    /// <returns>事件源对象</returns>
     public async ValueTask<EventSource> ReadAsync(CancellationToken cancellationToken)
     {
-        // 读取管道队列
-        var eventSource = await _channel.Reader.ReadAsync(cancellationToken);
+        // 读取一条事件源
+        var eventSource = await _memoryEventChannel.Reader.ReadAsync(cancellationToken);
         return eventSource;
     }
 }

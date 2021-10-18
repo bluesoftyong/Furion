@@ -36,7 +36,7 @@ public static class SchedulerTaskServiceCollectionExtensions
         // 通过工厂模式创建
         return services.AddHostedService(serviceProvider =>
         {
-            // 创建服务对象
+            // 创建任务调度后台服务对象
             var schedulerTaskHostedService = ActivatorUtilities.CreateInstance<SchedulerTaskHostedService>(serviceProvider);
 
             // 订阅未察觉任务异常事件

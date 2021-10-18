@@ -9,7 +9,7 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件源
+/// 事件源（事件承载对象）
 /// </summary>
 public sealed class EventSource
 {
@@ -25,15 +25,16 @@ public sealed class EventSource
     /// <summary>
     /// 事件 Id
     /// </summary>
-    public string EventId { get; internal set; }
+    public string EventId { get; set; }
 
     /// <summary>
-    /// 事件承载数据
+    /// 事件承载（携带）数据
     /// </summary>
     public object? Payload { get; set; }
 
     /// <summary>
-    /// 取消Token标识
+    /// 取消任务 Token
     /// </summary>
+    /// <remarks>用于取消本次消息处理</remarks>
     public CancellationToken CancellationToken { get; set; }
 }

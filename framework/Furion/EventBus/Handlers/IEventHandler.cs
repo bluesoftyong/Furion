@@ -9,7 +9,7 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件处理程序依赖接口
+/// 事件处理程序依赖空接口
 /// </summary>
 public interface IEventHandler
 {

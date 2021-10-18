@@ -10,9 +10,9 @@ namespace Furion.EventBus;
 
 internal sealed partial class EventService : IEventService
 {
-    private readonly IEventChannel _eventChannel;
+    private readonly IEventStoreChannel _eventChannel;
 
-    public EventService(IEventChannel eventChannel)
+    public EventService(IEventStoreChannel eventChannel)
     {
         _eventChannel = eventChannel;
     }

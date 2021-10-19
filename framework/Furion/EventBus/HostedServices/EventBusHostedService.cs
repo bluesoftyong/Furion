@@ -112,14 +112,14 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
-        // 创建一个任务工厂
-        var taskFactory = new TaskFactory(TaskScheduler.Current);
-
         // 从事件存取器中读取一条
         var eventSource = await _eventStoreChannel.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序
         var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
+
+        // 创建一个任务工厂
+        var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 逐条创建新线程调用
         foreach (var eventHandlerThatShouldRun in eventHandlersThatShouldRun)

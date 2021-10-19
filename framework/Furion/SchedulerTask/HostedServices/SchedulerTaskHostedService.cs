@@ -104,11 +104,11 @@ internal sealed class SchedulerTaskHostedService : BackgroundService
     {
         var referenceTime = DateTime.UtcNow;
 
-        // 创建一个任务工厂
-        var taskFactory = new TaskFactory(TaskScheduler.Current);
-
         // 获取所有到达执行时间的任务
         var tasksThatShouldRun = _scheduledTasks.Where(t => t.ShouldRun(referenceTime));
+
+        // 创建一个任务工厂
+        var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 逐条创建新线程调用
         foreach (var taskThatShouldRun in tasksThatShouldRun)

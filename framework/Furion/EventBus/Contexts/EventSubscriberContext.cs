@@ -28,9 +28,9 @@ public sealed class EventSubscriberContext
     public IEventSource Source { get; }
 
     /// <summary>
-    /// 调用事件
+    /// 触发时间
     /// </summary>
-    public DateTime CalledTime { get; internal set; }
+    public DateTime CallingTime { get; internal set; }
 
     /// <summary>
     /// 订阅异常

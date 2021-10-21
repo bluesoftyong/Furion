@@ -138,7 +138,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 // 创建订阅上下文
                 var eventSubscriberContext = new EventSubscriberContext(eventSource)
                 {
-                    CalledTime = DateTime.UtcNow
+                    CallingTime = DateTime.UtcNow
                 };
 
                 try

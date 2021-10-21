@@ -122,10 +122,10 @@ internal sealed class EventBusHostedService : BackgroundService
         var eventSource = await _eventStoreChannel.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序
-        var eventHandlersThatShouldRun = _eventSubscribes.Where(t => t.ShouldRun(eventSource.EventId));
+        var eventSubscribesThatShouldRun = _eventSubscribes.Where(t => t.ShouldRun(eventSource.EventId));
 
         // 空订阅
-        if (!eventHandlersThatShouldRun.Any())
+        if (!eventSubscribesThatShouldRun.Any())
         {
             _logger.LogDebug("Subscriber with event ID <{EventId}> was not found.", eventSource.EventId);
 
@@ -136,7 +136,7 @@ internal sealed class EventBusHostedService : BackgroundService
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 逐条创建新线程调用
-        foreach (var eventHandlerThatShouldRun in eventHandlersThatShouldRun)
+        foreach (var eventSubscribeThatShouldRun in eventSubscribesThatShouldRun)
         {
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
@@ -156,13 +156,13 @@ internal sealed class EventBusHostedService : BackgroundService
                 try
                 {
                     // 调用执行前过滤器
-                    if (eventHandlerThatShouldRun.Filter != default)
+                    if (eventSubscribeThatShouldRun.Filter != default)
                     {
-                        await eventHandlerThatShouldRun.Filter.OnHandlerExecutingAsync(eventSubscribeExecutingContext);
+                        await eventSubscribeThatShouldRun.Filter.OnHandlerExecutingAsync(eventSubscribeExecutingContext);
                     }
 
                     // 调用事件处理程序
-                    await eventHandlerThatShouldRun.Handler!(eventSubscribeExecutingContext, eventSource.CancellationToken);
+                    await eventSubscribeThatShouldRun.Handler!(eventSubscribeExecutingContext, eventSource.CancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +181,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 finally
                 {
                     // 调用执行后过滤器
-                    if (eventHandlerThatShouldRun.Filter != default)
+                    if (eventSubscribeThatShouldRun.Filter != default)
                     {
                         // 创建执行后上下文
                         var eventSubscribeExecutedContext = new EventSubscribeExecutedContext(eventSource, properties)
@@ -190,7 +190,7 @@ internal sealed class EventBusHostedService : BackgroundService
                             Exception = executionException
                         };
 
-                        await eventHandlerThatShouldRun.Filter.OnHandlerExecutedAsync(eventSubscribeExecutedContext);
+                        await eventSubscribeThatShouldRun.Filter.OnHandlerExecutedAsync(eventSubscribeExecutedContext);
                     }
                 }
             }, stoppingToken);

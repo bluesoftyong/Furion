@@ -59,7 +59,7 @@ internal sealed class EventBusHostedService : BackgroundService
             // 查找所有公开且贴有 [EventSubscribe] 的实例方法
             var bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
             var eventHandlerMethods = eventHandlerType.GetMethods(bindingAttr)
-                .Where(u => u.IsDefined(typeof(EventSubscribeAttribute), false));
+                .Where(u => u.IsDefined(typeof(EventSubscriberAttribute), false));
 
             // 遍历所有处理程序方法
             foreach (var eventHandlerMethod in eventHandlerMethods)
@@ -68,7 +68,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 var @delegate = eventHandlerMethod.CreateDelegate<Func<EventSource, CancellationToken, Task>>(eventHandler);
 
                 // 处理同一个事件处理程序支持多个事件 Id 情况
-                var eventSubscribeAttribute = eventHandlerMethod.GetCustomAttributes<EventSubscribeAttribute>(false);
+                var eventSubscribeAttribute = eventHandlerMethod.GetCustomAttributes<EventSubscriberAttribute>(false);
 
                 // 逐条包装并添加到 HashSet 集合中
                 foreach (var eventSubscribe in eventSubscribeAttribute)

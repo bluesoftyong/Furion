@@ -9,20 +9,20 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 订阅事件特性
+/// 事件订阅者特性
 /// </summary>
 /// <remarks>
 /// <para>作用于 <see cref="IEventHandler"/> 实现类实例方法</para>
 /// <para>支持多个事件 Id 触发同一个处理程序</para>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public sealed class EventSubscribeAttribute : Attribute
+public sealed class EventSubscriberAttribute : Attribute
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="eventId">事件 Id</param>
-    public EventSubscribeAttribute(string eventId)
+    public EventSubscriberAttribute(string eventId)
     {
         EventId = eventId;
     }

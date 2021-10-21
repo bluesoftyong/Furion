@@ -11,6 +11,7 @@ namespace Furion.EventBus;
 /// <summary>
 /// 事件处理程序依赖空接口
 /// </summary>
+/// <remarks>事件处理方法订阅须符合 Func{EventSource, CancellationToken, Task} 签名</remarks>
 public interface IEventHandler
 {
 }

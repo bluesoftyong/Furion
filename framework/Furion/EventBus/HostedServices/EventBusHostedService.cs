@@ -141,8 +141,11 @@ internal sealed class EventBusHostedService : BackgroundService
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
             {
+                // 创建共享上下文数据对象
+                var properties = new Dictionary<object, object>();
+
                 // 创建执行前上下文
-                var eventSubscribeExecutingContext = new EventSubscribeExecutingContext(eventSource)
+                var eventSubscribeExecutingContext = new EventSubscribeExecutingContext(eventSource, properties)
                 {
                     ExecutingTime = DateTime.UtcNow
                 };
@@ -181,7 +184,7 @@ internal sealed class EventBusHostedService : BackgroundService
                     if (eventHandlerThatShouldRun.Filter != default)
                     {
                         // 创建执行后上下文
-                        var eventSubscribeExecutedContext = new EventSubscribeExecutedContext(eventSource)
+                        var eventSubscribeExecutedContext = new EventSubscribeExecutedContext(eventSource, properties)
                         {
                             ExecutedTime = DateTime.UtcNow,
                             Exception = executionException

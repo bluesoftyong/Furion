@@ -17,8 +17,9 @@ public sealed class EventSubscribeExecutedContext : EventSubscribeContext
     /// 构造函数
     /// </summary>
     /// <param name="eventSource">事件源（事件承载对象）</param>
-    internal EventSubscribeExecutedContext(IEventSource eventSource)
-        : base(eventSource)
+    /// <param name="properties">共享上下文数据</param>
+    internal EventSubscribeExecutedContext(IEventSource eventSource, IDictionary<object, object> properties)
+        : base(eventSource, properties)
     {
     }
 

@@ -12,16 +12,16 @@ namespace Furion.EventBusSamples.Handlers
         }
 
         [EventSubscriber("User:Create")]
-        public Task Create(EventSource eventSource, CancellationToken cancellationToken)
+        public Task Create(EventSubscriberContext context, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("新增用户：{User}", JsonSerializer.Serialize(eventSource.Payload));
+            _logger.LogInformation("新增用户：{User}", JsonSerializer.Serialize(context.Source.Payload));
             return Task.CompletedTask;
         }
 
         [EventSubscriber("User:Update")]
-        public Task Update(EventSource eventSource, CancellationToken cancellationToken)
+        public Task Update(EventSubscriberContext context, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("更新用户：{User}", JsonSerializer.Serialize(eventSource.Payload));
+            _logger.LogInformation("更新用户：{User}", JsonSerializer.Serialize(context.Source.Payload));
             return Task.CompletedTask;
         }
     }

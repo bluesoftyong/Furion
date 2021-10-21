@@ -16,11 +16,7 @@ public interface IEventPulisher
     /// <summary>
     /// 发布一条消息
     /// </summary>
-    /// <param name="eventId">事件 Id</param>
-    /// <param name="payload">事件承载（携带）数据</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <param name="eventSource">事件源</param>
     /// <returns><see cref="Task"/></returns>
-    Task PublishAsync(string eventId
-        , object? payload = default
-        , CancellationToken cancellationToken = default);
+    Task PublishAsync(IEventSource eventSource);
 }

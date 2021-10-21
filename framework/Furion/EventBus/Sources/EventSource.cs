@@ -11,7 +11,7 @@ namespace Furion.EventBus;
 /// <summary>
 /// 事件源（事件承载对象）
 /// </summary>
-public sealed class EventSource
+public sealed class EventSource : IEventSource
 {
     /// <summary>
     /// 构造函数
@@ -23,18 +23,41 @@ public sealed class EventSource
     }
 
     /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="eventId">事件 Id</param>
+    /// <param name="payload">事件承载（携带）数据</param>
+    public EventSource(string eventId, object payload)
+        : this(eventId)
+    {
+        Payload = payload;
+    }
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="eventId">事件 Id</param>
+    /// <param name="payload">事件承载（携带）数据</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    public EventSource(string eventId, object payload, CancellationToken cancellationToken)
+        : this(eventId, payload)
+    {
+        CancellationToken = cancellationToken;
+    }
+
+    /// <summary>
     /// 事件 Id
     /// </summary>
-    public string EventId { get; set; }
+    public string EventId { get; }
 
     /// <summary>
     /// 事件承载（携带）数据
     /// </summary>
-    public object? Payload { get; set; }
+    public object? Payload { get; }
 
     /// <summary>
     /// 取消任务 Token
     /// </summary>
     /// <remarks>用于取消本次消息处理</remarks>
-    public CancellationToken CancellationToken { get; set; }
+    public CancellationToken CancellationToken { get; }
 }

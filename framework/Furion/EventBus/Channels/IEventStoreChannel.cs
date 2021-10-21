@@ -22,12 +22,12 @@ public interface IEventStoreChannel
     /// </summary>
     /// <param name="eventSource">事件源对象</param>
     /// <returns><see cref="ValueTask"/></returns>
-    ValueTask WriteAsync(EventSource eventSource);
+    ValueTask WriteAsync(IEventSource eventSource);
 
     /// <summary>
     /// 从存取器中读取一条事件源
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>事件源对象</returns>
-    ValueTask<EventSource> ReadAsync(CancellationToken cancellationToken);
+    ValueTask<IEventSource> ReadAsync(CancellationToken cancellationToken);
 }

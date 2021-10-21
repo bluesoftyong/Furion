@@ -9,37 +9,32 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件处理程序包装器
+/// 事件订阅上下文
 /// </summary>
-/// <remarks>主要用于主机服务启动时将所有处理程序和事件 Id进行包装绑定</remarks>
-internal sealed class EventHandlerWrapper
+public sealed class EventSubscriberContext
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="eventId">事件Id</param>
-    public EventHandlerWrapper(string eventId)
+    /// <param name="eventSource">事件源（事件承载对象）</param>
+    public EventSubscriberContext(IEventSource eventSource)
     {
-        EventId = eventId;
+        Source = eventSource;
     }
 
     /// <summary>
-    /// 事件 Id
+    /// 事件源（事件承载对象）
     /// </summary>
-    internal string EventId { get; set; }
+    public IEventSource Source { get; }
 
     /// <summary>
-    /// 事件处理程序
+    /// 调用事件
     /// </summary>
-    internal Func<EventSubscriberContext, CancellationToken, Task>? Handler { get; set; }
+    public DateTime CalledTime { get; internal set; }
 
     /// <summary>
-    /// 是否符合条件执行处理程序
+    /// 订阅异常
     /// </summary>
-    /// <param name="eventId">事件 Id</param>
-    /// <returns><see cref="bool"/></returns>
-    internal bool ShouldRun(string eventId)
-    {
-        return EventId == eventId;
-    }
+    /// <remarks>为后续实现过滤器/管道预留</remarks>
+    public InvalidOperationException? Exception { get; internal set; }
 }

@@ -22,7 +22,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
     /// <summary>
     /// 内存通道事件源存取器
     /// </summary>
-    private readonly Channel<EventSource> _memoryEventChannel;
+    private readonly Channel<IEventSource> _memoryEventChannel;
 
     /// <summary>
     /// 构造函数
@@ -37,7 +37,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
         };
 
         // 创建有限容量通道
-        _memoryEventChannel = Channel.CreateBounded<EventSource>(boundedChannelOptions);
+        _memoryEventChannel = Channel.CreateBounded<IEventSource>(boundedChannelOptions);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
     /// </summary>
     /// <param name="eventSource">事件源对象</param>
     /// <returns><see cref="ValueTask"/></returns>
-    public async ValueTask WriteAsync(EventSource eventSource)
+    public async ValueTask WriteAsync(IEventSource eventSource)
     {
         // 空检查
         if (eventSource == default)
@@ -62,7 +62,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns>事件源对象</returns>
-    public async ValueTask<EventSource> ReadAsync(CancellationToken cancellationToken)
+    public async ValueTask<IEventSource> ReadAsync(CancellationToken cancellationToken)
     {
         // 读取一条事件源
         var eventSource = await _memoryEventChannel.Reader.ReadAsync(cancellationToken);

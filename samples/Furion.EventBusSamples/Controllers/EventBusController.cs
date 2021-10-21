@@ -23,10 +23,10 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendCreateUser()
     {
-        await _eventPulisher.PublishAsync("User:Create", new
+        await _eventPulisher.PublishAsync(new EventSource("User:Create", new
         {
             Name = "Furion"
-        });
+        }));
     }
 
     /// <summary>
@@ -36,10 +36,10 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendUpdateUser()
     {
-        await _eventPulisher.PublishAsync("User:Update", new
+        await _eventPulisher.PublishAsync(new EventSource("User:Update", new
         {
             Id = 2,
             Name = "先知"
-        });
+        }));
     }
 }

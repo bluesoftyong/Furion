@@ -65,7 +65,7 @@ internal sealed class EventBusHostedService : BackgroundService
             foreach (var eventHandlerMethod in eventHandlerMethods)
             {
                 // 将方法转换成 Func<EventSource, CancellationToken, Task> 委托
-                var @delegate = eventHandlerMethod.CreateDelegate<Func<EventSource, CancellationToken, Task>>(eventHandler);
+                var @delegate = eventHandlerMethod.CreateDelegate<Func<EventSubscriberContext, CancellationToken, Task>>(eventHandler);
 
                 // 处理同一个事件处理程序支持多个事件 Id 情况
                 var eventSubscribeAttribute = eventHandlerMethod.GetCustomAttributes<EventSubscriberAttribute>(false);
@@ -118,6 +118,14 @@ internal sealed class EventBusHostedService : BackgroundService
         // 查找事件 Id 匹配的事件处理程序
         var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
 
+        // 空订阅
+        if (!eventHandlersThatShouldRun.Any())
+        {
+            _logger.LogDebug("Subscriber with event ID <{EventId}> was not found.", eventSource.EventId);
+
+            return;
+        }
+
         // 创建一个任务工厂
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
@@ -127,13 +135,22 @@ internal sealed class EventBusHostedService : BackgroundService
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
             {
+                // 创建订阅上下文
+                var eventSubscriberContext = new EventSubscriberContext(eventSource)
+                {
+                    CalledTime = DateTime.UtcNow
+                };
+
                 try
                 {
                     // 调用事件处理程序
-                    await eventHandlerThatShouldRun.Handler!(eventSource, eventSource.CancellationToken);
+                    await eventHandlerThatShouldRun.Handler!(eventSubscriberContext, eventSource.CancellationToken);
                 }
                 catch (Exception ex)
                 {
+                    // 标记异常
+                    eventSubscriberContext.Exception = new InvalidOperationException(string.Format("Error occurred executing {0}.", eventSource.EventId), ex);
+
                     // 捕获 Task 任务异常信息并统计所有异常
                     var args = new UnobservedTaskExceptionEventArgs(
                             ex as AggregateException ?? new AggregateException(ex));
@@ -141,7 +158,7 @@ internal sealed class EventBusHostedService : BackgroundService
                     UnobservedTaskException?.Invoke(this, args);
 
                     // 输出异常日志
-                    _logger.LogError(ex, "Error occurred executing {Task}.", eventHandlerThatShouldRun.Handler!.ToString());
+                    _logger.LogError(ex, "Error occurred executing {EventId}.", eventSource.EventId);
                 }
             }, stoppingToken);
         }

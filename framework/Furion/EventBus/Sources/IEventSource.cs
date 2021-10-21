@@ -9,31 +9,23 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件发布服务默认实现
+/// 事件源（事件承载对象）依赖接口
 /// </summary>
-internal sealed partial class EventPulisher : IEventPulisher
+public interface IEventSource
 {
     /// <summary>
-    /// 事件存取器
+    /// 事件 Id
     /// </summary>
-    private readonly IEventStoreChannel _eventStoreChannel;
+    string EventId { get; }
 
     /// <summary>
-    /// 构造函数
+    /// 事件承载（携带）数据
     /// </summary>
-    /// <param name="eventStoreChannel">事件存取器</param>
-    public EventPulisher(IEventStoreChannel eventStoreChannel)
-    {
-        _eventStoreChannel = eventStoreChannel;
-    }
+    object? Payload { get; }
 
     /// <summary>
-    /// 发布一条消息
+    /// 取消任务 Token
     /// </summary>
-    /// <param name="eventSource">事件源</param>
-    /// <returns><see cref="Task"/></returns>
-    public async Task PublishAsync(IEventSource eventSource)
-    {
-        await _eventStoreChannel.WriteAsync(eventSource);
-    }
+    /// <remarks>用于取消本次消息处理</remarks>
+    CancellationToken CancellationToken { get; }
 }

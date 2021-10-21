@@ -150,7 +150,7 @@ internal sealed class EventBusHostedService : BackgroundService
                     ExecutingTime = DateTime.UtcNow
                 };
 
-                // 执行异常
+                // 执行异常对象
                 InvalidOperationException? executionException = default;
 
                 try

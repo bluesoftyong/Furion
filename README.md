@@ -1,7 +1,7 @@
 # Furion 探索版
 
 > **🐣 在过去一年，实现了 `Furion` 从无到有，这一过程其实是最艰难的。但随着用户量和下载量增长，现版本发现了诸多问题，如前期需求考虑不全造成后期不断出现破坏性更改，大量静态类、静态属性和对象拓展方法设计，架构模式运用混乱等等。**
-> 
+>
 > **👅 所以，这一次汲取以往经验并给开发团队充足的时间，从头开始，致力打造全新全民且依旧完全开源免费的 .NET 框架。**
 
 ---
@@ -32,9 +32,9 @@
 
 要跟踪正在进行的进度，请过滤处理程序标签。
 
-### ✅ App / App
+### ✅ 应用 / App
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples/AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
 
 | 功能                                                      | 状态 |
 | --------------------------------------------------------- | ---- |
@@ -91,6 +91,25 @@
 | `Options` 集成单元测试                                                                              | ⏳   |
 | `Options` 模块文档                                                                                  | ⏳   |
 | `Options` 模块使用例子                                                                              | ⏳   |
+
+### ⏳ 事件总线 / EventBus
+
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/EventBus) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples.EventBusSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/EventBus) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/EventBusTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/EventBusTests)**
+
+| 功能                                               | 状态 |
+| -------------------------------------------------- | ---- |
+| 支持自定义事件源                                   | ✅   |
+| 支持自定义事件存取器                               | ✅   |
+| 支持事件发布                                       | ✅   |
+| 支持定义多个事件订阅者                             | ✅   |
+| 支持事件订阅者定义多个处理程序（含一对一，一对多） | ✅   |
+| 支持事件订阅过滤器（执行前，执行后，执行异常）     | ✅   |
+| 支持事件处理程序取消                               | ✅   |
+| 支持事件总线调用日志输出                           | ✅   |
+| `EventBus` 模块单元测试                            | ⏳   |
+| `EventBus` 模块集成测试                            | ⏳   |
+| `EventBus` 模块文档                                | ⏳   |
+| `EventBus` 模块使用例子                            | ⏳   |
 
 ### ⏳ 任务队列 / TaskQueue
 

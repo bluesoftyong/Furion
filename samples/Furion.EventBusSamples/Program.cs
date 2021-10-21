@@ -1,4 +1,4 @@
-using Furion.EventBusSamples.Handlers;
+using Furion.EventBusSamples.Subscriber;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 // 注册事件总线
 builder.Services.AddEventBus(builder.Configuration);
-builder.Services.AddEventHandler<UserEventHandler>();
+builder.Services.AddEventSubscriber<UserEventSubscriber>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

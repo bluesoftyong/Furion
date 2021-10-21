@@ -9,32 +9,22 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅上下文
+/// 事件订阅者处理程序过滤器
 /// </summary>
-public sealed class EventSubscriberContext
+/// <remarks>须和 <see cref="IEventSubscriber"/> 一起使用</remarks>
+public interface IEventSubscriberFilter
 {
     /// <summary>
-    /// 构造函数
+    /// 事件订阅者处理程序执行前
     /// </summary>
-    /// <param name="eventSource">事件源（事件承载对象）</param>
-    public EventSubscriberContext(IEventSource eventSource)
-    {
-        Source = eventSource;
-    }
+    /// <param name="context">上下文</param>
+    /// <returns></returns>
+    Task OnHandlerExecutingAsync(EventSubscribeExecutingContext context);
 
     /// <summary>
-    /// 事件源（事件承载对象）
+    /// 事件订阅者处理程序执行后
     /// </summary>
-    public IEventSource Source { get; }
-
-    /// <summary>
-    /// 触发时间
-    /// </summary>
-    public DateTime CallingTime { get; internal set; }
-
-    /// <summary>
-    /// 订阅异常
-    /// </summary>
-    /// <remarks>为后续实现过滤器/管道预留</remarks>
-    public InvalidOperationException? Exception { get; internal set; }
+    /// <param name="context">上下文</param>
+    /// <returns></returns>
+    Task OnHandlerExecutedAsync(EventSubscribeExecutedContext context);
 }

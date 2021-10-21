@@ -17,16 +17,15 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class EventBusServiceCollectionExtensions
 {
     /// <summary>
-    /// 注册事件处理程序
+    /// 注册事件订阅者
     /// </summary>
-    /// <typeparam name="TEventHandler">事件处理程序，须实现 <see cref="IEventHandler"/> 接口</typeparam>
     /// <param name="services">服务集合对象</param>
     /// <returns>服务集合对象</returns>
-    public static IServiceCollection AddEventHandler<TEventHandler>(this IServiceCollection services)
-        where TEventHandler : class, IEventHandler
+    public static IServiceCollection AddEventSubscriber<TEventSubscriber>(this IServiceCollection services)
+        where TEventSubscriber : class, IEventSubscriber
     {
-        // 将事件处理程序注册为单例
-        services.AddSingleton<IEventHandler, TEventHandler>();
+        // 将事件订阅者注册为单例
+        services.AddSingleton<IEventSubscriber, TEventSubscriber>();
 
         return services;
     }

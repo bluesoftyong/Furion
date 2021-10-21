@@ -42,4 +42,18 @@ public class EventBusController : ControllerBase
             Name = "先知"
         }));
     }
+
+    /// <summary>
+    /// 发送删除用户消息（抛异常）
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task SendDeleteUser()
+    {
+        await _eventPulisher.PublishAsync(new EventSource("User:Delete", new
+        {
+            Id = 2,
+            Name = "先知"
+        }));
+    }
 }

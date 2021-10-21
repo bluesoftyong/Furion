@@ -9,26 +9,26 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者特性
+/// 事件订阅者处理程序执行后上下文
 /// </summary>
-/// <remarks>
-/// <para>作用于 <see cref="IEventHandler"/> 实现类实例方法</para>
-/// <para>支持多个事件 Id 触发同一个处理程序</para>
-/// </remarks>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public sealed class EventSubscriberAttribute : Attribute
+public sealed class EventSubscribeExecutedContext : EventSubscribeContext
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="eventId">事件 Id</param>
-    public EventSubscriberAttribute(string eventId)
+    /// <param name="eventSource">事件源（事件承载对象）</param>
+    public EventSubscribeExecutedContext(IEventSource eventSource)
+        : base(eventSource)
     {
-        EventId = eventId;
     }
 
     /// <summary>
-    /// 事件 Id
+    /// 执行后时间
     /// </summary>
-    public string EventId { get; set; }
+    public DateTime ExecutedTime { get; internal set; }
+
+    /// <summary>
+    /// 异常信息
+    /// </summary>
+    public InvalidOperationException? Exception { get; internal set; }
 }

@@ -24,6 +24,11 @@ public interface IEventSource
     object? Payload { get; }
 
     /// <summary>
+    /// 事件创建时间
+    /// </summary>
+    DateTime CreatedTime { get; }
+
+    /// <summary>
     /// 取消任务 Token
     /// </summary>
     /// <remarks>用于取消本次消息处理</remarks>

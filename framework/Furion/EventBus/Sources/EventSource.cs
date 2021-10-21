@@ -60,4 +60,9 @@ public sealed class EventSource : IEventSource
     /// </summary>
     /// <remarks>用于取消本次消息处理</remarks>
     public CancellationToken CancellationToken { get; }
+
+    /// <summary>
+    /// 事件创建时间
+    /// </summary>
+    public DateTime CreatedTime { get; } = DateTime.UtcNow;
 }

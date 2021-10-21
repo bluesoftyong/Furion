@@ -94,7 +94,7 @@
 
 ### ⏳ 事件总线 / EventBus
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/EventBus) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.Samples.EventBusSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/EventBus) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/EventBusTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/EventBusTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/EventBus) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.EventBusSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/EventBus) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/EventBusTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/EventBusTests)**
 
 | 功能                                               | 状态 |
 | -------------------------------------------------- | ---- |

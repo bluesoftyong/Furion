@@ -17,7 +17,7 @@ public sealed class EventSubscribeExecutedContext : EventSubscribeContext
     /// 构造函数
     /// </summary>
     /// <param name="eventSource">事件源（事件承载对象）</param>
-    public EventSubscribeExecutedContext(IEventSource eventSource)
+    internal EventSubscribeExecutedContext(IEventSource eventSource)
         : base(eventSource)
     {
     }

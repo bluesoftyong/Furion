@@ -11,7 +11,10 @@ namespace Furion.EventBus;
 /// <summary>
 /// 事件订阅者依赖接口
 /// </summary>
-/// <remarks>可自定义事件处理方法，但须符合 Func{EventSubscriberContext, CancellationToken, Task} 签名</remarks>
+/// <remarks>
+/// <para>可自定义事件处理方法，但须符合 Func{EventSubscribeExecutingContext, CancellationToken, Task} 签名</para>
+/// <para>通常只做依赖查找，不做服务调用</para>
+/// </remarks>
 public interface IEventSubscriber
 {
 }

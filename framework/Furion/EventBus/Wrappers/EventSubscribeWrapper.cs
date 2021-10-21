@@ -18,7 +18,7 @@ internal sealed class EventSubscribeWrapper
     /// 构造函数
     /// </summary>
     /// <param name="eventId">事件Id</param>
-    public EventSubscribeWrapper(string eventId)
+    internal EventSubscribeWrapper(string eventId)
     {
         EventId = eventId;
     }

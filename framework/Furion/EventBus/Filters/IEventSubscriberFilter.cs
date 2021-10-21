@@ -18,13 +18,13 @@ public interface IEventSubscriberFilter
     /// 事件订阅者处理程序执行前
     /// </summary>
     /// <param name="context">上下文</param>
-    /// <returns></returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task OnHandlerExecutingAsync(EventSubscribeExecutingContext context);
 
     /// <summary>
     /// 事件订阅者处理程序执行后
     /// </summary>
     /// <param name="context">上下文</param>
-    /// <returns></returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task OnHandlerExecutedAsync(EventSubscribeExecutedContext context);
 }

@@ -93,7 +93,7 @@ public static class EventBusServiceCollectionExtensions
             return new EventStoreChannel(capacity);
         });
 
-        // 注册事件服务
+        // 注册事件发布者
         services.AddSingleton<IEventPulisher, EventPulisher>();
 
         return services;

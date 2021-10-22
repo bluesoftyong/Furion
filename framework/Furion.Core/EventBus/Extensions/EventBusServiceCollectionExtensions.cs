@@ -32,6 +32,18 @@ public static class EventBusServiceCollectionExtensions
     }
 
     /// <summary>
+    /// 替换事件总线默认事件发布者
+    /// </summary>
+    /// <remarks>须在 <see cref="AddEventBus(IServiceCollection, EventBusOptions?)"/> 之后会调用</remarks>
+    /// <param name="services">服务集合对象</param>
+    /// <returns>服务集合对象</returns>
+    public static IServiceCollection ReplaceEventPublisher<TEventPublisher>(this IServiceCollection services)
+        where TEventPublisher : class, IEventPublisher
+    {
+        return services.Replace(ServiceDescriptor.Singleton<IEventPublisher, TEventPublisher>());
+    }
+
+    /// <summary>
     /// 替换事件总线事件源默认存取器
     /// </summary>
     /// <remarks>须在 <see cref="AddEventBus(IServiceCollection, EventBusOptions?)"/> 之后会调用</remarks>

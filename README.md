@@ -2,13 +2,13 @@
 
 > 在过去一年，实现 `Furion` 从无到有，编写文档已逾百万字，过程心酸开源人自知。
 >
-> 这一路日夜兼程，嘲讽辱骂也常伴眼耳，即便辛苦无奈、想过放弃，但为了那微不足道的存在感依然努力着。
+> 这一路日夜兼程，嘲讽批评常伴眼耳，即便辛苦无奈、想过放弃，但为了那微不足道的存在感依然努力着。
 >
 > 当然，也收获了不少... 越来越多拥趸者，越发精湛技术能力，更高层次思维模式，还有许多跨界跨行朋友。
 >
 > 在 《[开源指北](https://gitee.com/opensource-guide/comments/)》中，我曾说道：“开源如同人的脸，好坏一面便知，缺点可能会受到嘲讽批评，优点也会收获赞扬尊重。别担心，他们正在塑造更好的你。”
 >
-> 所以，这一次重新起航，重塑 `Furion` 重塑自己。或许未来在某个 IT 圈但凡有人谈起 `.NET` 还能瞟到 `Furion` 的影子。
+> 所以，这一次重新起航，重塑 `Furion` 重塑自己。也许未来在某个 IT 圈但凡有人谈起 `.NET` 还能瞟到 `Furion` 的身影。
 
 ---
 
@@ -20,7 +20,7 @@
 ## 环境
 
 - IDE ：[Microsoft Visual Studio Enterprise 2022 Preview (64 位) 版本 17.0.0 Preview 3.1](https://visualstudio.microsoft.com/zh-hans/vs/preview/)
-- SDK ：[.NET SDK 6 Daily Version](https://github.com/dotnet/installer#installers-and-binaries)
+- SDK ：[.NET SDK 6](https://dotnet.microsoft.com/download/dotnet/6.0)
 - 语言：[C# 10](https://docs.microsoft.com/zh-cn/dotnet/csharp/whats-new/csharp-10)
 
 ## 包说明

@@ -178,7 +178,12 @@ internal sealed class EventBusHostedService : BackgroundService
                         var args = new UnobservedTaskExceptionEventArgs(
                             ex as AggregateException ?? new AggregateException(ex));
 
-                        UnobservedTaskException.Invoke(this, args);
+                        // 此处解决一些极端情况下 Invoke 调用异常从而导致任务 finally 无法执行问题，但不进行 catch 和日志记录
+                        try
+                        {
+                            UnobservedTaskException.Invoke(this, args);
+                        }
+                        finally { }
                     }
                 }
                 finally

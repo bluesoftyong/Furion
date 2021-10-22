@@ -45,7 +45,7 @@
 
 ### ✅ 应用 / App
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/App) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.AppSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion.Core/App) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/AppTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/AppTests)**
 
 | 功能                                                      | 状态 |
 | --------------------------------------------------------- | ---- |
@@ -61,7 +61,7 @@
 
 ### ✅ 配置 / Configuration
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Configuration) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.ConfigurationSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/Configuration) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/ConfigurationTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/ConfigurationTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Configuration) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.ConfigurationSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion.Core/Configuration) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/ConfigurationTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/ConfigurationTests)**
 
 | 功能                                                | 状态 |
 | --------------------------------------------------- | ---- |
@@ -83,7 +83,7 @@
 
 ### ⏳ 选项 / Options
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Options) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.OptionsSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/Options) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/OptionsTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/OptionsTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/Options) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.OptionsSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion.Core/Options) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/OptionsTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/OptionsTests)**
 
 | 功能                                                                                                | 状态 |
 | --------------------------------------------------------------------------------------------------- | ---- |
@@ -105,7 +105,7 @@
 
 ### ⏳ 事件总线 / EventBus
 
-🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/EventBus) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.EventBusSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion/EventBus) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/EventBusTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/EventBusTests)**
+🟡 **[文档手册](https://gitee.com/dotnetchina/Furion/tree/experimental/handbook/EventBus) | [使用示例](https://gitee.com/dotnetchina/Furion/tree/experimental/samples/Furion.EventBusSamples) | [模块源码](https://gitee.com/dotnetchina/Furion/tree/experimental/framework/Furion.Core/EventBus) | [单元测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.UnitTests/EventBusTests) | [集成测试](https://gitee.com/dotnetchina/Furion/tree/experimental/tests/Furion.IntegrationTests/EventBusTests)**
 
 | 功能                                               | 状态 |
 | -------------------------------------------------- | ---- |

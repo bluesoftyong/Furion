@@ -24,6 +24,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\samples\Furion.AppSamples\Furion.AppSamples.csproj" />
 		<ProjectReference Include="..\..\samples\Furion.ConfigurationSamples\Furion.ConfigurationSamples.csproj" />
+		<ProjectReference Include="..\..\samples\Furion.EventBusSamples\Furion.EventBusSamples.csproj" />
 	</ItemGroup>
 
 </Project>

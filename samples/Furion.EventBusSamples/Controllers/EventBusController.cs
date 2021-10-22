@@ -10,10 +10,10 @@ namespace Furion.EventBusSamples.Controllers;
 [ApiController]
 public class EventBusController : ControllerBase
 {
-    private readonly IEventPulisher _eventPulisher;
-    public EventBusController(IEventPulisher eventPulisher)
+    private readonly IEventPublisher _eventPublisher;
+    public EventBusController(IEventPublisher eventPublisher)
     {
-        _eventPulisher = eventPulisher;
+        _eventPublisher = eventPublisher;
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendCreateUser()
     {
-        await _eventPulisher.PublishAsync(new EventSource("User:Create", new
+        await _eventPublisher.PublishAsync(new EventSource("User:Create", new
         {
             Name = "Furion"
         }));
@@ -36,7 +36,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendUpdateUser()
     {
-        await _eventPulisher.PublishAsync(new EventSource("User:Update", new
+        await _eventPublisher.PublishAsync(new EventSource("User:Update", new
         {
             Id = 2,
             Name = "先知"
@@ -50,7 +50,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendDeleteUser()
     {
-        await _eventPulisher.PublishAsync(new EventSource("User:Delete", new
+        await _eventPublisher.PublishAsync(new EventSource("User:Delete", new
         {
             Id = 2,
             Name = "先知"
@@ -64,6 +64,6 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendUnknownEvent()
     {
-        await _eventPulisher.PublishAsync(new EventSource("User:NotExist"));
+        await _eventPublisher.PublishAsync(new EventSource("User:NotExist"));
     }
 }

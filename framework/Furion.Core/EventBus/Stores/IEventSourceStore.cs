@@ -9,13 +9,13 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件存取器依赖接口
+/// 事件源存取器
 /// </summary>
 /// <remarks>
 /// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
-/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 kafka，sqlserver 等</para>
+/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 Kafka，SQL Server 等</para>
 /// </remarks>
-public interface IEventStoreChannel
+public interface IEventSourceStore
 {
     /// <summary>
     /// 将事件源写入存取器

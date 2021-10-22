@@ -38,7 +38,7 @@ public static class EventBusServiceCollectionExtensions
     /// <param name="services">服务集合对象</param>
     /// <param name="implementationFactory">创建自定义事件存取器对象工厂</param>
     /// <returns>服务集合对象</returns>
-    public static IServiceCollection ReplaceEventStoreChannel(this IServiceCollection services, Func<IServiceProvider, IEventStoreChannel> implementationFactory)
+    public static IServiceCollection ReplaceEventSourceStore(this IServiceCollection services, Func<IServiceProvider, IEventSourceStore> implementationFactory)
     {
         return services.Replace(ServiceDescriptor.Singleton(implementationFactory));
     }
@@ -98,14 +98,14 @@ public static class EventBusServiceCollectionExtensions
     private static IServiceCollection AddInternalService(this IServiceCollection services, EventBusOptions eventBusOptions)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
-        services.AddSingleton<IEventStoreChannel>(_ =>
+        services.AddSingleton<IEventSourceStore>(_ =>
         {
-            // 创建事件存取器对象
-            return new EventStoreChannel(eventBusOptions.ChannelCapacity);
+            // 创建默认内存通道事件源对象
+            return new ChannelEventSourceStore(eventBusOptions.ChannelCapacity);
         });
 
-        // 注册事件发布者
-        services.AddSingleton<IEventPulisher, EventPulisher>();
+        // 注册默认内存通道事件发布者
+        services.AddSingleton<IEventPublisher, ChannelEventPublisher>();
 
         return services;
     }

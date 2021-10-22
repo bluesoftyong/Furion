@@ -11,7 +11,7 @@ namespace Furion.EventBus;
 /// <summary>
 /// 事件发布服务依赖接口
 /// </summary>
-public interface IEventPulisher
+public interface IEventPublisher
 {
     /// <summary>
     /// 发布一条消息

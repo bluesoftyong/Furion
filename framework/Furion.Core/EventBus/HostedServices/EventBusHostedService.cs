@@ -28,9 +28,9 @@ internal sealed class EventBusHostedService : BackgroundService
     private readonly ILogger<EventBusHostedService> _logger;
 
     /// <summary>
-    /// 事件存取器
+    /// 事件源存取器
     /// </summary>
-    private readonly IEventStoreChannel _eventStoreChannel;
+    private readonly IEventSourceStore _eventSourceStore;
 
     /// <summary>
     /// 事件订阅者处理程序集合
@@ -41,14 +41,14 @@ internal sealed class EventBusHostedService : BackgroundService
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    /// <param name="eventStoreChannel">事件存取器</param>
+    /// <param name="eventSourceStore">事件源存取器</param>
     /// <param name="eventSubscribers">事件订阅者集合</param>
     public EventBusHostedService(ILogger<EventBusHostedService> logger
-        , IEventStoreChannel eventStoreChannel
+        , IEventSourceStore eventSourceStore
         , IEnumerable<IEventSubscriber> eventSubscribers)
     {
         _logger = logger;
-        _eventStoreChannel = eventStoreChannel;
+        _eventSourceStore = eventSourceStore;
 
         // 逐条获取事件订阅者处理程序并进行包装
         foreach (var eventSubscriber in eventSubscribers)
@@ -119,7 +119,7 @@ internal sealed class EventBusHostedService : BackgroundService
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
         // 从事件存取器中读取一条
-        var eventSource = await _eventStoreChannel.ReadAsync(stoppingToken);
+        var eventSource = await _eventSourceStore.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序
         var eventSubscribesThatShouldRun = _eventSubscribes.Where(t => t.ShouldRun(eventSource.EventId));

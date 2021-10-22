@@ -9,22 +9,22 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件发布服务默认实现
+/// 基于内存通道事件发布者（默认实现）
 /// </summary>
-internal sealed partial class EventPulisher : IEventPulisher
+internal sealed partial class ChannelEventPublisher : IEventPublisher
 {
     /// <summary>
-    /// 事件存取器
+    /// 事件源存取器
     /// </summary>
-    private readonly IEventStoreChannel _eventStoreChannel;
+    private readonly IEventSourceStore _eventSourceStore;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="eventStoreChannel">事件存取器</param>
-    public EventPulisher(IEventStoreChannel eventStoreChannel)
+    /// <param name="eventSourceStore">事件源存取器</param>
+    public ChannelEventPublisher(IEventSourceStore eventSourceStore)
     {
-        _eventStoreChannel = eventStoreChannel;
+        _eventSourceStore = eventSourceStore;
     }
 
     /// <summary>
@@ -34,6 +34,6 @@ internal sealed partial class EventPulisher : IEventPulisher
     /// <returns><see cref="Task"/> 实例</returns>
     public async Task PublishAsync(IEventSource eventSource)
     {
-        await _eventStoreChannel.WriteAsync(eventSource);
+        await _eventSourceStore.WriteAsync(eventSource);
     }
 }

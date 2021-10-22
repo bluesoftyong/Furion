@@ -11,24 +11,24 @@ using System.Threading.Channels;
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件存取器默认实现
+/// 内存通道事件源存储器（默认实现）
 /// </summary>
 /// <remarks>
 /// <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
-/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 kafka，sqlserver 等</para>
+/// <para>默认实现为内存中的 <see cref="System.Threading.Channels.Channel"/>，可自由更换存储介质，如 Kafka，SQL Server 等</para>
 /// </remarks>
-internal sealed partial class EventStoreChannel : IEventStoreChannel
+internal sealed partial class ChannelEventSourceStore : IEventSourceStore
 {
     /// <summary>
     /// 内存通道事件源存取器
     /// </summary>
-    private readonly Channel<IEventSource> _memoryEventStoreChannel;
+    private readonly Channel<IEventSource> _channel;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="capacity">存取器最多能够处理多少消息，超过该容量进入等待写入</param>
-    public EventStoreChannel(int capacity)
+    public ChannelEventSourceStore(int capacity)
     {
         // 配置通道，设置超出默认容量后进入等待
         var boundedChannelOptions = new BoundedChannelOptions(capacity)
@@ -37,7 +37,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
         };
 
         // 创建有限容量通道
-        _memoryEventStoreChannel = Channel.CreateBounded<IEventSource>(boundedChannelOptions);
+        _channel = Channel.CreateBounded<IEventSource>(boundedChannelOptions);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
         }
 
         // 写入存取器
-        await _memoryEventStoreChannel.Writer.WriteAsync(eventSource);
+        await _channel.Writer.WriteAsync(eventSource);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ internal sealed partial class EventStoreChannel : IEventStoreChannel
     public async ValueTask<IEventSource> ReadAsync(CancellationToken cancellationToken)
     {
         // 读取一条事件源
-        var eventSource = await _memoryEventStoreChannel.Reader.ReadAsync(cancellationToken);
+        var eventSource = await _channel.Reader.ReadAsync(cancellationToken);
         return eventSource;
     }
 }

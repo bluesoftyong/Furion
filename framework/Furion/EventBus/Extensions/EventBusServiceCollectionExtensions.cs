@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.EventBus;
-using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -34,30 +33,17 @@ public static class EventBusServiceCollectionExtensions
     /// 添加 EventBus 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <param name="configuration">配置对象</param>
-    /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
-    {
-        // 注册内部服务
-        services.AddInternalService(configuration);
-
-        // 注册事件总线后台服务
-        services.AddHostedService<EventBusHostedService>();
-
-        return services;
-    }
-
-    /// <summary>
-    /// 添加 EventBus 模块注册
-    /// </summary>
-    /// <param name="services">服务集合对象</param>
     /// <<param name="configuration">配置对象</param>
-    /// <param name="unobservedTaskExceptionHandler">未察觉任务异常事件处理程序</param>
+    /// <param name="configureOptions">事件总线配置选项委托</param>
     /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration, EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler)
+    public static IServiceCollection AddEventBus(this IServiceCollection services, Action<EventBusOptions>? configureOptions = default)
     {
+        // 创建初始事件总线配置选项
+        var eventBusOptions = new EventBusOptions();
+        configureOptions?.Invoke(eventBusOptions);
+
         // 注册内部服务
-        services.AddInternalService(configuration);
+        services.AddInternalService(eventBusOptions);
 
         // 通过工厂模式创建
         return services.AddHostedService(serviceProvider =>
@@ -66,7 +52,11 @@ public static class EventBusServiceCollectionExtensions
             var eventBusHostedService = ActivatorUtilities.CreateInstance<EventBusHostedService>(serviceProvider);
 
             // 订阅未察觉任务异常事件
-            eventBusHostedService.UnobservedTaskException += unobservedTaskExceptionHandler;
+            var unobservedTaskExceptionHandler = eventBusOptions.UnobservedTaskExceptionHandler;
+            if (unobservedTaskExceptionHandler != default)
+            {
+                eventBusHostedService.UnobservedTaskException += unobservedTaskExceptionHandler;
+            }
 
             return eventBusHostedService;
         });
@@ -76,21 +66,15 @@ public static class EventBusServiceCollectionExtensions
     /// 注册内部服务
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <param name="configuration">配置对象</param>
+    /// <param name="eventBusOptions">事件总线配置选项</param>
     /// <returns>服务集合实例</returns>
-    private static IServiceCollection AddInternalService(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddInternalService(this IServiceCollection services, EventBusOptions eventBusOptions)
     {
         // 注册后台任务队列接口/实例为单例，采用工厂方式创建
         services.AddSingleton<IEventStoreChannel>(_ =>
         {
-            // 读取 EventBus 模块配置，并获取队列通道容量，默认为 100
-            if (!int.TryParse(configuration[Constants.Keys.Capacity], out var capacity))
-            {
-                capacity = Constants.Values.Capacity;
-            }
-
             // 创建事件存取器对象
-            return new EventStoreChannel(capacity);
+            return new EventStoreChannel(eventBusOptions.ChannelCapacity);
         });
 
         // 注册事件发布者

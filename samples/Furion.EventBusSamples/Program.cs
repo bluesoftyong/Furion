@@ -5,8 +5,8 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 // Add services to the container.
 
 // 注册事件总线
-builder.Services.AddEventBus(builder.Configuration);
-builder.Services.AddEventSubscriber<UserEventSubscriber>();
+builder.Services.AddEventBus()
+                .AddEventSubscriber<UserEventSubscriber>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

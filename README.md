@@ -25,8 +25,8 @@
 
 ## 包说明
 
-- `Furion.Core`：不依赖任何第三方包，可在 `.NET 6` 所有类型项目中运行。
-- `Furion`：内部依赖 `Furion.Core` 且不依赖任何第三方包，**聚焦 `Web` 应用**，采用共享框架 `<FrameworkReference Include="Microsoft.AspNetCore.App" />` 模式
+- `Furion.Core`：无第三方依赖，可在 `.NET 6` 所有项目类型中运行。
+- `Furion`：内部依赖 `Furion.Core` 且无第三方依赖，**聚焦 `Web` 应用**，采用共享框架 `<FrameworkReference Include="Microsoft.AspNetCore.App" />` 模式
 
 ## 状态
 

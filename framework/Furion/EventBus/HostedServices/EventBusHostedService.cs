@@ -108,7 +108,7 @@ internal sealed class EventBusHostedService : BackgroundService
             await BackgroundProcessing(stoppingToken);
         }
 
-        _logger.LogDebug($"EventBus Hosted Service is stopped.");
+        _logger.LogCritical($"EventBus Hosted Service is stopped.");
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ internal sealed class EventBusHostedService : BackgroundService
         // 空订阅
         if (!eventSubscribesThatShouldRun.Any())
         {
-            _logger.LogDebug("Subscriber with event ID <{EventId}> was not found.", eventSource.EventId);
+            _logger.LogWarning("Subscriber with event ID <{EventId}> was not found.", eventSource.EventId);
 
             return;
         }
@@ -166,17 +166,20 @@ internal sealed class EventBusHostedService : BackgroundService
                 }
                 catch (Exception ex)
                 {
+                    // 输出异常日志
+                    _logger.LogError(ex, "Error occurred executing {EventId}.", eventSource.EventId);
+
                     // 标记异常
                     executionException = new InvalidOperationException(string.Format("Error occurred executing {0}.", eventSource.EventId), ex);
 
                     // 捕获 Task 任务异常信息并统计所有异常
-                    var args = new UnobservedTaskExceptionEventArgs(
+                    if (UnobservedTaskException != default)
+                    {
+                        var args = new UnobservedTaskExceptionEventArgs(
                             ex as AggregateException ?? new AggregateException(ex));
 
-                    UnobservedTaskException?.Invoke(this, args);
-
-                    // 输出异常日志
-                    _logger.LogError(ex, "Error occurred executing {EventId}.", eventSource.EventId);
+                        UnobservedTaskException.Invoke(this, args);
+                    }
                 }
                 finally
                 {

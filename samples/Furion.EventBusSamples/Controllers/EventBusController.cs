@@ -56,4 +56,14 @@ public class EventBusController : ControllerBase
             Name = "先知"
         }));
     }
+
+    /// <summary>
+    /// 发送不存在消息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task SendUnknownEvent()
+    {
+        await _eventPulisher.PublishAsync(new EventSource("User:NotExist"));
+    }
 }

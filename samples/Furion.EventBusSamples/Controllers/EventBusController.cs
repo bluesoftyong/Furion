@@ -66,4 +66,22 @@ public class EventBusController : ControllerBase
     {
         await _eventPublisher.PublishAsync(new EventSource("User:NotExist"));
     }
+
+    // <summary>
+    /// 一次性发送大消息
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task SendManyEvent()
+    {
+        for (int i = 0; i < 1000; i++)
+        {
+            await _eventPublisher.PublishAsync(new EventSource("User:Create", i + 1));
+        }
+
+        Parallel.For(1, 1000, (i, b) =>
+        {
+            _eventPublisher.PublishAsync(new EventSource("User:Create", i + 1));
+        });
+    }
 }

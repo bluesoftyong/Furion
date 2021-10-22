@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Furion.EventBus;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,7 @@ public static class EventBusServiceCollectionExtensions
     /// <summary>
     /// 注册事件订阅者
     /// </summary>
+    /// <typeparam name="TEventSubscriber">实现自 <see cref="IEventSubscriber"/></typeparam>
     /// <param name="services">服务集合对象</param>
     /// <returns>服务集合对象</returns>
     public static IServiceCollection AddEventSubscriber<TEventSubscriber>(this IServiceCollection services)
@@ -30,17 +32,42 @@ public static class EventBusServiceCollectionExtensions
     }
 
     /// <summary>
+    /// 替换事件总线事件源默认存取器
+    /// </summary>
+    /// <remarks>须在 <see cref="AddEventBus(IServiceCollection, EventBusOptions?)"/> 之后会调用</remarks>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="implementationFactory">创建自定义事件存取器对象工厂</param>
+    /// <returns>服务集合对象</returns>
+    public static IServiceCollection ReplaceEventStoreChannel(this IServiceCollection services, Func<IServiceProvider, IEventStoreChannel> implementationFactory)
+    {
+        return services.Replace(ServiceDescriptor.Singleton(implementationFactory));
+    }
+
+    /// <summary>
     /// 添加 EventBus 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <<param name="configuration">配置对象</param>
     /// <param name="configureOptions">事件总线配置选项委托</param>
     /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddEventBus(this IServiceCollection services, Action<EventBusOptions>? configureOptions = default)
+    public static IServiceCollection AddEventBus(this IServiceCollection services, Action<EventBusOptions> configureOptions)
     {
         // 创建初始事件总线配置选项
         var eventBusOptions = new EventBusOptions();
-        configureOptions?.Invoke(eventBusOptions);
+        configureOptions.Invoke(eventBusOptions);
+
+        return services.AddEventBus(eventBusOptions);
+    }
+
+    /// <summary>
+    /// 添加 EventBus 模块注册
+    /// </summary>
+    /// <param name="services">服务集合对象</param>
+    /// <param name="eventBusOptions">事件总线配置选项</param>
+    /// <returns>服务集合实例</returns>
+    public static IServiceCollection AddEventBus(this IServiceCollection services, EventBusOptions? eventBusOptions = default)
+    {
+        // 处理空配置情况
+        eventBusOptions ??= new EventBusOptions();
 
         // 注册内部服务
         services.AddInternalService(eventBusOptions);

@@ -35,7 +35,7 @@ public class RetryEventHandlerPolicy : IEventHandlerPolicy
 
 ```
 
-通过这样设计，把调用方法主动权交给开发者，这样灵活性可以达到无线放大。
+通过这样设计，把调用方法主动权交给开发者，这样灵活性可以达到无限放大。
 
 2、过滤器设计不够灵活，目前是在 `IEventSubscriber` 实现类中实现 `IEventSubscriberFilter` 接口，这样带来的问题是如果有多个 `IEventSubscriber` 实现类，那么就会出现大量重复代码。
 

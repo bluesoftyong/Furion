@@ -13,4 +13,12 @@ namespace Furion.EventBus;
 /// </summary>
 public interface IEventHandlerPolicy
 {
+    /// <summary>
+    /// 策略执行事件订阅者处理程序
+    /// </summary>
+    /// <remarks>在这里可以实现超时控制，失败重试控制等等</remarks>
+    /// <param name="context">事件订阅者处理程序执行前上下文</param>
+    /// <param name="handler">事件订阅者处理程序</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    Task ExecuteAsync(EventHandlerExecutingContext context, Func<EventHandlerExecutingContext, Task> handler);
 }

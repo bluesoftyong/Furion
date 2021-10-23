@@ -28,6 +28,12 @@
 - `Furion.Core`：无第三方依赖，可在 `.NET 6` 所有项目类型中运行。
 - `Furion`：内部依赖 `Furion.Core` 且无第三方依赖，**聚焦 `Web` 应用**，采用共享框架 `<FrameworkReference Include="Microsoft.AspNetCore.App" />` 模式
 
+## 未解之谜
+
+该文档主要记录了功能模块设计不够灵活或待解决问题：
+
+[查看文件](./UNSOLVED.md)
+
 ## 状态
 
 我们创建了一个详细的列表来轻松显示 Furion 探索版本的状态和演变。

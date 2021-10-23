@@ -35,7 +35,7 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <summary>
     /// 事件订阅者处理程序集合
     /// </summary>
-    private readonly HashSet<EventSubscribeWrapper> _eventSubscribes = new();
+    private readonly HashSet<EventHandlerWrapper> _eventHandlers = new();
 
     /// <summary>
     /// 构造函数
@@ -57,30 +57,30 @@ internal sealed class EventBusHostedService : BackgroundService
             var eventSubscriberType = eventSubscriber.GetType();
 
             // 判断并获取事件订阅者过滤器
-            var filter = typeof(IEventSubscriberFilter).IsAssignableFrom(eventSubscriberType)
-                ? eventSubscriber as IEventSubscriberFilter
+            var filter = typeof(IEventHandlerFilter).IsAssignableFrom(eventSubscriberType)
+                ? eventSubscriber as IEventHandlerFilter
                 : default;
 
             // 查找所有公开且贴有 [EventSubscribe] 的实例方法
             var bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-            var eventSubscribeMethods = eventSubscriberType.GetMethods(bindingAttr)
+            var eventHandlerMethods = eventSubscriberType.GetMethods(bindingAttr)
                 .Where(u => u.IsDefined(typeof(EventSubscribeAttribute), false));
 
             // 遍历所有事件订阅者处理方法
-            foreach (var eventSubscribeMethod in eventSubscribeMethods)
+            foreach (var eventHandlerMethod in eventHandlerMethods)
             {
-                // 将方法转换成 Func<EventSubscribeExecutingContext, CancellationToken, Task> 委托
-                var @delegate = eventSubscribeMethod.CreateDelegate<Func<EventSubscribeExecutingContext, CancellationToken, Task>>(eventSubscriber);
+                // 将方法转换成 Func<EventHandlerExecutingContext, CancellationToken, Task> 委托
+                var handler = eventHandlerMethod.CreateDelegate<Func<EventHandlerExecutingContext, Task>>(eventSubscriber);
 
                 // 处理同一个事件处理程序支持多个事件 Id 情况
-                var eventSubscribeAttributes = eventSubscribeMethod.GetCustomAttributes<EventSubscribeAttribute>(false);
+                var eventSubscribeAttributes = eventHandlerMethod.GetCustomAttributes<EventSubscribeAttribute>(false);
 
                 // 逐条包装并添加到 HashSet 集合中
                 foreach (var eventSubscribeAttribute in eventSubscribeAttributes)
                 {
-                    _eventSubscribes.Add(new EventSubscribeWrapper(eventSubscribeAttribute.EventId)
+                    _eventHandlers.Add(new EventHandlerWrapper(eventSubscribeAttribute.EventId)
                     {
-                        Handler = @delegate,
+                        Handler = handler,
                         Filter = filter
                     });
                 }
@@ -122,10 +122,10 @@ internal sealed class EventBusHostedService : BackgroundService
         var eventSource = await _eventSourceStore.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序
-        var eventSubscribesThatShouldRun = _eventSubscribes.Where(t => t.ShouldRun(eventSource.EventId));
+        var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
 
         // 空订阅
-        if (!eventSubscribesThatShouldRun.Any())
+        if (!eventHandlersThatShouldRun.Any())
         {
             _logger.LogWarning("Subscriber with event ID <{EventId}> was not found.", eventSource.EventId);
 
@@ -136,7 +136,7 @@ internal sealed class EventBusHostedService : BackgroundService
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 逐条创建新线程调用
-        foreach (var eventSubscribeThatShouldRun in eventSubscribesThatShouldRun)
+        foreach (var eventHandlerThatShouldRun in eventHandlersThatShouldRun)
         {
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
@@ -145,7 +145,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 var properties = new Dictionary<object, object>();
 
                 // 创建执行前上下文
-                var eventSubscribeExecutingContext = new EventSubscribeExecutingContext(eventSource, properties)
+                var eventHandlerExecutingContext = new EventHandlerExecutingContext(eventSource, properties)
                 {
                     ExecutingTime = DateTime.UtcNow
                 };
@@ -156,13 +156,13 @@ internal sealed class EventBusHostedService : BackgroundService
                 try
                 {
                     // 调用执行前过滤器
-                    if (eventSubscribeThatShouldRun.Filter != default)
+                    if (eventHandlerThatShouldRun.Filter != default)
                     {
-                        await eventSubscribeThatShouldRun.Filter.OnHandlerExecutingAsync(eventSubscribeExecutingContext);
+                        await eventHandlerThatShouldRun.Filter.OnExecutingAsync(eventHandlerExecutingContext);
                     }
 
                     // 调用事件处理程序
-                    await eventSubscribeThatShouldRun.Handler!(eventSubscribeExecutingContext, eventSource.CancellationToken);
+                    await eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext);
                 }
                 catch (Exception ex)
                 {
@@ -184,16 +184,16 @@ internal sealed class EventBusHostedService : BackgroundService
                 finally
                 {
                     // 调用执行后过滤器
-                    if (eventSubscribeThatShouldRun.Filter != default)
+                    if (eventHandlerThatShouldRun.Filter != default)
                     {
                         // 创建执行后上下文
-                        var eventSubscribeExecutedContext = new EventSubscribeExecutedContext(eventSource, properties)
+                        var eventHandlerExecutedContext = new EventHandlerExecutedContext(eventSource, properties)
                         {
                             ExecutedTime = DateTime.UtcNow,
                             Exception = executionException
                         };
 
-                        await eventSubscribeThatShouldRun.Filter.OnHandlerExecutedAsync(eventSubscribeExecutedContext);
+                        await eventHandlerThatShouldRun.Filter.OnExecutedAsync(eventHandlerExecutedContext);
                     }
                 }
             }, stoppingToken);

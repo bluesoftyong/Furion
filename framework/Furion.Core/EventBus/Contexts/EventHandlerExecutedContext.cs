@@ -11,14 +11,14 @@ namespace Furion.EventBus;
 /// <summary>
 /// 事件订阅者处理程序执行后上下文
 /// </summary>
-public sealed class EventSubscribeExecutedContext : EventSubscribeContext
+public sealed class EventHandlerExecutedContext : EventHandlerContext
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="eventSource">事件源（事件承载对象）</param>
     /// <param name="properties">共享上下文数据</param>
-    internal EventSubscribeExecutedContext(IEventSource eventSource, IDictionary<object, object> properties)
+    internal EventHandlerExecutedContext(IEventSource eventSource, IDictionary<object, object> properties)
         : base(eventSource, properties)
     {
     }

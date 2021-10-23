@@ -12,13 +12,13 @@ namespace Furion.EventBus;
 /// 事件订阅者处理程序包装类
 /// </summary>
 /// <remarks>主要用于主机服务启动时将所有处理程序和事件 Id 进行包装绑定</remarks>
-internal sealed class EventSubscribeWrapper
+internal sealed class EventHandlerWrapper
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="eventId">事件Id</param>
-    internal EventSubscribeWrapper(string eventId)
+    internal EventHandlerWrapper(string eventId)
     {
         EventId = eventId;
     }
@@ -31,12 +31,12 @@ internal sealed class EventSubscribeWrapper
     /// <summary>
     /// 事件处理程序
     /// </summary>
-    internal Func<EventSubscribeExecutingContext, CancellationToken, Task>? Handler { get; set; }
+    internal Func<EventHandlerExecutingContext, Task>? Handler { get; set; }
 
     /// <summary>
     /// 事件订阅者处理程序过滤器
     /// </summary>
-    internal IEventSubscriberFilter? Filter { get; set; }
+    internal IEventHandlerFilter? Filter { get; set; }
 
     /// <summary>
     /// 是否符合条件执行处理程序

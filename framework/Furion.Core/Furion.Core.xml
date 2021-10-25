@@ -778,11 +778,12 @@
             </summary>
             <param name="capacity">存储器最多能够处理多少消息，超过该容量进入等待写入</param>
         </member>
-        <member name="M:Furion.EventBus.ChannelEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource)">
+        <member name="M:Furion.EventBus.ChannelEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource,System.Threading.CancellationToken)">
             <summary>
             将事件源写入存储器
             </summary>
             <param name="eventSource">事件源对象</param>
+            <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.ValueTask"/></returns>
         </member>
         <member name="M:Furion.EventBus.ChannelEventSourceStorer.ReadAsync(System.Threading.CancellationToken)">
@@ -801,11 +802,12 @@
             <para>默认实现为内存中的 <see cref="T:System.Threading.Channels.Channel"/>，可自由更换存储介质，如 Kafka，SQL Server 等</para>
             </remarks>
         </member>
-        <member name="M:Furion.EventBus.IEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource)">
+        <member name="M:Furion.EventBus.IEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource,System.Threading.CancellationToken)">
             <summary>
             将事件源写入存储器
             </summary>
             <param name="eventSource">事件源对象</param>
+            <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.ValueTask"/></returns>
         </member>
         <member name="M:Furion.EventBus.IEventSourceStorer.ReadAsync(System.Threading.CancellationToken)">

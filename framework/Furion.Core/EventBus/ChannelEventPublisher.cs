@@ -34,6 +34,6 @@ internal sealed partial class ChannelEventPublisher : IEventPublisher
     /// <returns><see cref="Task"/> 实例</returns>
     public async Task PublishAsync(IEventSource eventSource)
     {
-        await _eventSourceStorer.WriteAsync(eventSource);
+        await _eventSourceStorer.WriteAsync(eventSource, eventSource.CancellationToken);
     }
 }

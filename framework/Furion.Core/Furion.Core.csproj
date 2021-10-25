@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<SignAssembly>False</SignAssembly>
-		<DelaySign>False</DelaySign>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<Version>0.0.1-alpha</Version>
 	</PropertyGroup>
 
 	<!--核心包完成后将移除该 ItemGroup-->

@@ -1,0 +1,30 @@
+﻿<Project>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<SignAssembly>False</SignAssembly>
+		<DelaySign>False</DelaySign>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<Authors>百小僧</Authors>
+		<Company>Baiqian Co.,Ltd.</Company>
+		<Product>Furion</Product>
+		<Copyright>© 2020-2021 百小僧, Baiqian Co.,Ltd.</Copyright>
+		<RepositoryUrl>https://gitee.com/dotnetchina/Furion</RepositoryUrl>
+		<RepositoryType>Gitee</RepositoryType>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageLicenseExpression>MulanPSL-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://furion.pro</PackageProjectUrl>
+		<PackageOutputPath>../nupkgs</PackageOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+</Project>

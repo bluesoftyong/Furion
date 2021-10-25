@@ -1,0 +1,2501 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Furion.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Furion.App.Constants">
+            <summary>
+            App 模块常量
+            </summary>
+        </member>
+        <member name="T:Furion.App.Constants.Keys">
+            <summary>
+            键常量
+            </summary>
+        </member>
+        <member name="F:Furion.App.Constants.Keys.Root">
+            <summary>
+            App 模块配置根节点
+            </summary>
+        </member>
+        <member name="F:Furion.App.Constants.Keys.EnvironmentVariablesPrefix">
+            <summary>
+            环境配置变量前缀节点
+            </summary>
+        </member>
+        <member name="F:Furion.App.Constants.Keys.CustomizeConfigurationFiles">
+            <summary>
+            自定义配置文件节点
+            </summary>
+        </member>
+        <member name="T:Furion.App.Constants.Values">
+            <summary>
+            值常量
+            </summary>
+        </member>
+        <member name="F:Furion.App.Constants.Values.EnvironmentVariablesPrefix">
+            <summary>
+            <see cref="F:Furion.App.Constants.Keys.EnvironmentVariablesPrefix"/> 默认值
+            </summary>
+        </member>
+        <member name="T:Furion.App.App">
+            <summary>
+            App 模块全局单例服务
+            </summary>
+        </member>
+        <member name="M:Furion.App.App.#ctor(System.IServiceProvider,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Hosting.IHostEnvironment,Microsoft.Extensions.Hosting.IHost)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="serviceProvider">服务提供器</param>
+            <param name="configuration">配置对象</param>
+            <param name="hostEnvironment">主机环境对象</param>
+            <param name="host">主机对象</param>
+        </member>
+        <member name="P:Furion.App.App.ServiceProvider">
+            <summary>
+            服务提供器
+            </summary>
+        </member>
+        <member name="P:Furion.App.App.Configuration">
+            <summary>
+            配置对象
+            </summary>
+        </member>
+        <member name="P:Furion.App.App.Environment">
+            <summary>
+            主机环境对象
+            </summary>
+        </member>
+        <member name="P:Furion.App.App.Host">
+            <summary>
+            主机对象
+            </summary>
+            <remarks>可通过.Services 获取根服务，常用于多线程操作</remarks>
+        </member>
+        <member name="M:Furion.App.App.GetService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType">服务类型</param>
+            <returns>object实例或null</returns>
+        </member>
+        <member name="M:Furion.App.App.GetRequiredService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType">服务类型</param>
+            <returns>object实例或异常</returns>
+        </member>
+        <member name="M:Furion.App.App.GetService``1">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+            <returns>服务实例或null</returns>
+        </member>
+        <member name="M:Furion.App.App.GetRequiredService``1">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+            <returns>服务实例或异常</returns>
+        </member>
+        <member name="T:Furion.App.IApp">
+            <summary>
+            App 模块全局单例服务接口
+            </summary>
+        </member>
+        <member name="P:Furion.App.IApp.ServiceProvider">
+            <summary>
+            服务提供器
+            </summary>
+        </member>
+        <member name="P:Furion.App.IApp.Configuration">
+            <summary>
+            配置对象
+            </summary>
+        </member>
+        <member name="P:Furion.App.IApp.Environment">
+            <summary>
+            主机环境对象
+            </summary>
+        </member>
+        <member name="P:Furion.App.IApp.Host">
+            <summary>
+            主机对象
+            </summary>
+            <remarks>可通过.Services 获取根服务，常用于多线程操作</remarks>
+        </member>
+        <member name="M:Furion.App.IApp.GetService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType">服务类型</param>
+            <returns>object实例或null</returns>
+        </member>
+        <member name="M:Furion.App.IApp.GetRequiredService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType">服务类型</param>
+            <returns>object实例或异常</returns>
+        </member>
+        <member name="M:Furion.App.IApp.GetService``1">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+            <returns>服务实例或null</returns>
+        </member>
+        <member name="M:Furion.App.IApp.GetRequiredService``1">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="TService">服务类型，约束为引用类型</typeparam>
+            <returns>服务实例或异常</returns>
+        </member>
+        <member name="T:Furion.Configuration.Constants">
+            <summary>
+            Configuration 模块常量
+            </summary>
+        </member>
+        <member name="T:Furion.Configuration.Constants.Patterns">
+            <summary>
+            正则表达式常量
+            </summary>
+        </member>
+        <member name="F:Furion.Configuration.Constants.Patterns.ConfigurationFileName">
+            <summary>
+            配置文件名
+            </summary>
+        </member>
+        <member name="F:Furion.Configuration.Constants.Patterns.ConfigurationFileParameter">
+            <summary>
+            配置文件参数
+            </summary>
+        </member>
+        <member name="T:Furion.DependencyInjection.IServiceBuilder">
+            <summary>
+            依赖注入构建器
+            </summary>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.AddAssemblies(System.Reflection.Assembly[])">
+            <summary>
+            添加依赖注入扫描程序集
+            </summary>
+            <param name="assemblies"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.TryAddAssemblies(System.Reflection.Assembly[])">
+            <summary>
+            添加依赖注入扫描程序集
+            </summary>
+            <param name="assemblies"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.AddNamedService(System.String,System.Type,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <param name="serviceName"></param>
+            <param name="implementationType"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.TryAddNamedService(System.String,System.Type,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <param name="serviceName"></param>
+            <param name="implementationType"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.AddNamedService``1(System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <typeparam name="TImplementation"></typeparam>
+            <param name="serviceName"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.IServiceBuilder.TryAddNamedService``1(System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <typeparam name="TImplementation"></typeparam>
+            <param name="serviceName"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Furion.DependencyInjection.ServiceBuilder">
+            <summary>
+            依赖注入构建器
+            </summary>
+        </member>
+        <member name="F:Furion.DependencyInjection.ServiceBuilder._context">
+            <summary>
+            主机构建器上下文
+            </summary>
+        </member>
+        <member name="F:Furion.DependencyInjection.ServiceBuilder._namedServiceCollection">
+            <summary>
+            命名服务集合
+            </summary>
+        </member>
+        <member name="F:Furion.DependencyInjection.ServiceBuilder._serviceDescriptors">
+            <summary>
+            服务描述器集合
+            </summary>
+        </member>
+        <member name="F:Furion.DependencyInjection.ServiceBuilder._additionAssemblies">
+            <summary>
+            依赖注入扫描程序集集合
+            </summary>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.#ctor(Microsoft.Extensions.Hosting.HostBuilderContext)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.AddAssemblies(System.Reflection.Assembly[])">
+            <summary>
+            添加程序集
+            </summary>
+            <param name="assemblies"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.TryAddAssemblies(System.Reflection.Assembly[])">
+            <summary>
+            添加程序集
+            </summary>
+            <remarks>如果存在则跳过</remarks>
+            <param name="assemblies"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.AddNamedService(System.String,System.Type,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <param name="serviceName"></param>
+            <param name="implementationType"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.TryAddNamedService(System.String,System.Type,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <param name="serviceName"></param>
+            <param name="implementationType"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.AddNamedService``1(System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <typeparam name="TImplementation"></typeparam>
+            <param name="serviceName"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.TryAddNamedService``1(System.String,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <remarks>如果存在则跳过</remarks>
+            <typeparam name="TImplementation"></typeparam>
+            <param name="serviceName"></param>
+            <param name="lifetime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            服务注册构建
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.BatchRegisterServiceDescriptors(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            批量注册服务描述器
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.BatchRegisterServiceTypes(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            通过依赖类型批量注册
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.BatchRegisterFactoryServiceTypes(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            通过依赖工厂类型批量注册
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.BatchRegisterHostBuilderServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            通过主机构建器服务依赖接口批量注册
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.RegisterNamedService(System.Type,Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+            注册命名服务
+            </summary>
+            <param name="implementationType"></param>
+            <param name="lifetime"></param>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.Release">
+            <summary>
+            释放服务构建器
+            </summary>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.TryGetServiceLifetime(System.Type)">
+            <summary>
+            根据依赖接口类型解析 ServiceLifetime 对象
+            </summary>
+            <param name="dependencyLifetimeType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.FixedGenericType(System.Type)">
+            <summary>
+            修正泛型类型
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.DependencyInjection.ServiceBuilder.GetProjectAssemblies">
+            <summary>
+            获取项目所有程序集
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Furion.DependencyInjection.IDependency">
+            <summary>
+            依赖注入生存周期接口依赖
+            </summary>
+        </member>
+        <member name="T:Furion.DependencyInjection.DefaultInterceptor">
+            <summary>
+            默认拦截器
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.EventSubscribeAttribute">
+            <summary>
+            事件处理程序特性
+            </summary>
+            <remarks>
+            <para>作用于 <see cref="T:Furion.EventBus.IEventSubscriber"/> 实现类实例方法</para>
+            <para>支持多个事件 Id 触发同一个事件处理程序</para>
+            </remarks>
+        </member>
+        <member name="M:Furion.EventBus.EventSubscribeAttribute.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventId">事件 Id</param>
+        </member>
+        <member name="P:Furion.EventBus.EventSubscribeAttribute.EventId">
+            <summary>
+            事件 Id
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.ChannelEventPublisher">
+            <summary>
+            基于内存通道事件发布者（默认实现）
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.ChannelEventPublisher._eventSourceStorer">
+            <summary>
+            事件源存储器
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventPublisher.#ctor(Furion.EventBus.IEventSourceStorer)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventSourceStorer">事件源存储器</param>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventPublisher.PublishAsync(Furion.EventBus.IEventSource)">
+            <summary>
+            发布一条消息
+            </summary>
+            <param name="eventSource">事件源</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.EventBus.EventHandlerContext">
+            <summary>
+            事件处理程序上下文
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventHandlerContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventSource">事件源（事件承载对象）</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerContext.Source">
+            <summary>
+            事件源（事件承载对象）
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerContext.Properties">
+            <summary>
+            共享上下文数据
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.EventHandlerExecutedContext">
+            <summary>
+            事件处理程序执行后上下文
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventHandlerExecutedContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventSource">事件源（事件承载对象）</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerExecutedContext.ExecutedTime">
+            <summary>
+            执行后时间
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerExecutedContext.Exception">
+            <summary>
+            异常信息
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.EventHandlerExecutingContext">
+            <summary>
+            事件处理程序执行前上下文
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventHandlerExecutingContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventSource">事件源（事件承载对象）</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerExecutingContext.ExecutingTime">
+            <summary>
+            执行前时间
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.IEventHandlerExecutor">
+            <summary>
+            事件处理程序执行器依赖接口
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.IEventHandlerExecutor.ExecuteAsync(Furion.EventBus.EventHandlerExecutingContext,System.Func{Furion.EventBus.EventHandlerExecutingContext,System.Threading.Tasks.Task})">
+            <summary>
+            执行事件处理程序
+            </summary>
+            <remarks>在这里可以实现超时控制，失败重试控制等等</remarks>
+            <param name="context">事件处理程序执行前上下文</param>
+            <param name="handler">事件处理程序</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.EventBus.EventBusHostedService">
+            <summary>
+            事件总线后台主机服务
+            </summary>
+        </member>
+        <member name="E:Furion.EventBus.EventBusHostedService.UnobservedTaskException">
+            <summary>
+            避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusHostedService._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusHostedService._eventSourceStorer">
+            <summary>
+            事件源存储器
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusHostedService._eventHandlers">
+            <summary>
+            事件处理程序集合
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventBusHostedService.Monitor">
+            <summary>
+            事件处理程序监视器
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventBusHostedService.Executor">
+            <summary>
+            事件处理程序执行器
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventBusHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.EventBus.EventBusHostedService},System.IServiceProvider,Furion.EventBus.IEventSourceStorer,System.Collections.Generic.IEnumerable{Furion.EventBus.IEventSubscriber})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger">日志对象</param>
+            <param name="serviceProvider">服务提供器</param>
+            <param name="eventSourceStorer">事件源存储器</param>
+            <param name="eventSubscribers">事件订阅者集合</param>
+        </member>
+        <member name="M:Furion.EventBus.EventBusHostedService.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行后台任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
+            <summary>
+            后台调用事件处理程序
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.EventBus.IEventPublisher">
+            <summary>
+            事件发布服务依赖接口
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.IEventPublisher.PublishAsync(Furion.EventBus.IEventSource)">
+            <summary>
+            发布一条消息
+            </summary>
+            <param name="eventSource">事件源</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.EventBus.IEventSubscriber">
+            <summary>
+            事件订阅者依赖接口
+            </summary>
+            <remarks>
+            <para>可自定义事件处理方法，但须符合 Func{EventSubscribeExecutingContext, Task} 签名</para>
+            <para>通常只做依赖查找，不做服务调用</para>
+            </remarks>
+        </member>
+        <member name="T:Furion.EventBus.IEventHandlerMonitor">
+            <summary>
+            事件处理程序监视器
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutingAsync(Furion.EventBus.EventHandlerExecutingContext)">
+            <summary>
+            事件处理程序执行前
+            </summary>
+            <param name="context">上下文</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutedAsync(Furion.EventBus.EventHandlerExecutedContext)">
+            <summary>
+            事件处理程序执行后
+            </summary>
+            <param name="context">上下文</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.EventBus.EventBusOptionsBuilder">
+            <summary>
+            事件总线配置选项构建器
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventSubscribers">
+            <summary>
+            事件订阅者类型集合
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventPublisher">
+            <summary>
+            事件发布者类型
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventSourceStorerImplementationFactory">
+            <summary>
+            事件存储器实现工厂
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventHandlerMonitor">
+            <summary>
+            事件处理程序监视器
+            </summary>
+        </member>
+        <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventHandlerExecutor">
+            <summary>
+            事件处理程序执行器
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventBusOptionsBuilder.ChannelCapacity">
+            <summary>
+            默认内置事件源存储器内存通道容量
+            </summary>
+            <remarks>超过 n 条待处理消息，第 n+1 条将进入等待，默认为 3000</remarks>
+        </member>
+        <member name="P:Furion.EventBus.EventBusOptionsBuilder.UnobservedTaskExceptionHandler">
+            <summary>
+            未察觉任务异常事件处理程序
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.AddSubscriber``1">
+            <summary>
+            注册事件订阅者
+            </summary>
+            <typeparam name="TEventSubscriber">实现自 <see cref="T:Furion.EventBus.IEventSubscriber"/></typeparam>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.ReplacePublisher``1">
+            <summary>
+            替换事件发布者
+            </summary>
+            <typeparam name="TEventPublisher">实现自 <see cref="T:Furion.EventBus.IEventPublisher"/></typeparam>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.EventBus.IEventSourceStorer})">
+            <summary>
+            替换事件源存储器
+            </summary>
+            <param name="implementationFactory">自定义事件源存储器工厂</param>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.AddMonitor``1">
+            <summary>
+            注册事件处理程序监视器
+            </summary>
+            <typeparam name="TEventHandlerMonitor">实现自 <see cref="T:Furion.EventBus.IEventHandlerMonitor"/></typeparam>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.AddExecutor``1">
+            <summary>
+            注册事件处理程序执行器
+            </summary>
+            <typeparam name="TEventHandlerExecutor">实现自 <see cref="T:Furion.EventBus.IEventHandlerExecutor"/></typeparam>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            构建事件总线配置选项
+            </summary>
+            <param name="services">服务集合对象</param>
+        </member>
+        <member name="T:Furion.EventBus.ChannelEventSource">
+            <summary>
+            内存通道事件源（事件承载对象）
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSource.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventId">事件 Id</param>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSource.#ctor(System.String,System.Object)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventId">事件 Id</param>
+            <param name="payload">事件承载（携带）数据</param>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSource.#ctor(System.String,System.Object,System.Threading.CancellationToken)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventId">事件 Id</param>
+            <param name="payload">事件承载（携带）数据</param>
+            <param name="cancellationToken">取消任务 Token</param>
+        </member>
+        <member name="P:Furion.EventBus.ChannelEventSource.EventId">
+            <summary>
+            事件 Id
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.ChannelEventSource.Payload">
+            <summary>
+            事件承载（携带）数据
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.ChannelEventSource.CancellationToken">
+            <summary>
+            取消任务 Token
+            </summary>
+            <remarks>用于取消本次消息处理</remarks>
+        </member>
+        <member name="P:Furion.EventBus.ChannelEventSource.CreatedTime">
+            <summary>
+            事件创建时间
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.IEventSource">
+            <summary>
+            事件源（事件承载对象）依赖接口
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.IEventSource.EventId">
+            <summary>
+            事件 Id
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.IEventSource.Payload">
+            <summary>
+            事件承载（携带）数据
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.IEventSource.CreatedTime">
+            <summary>
+            事件创建时间
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.IEventSource.CancellationToken">
+            <summary>
+            取消任务 Token
+            </summary>
+            <remarks>用于取消本次消息处理</remarks>
+        </member>
+        <member name="T:Furion.EventBus.ChannelEventSourceStorer">
+            <summary>
+            内存通道事件源存储器（默认实现）
+            </summary>
+            <remarks>
+            <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
+            <para>默认实现为内存中的 <see cref="T:System.Threading.Channels.Channel"/>，可自由更换存储介质，如 Kafka，SQL Server 等</para>
+            </remarks>
+        </member>
+        <member name="F:Furion.EventBus.ChannelEventSourceStorer._channel">
+            <summary>
+            内存通道事件源存储器
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSourceStorer.#ctor(System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="capacity">存储器最多能够处理多少消息，超过该容量进入等待写入</param>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource)">
+            <summary>
+            将事件源写入存储器
+            </summary>
+            <param name="eventSource">事件源对象</param>
+            <returns><see cref="T:System.Threading.Tasks.ValueTask"/></returns>
+        </member>
+        <member name="M:Furion.EventBus.ChannelEventSourceStorer.ReadAsync(System.Threading.CancellationToken)">
+            <summary>
+            从存储器中读取一条事件源
+            </summary>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns>事件源对象</returns>
+        </member>
+        <member name="T:Furion.EventBus.IEventSourceStorer">
+            <summary>
+            事件源存储器
+            </summary>
+            <remarks>
+            <para>顾名思义，这里指的是事件消息存储中心，提供读写能力</para>
+            <para>默认实现为内存中的 <see cref="T:System.Threading.Channels.Channel"/>，可自由更换存储介质，如 Kafka，SQL Server 等</para>
+            </remarks>
+        </member>
+        <member name="M:Furion.EventBus.IEventSourceStorer.WriteAsync(Furion.EventBus.IEventSource)">
+            <summary>
+            将事件源写入存储器
+            </summary>
+            <param name="eventSource">事件源对象</param>
+            <returns><see cref="T:System.Threading.Tasks.ValueTask"/></returns>
+        </member>
+        <member name="M:Furion.EventBus.IEventSourceStorer.ReadAsync(System.Threading.CancellationToken)">
+            <summary>
+            从存储器中读取一条事件源
+            </summary>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns>事件源对象</returns>
+        </member>
+        <member name="T:Furion.EventBus.EventHandlerWrapper">
+            <summary>
+            事件处理程序包装类
+            </summary>
+            <remarks>主要用于主机服务启动时将所有处理程序和事件 Id 进行包装绑定</remarks>
+        </member>
+        <member name="M:Furion.EventBus.EventHandlerWrapper.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventId">事件Id</param>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerWrapper.EventId">
+            <summary>
+            事件 Id
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventHandlerWrapper.Handler">
+            <summary>
+            事件处理程序
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventHandlerWrapper.ShouldRun(System.String)">
+            <summary>
+            是否符合条件执行处理程序
+            </summary>
+            <param name="eventId">事件 Id</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="T:Furion.Constants">
+            <summary>
+            框架常量
+            </summary>
+        </member>
+        <member name="T:Furion.FurionDiagnosticObserver">
+            <summary>
+            框架诊断监听器
+            </summary>
+        </member>
+        <member name="T:Furion.FurionKeyValueObserver">
+            <summary>
+            订阅框架诊断器消息
+            </summary>
+        </member>
+        <member name="T:Furion.Extensions.InternalUtilities.IIEnumerableOfTExtensions">
+            <summary>
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> 拓展类
+            </summary>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.IIEnumerableOfTExtensions.IsEmpty``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            判断集合是否为空
+            </summary>
+            <typeparam name="T">元素类型</typeparam>
+            <param name="collection">集合对象</param>
+            <returns><see cref="T:System.Boolean"/> 实例，true 表示空集合，false 表示非空集合</returns>
+        </member>
+        <member name="T:Furion.Extensions.InternalUtilities.StringExtensions">
+            <summary>
+            <see cref="T:System.String"/> 拓展
+            </summary>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.StringExtensions.DetachSuffix(System.String,System.String,System.StringComparison)">
+            <summary>
+            移除字符串指定后缀
+            </summary>
+            <param name="text">文本</param>
+            <param name="suffix">后缀字符串</param>
+            <param name="comparisonType">字符串比较方式</param>
+            <returns>移除指定后缀的文本</returns>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.StringExtensions.ToTitleCase(System.String)">
+            <summary>
+            转换字符串首字母大写
+            </summary>
+            <param name="text">文本</param>
+            <returns>首字母大写文本</returns>
+        </member>
+        <member name="T:Furion.Extensions.InternalUtilities.TypeExtensions">
+            <summary>
+            <see cref="T:System.Type"/> 类型拓展
+            </summary>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.TypeExtensions.GetTypeAttribute``1(System.Type,System.Boolean)">
+            <summary>
+            获取类型自定义特性
+            </summary>
+            <typeparam name="TAttribute">特性类型</typeparam>
+            <param name="type">类类型</param>
+            <param name="inherit">是否继承查找</param>
+            <returns>特性对象</returns>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.TypeExtensions.IsGenericAssignableTo(System.Type,System.Type)">
+            <summary>
+            判断类型是否实现泛型接口
+            </summary>
+            <param name="type">类型</param>
+            <param name="genericInterface">泛型接口</param>
+            <returns><see cref="T:System.Boolean"/> 实例，true 表示实现泛型接口，false 表示未实现泛型接口</returns>
+        </member>
+        <member name="M:Furion.Extensions.InternalUtilities.TypeExtensions.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object)">
+            <summary>
+            设置属性值
+            </summary>
+            <param name="propertyInfo">属性对象</param>
+            <param name="target">目标对象</param>
+            <param name="value">要设置的属性值</param>
+        </member>
+        <member name="T:Furion.Helpers.InternalUtilities.TypeHelpers">
+            <summary>
+            类型帮助类
+            </summary>
+        </member>
+        <member name="M:Furion.Helpers.InternalUtilities.TypeHelpers.CreateDelegate(System.Type[],System.Type)">
+            <summary>
+            创建委托类型
+            </summary>
+            <param name="inputTypes">输入类型</param>
+            <param name="outputType">输出类型</param>
+            <returns>Action或Func 委托类型</returns>
+        </member>
+        <member name="T:Furion.Options.FailureMessageAttribute">
+            <summary>
+            选项校验失败消息特性
+            </summary>
+        </member>
+        <member name="M:Furion.Options.FailureMessageAttribute.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="text">文本内容</param>
+        </member>
+        <member name="P:Furion.Options.FailureMessageAttribute.Text">
+            <summary>
+            文本内容
+            </summary>
+        </member>
+        <member name="T:Furion.Options.OptionsBuilderAttribute">
+            <summary>
+            选项构建器特性
+            </summary>
+        </member>
+        <member name="M:Furion.Options.OptionsBuilderAttribute.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Furion.Options.OptionsBuilderAttribute.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sectionKey">配置节点</param>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderAttribute.SectionKey">
+            <summary>
+            配置节点
+            </summary>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderAttribute.ErrorOnUnknownConfiguration">
+            <summary>
+            未知配置节点抛异常
+            </summary>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderAttribute.BindNonPublicProperties">
+            <summary>
+            绑定非公开属性
+            </summary>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderAttribute.ValidateDataAnnotations">
+            <summary>
+            启用验证特性支持
+            </summary>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderAttribute.ValidateOptionsTypes">
+            <summary>
+            验证选项类型
+            </summary>
+        </member>
+        <member name="T:Furion.Options.OptionsBuilderMethodMapAttribute">
+            <summary>
+            选项构建器方法映射特性
+            </summary>
+        </member>
+        <member name="M:Furion.Options.OptionsBuilderMethodMapAttribute.#ctor(System.String,System.Boolean)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="methodName">映射方法名</param>
+            <param name="voidReturn">无返回值</param>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderMethodMapAttribute.MethodName">
+            <summary>
+            方法名称
+            </summary>
+        </member>
+        <member name="P:Furion.Options.OptionsBuilderMethodMapAttribute.VoidReturn">
+            <summary>
+            有无返回值
+            </summary>
+        </member>
+        <member name="T:Furion.Options.Constants">
+            <summary>
+            Options 模块常量
+            </summary>
+        </member>
+        <member name="F:Furion.Options.Constants.OptionsTypeSuffix">
+            <summary>
+            Options 类型后缀
+            </summary>
+            <remarks>主要用于匹配配置节点，自动去掉该后缀</remarks>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`1">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`1.Configure(`0)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`2">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`2.Configure(`0,`1)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`3">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`3.Configure(`0,`1,`2)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`4">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`4.Configure(`0,`1,`2,`3)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`5">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`5.Configure(`0,`1,`2,`3,`4)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IConfigureOptionsBuilder`6">
+            <summary>
+            选项配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+            <typeparam name="TDep5">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IConfigureOptionsBuilder`6.Configure(`0,`1,`2,`3,`4,`5)">
+            <summary>
+            选项配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+            <param name="dep5">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IOptionsBuilderDependency`1">
+            <summary>
+            选项构建器依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`1">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`1.PostConfigure(`0)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`2">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`2.PostConfigure(`0,`1)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`3">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`3.PostConfigure(`0,`1,`2)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`4">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`4.PostConfigure(`0,`1,`2,`3)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`5">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`5.PostConfigure(`0,`1,`2,`3,`4)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IPostConfigureOptionsBuilder`6">
+            <summary>
+            选项后期配置依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+            <typeparam name="TDep5">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IPostConfigureOptionsBuilder`6.PostConfigure(`0,`1,`2,`3,`4,`5)">
+            <summary>
+            选项后期配置
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+            <param name="dep5">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`1">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`1.Validate(`0)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`2">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`2.Validate(`0,`1)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`3">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`3.Validate(`0,`1,`2)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`4">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`4.Validate(`0,`1,`2,`3)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`5">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`5.Validate(`0,`1,`2,`3,`4)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+        </member>
+        <member name="T:Furion.Options.IValidateOptionsBuilder`6">
+            <summary>
+            选项验证依赖接口
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <typeparam name="TDep1">依赖服务</typeparam>
+            <typeparam name="TDep2">依赖服务</typeparam>
+            <typeparam name="TDep3">依赖服务</typeparam>
+            <typeparam name="TDep4">依赖服务</typeparam>
+            <typeparam name="TDep5">依赖服务</typeparam>
+        </member>
+        <member name="M:Furion.Options.IValidateOptionsBuilder`6.Validate(`0,`1,`2,`3,`4,`5)">
+            <summary>
+            复杂验证
+            </summary>
+            <param name="options">选项实例</param>
+            <param name="dep1">依赖服务</param>
+            <param name="dep2">依赖服务</param>
+            <param name="dep3">依赖服务</param>
+            <param name="dep4">依赖服务</param>
+            <param name="dep5">依赖服务</param>
+        </member>
+        <member name="T:Furion.SchedulerTask.IScheduledTask">
+            <summary>
+            执行具体任务依赖接口
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.IScheduledTask.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行具体任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns>Task</returns>
+        </member>
+        <member name="T:Furion.SchedulerTask.SchedulerTaskHostedService">
+            <summary>
+            任务调度后台主机服务
+            </summary>
+        </member>
+        <member name="E:Furion.SchedulerTask.SchedulerTaskHostedService.UnobservedTaskException">
+            <summary>
+            避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
+            </summary>
+        </member>
+        <member name="F:Furion.SchedulerTask.SchedulerTaskHostedService._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="F:Furion.SchedulerTask.SchedulerTaskHostedService._scheduledTasks">
+            <summary>
+            定时任务集合
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.SchedulerTaskHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerTask.SchedulerTaskHostedService},System.Collections.Generic.IEnumerable{Furion.SchedulerTask.IIntervalScheduledTask},System.Collections.Generic.IEnumerable{Furion.SchedulerTask.ICrontabScheduledTask})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger">日志对象</param>
+            <param name="intervalScheduledTasks">间隔定时任务集合</param>
+            <param name="crontabScheduledTasks">Cron 表达式定时任务集合</param>
+        </member>
+        <member name="M:Furion.SchedulerTask.SchedulerTaskHostedService.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行后台任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.SchedulerTask.SchedulerTaskHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
+            <summary>
+            后台调用具体任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.SchedulerTask.ICrontabScheduledTask">
+            <summary>
+            执行 Cron 表达式任务
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.ICrontabScheduledTask.Schedule">
+            <summary>
+            Cron 表达式
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.ICrontabScheduledTask.Format">
+            <summary>
+            Cron 表达式格式化，默认 <see cref="F:Furion.TimeCrontab.CronStringFormat.Default"/>
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerTask.IIntervalScheduledTask">
+            <summary>
+            执行间隔任务
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.IIntervalScheduledTask.Interval">
+            <summary>
+            间隔时间（分钟）
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerTask.CrontabSchedulerTaskWrapper">
+            <summary>
+            Cron 调度任务包装类
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.CrontabSchedulerTaskWrapper.Schedule">
+            <summary>
+            Cron 表达式
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.CrontabSchedulerTaskWrapper.Increment">
+            <summary>
+            设置最近运行时间和下一次运行时间增量
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerTask.IntervalSchedulerTaskWrapper">
+            <summary>
+            间隔调度任务包装类
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.IntervalSchedulerTaskWrapper.Interval">
+            <summary>
+            间隔时间（分钟）
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.IntervalSchedulerTaskWrapper.Increment">
+            <summary>
+            设置最近运行时间和下一次运行时间增量
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerTask.SchedulerTaskWrapper">
+            <summary>
+            调度任务包装抽象类
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.SchedulerTaskWrapper.Task">
+            <summary>
+            具体执行任务对象
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.SchedulerTaskWrapper.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerTask.SchedulerTaskWrapper.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.SchedulerTaskWrapper.Increment">
+            <summary>
+            设置最近运行时间和下一次运行时间增量
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerTask.SchedulerTaskWrapper.ShouldRun(System.DateTime)">
+            <summary>
+            是否开始执行任务
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns>bool</returns>
+        </member>
+        <member name="T:Furion.TaskQueue.Constants">
+            <summary>
+            TaskQueue 模块常量
+            </summary>
+        </member>
+        <member name="T:Furion.TaskQueue.Constants.Keys">
+            <summary>
+            键常量
+            </summary>
+        </member>
+        <member name="F:Furion.TaskQueue.Constants.Keys.Root">
+            <summary>
+            TaskQueue 模块配置根节点
+            </summary>
+        </member>
+        <member name="F:Furion.TaskQueue.Constants.Keys.Capacity">
+            <summary>
+            队列通道容量
+            </summary>
+        </member>
+        <member name="T:Furion.TaskQueue.Constants.Values">
+            <summary>
+            值常量
+            </summary>
+        </member>
+        <member name="F:Furion.TaskQueue.Constants.Values.Capacity">
+            <summary>
+            <see cref="F:Furion.TaskQueue.Constants.Keys.Capacity"/> 默认值
+            </summary>
+        </member>
+        <member name="T:Furion.TaskQueue.TaskQueuedHostedService">
+            <summary>
+            任务队列后台主机服务
+            </summary>
+            <remarks>用于长时间监听任务项入队后进行出队调用</remarks>
+        </member>
+        <member name="F:Furion.TaskQueue.TaskQueuedHostedService._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="F:Furion.TaskQueue.TaskQueuedHostedService._taskQueue">
+            <summary>
+            后台任务队列
+            </summary>
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueuedHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.TaskQueue.TaskQueuedHostedService},Furion.TaskQueue.ITaskQueue)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger">日志对象</param>
+            <param name="taskQueue">后台任务队列</param>
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueuedHostedService.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行后台任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueuedHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
+            <summary>
+            管道中任务出队并调用
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns>Task</returns>
+        </member>
+        <member name="T:Furion.TaskQueue.ITaskQueue">
+            <summary>
+            任务队列接口
+            </summary>
+        </member>
+        <member name="M:Furion.TaskQueue.ITaskQueue.EnqueueAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.ValueTask})">
+            <summary>
+            任务项入队
+            </summary>
+            <param name="taskHandler">任务处理委托</param>
+            <returns>ValueTask</returns>
+        </member>
+        <member name="M:Furion.TaskQueue.ITaskQueue.DequeueAsync(System.Threading.CancellationToken)">
+            <summary>
+            任务项出队
+            </summary>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
+        </member>
+        <member name="T:Furion.TaskQueue.TaskQueue">
+            <summary>
+            任务队列默认实现
+            </summary>
+        </member>
+        <member name="F:Furion.TaskQueue.TaskQueue._queue">
+            <summary>
+            队列通道
+            </summary>
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueue.#ctor(System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="capacity">队列通道默认容量，超过该容量进入等待</param>
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueue.EnqueueAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.ValueTask})">
+            <summary>
+            任务项入队
+            </summary>
+            <param name="taskHandler">任务处理委托</param>
+            <returns>ValueTask</returns>
+            <exception cref="T:System.ArgumentNullException" />
+        </member>
+        <member name="M:Furion.TaskQueue.TaskQueue.DequeueAsync(System.Threading.CancellationToken)">
+            <summary>
+            任务项出队
+            </summary>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.CronStringFormat">
+            <summary>
+            The cron string format to use during parsing
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CronStringFormat.Default">
+            <summary>
+            Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CronStringFormat.WithYears">
+            <summary>
+            Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CronStringFormat.WithSeconds">
+            <summary>
+            Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CronStringFormat.WithSecondsAndYears">
+            <summary>
+            Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.ToCronDayOfWeek(System.DayOfWeek)">
+            <summary>
+            Since there is no guarantee that (int) DayOfWeek returns the same value
+            that cron uses (since the values aren't explicitly set in the DayOfWeek enum)
+            we have to use this method.
+            </summary>
+            <param name="value">The DayOfWeek value to convert</param>
+            <returns>An integer representing the provided day of week</returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.ToDayOfWeek(System.Int32)">
+            <summary>
+            Since there is no guarantee that (int) DayOfWeek returns the same value
+            that cron uses (since the values aren't explicitly set in the DayOfWeek enum)
+            we have to use this method.
+            </summary>
+            <param name="value">The cron day value to convert</param>
+            <returns>A DayOfWeek representing the provided day of week</returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.LastDayOfMonth(System.DayOfWeek,System.Int32,System.Int32)">
+            <summary>
+            Retrieves the last instance of the specified day of the month
+            </summary>
+            <param name="dayOfWeek">The day you want to find</param>
+            <param name="year">The year in which you want to find the day</param>
+            <param name="month">The month in which you want to find the day</param>
+            <returns>An integer representing the day that matches the criteria</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.AnyFilter">
+            <summary>
+            Handles the filter instance where the user specifies a * (for any value)
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.AnyFilter.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new AnyFilter instance
+            </summary>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.AnyFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.BlankDayOfMonthOrWeekFilter">
+            <summary>
+            No specific value filter for day-of-week and day-of -month fields
+            <remarks>
+            http://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontrigger.html
+            https://en.wikipedia.org/wiki/Cron#CRON_expression
+            </remarks>
+            </summary>
+        </member>
+        <member name="T:Furion.TimeCrontab.LastDayOfMonthFilter">
+            <summary>
+            Handles filtering for the last day of the month
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.LastDayOfMonthFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.LastDayOfWeekInMonthFilter">
+            <summary>
+            Handles filtering for the last specified day of the week in the month
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.LastDayOfWeekInMonthFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new instance of LastDayOfWeekInMonthFilter
+            </summary>
+            <param name="dayOfWeek">The cron day of the week (0 = Sunday...7 = Saturday)</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.LastDayOfWeekInMonthFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.LastWeekdayOfMonthFilter">
+            <summary>
+            Handles filtering for the last weekday of a month
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.LastWeekdayOfMonthFilter.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.LastWeekdayOfMonthFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.NearestWeekdayFilter">
+            <summary>
+            Handles filtering for the nearest weekday to a specified day
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.NearestWeekdayFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="specificValue">The specific value you wish to match</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.NearestWeekdayFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.RangeFilter">
+            <summary>
+            Handles filtering ranges (i.e. 1-5)
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.RangeFilter.SpecificFilters">
+            <summary>
+            Returns a list of specific filters that represents this step filter.
+            NOTE - This is only populated on construction, and should NOT be modified.
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.RangeFilter.#ctor(System.Int32,System.Int32,System.Nullable{System.Int32},Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="start">The start of the range</param>
+            <param name="end">The end of the range</param>
+            <param name="steps">The steps in the range</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.RangeFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter">
+            <summary>
+            Handles filtering for a specific day of the week in the month (i.e. 3rd Tuesday of the month)
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.#ctor(System.Int32,System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new instance of LastDayOfWeekInMonthFilter
+            </summary>
+            <param name="dayOfWeek">The cron day of the week (0 = Sunday...7 = Saturday)</param>
+            <param name="weekNumber">Indicates which occurence of the day to filter against</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.SpecificFilter">
+            <summary>
+            Handles filtering for a specific value
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="specificValue">The specific value you wish to match</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Furion.TimeCrontab.SpecificYearFilter">
+            <summary>
+            Handles filtering for a specific value
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificYearFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="specificValue">The specific value you wish to match</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="T:Furion.TimeCrontab.StepFilter">
+            <summary>
+            Handles step values (i.e. */5, 2/7)
+            <remarks>
+            For example, */5 in the minutes field indicates every 5 minutes
+            </remarks>
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.StepFilter.SpecificFilters">
+            <summary>
+            Returns a list of specific filters that represents this step filter
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.StepFilter.#ctor(System.Int32,System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            Constructs a new RangeFilter instance
+            </summary>
+            <param name="start">The start of the range</param>
+            <param name="steps">The steps in the range</param>
+            <param name="kind">The crontab field kind to associate with this filter</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.StepFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.ICronFilter.IsMatch(System.DateTime)">
+            <summary>
+            Checks if the value is accepted by the filter
+            </summary>
+            <param name="value">The value to check</param>
+            <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Hosting.AppHostBuilderExtensions">
+            <summary>
+            App 模块自定义配置主机拓展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.AppHostBuilderExtensions.ConfigureAppConfiguration(Microsoft.Extensions.Hosting.IHostBuilder)">
+            <summary>
+            配置 App 模块初始配置
+            </summary>
+            <param name="hostBuilder">主机构建器</param>
+            <returns>主机构建器</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.AppHostBuilderExtensions.AddCustomizeConfigurationFiles(Microsoft.Extensions.Configuration.IConfigurationBuilder,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Hosting.IHostEnvironment)">
+            <summary>
+            添加自定义配置文件
+            </summary>
+            <param name="configurationBuilder">配置构建对象</param>
+            <param name="configuration">配置对象</param>
+            <param name="environment">环境对象</param>
+            <returns>配置构建对象</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Hosting.ServiceBuilderHostBuilderExtensions">
+            <summary>
+            服务构建器主机拓展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.ServiceBuilderHostBuilderExtensions.ConfigureServiceBuilder(Microsoft.Extensions.Hosting.IHostBuilder)">
+            <summary>
+            配置服务构建器
+            </summary>
+            <param name="hostBuilder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.ServiceBuilderHostBuilderExtensions.AddServiceBuilderProvider(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Hosting.HostBuilderContext)">
+            <summary>
+            添加服务构建器及命名服务支持
+            </summary>
+            <param name="services"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.ServiceBuilderHostBuilderExtensions.AddPropertiesAutowired(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Hosting.HostBuilderContext)">
+            <summary>
+            添加属性注入支持
+            </summary>
+            <param name="services"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Hosting.FurionHostBuilderExtensions">
+            <summary>
+            配置 Furion 框架初始化
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Hosting.FurionHostBuilderExtensions.UseFurion(Microsoft.Extensions.Hosting.IHostBuilder)">
+            <summary>
+            初始化框架服务
+            </summary>
+            <param name="hostBuilder">主机构建器</param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.AppServiceCollectionExtensions">
+            <summary>
+            App 模块服务拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.AppServiceCollectionExtensions.AddApp(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加 App 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.AutowiredServicesAttribute">
+            <summary>
+            属性依赖注入特性
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.AutowiredServicesAttribute.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.AutowiredServicesAttribute.#ctor(System.Boolean)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="required"></param>
+        </member>
+        <member name="P:Microsoft.Extensions.DependencyInjection.AutowiredServicesAttribute.Required">
+            <summary>
+            如果服务不存在抛异常
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute">
+            <summary>
+            服务描述器特性
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute.ServiceName">
+            <summary>
+            命名服务配置名称
+            </summary>
+            <remarks>优先级低于 <see cref="M:Microsoft.Extensions.DependencyInjection.INamedService.ServiceName"/> </remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute.RegisterType">
+            <summary>
+            注册类型
+            </summary>
+        </member>
+        <member name="P:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute.ServiceTypes">
+            <summary>
+            配置注册接口类型
+            </summary>
+            <remarks>如果指定则优先选用，否则扫描所有接口并全部注册</remarks>
+        </member>
+        <member name="P:Microsoft.Extensions.DependencyInjection.ServiceDescriptorAttribute.Order">
+            <summary>
+            排序
+            </summary>
+            <remarks>序号越小，越先注册</remarks>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.RegisterTypes">
+            <summary>
+            注册方式
+            </summary>
+        </member>
+        <member name="F:Microsoft.Extensions.DependencyInjection.RegisterTypes.Add">
+            <summary>
+            添加注册，无论是否已注册
+            </summary>
+        </member>
+        <member name="F:Microsoft.Extensions.DependencyInjection.RegisterTypes.TryAdd">
+            <summary>
+            如果已注册，则跳过
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.IHostBuilderService">
+            <summary>
+            配置主机服务
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IHostBuilderService.Configure(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Hosting.HostBuilderContext)">
+            <summary>
+            配置服务
+            </summary>
+            <param name="services"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.IFactoryService`2">
+            <summary>
+            基于工厂的服务依赖接口
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.IFactoryService`2.ImplementationFactory(System.IServiceProvider)">
+            <summary>
+            服务实例创建工厂
+            </summary>
+            <param name="serviceProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.INamedService">
+            <summary>
+            命名服务依赖接口
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.INamedService.ServiceName">
+            <summary>
+            返回命名服务名称
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.IScopedService">
+            <summary>
+            范围服务依赖接口
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ISingletonService">
+            <summary>
+            单例服务依赖接口
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ITransientService">
+            <summary>
+            瞬时服务依赖接口
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.ServiceBuilderServiceCollectionExtensions">
+            <summary>
+            服务构建器服务拓展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.ServiceBuilderServiceCollectionExtensions.AsServiceBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Hosting.HostBuilderContext)">
+            <summary>
+            创建依赖注入构建器
+            </summary>
+            <param name="services"></param>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.EventBusServiceCollectionExtensions">
+            <summary>
+            EventBus 模块服务拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EventBusServiceCollectionExtensions.AddEventBus(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Furion.EventBus.EventBusOptionsBuilder})">
+            <summary>
+            添加 EventBus 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="configureOptionsBuilder">事件总线配置选项构建器委托</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EventBusServiceCollectionExtensions.AddEventBus(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.EventBus.EventBusOptionsBuilder)">
+            <summary>
+            添加 EventBus 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="eventBusOptionsBuilder">事件总线配置选项构建器</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.EventBusServiceCollectionExtensions.AddInternalService(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.EventBus.EventBusOptionsBuilder)">
+            <summary>
+            注册内部服务
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="eventBusOptions">事件总线配置选项</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.SchedulerTaskServiceCollectionExtensions">
+            <summary>
+            SchedulerTask 模块服务拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerTaskServiceCollectionExtensions.AddSchedulerTask(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            添加 SchedulerTask 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerTaskServiceCollectionExtensions.AddScheduler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.EventHandler{System.Threading.Tasks.UnobservedTaskExceptionEventArgs})">
+            <summary>
+            添加 SchedulerTask 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="unobservedTaskExceptionHandler">未察觉任务异常事件处理程序</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.TaskQueueServiceCollectionExtensions">
+            <summary>
+            TaskQueue 模块服务拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.TaskQueueServiceCollectionExtensions.AddTaskQueue(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            添加 TaskQueue 模块注册
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="configuration">配置对象</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.TaskQueueServiceCollectionExtensions.AddInternalService(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            注册内部服务
+            </summary>
+            <param name="services">服务集合对象</param>
+            <param name="configuration">配置对象</param>
+            <returns>服务集合实例</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions">
+            <summary>
+            IConfigurationBuilder 接口拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions.AddFile(Microsoft.Extensions.Configuration.IConfigurationBuilder,System.String,Microsoft.Extensions.Hosting.IHostEnvironment,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            添加配置文件
+            </summary>
+            <param name="configurationBuilder">配置构建对象</param>
+            <param name="fileName">文件名</param>
+            <param name="environment">环境对象</param>
+            <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
+            <param name="reloadOnChange">是否监听文件更改</param>
+            <param name="includeEnvironment">是否包含环境文件格式注册</param>
+            <returns>配置构建对象</returns>
+            <exception cref="T:System.ArgumentNullException" />
+            <exception cref="T:System.InvalidOperationException" />
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions.CheckFileNamePattern(System.String,System.String@,System.String@,System.String@,System.Collections.Generic.IDictionary{System.String,System.Boolean}@)">
+            <summary>
+            检查文件名格式是否是受支持的格式
+            </summary>
+            <param name="fileName">文件名</param>
+            <param name="fileNamePart">返回文件名匹配部分</param>
+            <param name="environmentNamePart">环境名匹配部分</param>
+            <param name="fileNameWithEnvironmentPart">带环境标识的文件名</param>
+            <param name="parameterPart">参数匹配部分</param>
+            <exception cref="T:System.ArgumentNullException" />
+            <exception cref="T:System.InvalidOperationException" />
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions.ResolveRealAbsolutePath(System.String)">
+            <summary>
+            分析配置文件名并返回真实绝对路径
+            </summary>
+            <param name="fileName">文件名</param>
+            <returns>返回文件绝对路径</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions.CreateFileConfigurationSource(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            根据文件路径创建文件配置源
+            </summary>
+            <param name="filePath">文件路径</param>
+            <param name="optional">可选文件，设置 true 跳过文件存在检查</param>
+            <param name="reloadOnChange">是否监听文件更改</param>
+            <returns><see cref="T:Microsoft.Extensions.Configuration.FileConfigurationSource"/> 实例</returns>
+            <exception cref="T:System.InvalidOperationException" />
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationBuilderExtensions.TrySetParameter(System.Collections.Generic.IDictionary{System.String,System.Boolean},System.String,System.Boolean@)">
+            <summary>
+            设置 FileConfigurationSouce 参数
+            </summary>
+            <param name="parameters">字典参数结合</param>
+            <param name="parameterName">参数名</param>
+            <param name="value">参数值</param>
+        </member>
+        <member name="T:Microsoft.Extensions.Configuration.IConfigurationExtensions">
+            <summary>
+            IConfiguration 接口拓展
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationExtensions.Exists(Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            判断配置节点是否存在
+            </summary>
+            <param name="configuration">配置对象</param>
+            <param name="key">节点路径</param>
+            <returns>是否存在</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationExtensions.Get``1(Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            获取配置节点并转换成指定类型
+            </summary>
+            <typeparam name="T">节点类型</typeparam>
+            <param name="configuration">配置对象</param>
+            <param name="key">节点路径</param>
+            <returns>节点类型实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationExtensions.Get``1(Microsoft.Extensions.Configuration.IConfiguration,System.String,System.Action{Microsoft.Extensions.Configuration.BinderOptions})">
+            <summary>
+            获取配置节点并转换成指定类型
+            </summary>
+            <typeparam name="T">节点类型</typeparam>
+            <param name="configuration">配置对象</param>
+            <param name="key">节点路径</param>
+            <param name="configureOptions">配置值绑定到指定类型额外配置</param>
+            <returns>节点类型实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationExtensions.Get(Microsoft.Extensions.Configuration.IConfiguration,System.String,System.Type)">
+            <summary>
+            获取节点配置
+            </summary>
+            <param name="configuration">配置对象</param>
+            <param name="key">节点路径</param>
+            <param name="type">节点类型</param>
+            <returns><see cref="T:System.Object"/> 实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Configuration.IConfigurationExtensions.Get(Microsoft.Extensions.Configuration.IConfiguration,System.String,System.Type,System.Action{Microsoft.Extensions.Configuration.BinderOptions})">
+            <summary>
+            获取节点配置
+            </summary>
+            <param name="configuration">配置对象</param>
+            <param name="key">节点路径</param>
+            <param name="type">节点类型</param>
+            <param name="configureOptions">配置值绑定到指定类型额外配置</param>
+            <returns><see cref="T:System.Object"/> 实例</returns>
+        </member>
+        <member name="T:Microsoft.Extensions.Options.OptionsBuilderExtensions">
+            <summary>
+            OptionsBuilder 拓展类
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.ConfigureBuilder``1(Microsoft.Extensions.Options.OptionsBuilder{``0},Microsoft.Extensions.Configuration.IConfiguration,System.Type)">
+            <summary>
+            配置选项构建器
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="configuration">配置对象</param>
+            <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
+            <returns>选项构建器实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.ConfigureBuilders``1(Microsoft.Extensions.Options.OptionsBuilder{``0},Microsoft.Extensions.Configuration.IConfiguration,System.Type[])">
+            <summary>
+            配置多个选项构建器
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="configuration">配置对象</param>
+            <param name="optionsBuilderTypes">配置多个选项构建器</param>
+            <returns>选项构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException" />
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.ConfigureBuilder``1(Microsoft.Extensions.Options.OptionsBuilder{``0},System.Type)">
+            <summary>
+            配置选项构建器
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="optionsBuilderType">选项构建器类型，默认为 typeof(TOptions) </param>
+            <returns>选项构建器实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.ConfigureBuilders``1(Microsoft.Extensions.Options.OptionsBuilder{``0},System.Type[])">
+            <summary>
+            配置多个选项构建器
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="optionsBuilderTypes">配置多个选项构建器</param>
+            <returns>选项构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException" />
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.ConfigureDefaults``1(Microsoft.Extensions.Options.OptionsBuilder{``0},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            配置选项常规默认处理
+            </summary>
+            <typeparam name="TOptions">选项类型</typeparam>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="configuration">配置对象</param>
+            <returns>选项构建器实例</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.InvokeMapMethod(System.Object,System.Type,System.Type)">
+            <summary>
+            调用 OptionsBuilder{TOptions} 对应方法
+            </summary>
+            <param name="optionsBuilder">选项构建器实例</param>
+            <param name="optionsBuilderType">选项构建器类型</param>
+            <param name="builderInterface">构建器接口</param>
+        </member>
+        <member name="M:Microsoft.Extensions.Options.OptionsBuilderExtensions.BuildExpressionCallParameters(System.Reflection.MethodInfo,System.Boolean,System.Type[],System.Object[]@)">
+            <summary>
+            构建 Call 调用方法表达式参数
+            </summary>
+            <remarks>含实际传入参数</remarks>
+            <param name="matchMethod">表达式匹配方法</param>
+            <param name="isValidateMethod">是否校验方法</param>
+            <param name="genericArguments">泛型参数</param>
+            <param name="args">实际传入参数</param>
+            <returns>调用参数表达式数组</returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Mvc.Controllers.AutowiredControllerActivator">
+            <summary>
+            属性注入控制器激活器
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Mvc.Controllers.AutowiredControllerActivator.Create(Microsoft.AspNetCore.Mvc.ControllerContext)">
+            <summary>
+            实现控制器创建过程
+            </summary>
+            <param name="controllerContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Mvc.Controllers.AutowiredControllerActivator.Release(Microsoft.AspNetCore.Mvc.ControllerContext,System.Object)">
+            <summary>
+            释放控制器对象
+            </summary>
+            <param name="controllerContext"></param>
+            <param name="controller"></param>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Mvc.Controllers.AutowiredControllerActivator.CreateInstance(System.Reflection.TypeInfo,System.IAutowiredServiceProvider)">
+            <summary>
+            创建控制器实例
+            </summary>
+            <param name="controllerTypeInfo"></param>
+            <param name="autowiredServiceProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Builder.FurionWebApplicationBuilderExtensions">
+            <summary>
+            配置 Furion 框架初始化
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Builder.FurionWebApplicationBuilderExtensions.UseFurion(Microsoft.AspNetCore.Builder.WebApplicationBuilder)">
+            <summary>
+            初始化框架服务
+            </summary>
+            <param name="webApplicationBuilder">WebApplication 构建器</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.IServiceProviderExtensions">
+            <summary>
+            IServiceProvider 拓展类
+            </summary>
+        </member>
+        <member name="M:System.IServiceProviderExtensions.Autowired(System.IServiceProvider)">
+            <summary>
+            解析属性注入服务提供器
+            </summary>
+            <param name="serviceProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.AutowiredServiceProvider">
+            <summary>
+            属性注入服务提供器
+            </summary>
+        </member>
+        <member name="F:System.AutowiredServiceProvider._serviceProvider">
+            <summary>
+            .NET 内置服务提供器
+            </summary>
+        </member>
+        <member name="M:System.AutowiredServiceProvider.#ctor(System.IServiceProvider)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="serviceProvider"></param>
+        </member>
+        <member name="M:System.AutowiredServiceProvider.GetService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.AutowiredServiceProvider.GetRequiredService(System.Type)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.AutowiredServiceProvider.Autowried(System.Object)">
+            <summary>
+            属性注入服务
+            </summary>
+            <param name="instance"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.IAutowiredServiceProvider">
+            <summary>
+            属性注入服务提供器
+            </summary>
+        </member>
+        <member name="M:System.IAutowiredServiceProvider.Autowried(System.Object)">
+            <summary>
+            属性注入
+            </summary>
+            <param name="instance"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.INamedServiceProvider">
+            <summary>
+            命名服务提供器
+            </summary>
+        </member>
+        <member name="M:System.INamedServiceProvider.GetService(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.INamedServiceProvider.GetRequiredService(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.INamedServiceProvider.GetService``1(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.INamedServiceProvider.GetRequiredService``1(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.NamedServiceProvider">
+            <summary>
+            命名服务提供器
+            </summary>
+        </member>
+        <member name="F:System.NamedServiceProvider._autowiredServiceProvider">
+            <summary>
+            属性注入服务提供器
+            </summary>
+        </member>
+        <member name="F:System.NamedServiceProvider._namedServiceCollection">
+            <summary>
+            命名服务集合
+            </summary>
+        </member>
+        <member name="M:System.NamedServiceProvider.#ctor(System.IAutowiredServiceProvider,System.Collections.Concurrent.ConcurrentDictionary{System.String,System.Type})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="autowiredServiceProvider"></param>
+            <param name="namedServiceCollection"></param>
+        </member>
+        <member name="M:System.NamedServiceProvider.GetService(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.NamedServiceProvider.GetRequiredService(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <param name="serviceName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.NamedServiceProvider.GetService``1(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.NamedServiceProvider.GetRequiredService``1(System.String)">
+            <summary>
+            解析服务
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

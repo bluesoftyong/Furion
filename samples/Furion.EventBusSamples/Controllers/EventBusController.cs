@@ -23,7 +23,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendCreateUser()
     {
-        await _eventPublisher.PublishAsync(new EventSource("User:Create", new
+        await _eventPublisher.PublishAsync(new ChannelEventSource("User:Create", new
         {
             Name = "Furion"
         }));
@@ -36,7 +36,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendUpdateUser()
     {
-        await _eventPublisher.PublishAsync(new EventSource("User:Update", new
+        await _eventPublisher.PublishAsync(new ChannelEventSource("User:Update", new
         {
             Id = 2,
             Name = "先知"
@@ -50,7 +50,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendDeleteUser()
     {
-        await _eventPublisher.PublishAsync(new EventSource("User:Delete", new
+        await _eventPublisher.PublishAsync(new ChannelEventSource("User:Delete", new
         {
             Id = 2,
             Name = "先知"
@@ -64,7 +64,7 @@ public class EventBusController : ControllerBase
     [HttpGet]
     public async Task SendUnknownEvent()
     {
-        await _eventPublisher.PublishAsync(new EventSource("User:NotExist"));
+        await _eventPublisher.PublishAsync(new ChannelEventSource("User:NotExist"));
     }
 
     // <summary>
@@ -76,12 +76,12 @@ public class EventBusController : ControllerBase
     {
         for (int i = 0; i < 1000; i++)
         {
-            await _eventPublisher.PublishAsync(new EventSource("User:Create", i + 1));
+            await _eventPublisher.PublishAsync(new ChannelEventSource("User:Create", i + 1));
         }
 
         Parallel.For(1, 1000, (i, b) =>
         {
-            _eventPublisher.PublishAsync(new EventSource("User:Create", i + 1));
+            _eventPublisher.PublishAsync(new ChannelEventSource("User:Create", i + 1));
         });
     }
 }

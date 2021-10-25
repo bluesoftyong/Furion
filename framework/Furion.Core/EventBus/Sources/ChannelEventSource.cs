@@ -9,15 +9,15 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件源（事件承载对象）
+/// 内存通道事件源（事件承载对象）
 /// </summary>
-public sealed class EventSource : IEventSource
+public sealed class ChannelEventSource : IEventSource
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="eventId">事件 Id</param>
-    public EventSource(string eventId)
+    public ChannelEventSource(string eventId)
     {
         EventId = eventId;
     }
@@ -27,7 +27,7 @@ public sealed class EventSource : IEventSource
     /// </summary>
     /// <param name="eventId">事件 Id</param>
     /// <param name="payload">事件承载（携带）数据</param>
-    public EventSource(string eventId, object payload)
+    public ChannelEventSource(string eventId, object payload)
         : this(eventId)
     {
         Payload = payload;
@@ -39,7 +39,7 @@ public sealed class EventSource : IEventSource
     /// <param name="eventId">事件 Id</param>
     /// <param name="payload">事件承载（携带）数据</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    public EventSource(string eventId, object payload, CancellationToken cancellationToken)
+    public ChannelEventSource(string eventId, object payload, CancellationToken cancellationToken)
         : this(eventId, payload)
     {
         CancellationToken = cancellationToken;

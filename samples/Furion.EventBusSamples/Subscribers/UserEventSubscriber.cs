@@ -1,9 +1,9 @@
 ﻿using Furion.EventBus;
 using System.Text.Json;
 
-namespace Furion.EventBusSamples.Subscriber
+namespace Furion.EventBusSamples.Subscribers
 {
-    public class UserEventSubscriber : IEventSubscriber, IEventHandlerFilter
+    public class UserEventSubscriber : IEventSubscriber
     {
         private readonly ILogger<UserEventSubscriber> _logger;
         public UserEventSubscriber(ILogger<UserEventSubscriber> logger)
@@ -37,22 +37,6 @@ namespace Furion.EventBusSamples.Subscriber
         public Task CreateOrUpdate(EventHandlerExecutingContext context)
         {
             _logger.LogInformation("新增或更新触发");
-            return Task.CompletedTask;
-        }
-
-        public Task OnExecutingAsync(EventHandlerExecutingContext context)
-        {
-            _logger.LogInformation("执行之前：{EventId}", context.Source.EventId);
-            return Task.CompletedTask;
-        }
-
-        public Task OnExecutedAsync(EventHandlerExecutedContext context)
-        {
-            _logger.LogInformation("执行之后：{EventId}", context.Source.EventId);
-            if (context.Exception != null)
-            {
-                _logger.LogError(context.Exception, "执行出错啦：{EventId}", context.Source.EventId);
-            }
             return Task.CompletedTask;
         }
     }

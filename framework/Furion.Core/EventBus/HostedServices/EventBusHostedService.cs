@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -28,37 +29,51 @@ internal sealed class EventBusHostedService : BackgroundService
     private readonly ILogger<EventBusHostedService> _logger;
 
     /// <summary>
-    /// 事件源存取器
+    /// 事件源存储器
     /// </summary>
-    private readonly IEventSourceStore _eventSourceStore;
+    private readonly IEventSourceStorer _eventSourceStorer;
 
     /// <summary>
-    /// 事件订阅者处理程序集合
+    /// 事件处理程序集合
     /// </summary>
     private readonly HashSet<EventHandlerWrapper> _eventHandlers = new();
+
+    /// <summary>
+    /// 事件处理程序监视器
+    /// </summary>
+    private IEventHandlerMonitor? Monitor { get; }
+
+    /// <summary>
+    /// 事件处理程序执行器
+    /// </summary>
+    private IEventHandlerExecutor? Executor { get; }
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    /// <param name="eventSourceStore">事件源存取器</param>
+    /// <param name="serviceProvider">服务提供器</param>
+    /// <param name="eventSourceStorer">事件源存储器</param>
     /// <param name="eventSubscribers">事件订阅者集合</param>
     public EventBusHostedService(ILogger<EventBusHostedService> logger
-        , IEventSourceStore eventSourceStore
+        , IServiceProvider serviceProvider
+        , IEventSourceStorer eventSourceStorer
         , IEnumerable<IEventSubscriber> eventSubscribers)
     {
         _logger = logger;
-        _eventSourceStore = eventSourceStore;
+        _eventSourceStorer = eventSourceStorer;
+        Monitor = serviceProvider.GetService<IEventHandlerMonitor>();
+        Executor = serviceProvider.GetService<IEventHandlerExecutor>();
 
-        // 逐条获取事件订阅者处理程序并进行包装
+        // 逐条获取事件处理程序并进行包装
         foreach (var eventSubscriber in eventSubscribers)
         {
             // 获取事件订阅者类型
             var eventSubscriberType = eventSubscriber.GetType();
 
             // 判断并获取事件订阅者过滤器
-            var filter = typeof(IEventHandlerFilter).IsAssignableFrom(eventSubscriberType)
-                ? eventSubscriber as IEventHandlerFilter
+            var filter = typeof(IEventHandlerMonitor).IsAssignableFrom(eventSubscriberType)
+                ? eventSubscriber as IEventHandlerMonitor
                 : default;
 
             // 查找所有公开且贴有 [EventSubscribe] 的实例方法
@@ -80,8 +95,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 {
                     _eventHandlers.Add(new EventHandlerWrapper(eventSubscribeAttribute.EventId)
                     {
-                        Handler = handler,
-                        Filter = filter
+                        Handler = handler
                     });
                 }
             }
@@ -118,8 +132,8 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
-        // 从事件存取器中读取一条
-        var eventSource = await _eventSourceStore.ReadAsync(stoppingToken);
+        // 从事件存储器中读取一条
+        var eventSource = await _eventSourceStorer.ReadAsync(stoppingToken);
 
         // 查找事件 Id 匹配的事件处理程序
         var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.ShouldRun(eventSource.EventId));
@@ -156,13 +170,20 @@ internal sealed class EventBusHostedService : BackgroundService
                 try
                 {
                     // 调用执行前过滤器
-                    if (eventHandlerThatShouldRun.Filter != default)
+                    if (Monitor != default)
                     {
-                        await eventHandlerThatShouldRun.Filter.OnExecutingAsync(eventHandlerExecutingContext);
+                        await Monitor.OnExecutingAsync(eventHandlerExecutingContext);
                     }
 
-                    // 调用事件处理程序
-                    await eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext);
+                    // 判断是否自定义了执行器
+                    if (Executor == default)
+                    {
+                        await eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext);
+                    }
+                    else
+                    {
+                        await Executor.ExecuteAsync(eventHandlerExecutingContext, eventHandlerThatShouldRun.Handler!);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -184,7 +205,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 finally
                 {
                     // 调用执行后过滤器
-                    if (eventHandlerThatShouldRun.Filter != default)
+                    if (Monitor != default)
                     {
                         // 创建执行后上下文
                         var eventHandlerExecutedContext = new EventHandlerExecutedContext(eventSource, properties)
@@ -193,7 +214,7 @@ internal sealed class EventBusHostedService : BackgroundService
                             Exception = executionException
                         };
 
-                        await eventHandlerThatShouldRun.Filter.OnExecutedAsync(eventHandlerExecutedContext);
+                        await Monitor.OnExecutedAsync(eventHandlerExecutedContext);
                     }
                 }
             }, stoppingToken);

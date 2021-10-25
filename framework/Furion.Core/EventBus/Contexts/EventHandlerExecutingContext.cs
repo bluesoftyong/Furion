@@ -9,7 +9,7 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者处理程序执行前上下文
+/// 事件处理程序执行前上下文
 /// </summary>
 public sealed class EventHandlerExecutingContext : EventHandlerContext
 {

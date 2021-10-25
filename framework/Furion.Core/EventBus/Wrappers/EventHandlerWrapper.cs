@@ -9,7 +9,7 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者处理程序包装类
+/// 事件处理程序包装类
 /// </summary>
 /// <remarks>主要用于主机服务启动时将所有处理程序和事件 Id 进行包装绑定</remarks>
 internal sealed class EventHandlerWrapper
@@ -32,11 +32,6 @@ internal sealed class EventHandlerWrapper
     /// 事件处理程序
     /// </summary>
     internal Func<EventHandlerExecutingContext, Task>? Handler { get; set; }
-
-    /// <summary>
-    /// 事件订阅者处理程序过滤器
-    /// </summary>
-    internal IEventHandlerFilter? Filter { get; set; }
 
     /// <summary>
     /// 是否符合条件执行处理程序

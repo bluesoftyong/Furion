@@ -9,22 +9,16 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者处理程序过滤器
+/// 事件处理程序执行器依赖接口
 /// </summary>
-/// <remarks>须和 <see cref="IEventSubscriber"/> 一起使用</remarks>
-public interface IEventHandlerFilter
+public interface IEventHandlerExecutor
 {
     /// <summary>
-    /// 事件订阅者处理程序执行前
+    /// 执行事件处理程序
     /// </summary>
-    /// <param name="context">上下文</param>
+    /// <remarks>在这里可以实现超时控制，失败重试控制等等</remarks>
+    /// <param name="context">事件处理程序执行前上下文</param>
+    /// <param name="handler">事件处理程序</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutingAsync(EventHandlerExecutingContext context);
-
-    /// <summary>
-    /// 事件订阅者处理程序执行后
-    /// </summary>
-    /// <param name="context">上下文</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutedAsync(EventHandlerExecutedContext context);
+    Task ExecuteAsync(EventHandlerExecutingContext context, Func<EventHandlerExecutingContext, Task> handler);
 }

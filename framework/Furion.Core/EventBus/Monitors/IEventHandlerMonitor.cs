@@ -9,16 +9,21 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者处理程序策略机制依赖接口
+/// 事件处理程序监视器
 /// </summary>
-public interface IEventHandlerPolicy
+public interface IEventHandlerMonitor
 {
     /// <summary>
-    /// 策略执行事件订阅者处理程序
+    /// 事件处理程序执行前
     /// </summary>
-    /// <remarks>在这里可以实现超时控制，失败重试控制等等</remarks>
-    /// <param name="context">事件订阅者处理程序执行前上下文</param>
-    /// <param name="handler">事件订阅者处理程序</param>
+    /// <param name="context">上下文</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(EventHandlerExecutingContext context, Func<EventHandlerExecutingContext, Task> handler);
+    Task OnExecutingAsync(EventHandlerExecutingContext context);
+
+    /// <summary>
+    /// 事件处理程序执行后
+    /// </summary>
+    /// <param name="context">上下文</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    Task OnExecutedAsync(EventHandlerExecutedContext context);
 }

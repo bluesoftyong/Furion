@@ -9,11 +9,11 @@
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件订阅者处理程序特性
+/// 事件处理程序特性
 /// </summary>
 /// <remarks>
 /// <para>作用于 <see cref="IEventSubscriber"/> 实现类实例方法</para>
-/// <para>支持多个事件 Id 触发同一个处理程序</para>
+/// <para>支持多个事件 Id 触发同一个事件处理程序</para>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public sealed class EventSubscribeAttribute : Attribute

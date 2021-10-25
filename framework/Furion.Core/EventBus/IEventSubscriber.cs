@@ -17,4 +17,12 @@ namespace Furion.EventBus;
 /// </remarks>
 public interface IEventSubscriber
 {
+    /*
+     * // 事件处理程序定义规范
+     * [EventSubscribe(YourEventID)]
+     * public Task YourHandler(EventHandlerExecutingContext context)
+     * {
+     *     // To Do...
+     * }
+     */
 }

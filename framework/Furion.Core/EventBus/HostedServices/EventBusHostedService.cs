@@ -36,7 +36,7 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <summary>
     /// 事件处理程序集合
     /// </summary>
-    private readonly List<EventHandlerWrapper> _eventHandlers = new();
+    private readonly HashSet<EventHandlerWrapper> _eventHandlers = new();
 
     /// <summary>
     /// 事件处理程序监视器

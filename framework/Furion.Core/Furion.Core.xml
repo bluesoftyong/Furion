@@ -512,6 +512,14 @@
             <param name="eventSource">事件源</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
+        <member name="M:Furion.EventBus.ChannelEventPublisher.PublishDelayAsync(Furion.EventBus.IEventSource,System.Int64)">
+            <summary>
+            延迟发布一条消息
+            </summary>
+            <param name="eventSource">事件源</param>
+            <param name="delay">延迟数（毫秒）</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
         <member name="T:Furion.EventBus.EventHandlerContext">
             <summary>
             事件处理程序上下文
@@ -655,6 +663,14 @@
             发布一条消息
             </summary>
             <param name="eventSource">事件源</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.EventBus.IEventPublisher.PublishDelayAsync(Furion.EventBus.IEventSource,System.Int64)">
+            <summary>
+            延迟发布一条消息
+            </summary>
+            <param name="eventSource">事件源</param>
+            <param name="delay">延迟数（毫秒）</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="T:Furion.EventBus.IEventSubscriber">

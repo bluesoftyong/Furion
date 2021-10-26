@@ -36,4 +36,24 @@ internal sealed partial class ChannelEventPublisher : IEventPublisher
     {
         await _eventSourceStorer.WriteAsync(eventSource, eventSource.CancellationToken);
     }
+
+    /// <summary>
+    /// 延迟发布一条消息
+    /// </summary>
+    /// <param name="eventSource">事件源</param>
+    /// <param name="delay">延迟数（毫秒）</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    public Task PublishDelayAsync(IEventSource eventSource, long delay)
+    {
+        // 创建新线程
+        Task.Factory.StartNew(async () =>
+        {
+            // 延迟 delay 毫秒
+            await Task.Delay(TimeSpan.FromMilliseconds(delay), eventSource.CancellationToken);
+
+            await _eventSourceStorer.WriteAsync(eventSource, eventSource.CancellationToken);
+        }, eventSource.CancellationToken);
+
+        return Task.CompletedTask;
+    }
 }

@@ -9,27 +9,31 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// The cron string format to use during parsing
+/// Cron 表达式格式化配置
 /// </summary>
 public enum CronStringFormat
 {
     /// <summary>
-    /// Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+    /// 默认格式
     /// </summary>
+    /// <remarks>分 时 天 月 周</remarks>
     Default = 0,
 
     /// <summary>
-    /// Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+    /// 带年份格式
     /// </summary>
+    /// <remarks>分 时 天 月 周 年</remarks>
     WithYears = 1,
 
     /// <summary>
-    /// Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+    /// 带秒格式
     /// </summary>
+    /// <remarks>秒 分 时 天 月 周</remarks>
     WithSeconds = 2,
 
     /// <summary>
-    /// Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+    /// 带秒和年格式
     /// </summary>
+    /// <remarks>秒 分 时 天 月 周 年</remarks>
     WithSecondsAndYears = 3
 }

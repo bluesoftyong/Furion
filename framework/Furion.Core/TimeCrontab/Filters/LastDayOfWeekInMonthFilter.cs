@@ -27,7 +27,7 @@ internal sealed class LastDayOfWeekInMonthFilter : ICronFilter
     public LastDayOfWeekInMonthFilter(int dayOfWeek, CrontabFieldKind kind)
     {
         if (kind != CrontabFieldKind.DayOfWeek)
-            throw new CrontabException(string.Format("<{0}L> can only be used in the Day of Week field.", dayOfWeek));
+            throw new TimeCrontabException(string.Format("<{0}L> can only be used in the Day of Week field.", dayOfWeek));
 
         DayOfWeek = dayOfWeek;
         DateTimeDayOfWeek = dayOfWeek.ToDayOfWeek();

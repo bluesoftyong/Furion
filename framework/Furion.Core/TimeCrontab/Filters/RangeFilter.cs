@@ -41,13 +41,13 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
         var maxValue = Constants.MaximumDateTimeValues[kind];
 
         if (start < 0 || start > maxValue)
-            throw new CrontabException(string.Format("Start = {0} is out of bounds for <{1}> field", start, Enum.GetName(typeof(CrontabFieldKind), kind)));
+            throw new TimeCrontabException(string.Format("Start = {0} is out of bounds for <{1}> field", start, Enum.GetName(typeof(CrontabFieldKind), kind)));
 
         if (end < 0 || end > maxValue)
-            throw new CrontabException(string.Format("End = {0} is out of bounds for <{1}> field", end, Enum.GetName(typeof(CrontabFieldKind), kind)));
+            throw new TimeCrontabException(string.Format("End = {0} is out of bounds for <{1}> field", end, Enum.GetName(typeof(CrontabFieldKind), kind)));
 
         if (steps != null && (steps <= 0 || steps > maxValue))
-            throw new CrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
+            throw new TimeCrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
 
         Start = start;
         End = end;
@@ -94,7 +94,7 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call Next for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types");
 
         var max = Constants.MaximumDateTimeValues[Kind];
 
@@ -114,7 +114,7 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call First for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types");
 
         var max = Constants.MaximumDateTimeValues[Kind];
 
@@ -123,7 +123,7 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
             newValue++;
 
         if (newValue > max)
-            throw new CrontabException(string.Format("Next value for {0} on field {1} could not be found!",
+            throw new TimeCrontabException(string.Format("Next value for {0} on field {1} could not be found!",
                 this.ToString(),
                 Enum.GetName(typeof(CrontabFieldKind), Kind))
             );

@@ -25,10 +25,10 @@ internal sealed class NearestWeekdayFilter : ICronFilter
     public NearestWeekdayFilter(int specificValue, CrontabFieldKind kind)
     {
         if (specificValue <= 0 || specificValue > Constants.MaximumDateTimeValues[CrontabFieldKind.Day])
-            throw new CrontabException(string.Format("<{0}W> is out of bounds for the Day field.", specificValue));
+            throw new TimeCrontabException(string.Format("<{0}W> is out of bounds for the Day field.", specificValue));
 
         if (kind != CrontabFieldKind.Day)
-            throw new CrontabException(string.Format("<{0}W> can only be used in the Day field.", specificValue));
+            throw new TimeCrontabException(string.Format("<{0}W> can only be used in the Day field.", specificValue));
 
         SpecificValue = specificValue;
         Kind = kind;

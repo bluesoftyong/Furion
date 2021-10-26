@@ -8,6 +8,9 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// DayOfWeek 拓展类
+/// </summary>
 internal static class DayOfWeekExtensions
 {
     /// <summary>

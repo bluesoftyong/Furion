@@ -1598,29 +1598,137 @@
             <param name="cancellationToken">取消任务 Token</param>
             <returns>ValueTask{Func{CancellationToken, ValueTask}}</returns>
         </member>
+        <member name="T:Furion.TimeCrontab.Constants">
+            <summary>
+            TimeCrontab 模块常量
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.MaximumDateTimeValues">
+            <summary>
+            Cron 表达式每个字段最大值
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.MinimumDateTimeValues">
+            <summary>
+            Cron 表达式每个字段最小值
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.ExpectedFieldCounts">
+            <summary>
+            Cron 不同格式表达式字段数量
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.CronDays">
+            <summary>
+            Cron 表达式 "天" 字段支持英文单词
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.Days">
+            <summary>
+            Cron 表达式 "天" 字段支持英文单词缩写
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.Constants.Months">
+            <summary>
+            Cron 表达式 "月" 字段支持英文单词缩写
+            </summary>
+        </member>
+        <member name="T:Furion.TimeCrontab.CrontabFieldKind">
+            <summary>
+            Cron 表达式字段种类
+            </summary>
+            <remarks>使用时保持以下顺序编写</remarks>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Second">
+            <summary>
+            秒
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Minute">
+            <summary>
+            分
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Hour">
+            <summary>
+            时
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Day">
+            <summary>
+            天
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Month">
+            <summary>
+            月
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek">
+            <summary>
+            周
+            </summary>
+        </member>
+        <member name="F:Furion.TimeCrontab.CrontabFieldKind.Year">
+            <summary>
+            年
+            </summary>
+        </member>
         <member name="T:Furion.TimeCrontab.CronStringFormat">
             <summary>
-            The cron string format to use during parsing
+            Cron 表达式格式化配置
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.Default">
             <summary>
-            Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+            默认格式
             </summary>
+            <remarks>分 时 天 月 周</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithYears">
             <summary>
-            Defined as "MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+            带年份格式
             </summary>
+            <remarks>分 时 天 月 周 年</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithSeconds">
             <summary>
-            Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK"
+            带秒格式
             </summary>
+            <remarks>秒 分 时 天 月 周</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithSecondsAndYears">
             <summary>
-            Defined as "SECONDS MINUTES HOURS DAYS MONTHS DAYS-OF-WEEK YEARS"
+            带秒和年格式
+            </summary>
+            <remarks>秒 分 时 天 月 周 年</remarks>
+        </member>
+        <member name="T:Furion.TimeCrontab.TimeCrontabException">
+            <summary>
+            TimeCrontab 模块异常类
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.TimeCrontabException.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.TimeCrontabException.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="message">异常消息</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.TimeCrontabException.#ctor(System.String,System.Exception)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="message">异常消息</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:Furion.TimeCrontab.DayOfWeekExtensions">
+            <summary>
+            DayOfWeek 拓展类
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.ToCronDayOfWeek(System.DayOfWeek)">

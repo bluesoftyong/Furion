@@ -18,7 +18,7 @@ internal sealed class LastDayOfMonthFilter : ICronFilter
     public LastDayOfMonthFilter(CrontabFieldKind kind)
     {
         if (kind != CrontabFieldKind.Day)
-            throw new CrontabException("The <L> filter can only be used with the Day field.");
+            throw new TimeCrontabException("The <L> filter can only be used with the Day field.");
 
         Kind = kind;
     }

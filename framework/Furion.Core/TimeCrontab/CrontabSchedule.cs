@@ -219,7 +219,7 @@ public sealed class CrontabSchedule
         if (monthSingle.Any() && monthSingle.All(x => x.SpecificValue == 2))
         {
             if (daySingle.Any() && daySingle.All(x => (x.SpecificValue == 30) || (x.SpecificValue == 31)))
-                throw new CrontabException("Nice try, but February 30 and 31 don't exist.");
+                throw new TimeCrontabException("Nice try, but February 30 and 31 don't exist.");
         }
     }
 
@@ -235,7 +235,7 @@ public sealed class CrontabSchedule
     private static Dictionary<CrontabFieldKind, List<ICronFilter>> ParseToDictionary(string cron, CronStringFormat format)
     {
         if (string.IsNullOrWhiteSpace(cron))
-            throw new CrontabException("The provided cron string is null, empty or contains only whitespace");
+            throw new TimeCrontabException("The provided cron string is null, empty or contains only whitespace");
 
         var fields = new Dictionary<CrontabFieldKind, List<ICronFilter>>();
 
@@ -243,9 +243,9 @@ public sealed class CrontabSchedule
 
         var expectedCount = Constants.ExpectedFieldCounts[format];
         if (instructions.Length > expectedCount)
-            throw new CrontabException(string.Format("The provided cron string <{0}> has too many parameters", cron));
+            throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too many parameters", cron));
         if (instructions.Length < expectedCount)
-            throw new CrontabException(string.Format("The provided cron string <{0}> has too few parameters", cron));
+            throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too few parameters", cron));
 
         var defaultFieldOffset = 0;
         if (format == CronStringFormat.WithSeconds || format == CronStringFormat.WithSecondsAndYears)
@@ -276,7 +276,7 @@ public sealed class CrontabSchedule
         }
         catch (Exception e)
         {
-            throw new CrontabException(string.Format("There was an error parsing '{0}' for the {1} field", field, Enum.GetName(typeof(CrontabFieldKind), kind)), e);
+            throw new TimeCrontabException(string.Format("There was an error parsing '{0}' for the {1} field", field, Enum.GetName(typeof(CrontabFieldKind), kind)), e);
         }
     }
 
@@ -348,7 +348,7 @@ public sealed class CrontabSchedule
                         var secondValue = GetValue(ref newFilter, kind);
 
                         if (!string.IsNullOrEmpty(newFilter))
-                            throw new CrontabException(string.Format("Invalid filter '{0}'", filter));
+                            throw new TimeCrontabException(string.Format("Invalid filter '{0}'", filter));
 
                         return new SpecificDayOfWeekInMonthFilter(firstValue, secondValue, kind);
                     }
@@ -364,11 +364,11 @@ public sealed class CrontabSchedule
                     break;
             }
 
-            throw new CrontabException(string.Format("Invalid filter '{0}'", filter));
+            throw new TimeCrontabException(string.Format("Invalid filter '{0}'", filter));
         }
         catch (Exception e)
         {
-            throw new CrontabException(string.Format("Invalid filter '{0}'.  See inner exception for details.", filter), e);
+            throw new TimeCrontabException(string.Format("Invalid filter '{0}'.  See inner exception for details.", filter), e);
         }
     }
 
@@ -377,7 +377,7 @@ public sealed class CrontabSchedule
         var maxValue = Constants.MaximumDateTimeValues[kind];
 
         if (string.IsNullOrEmpty(filter))
-            throw new CrontabException("Expected number, but filter was empty.");
+            throw new TimeCrontabException("Expected number, but filter was empty.");
 
         int i;
         var isDigit = char.IsDigit(filter[0]);
@@ -394,7 +394,7 @@ public sealed class CrontabSchedule
             filter = filter[i..];
             var returnValue = value;
             if (returnValue > maxValue)
-                throw new CrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+                throw new TimeCrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
             return returnValue;
         }
         else
@@ -418,12 +418,12 @@ public sealed class CrontabSchedule
                 filter = filter[i..] + missingFilter;
                 var returnValue = replaceVal.First().Value;
                 if (returnValue > maxValue)
-                    throw new CrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+                    throw new TimeCrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
                 return returnValue;
             }
         }
 
-        throw new CrontabException("Filter does not contain expected number");
+        throw new TimeCrontabException("Filter does not contain expected number");
     }
 
     #endregion

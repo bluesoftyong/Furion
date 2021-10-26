@@ -23,7 +23,7 @@ internal sealed class BlankDayOfMonthOrWeekFilter : ICronFilter
     {
         if (kind != CrontabFieldKind.DayOfWeek && kind != CrontabFieldKind.Day)
         {
-            throw new CrontabException("The <?> filter can only be used in the Day-of-Week or Day-of-Month fields.");
+            throw new TimeCrontabException("The <?> filter can only be used in the Day-of-Week or Day-of-Month fields.");
         }
 
         Kind = kind;
@@ -40,7 +40,7 @@ internal sealed class BlankDayOfMonthOrWeekFilter : ICronFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call Next for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types");
 
         var newValue = (int?)value + 1;
         if (newValue >= max) newValue = null;
@@ -53,7 +53,7 @@ internal sealed class BlankDayOfMonthOrWeekFilter : ICronFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call First for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types");
 
         return 0;
     }

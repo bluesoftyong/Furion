@@ -22,7 +22,7 @@ internal sealed class LastWeekdayOfMonthFilter : ICronFilter
     public LastWeekdayOfMonthFilter(CrontabFieldKind kind)
     {
         if (kind != CrontabFieldKind.Day)
-            throw new CrontabException("<LW> can only be used in the Day field.");
+            throw new TimeCrontabException("<LW> can only be used in the Day field.");
 
         Kind = kind;
     }

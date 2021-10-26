@@ -8,9 +8,15 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// TimeCrontab 模块常量
+/// </summary>
 internal static class Constants
 {
-    public static readonly Dictionary<CrontabFieldKind, int> MaximumDateTimeValues = new()
+    /// <summary>
+    /// Cron 表达式每个字段最大值
+    /// </summary>
+    internal static readonly Dictionary<CrontabFieldKind, int> MaximumDateTimeValues = new()
     {
         { CrontabFieldKind.Second, 59 },
         { CrontabFieldKind.Minute, 59 },
@@ -21,7 +27,10 @@ internal static class Constants
         { CrontabFieldKind.Year, 9999 },
     };
 
-    public static readonly Dictionary<CrontabFieldKind, int> MinimumDateTimeValues = new()
+    /// <summary>
+    /// Cron 表达式每个字段最小值
+    /// </summary>
+    internal static readonly Dictionary<CrontabFieldKind, int> MinimumDateTimeValues = new()
     {
         { CrontabFieldKind.Second, 0 },
         { CrontabFieldKind.Minute, 0 },
@@ -32,7 +41,10 @@ internal static class Constants
         { CrontabFieldKind.Year, 1 },
     };
 
-    public static readonly Dictionary<CronStringFormat, int> ExpectedFieldCounts = new()
+    /// <summary>
+    /// Cron 不同格式表达式字段数量
+    /// </summary>
+    internal static readonly Dictionary<CronStringFormat, int> ExpectedFieldCounts = new()
     {
         { CronStringFormat.Default, 5 },
         { CronStringFormat.WithYears, 6 },
@@ -40,7 +52,10 @@ internal static class Constants
         { CronStringFormat.WithSecondsAndYears, 7 },
     };
 
-    public static readonly Dictionary<DayOfWeek, int> CronDays = new()
+    /// <summary>
+    /// Cron 表达式 "天" 字段支持英文单词
+    /// </summary>
+    internal static readonly Dictionary<DayOfWeek, int> CronDays = new()
     {
         { DayOfWeek.Sunday, 0 },
         { DayOfWeek.Monday, 1 },
@@ -51,7 +66,10 @@ internal static class Constants
         { DayOfWeek.Saturday, 6 },
     };
 
-    public static readonly Dictionary<string, int> Days = new()
+    /// <summary>
+    /// Cron 表达式 "天" 字段支持英文单词缩写
+    /// </summary>
+    internal static readonly Dictionary<string, int> Days = new()
     {
         { "SUN", 0 },
         { "MON", 1 },
@@ -62,7 +80,10 @@ internal static class Constants
         { "SAT", 6 },
     };
 
-    public static readonly Dictionary<string, int> Months = new()
+    /// <summary>
+    /// Cron 表达式 "月" 字段支持英文单词缩写
+    /// </summary>
+    internal static readonly Dictionary<string, int> Months = new()
     {
         { "JAN", 1 },
         { "FEB", 2 },

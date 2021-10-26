@@ -41,7 +41,7 @@ internal sealed class StepFilter : ICronFilter, ITimeFilter
         var maxValue = Constants.MaximumDateTimeValues[kind];
 
         if (steps <= 0 || steps > maxValue)
-            throw new CrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
+            throw new TimeCrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
 
         Start = start;
         Steps = steps;
@@ -92,7 +92,7 @@ internal sealed class StepFilter : ICronFilter, ITimeFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call Next for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types");
 
         var max = Constants.MaximumDateTimeValues[Kind];
 
@@ -112,7 +112,7 @@ internal sealed class StepFilter : ICronFilter, ITimeFilter
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new CrontabException("Cannot call First for Day, Month or DayOfWeek types");
+            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types");
 
         var max = Constants.MaximumDateTimeValues[Kind];
 
@@ -121,7 +121,7 @@ internal sealed class StepFilter : ICronFilter, ITimeFilter
             newValue++;
 
         if (newValue > max)
-            throw new CrontabException(string.Format("Next value for {0} on field {1} could not be found!",
+            throw new TimeCrontabException(string.Format("Next value for {0} on field {1} could not be found!",
                 this.ToString(),
                 Enum.GetName(typeof(CrontabFieldKind), Kind))
             );

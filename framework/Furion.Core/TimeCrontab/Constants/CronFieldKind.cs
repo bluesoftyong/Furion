@@ -8,13 +8,44 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// Cron 表达式字段种类
+/// </summary>
+/// <remarks>使用时保持以下顺序编写</remarks>
 internal enum CrontabFieldKind
 {
-    Second = 0, // Keep in order of appearance in expression
+    /// <summary>
+    /// 秒
+    /// </summary>
+    Second = 0,
+
+    /// <summary>
+    /// 分
+    /// </summary>
     Minute = 1,
+
+    /// <summary>
+    /// 时
+    /// </summary>
     Hour = 2,
+
+    /// <summary>
+    /// 天
+    /// </summary>
     Day = 3,
+
+    /// <summary>
+    /// 月
+    /// </summary>
     Month = 4,
+
+    /// <summary>
+    /// 周
+    /// </summary>
     DayOfWeek = 5,
+
+    /// <summary>
+    /// 年
+    /// </summary>
     Year = 6
 }

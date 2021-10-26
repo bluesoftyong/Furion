@@ -30,10 +30,10 @@ internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
     public SpecificDayOfWeekInMonthFilter(int dayOfWeek, int weekNumber, CrontabFieldKind kind)
     {
         if (weekNumber <= 0 || weekNumber > 5)
-            throw new CrontabException(string.Format("Week number = {0} is out of bounds.", weekNumber));
+            throw new TimeCrontabException(string.Format("Week number = {0} is out of bounds.", weekNumber));
 
         if (kind != CrontabFieldKind.DayOfWeek)
-            throw new CrontabException(string.Format("<{0}#{1}> can only be used in the Day of Week field.", dayOfWeek, weekNumber));
+            throw new TimeCrontabException(string.Format("<{0}#{1}> can only be used in the Day of Week field.", dayOfWeek, weekNumber));
 
         DayOfWeek = dayOfWeek;
         DateTimeDayOfWeek = dayOfWeek.ToDayOfWeek();

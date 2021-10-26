@@ -79,7 +79,7 @@ internal sealed class EventBusHostedService : BackgroundService
             // 遍历所有事件订阅者处理方法
             foreach (var eventHandlerMethod in eventHandlerMethods)
             {
-                // 将方法转换成 Func<EventHandlerExecutingContext, CancellationToken, Task> 委托
+                // 将方法转换成 Func<EventHandlerExecutingContext, Task> 委托
                 var handler = eventHandlerMethod.CreateDelegate<Func<EventHandlerExecutingContext, Task>>(eventSubscriber);
 
                 // 处理同一个事件处理程序支持多个事件 Id 情况

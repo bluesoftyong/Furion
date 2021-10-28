@@ -10,6 +10,9 @@ namespace Furion.TimeCrontab;
 
 internal interface ICronFilter
 {
+    /// <summary>
+    /// Cron 表达式字段种类
+    /// </summary>
     CrontabFieldKind Kind { get; }
 
     /// <summary>

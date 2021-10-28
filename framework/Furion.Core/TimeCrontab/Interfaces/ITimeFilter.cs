@@ -11,5 +11,6 @@ namespace Furion.TimeCrontab;
 internal interface ITimeFilter
 {
     int? Next(int value);
+
     int First();
 }

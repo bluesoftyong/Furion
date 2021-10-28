@@ -14,36 +14,32 @@ namespace Furion.TimeCrontab;
 internal static class DayOfWeekExtensions
 {
     /// <summary>
-    /// Since there is no guarantee that (int) DayOfWeek returns the same value
-    /// that cron uses (since the values aren't explicitly set in the DayOfWeek enum)
-    /// we have to use this method.
+    /// 将 DayOfWeek 枚举转换成 Cron 周字段支持的数字
     /// </summary>
-    /// <param name="value">The DayOfWeek value to convert</param>
-    /// <returns>An integer representing the provided day of week</returns>
-    internal static int ToCronDayOfWeek(this DayOfWeek value)
+    /// <param name="dayOfWeek"><see cref="DayOfWeek"/> 枚举</param>
+    /// <returns><see cref="int"/> 0 代表 星期日，以此类推</returns>
+    internal static int ToCronDayOfWeek(this DayOfWeek dayOfWeek)
     {
-        return Constants.CronDays[value];
+        return Constants.CronDays[dayOfWeek];
     }
 
     /// <summary>
-    /// Since there is no guarantee that (int) DayOfWeek returns the same value
-    /// that cron uses (since the values aren't explicitly set in the DayOfWeek enum)
-    /// we have to use this method.
+    /// 将 Cron 字段周数字转换成 <see cref="DayOfWeek"/> 枚举
     /// </summary>
-    /// <param name="value">The cron day value to convert</param>
-    /// <returns>A DayOfWeek representing the provided day of week</returns>
-    internal static DayOfWeek ToDayOfWeek(this int value)
+    /// <param name="dayOfWeek">0-6 数字</param>
+    /// <returns><see cref="DayOfWeek"/> 数值</returns>
+    internal static DayOfWeek ToDayOfWeek(this int dayOfWeek)
     {
-        return Constants.CronDays.First(x => x.Value == value).Key;
+        return Constants.CronDays.First(x => x.Value == dayOfWeek).Key;
     }
 
     /// <summary>
-    /// Retrieves the last instance of the specified day of the month
+    /// 查找特定年月中最后一个星期几是哪一天
     /// </summary>
-    /// <param name="dayOfWeek">The day you want to find</param>
-    /// <param name="year">The year in which you want to find the day</param>
-    /// <param name="month">The month in which you want to find the day</param>
-    /// <returns>An integer representing the day that matches the criteria</returns>
+    /// <param name="dayOfWeek"><see cref="DayOfWeek"/> 枚举</param>
+    /// <param name="year">年</param>
+    /// <param name="month">月</param>
+    /// <returns><see cref="int"/> 返回月中对应的天数</returns>
     internal static int LastDayOfMonth(this DayOfWeek dayOfWeek, int year, int month)
     {
         var daysInMonth = DateTime.DaysInMonth(year, month);

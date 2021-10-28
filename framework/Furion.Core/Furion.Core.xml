@@ -1971,6 +1971,11 @@
             <param name="value">The value to check</param>
             <returns>True if the value matches the condition, False if it does not match.</returns>
         </member>
+        <member name="P:Furion.TimeCrontab.ICronFilter.Kind">
+            <summary>
+            Cron 表达式字段种类
+            </summary>
+        </member>
         <member name="M:Furion.TimeCrontab.ICronFilter.IsMatch(System.DateTime)">
             <summary>
             Checks if the value is accepted by the filter

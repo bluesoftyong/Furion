@@ -87,7 +87,7 @@ public class EventBusTest
             services.AddEventBus(builder =>
             {
                 builder.AddSubscriber<TestEventSubscriber>();
-                builder.AddSubscriber<Test2EventSubscriber>();
+                builder.AddSubscriber<TestOtherEventSubscriber>();
             });
 
             services.Count(s => s.ServiceType == typeof(IEventSubscriber) && s.Lifetime == ServiceLifetime.Singleton).Should().Be(2);

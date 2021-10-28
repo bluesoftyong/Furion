@@ -8,6 +8,9 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// Cron 字符串过滤器
+/// </summary>
 internal interface ICronFilter
 {
     /// <summary>
@@ -16,9 +19,9 @@ internal interface ICronFilter
     CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// 判断时间是否匹配当前过滤器
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
+    /// <param name="value">时间</param>
+    /// <returns><see cref="bool"/></returns>
     bool IsMatch(DateTime value);
 }

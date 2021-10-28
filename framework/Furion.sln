@@ -26,7 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.ConfigurationSamples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.EventBusSamples", "..\samples\Furion.EventBusSamples\Furion.EventBusSamples.csproj", "{3D9C1B80-2409-4834-BAEA-4AF144EC9BEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.Core", "Furion.Core\Furion.Core.csproj", "{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Furion.Core", "Furion.Core\Furion.Core.csproj", "{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furion.TimeCrontabSamples", "..\samples\Furion.TimeCrontabSamples\Furion.TimeCrontabSamples.csproj", "{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{99A92220-A9A9-410C-968C-D8340176A311} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
 		{3D9C1B80-2409-4834-BAEA-4AF144EC9BEC} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
 		{21FE1CDE-72D1-4ED1-9241-A1076EDBDFE2} = {D916793E-B733-4749-816E-53C9F0E2CEE5}
+		{09C76B7C-BEF6-4B01-B3B8-4ECFE059219D} = {A3A3DE95-3C43-4BB2-BB19-D2590791177B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E763CD91-CB16-429F-9BC5-04117852A67D}

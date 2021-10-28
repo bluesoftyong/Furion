@@ -44,8 +44,12 @@ internal static class DayOfWeekExtensions
     {
         var daysInMonth = DateTime.DaysInMonth(year, month);
         var date = new DateTime(year, month, daysInMonth);
+
+        // 从月底天数进行递归查找
         while (date.DayOfWeek != dayOfWeek)
+        {
             date = date.AddDays(-1);
+        }
 
         return date.Day;
     }

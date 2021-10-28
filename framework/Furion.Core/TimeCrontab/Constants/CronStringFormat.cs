@@ -9,7 +9,7 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 表达式格式化配置
+/// Cron 表达式格式化
 /// </summary>
 public enum CronStringFormat
 {

@@ -9,16 +9,20 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles the filter instance where the user specifies a * (for any value)
+/// 处理 Cron 字段 * 字符
 /// </summary>
+/// <remarks>表示任意时间点</remarks>
 internal sealed class AnyFilter : ICronFilter, ITimeFilter
 {
+    /// <summary>
+    /// Cron 表达式字段种类
+    /// </summary>
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// Constructs a new AnyFilter instance
+    /// 构造函数
     /// </summary>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="kind">Cron 表达式字段种类</param>
     public AnyFilter(CrontabFieldKind kind)
     {
         Kind = kind;
@@ -34,6 +38,12 @@ internal sealed class AnyFilter : ICronFilter, ITimeFilter
         return true;
     }
 
+    /// <summary>
+    /// 获取当前时间下一个值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public int? Next(int value)
     {
         var max = Constants.MaximumDateTimeValues[Kind];
@@ -48,6 +58,11 @@ internal sealed class AnyFilter : ICronFilter, ITimeFilter
         return newValue;
     }
 
+    /// <summary>
+    /// 获取时间起始值
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
         if (Kind == CrontabFieldKind.Day
@@ -58,6 +73,10 @@ internal sealed class AnyFilter : ICronFilter, ITimeFilter
         return 0;
     }
 
+    /// <summary>
+    /// 转换成 Cron 字符串
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return "*";

@@ -1692,7 +1692,7 @@
         </member>
         <member name="T:Furion.TimeCrontab.CronStringFormat">
             <summary>
-            Cron 表达式格式化配置
+            Cron 表达式格式化
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.Default">
@@ -1772,14 +1772,20 @@
         </member>
         <member name="T:Furion.TimeCrontab.AnyFilter">
             <summary>
-            Handles the filter instance where the user specifies a * (for any value)
+            处理 Cron 字段 * 字符
+            </summary>
+            <remarks>表示任意时间点</remarks>
+        </member>
+        <member name="P:Furion.TimeCrontab.AnyFilter.Kind">
+            <summary>
+            Cron 表达式字段种类
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            Constructs a new AnyFilter instance
+            构造函数
             </summary>
-            <param name="kind">The crontab field kind to associate with this filter</param>
+            <param name="kind">Cron 表达式字段种类</param>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.IsMatch(System.DateTime)">
             <summary>
@@ -1787,6 +1793,27 @@
             </summary>
             <param name="value">The value to check</param>
             <returns>True if the value matches the condition, False if it does not match.</returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.AnyFilter.Next(System.Int32)">
+            <summary>
+            获取当前时间下一个值
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="M:Furion.TimeCrontab.AnyFilter.First">
+            <summary>
+            获取时间起始值
+            </summary>
+            <returns></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="M:Furion.TimeCrontab.AnyFilter.ToString">
+            <summary>
+            转换成 Cron 字符串
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.BlankDayOfMonthOrWeekFilter">
             <summary>
@@ -1971,6 +1998,11 @@
             <param name="value">The value to check</param>
             <returns>True if the value matches the condition, False if it does not match.</returns>
         </member>
+        <member name="T:Furion.TimeCrontab.ICronFilter">
+            <summary>
+            Cron 字符串过滤器
+            </summary>
+        </member>
         <member name="P:Furion.TimeCrontab.ICronFilter.Kind">
             <summary>
             Cron 表达式字段种类
@@ -1978,10 +2010,10 @@
         </member>
         <member name="M:Furion.TimeCrontab.ICronFilter.IsMatch(System.DateTime)">
             <summary>
-            Checks if the value is accepted by the filter
+            判断时间是否匹配当前过滤器
             </summary>
-            <param name="value">The value to check</param>
-            <returns>True if the value matches the condition, False if it does not match.</returns>
+            <param name="value">时间</param>
+            <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="T:Microsoft.Extensions.Hosting.AppHostBuilderExtensions">
             <summary>

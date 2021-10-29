@@ -65,7 +65,7 @@ internal class SpecificFilter : ICronFilter, ITimeFilter
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类下一个符合值
+    /// 计算当前 Cron 字段种类（时间）下一个符合值
     /// </summary>
     /// <remarks>由于是具体值，所以总是返回该值</remarks>
     /// <param name="currentValue">当前值</param>
@@ -76,7 +76,7 @@ internal class SpecificFilter : ICronFilter, ITimeFilter
     }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类起始值
+    /// 获取当前 Cron 字段种类（时间）起始值
     /// </summary>
     /// <remarks>由于是具体值，所以总是返回该值</remarks>
     /// <returns><see cref="int"/></returns>

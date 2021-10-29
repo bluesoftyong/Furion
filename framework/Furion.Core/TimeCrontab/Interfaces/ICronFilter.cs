@@ -9,19 +9,19 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 字符串过滤器
+/// Cron 过滤器
 /// </summary>
 internal interface ICronFilter
 {
     /// <summary>
-    /// Cron 表达式字段种类
+    /// Cron 字段种类
     /// </summary>
     CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 判断时间是否匹配当前过滤器
+    /// 是否匹配指定时间
     /// </summary>
-    /// <param name="value">时间</param>
+    /// <param name="datetime">指定时间</param>
     /// <returns><see cref="bool"/></returns>
-    bool IsMatch(DateTime value);
+    bool IsMatch(DateTime datetime);
 }

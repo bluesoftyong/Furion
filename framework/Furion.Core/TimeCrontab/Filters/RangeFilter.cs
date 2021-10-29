@@ -113,7 +113,7 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类下一个符合值
+    /// 计算当前 Cron 字段种类（时间）下一个符合值
     /// </summary>
     /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
     /// <param name="currentValue">当前值</param>
@@ -147,7 +147,7 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
     private int? FirstCache { get; set; }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类起始值
+    /// 获取当前 Cron 字段种类（时间）起始值
     /// </summary>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>

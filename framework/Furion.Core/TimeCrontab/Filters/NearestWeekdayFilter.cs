@@ -9,78 +9,113 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles filtering for the nearest weekday to a specified day
+/// 处理 <see cref="CrontabFieldKind.Day"/> 字段 {0}W 字符
 /// </summary>
+/// <remarks>
+/// <para>离指定日期最近的工作日，即最后一个非周六周末的日期，如 5W，当前仅处理 <see cref="CrontabFieldKind.Day"/> 字段种类</para>
+/// </remarks>
 internal sealed class NearestWeekdayFilter : ICronFilter
 {
-    public CrontabFieldKind Kind { get; }
-
-    public int SpecificValue { get; }
-
     /// <summary>
-    /// Constructs a new RangeFilter instance
+    /// 构造函数
     /// </summary>
-    /// <param name="specificValue">The specific value you wish to match</param>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="specificValue">天（具体值）</param>
+    /// <param name="kind"></param>
+    /// <exception cref="TimeCrontabException">Cron 字段种类</exception>
     public NearestWeekdayFilter(int specificValue, CrontabFieldKind kind)
     {
-        if (specificValue <= 0 || specificValue > Constants.MaximumDateTimeValues[CrontabFieldKind.Day])
-            throw new TimeCrontabException(string.Format("<{0}W> is out of bounds for the Day field.", specificValue));
-
+        // 限制当前过滤器只能作用于 Cron 字段种类 Day 域
         if (kind != CrontabFieldKind.Day)
+        {
             throw new TimeCrontabException(string.Format("<{0}W> can only be used in the Day field.", specificValue));
+        }
+
+        // 验证具体值范围
+        var maximum = Constants.MaximumDateTimeValues[CrontabFieldKind.Day];
+        if (specificValue <= 0 || specificValue > maximum)
+        {
+            throw new TimeCrontabException(string.Format("<{0}W> is out of bounds for the Day field.", specificValue));
+        }
 
         SpecificValue = specificValue;
         Kind = kind;
     }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// Cron 字段种类
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
-    {
-        // If this month doesn't have enough days, skip it (i.e. February has no closest weekday to the 31st, since there is no February 31st.)
-        if (DateTime.DaysInMonth(value.Year, value.Month) < SpecificValue)
-            return false;
+    public CrontabFieldKind Kind { get; }
 
-        var specificDay = new DateTime(value.Year, value.Month, SpecificValue);
+    /// <summary>
+    /// 天（具体值）
+    /// </summary>
+    public int SpecificValue { get; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
+    {
+        /*
+         * W: 表示有效工作日(周一到周五),只能出现在 Day 域，系统将在离指定日期的最近的有效工作日触发事件。
+         * 例如：在 Day 使用 5W，如果 5 日是星期六，则将在最近的工作日：星期五，即 4 日触发。
+         * 如果 5 日是星期天，则在 6 日(周一)触发；如果5日在星期一到星期五中的一天，则就在 5 日触发。
+         * 另外一点，W 的最近寻找不会跨过月份
+         */
+
+        // 如果这个月没有足够的天数则跳过（例如，二月没有与31日最接近的工作日，因为没有二月31日。）
+        if (DateTime.DaysInMonth(datetime.Year, datetime.Month) < SpecificValue)
+        {
+            return false;
+        }
+
+        // 获取当前时间日期
+        var specificDay = new DateTime(datetime.Year, datetime.Month, SpecificValue);
 
         DateTime closestWeekday;
 
-        // ReSharper disable once SwitchStatementMissingSomeCases
+        // 处理当天的不同情况
         switch (specificDay.DayOfWeek)
         {
+            // 如果当天是周六，则退一天
             case DayOfWeek.Saturday:
-                // If the specified day is Saturday, back up to Friday
                 closestWeekday = specificDay.AddDays(-1);
 
-                // If Friday is in the previous month, then move forward to the following Monday
+                // 如果退一天不在本月，则转到下周一
                 if (closestWeekday.Month != specificDay.Month)
+                {
                     closestWeekday = specificDay.AddDays(2);
+                }
 
                 break;
 
+            // 如果当天是周天，则进一天
             case DayOfWeek.Sunday:
-                // If the specified day is Sunday, move forward to Monday
                 closestWeekday = specificDay.AddDays(1);
 
-                // If Monday is in the next month, then move backward to the previous Friday
+                // 如果进一天不在本月，则退到上周五
                 if (closestWeekday.Month != specificDay.Month)
+                {
                     closestWeekday = specificDay.AddDays(-2);
+                }
 
                 break;
 
+            // 处理恰好是工作日情况，直接使用
             default:
-                // The specified day happens to be a weekday, so use it
                 closestWeekday = specificDay;
                 break;
         }
 
-        return value.Day == closestWeekday.Day;
+        return datetime.Day == closestWeekday.Day;
     }
 
+    /// <summary>
+    /// 重写 <see cref="ToString"/>
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return string.Format("{0}W", SpecificValue);

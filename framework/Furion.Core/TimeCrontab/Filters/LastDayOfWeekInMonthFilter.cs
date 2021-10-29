@@ -9,25 +9,26 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles filtering for the last specified day of the week in the month
+/// 处理 <see cref="CrontabFieldKind.DayOfWeek"/> 字段 {0}L 字符
 /// </summary>
+/// <remarks>
+/// <para>月中最后一个星期几，如 5L，当前仅处理 <see cref="CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+/// </remarks>
 internal sealed class LastDayOfWeekInMonthFilter : ICronFilter
 {
-    public CrontabFieldKind Kind { get; }
-
-    public int DayOfWeek { get; }
-
-    private DayOfWeek DateTimeDayOfWeek { get; }
-
     /// <summary>
-    /// Constructs a new instance of LastDayOfWeekInMonthFilter
+    /// 构造函数
     /// </summary>
-    /// <param name="dayOfWeek">The cron day of the week (0 = Sunday...7 = Saturday)</param>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
+    /// <param name="kind">Cron 字段种类</param>
+    /// <exception cref="TimeCrontabException"></exception>
     public LastDayOfWeekInMonthFilter(int dayOfWeek, CrontabFieldKind kind)
     {
+        // 限制当前过滤器只能作用于 Cron 字段种类 DayOfWeek 域
         if (kind != CrontabFieldKind.DayOfWeek)
+        {
             throw new TimeCrontabException(string.Format("<{0}L> can only be used in the Day of Week field.", dayOfWeek));
+        }
 
         DayOfWeek = dayOfWeek;
         DateTimeDayOfWeek = dayOfWeek.ToDayOfWeek();
@@ -35,15 +36,34 @@ internal sealed class LastDayOfWeekInMonthFilter : ICronFilter
     }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// Cron 字段种类
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
+    public CrontabFieldKind Kind { get; }
+
+    /// <summary>
+    /// 星期几
+    /// </summary>
+    public int DayOfWeek { get; }
+
+    /// <summary>
+    /// <see cref="DayOfWeek"/> 类型星期几
+    /// </summary>
+    private DayOfWeek DateTimeDayOfWeek { get; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
     {
-        return value.Day == DateTimeDayOfWeek.LastDayOfMonth(value.Year, value.Month);
+        return datetime.Day == DateTimeDayOfWeek.LastDayOfMonth(datetime.Year, datetime.Month);
     }
 
+    /// <summary>
+    /// 重写 <see cref="ToString"/>
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return string.Format("{0}L", DayOfWeek);

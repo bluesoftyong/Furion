@@ -31,7 +31,7 @@ internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
             throw new TimeCrontabException(string.Format("Week number = {0} is out of bounds.", weekNumber));
         }
 
-        // # 符号只能出现在 DayOfWeek 星期域
+        // # 符号只能出现在 Cron 字段种类 DayOfWeek 域
         if (kind != CrontabFieldKind.DayOfWeek)
         {
             throw new TimeCrontabException(string.Format("<{0}#{1}> can only be used in the Day of Week field.", dayOfWeek, weekNumber));

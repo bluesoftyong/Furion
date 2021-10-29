@@ -9,7 +9,7 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 Cron 字段具体值
+/// 处理 <see cref="CrontabFieldKind.Year"/> 字段具体值
 /// </summary>
 /// <remarks>
 /// <para>表示具体值，如 1,2,3,4... 仅支持 <see cref="CrontabFieldKind.Year"/> 字段种类</para>

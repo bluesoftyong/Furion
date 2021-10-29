@@ -153,8 +153,13 @@ internal sealed class RangeFilter : ICronFilter, ITimeFilter
     /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
-        if (FirstCache.HasValue) return FirstCache.Value;
+        // 判断是否缓存过起始值，如果有，则跳过
+        if (FirstCache.HasValue)
+        {
+            return FirstCache.Value;
+        }
 
+        // 禁止当前 Cron 字段种类为日、月、周获取起始值
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)

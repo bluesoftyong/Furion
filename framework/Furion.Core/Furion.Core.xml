@@ -1636,17 +1636,17 @@
         </member>
         <member name="F:Furion.TimeCrontab.Constants.CronDays">
             <summary>
-            Cron 天字段支持数字列表
+            Cron 星期字段支持星期单词全拼列表
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.Days">
             <summary>
-            Cron 天字段支持单词列表
+            Cron 星期字段支持星期单词缩写列表
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.Months">
             <summary>
-            Cron 月字段支持单词/数字列表
+            Cron 月字段支持月份单词缩写列表
             </summary>
         </member>
         <member name="T:Furion.TimeCrontab.CrontabFieldKind">

@@ -53,7 +53,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 天字段支持数字列表
+    /// Cron 星期字段支持星期单词全拼列表
     /// </summary>
     internal static readonly Dictionary<DayOfWeek, int> CronDays = new()
     {
@@ -67,7 +67,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 天字段支持单词列表
+    /// Cron 星期字段支持星期单词缩写列表
     /// </summary>
     internal static readonly Dictionary<string, int> Days = new()
     {
@@ -81,7 +81,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 月字段支持单词/数字列表
+    /// Cron 月字段支持月份单词缩写列表
     /// </summary>
     internal static readonly Dictionary<string, int> Months = new()
     {

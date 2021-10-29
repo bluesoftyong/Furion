@@ -14,7 +14,7 @@ namespace Furion.TimeCrontab;
 internal static class Constants
 {
     /// <summary>
-    /// Cron 表达式每个字段最大值
+    /// Cron 每个字段最大值列表
     /// </summary>
     internal static readonly Dictionary<CrontabFieldKind, int> MaximumDateTimeValues = new()
     {
@@ -28,7 +28,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 表达式每个字段最小值
+    /// Cron 每个字段最小值列表
     /// </summary>
     internal static readonly Dictionary<CrontabFieldKind, int> MinimumDateTimeValues = new()
     {
@@ -42,7 +42,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 不同格式表达式字段数量
+    /// Cron 不同格式表达式字段数量列表
     /// </summary>
     internal static readonly Dictionary<CronStringFormat, int> ExpectedFieldCounts = new()
     {
@@ -53,7 +53,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 表达式 "天" 字段支持英文单词
+    /// Cron 天字段支持数字列表
     /// </summary>
     internal static readonly Dictionary<DayOfWeek, int> CronDays = new()
     {
@@ -67,7 +67,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 表达式 "天" 字段支持英文单词缩写
+    /// Cron 天字段支持单词列表
     /// </summary>
     internal static readonly Dictionary<string, int> Days = new()
     {
@@ -81,7 +81,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 表达式 "月" 字段支持英文单词缩写
+    /// Cron 月字段支持单词/数字列表
     /// </summary>
     internal static readonly Dictionary<string, int> Months = new()
     {

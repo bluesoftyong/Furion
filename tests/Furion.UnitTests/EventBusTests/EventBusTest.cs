@@ -11,7 +11,7 @@ namespace Furion.UnitTests;
 public class EventBusTest
 {
     protected readonly ITestOutputHelper Output;
-    public JainaUnitTest(ITestOutputHelper tempOutput)
+    public EventBusTest(ITestOutputHelper tempOutput)
     {
         Output = tempOutput;
     }

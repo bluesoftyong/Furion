@@ -1719,6 +1719,92 @@
             </summary>
             <remarks>秒 分 时 天 月 周 年</remarks>
         </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.ToString">
+            <summary>
+            转换 String 输出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.GetNextOccurrence(System.DateTime)">
+            <summary>
+            获取下一个执行时间，没有结束边界
+            </summary>
+            <param name="baseValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.GetNextOccurrence(System.DateTime,System.DateTime)">
+            <summary>
+            获取下一个执行时间，带结束边界
+            </summary>
+            <param name="baseValue"></param>
+            <param name="endValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.GetNextOccurrences(System.DateTime,System.DateTime)">
+            <summary>
+            获取后面所有执行时间，带结束边界
+            </summary>
+            <param name="baseTime"></param>
+            <param name="endTime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.Increment(System.Collections.Generic.IEnumerable{Furion.TimeCrontab.ITimeFilter},System.Int32,System.Int32,System.Boolean@)">
+            <summary>
+            获取下一个值
+            </summary>
+            <param name="filters"></param>
+            <param name="value"></param>
+            <param name="defaultValue"></param>
+            <param name="overflow"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.MinDate(System.DateTime,System.DateTime)">
+            <summary>
+            最小日期
+            </summary>
+            <param name="newValue"></param>
+            <param name="endValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.InternalGetNextOccurence(System.DateTime,System.DateTime)">
+            <summary>
+            内部计算
+            </summary>
+            <param name="baseValue"></param>
+            <param name="endValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.IsMatch(System.DateTime)">
+            <summary>
+            是否匹配
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.IsMatch(System.DateTime,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            是否匹配
+            </summary>
+            <param name="value"></param>
+            <param name="kind"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.Parse(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            转换
+            </summary>
+            <param name="expression"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.CrontabSchedule.TryParse(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            转换
+            </summary>
+            <param name="expression"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
         <member name="T:Furion.TimeCrontab.TimeCrontabException">
             <summary>
             TimeCrontab 模块异常类

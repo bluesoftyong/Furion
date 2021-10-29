@@ -21,6 +21,10 @@ public sealed class CrontabSchedule
 
     public CronStringFormat Format { get; set; }
 
+    /// <summary>
+    /// 转换 String 输出
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
         var paramList = new List<string>();
@@ -40,16 +44,33 @@ public sealed class CrontabSchedule
         return string.Join(" ", paramList.ToArray());
     }
 
+    /// <summary>
+    /// 获取下一个执行时间，没有结束边界
+    /// </summary>
+    /// <param name="baseValue"></param>
+    /// <returns></returns>
     public DateTime GetNextOccurrence(DateTime baseValue)
     {
         return GetNextOccurrence(baseValue, DateTime.MaxValue);
     }
 
+    /// <summary>
+    /// 获取下一个执行时间，带结束边界
+    /// </summary>
+    /// <param name="baseValue"></param>
+    /// <param name="endValue"></param>
+    /// <returns></returns>
     public DateTime GetNextOccurrence(DateTime baseValue, DateTime endValue)
     {
         return InternalGetNextOccurence(baseValue, endValue);
     }
 
+    /// <summary>
+    /// 获取后面所有执行时间，带结束边界
+    /// </summary>
+    /// <param name="baseTime"></param>
+    /// <param name="endTime"></param>
+    /// <returns></returns>
     public IEnumerable<DateTime> GetNextOccurrences(DateTime baseTime, DateTime endTime)
     {
         for (var occurrence = GetNextOccurrence(baseTime, endTime);
@@ -60,6 +81,14 @@ public sealed class CrontabSchedule
         }
     }
 
+    /// <summary>
+    /// 获取下一个值
+    /// </summary>
+    /// <param name="filters"></param>
+    /// <param name="value"></param>
+    /// <param name="defaultValue"></param>
+    /// <param name="overflow"></param>
+    /// <returns></returns>
     private static int Increment(IEnumerable<ITimeFilter> filters, int value, int defaultValue, out bool overflow)
     {
         var nextValue = filters.Select(x => x.Next(value)).Where(x => x > value).Min() ?? defaultValue;
@@ -67,11 +96,23 @@ public sealed class CrontabSchedule
         return nextValue;
     }
 
+    /// <summary>
+    /// 最小日期
+    /// </summary>
+    /// <param name="newValue"></param>
+    /// <param name="endValue"></param>
+    /// <returns></returns>
     private static DateTime MinDate(DateTime newValue, DateTime endValue)
     {
         return newValue >= endValue ? endValue : newValue;
     }
 
+    /// <summary>
+    /// 内部计算
+    /// </summary>
+    /// <param name="baseValue"></param>
+    /// <param name="endValue"></param>
+    /// <returns></returns>
     private DateTime InternalGetNextOccurence(DateTime baseValue, DateTime endValue)
     {
         var newValue = baseValue;
@@ -165,6 +206,11 @@ public sealed class CrontabSchedule
         return MinDate(newValue, endValue);
     }
 
+    /// <summary>
+    /// 是否匹配
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
     private bool IsMatch(DateTime value)
     {
         return Filters.All(fieldKind =>
@@ -172,6 +218,12 @@ public sealed class CrontabSchedule
         );
     }
 
+    /// <summary>
+    /// 是否匹配
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="kind"></param>
+    /// <returns></returns>
     private bool IsMatch(DateTime value, CrontabFieldKind kind)
     {
         return Filters.Where(x => x.Key == kind).SelectMany(x => x.Value).Any(filter => filter.IsMatch(value));
@@ -190,6 +242,12 @@ public sealed class CrontabSchedule
 
     #region Static Methods
 
+    /// <summary>
+    /// 转换
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="format"></param>
+    /// <returns></returns>
     public static CrontabSchedule Parse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         return new CrontabSchedule
@@ -199,6 +257,12 @@ public sealed class CrontabSchedule
         };
     }
 
+    /// <summary>
+    /// 转换
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="format"></param>
+    /// <returns></returns>
     public static CrontabSchedule? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         try

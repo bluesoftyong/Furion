@@ -51,23 +51,18 @@ internal sealed class AnyFilter : ICronFilter, ITimeFilter
     {
         // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
         if (Kind == CrontabFieldKind.Day
-         || Kind == CrontabFieldKind.Month
-         || Kind == CrontabFieldKind.DayOfWeek)
+            || Kind == CrontabFieldKind.Month
+            || Kind == CrontabFieldKind.DayOfWeek)
         {
             throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
         }
 
         // 步长为 1 自增
-        int? nextValue = currentValue + 1;
+        int? newValue = currentValue + 1;
 
         // 判断下一个值是否在最大值内
         var maximum = Constants.MaximumDateTimeValues[Kind];
-        if (nextValue > maximum)
-        {
-            nextValue = null;
-        }
-
-        return nextValue;
+        return newValue > maximum ? null : newValue;
     }
 
     /// <summary>
@@ -79,8 +74,8 @@ internal sealed class AnyFilter : ICronFilter, ITimeFilter
     {
         // 禁止当前 Cron 字段种类为日、月、周获取起始值
         if (Kind == CrontabFieldKind.Day
-         || Kind == CrontabFieldKind.Month
-         || Kind == CrontabFieldKind.DayOfWeek)
+            || Kind == CrontabFieldKind.Month
+            || Kind == CrontabFieldKind.DayOfWeek)
         {
             throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types.");
         }

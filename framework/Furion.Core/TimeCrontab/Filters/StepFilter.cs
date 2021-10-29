@@ -9,129 +9,187 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles step values (i.e. */5, 2/7)
-/// <remarks>
-/// For example, */5 in the minutes field indicates every 5 minutes
-/// </remarks>
+/// 处理 Cron 字段 / 字符
 /// </summary>
+/// <remarks>
+/// <para>表示每隔固定时间，如 5/20，支持所有 Cron 字段种类</para>
+/// </remarks>
 internal sealed class StepFilter : ICronFilter, ITimeFilter
 {
-    public CrontabFieldKind Kind { get; }
-
-    public int Start { get; }
-
-    public int Steps { get; }
-
-    private int? FirstCache { get; set; }
-
     /// <summary>
-    /// Returns a list of specific filters that represents this step filter
+    /// 构造函数
     /// </summary>
-    public IEnumerable<SpecificFilter> SpecificFilters { get; }
-
-    /// <summary>
-    /// Constructs a new RangeFilter instance
-    /// </summary>
-    /// <param name="start">The start of the range</param>
-    /// <param name="steps">The steps in the range</param>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="start">起始值</param>
+    /// <param name="steps">步长</param>
+    /// <param name="kind">Cron 字段种类</param>
+    /// <exception cref="TimeCrontabException"></exception>
     public StepFilter(int start, int steps, CrontabFieldKind kind)
     {
-        var minValue = Constants.MinimumDateTimeValues[kind];
-        var maxValue = Constants.MaximumDateTimeValues[kind];
-
-        if (steps <= 0 || steps > maxValue)
+        // 验证步长，不能小于或等于0，也不能大于 Cron 字段种类最大值
+        var minimum = Constants.MinimumDateTimeValues[kind];
+        var maximum = Constants.MaximumDateTimeValues[kind];
+        if (steps <= 0 || steps > maximum)
+        {
             throw new TimeCrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
+        }
 
         Start = start;
         Steps = steps;
         Kind = kind;
 
-        // We don't want our loop to necessarily start at the start point,
-        // since values like 0/3 are valid for the StepFilter, but a start of
-        // 0 may not be valid for the SpecificFilter instances
-        var loopStart = Math.Max(start, minValue);
+        // 控制循环起始值，并不一定从 Start 开始
+        var loopStart = Math.Max(start, minimum);
 
+        // 循环计算当前 Cron 字段种类符合取值范围的所有值并存入 SpecificFilters 中
         var filters = new List<SpecificFilter>();
-        for (var evalValue = loopStart; evalValue <= maxValue; evalValue++)
+        for (var evalValue = loopStart; evalValue <= maximum; evalValue++)
+        {
             if (IsMatch(evalValue))
+            {
                 filters.Add(new SpecificFilter(evalValue, Kind));
+            }
+        }
 
         SpecificFilters = filters;
     }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// Cron 字段种类
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
+    public CrontabFieldKind Kind { get; }
+
+    /// <summary>
+    /// 起始值
+    /// </summary>
+    public int Start { get; }
+
+    /// <summary>
+    /// 步长
+    /// </summary>
+    public int Steps { get; }
+
+    /// <summary>
+    /// 所有符合步长算法的具体值过滤器
+    /// </summary>
+    public IEnumerable<SpecificFilter> SpecificFilters { get; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
     {
+        // 获取不同 Cron 字段种类对应时间值
         var evalValue = Kind switch
         {
-            CrontabFieldKind.Second => value.Second,
-            CrontabFieldKind.Minute => value.Minute,
-            CrontabFieldKind.Hour => value.Hour,
-            CrontabFieldKind.Day => value.Day,
-            CrontabFieldKind.Month => value.Month,
-            CrontabFieldKind.DayOfWeek => value.DayOfWeek.ToCronDayOfWeek(),
-            CrontabFieldKind.Year => value.Year,
-            _ => throw new ArgumentOutOfRangeException(nameof(value), Kind, null),
+            CrontabFieldKind.Second => datetime.Second,
+            CrontabFieldKind.Minute => datetime.Minute,
+            CrontabFieldKind.Hour => datetime.Hour,
+            CrontabFieldKind.Day => datetime.Day,
+            CrontabFieldKind.Month => datetime.Month,
+            CrontabFieldKind.DayOfWeek => datetime.DayOfWeek.ToCronDayOfWeek(),
+            CrontabFieldKind.Year => datetime.Year,
+            _ => throw new ArgumentOutOfRangeException(nameof(datetime), Kind, null),
         };
 
         return IsMatch(evalValue);
     }
 
-    private bool IsMatch(int evalValue)
+    /// <summary>
+    /// 计算当前 Cron 字段种类下一个符合值
+    /// </summary>
+    /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
+    /// <param name="currentValue">当前值</param>
+    /// <returns><see cref="int"/></returns>
+    public int? Next(int currentValue)
     {
-        return (evalValue - Start) % Steps == 0;
-    }
-
-    public int? Next(int value)
-    {
+        // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
         if (Kind == CrontabFieldKind.Day
-         || Kind == CrontabFieldKind.Month
-         || Kind == CrontabFieldKind.DayOfWeek)
-            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types");
+            || Kind == CrontabFieldKind.Month
+            || Kind == CrontabFieldKind.DayOfWeek)
+        {
+            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
+        }
 
-        var max = Constants.MaximumDateTimeValues[Kind];
+        var maximum = Constants.MaximumDateTimeValues[Kind];
+        int? newValue = currentValue + 1;
 
-        var newValue = (int?)value + 1;
-        while (newValue < max && !IsMatch(newValue.Value))
+        // 获取下一个符合的值，值必须小于最大值且符合步长算法
+        while (newValue < maximum && !IsMatch(newValue.Value))
+        {
             newValue++;
+        }
 
-        if (newValue > max) newValue = null;
-
-        return newValue;
+        return newValue > maximum ? null : newValue;
     }
 
+    /// <summary>
+    /// 避免重复计算进而起始值
+    /// </summary>
+    private int? FirstCache { get; set; }
+
+    /// <summary>
+    /// 获取当前 Cron 字段种类起始值
+    /// </summary>
+    /// <returns><see cref="int"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
-        if (FirstCache.HasValue) return FirstCache.Value;
+        // 判断是否缓存过起始值，如果有，则跳过
+        if (FirstCache.HasValue)
+        {
+            return FirstCache.Value;
+        }
 
+        // 禁止当前 Cron 字段种类为日、月、周获取起始值
         if (Kind == CrontabFieldKind.Day
-         || Kind == CrontabFieldKind.Month
-         || Kind == CrontabFieldKind.DayOfWeek)
-            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types");
+            || Kind == CrontabFieldKind.Month
+            || Kind == CrontabFieldKind.DayOfWeek)
+        {
+            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types.");
+        }
 
-        var max = Constants.MaximumDateTimeValues[Kind];
-
+        var maximum = Constants.MaximumDateTimeValues[Kind];
         var newValue = 0;
-        while (newValue < max && !IsMatch(newValue))
-            newValue++;
 
-        if (newValue > max)
-            throw new TimeCrontabException(string.Format("Next value for {0} on field {1} could not be found!",
-                this.ToString(),
+        // 获取首个符合的值，值必须小于最大值且符合步长算法
+        while (newValue < maximum && !IsMatch(newValue))
+        {
+            newValue++;
+        }
+
+        // 验证起始值边界
+        if (newValue > maximum)
+        {
+            throw new TimeCrontabException(
+                string.Format("Next value for {0} on field {1} could not be found!",
+                ToString(),
                 Enum.GetName(typeof(CrontabFieldKind), Kind))
             );
+        }
 
+        // 缓存起始值
         FirstCache = newValue;
         return newValue;
     }
 
+    /// <summary>
+    /// 重写 <see cref="ToString"/>
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return string.Format("{0}/{1}", Start == 0 ? "*" : Start.ToString(), Steps);
+    }
+
+    /// <summary>
+    /// 判断单个值是否符合步长算法
+    /// </summary>
+    /// <param name="evalValue">值</param>
+    /// <returns><see cref="bool"/></returns>
+    private bool IsMatch(int evalValue)
+    {
+        return (evalValue - Start) % Steps == 0;
     }
 }

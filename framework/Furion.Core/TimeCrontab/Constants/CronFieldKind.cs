@@ -9,7 +9,7 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 表达式字段种类
+/// Cron 字段种类
 /// </summary>
 /// <remarks>使用时保持以下顺序编写</remarks>
 internal enum CrontabFieldKind
@@ -40,7 +40,7 @@ internal enum CrontabFieldKind
     Month = 4,
 
     /// <summary>
-    /// 周
+    /// 星期
     /// </summary>
     DayOfWeek = 5,
 

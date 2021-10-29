@@ -11,70 +11,85 @@ namespace Furion.TimeCrontab;
 /// <summary>
 /// 处理 Cron 字段 * 字符
 /// </summary>
-/// <remarks>表示任意时间点</remarks>
+/// <remarks>
+/// <para>表示任意值，支持所有 Cron 字段种类</para>
+/// </remarks>
 internal sealed class AnyFilter : ICronFilter, ITimeFilter
 {
     /// <summary>
-    /// Cron 表达式字段种类
-    /// </summary>
-    public CrontabFieldKind Kind { get; }
-
-    /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="kind">Cron 表达式字段种类</param>
+    /// <param name="kind">Cron 字段种类</param>
     public AnyFilter(CrontabFieldKind kind)
     {
         Kind = kind;
     }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// Cron 字段种类
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
+    public CrontabFieldKind Kind { get; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
     {
         return true;
     }
 
     /// <summary>
-    /// 获取当前时间下一个值
+    /// 计算当前 Cron 字段种类下一个符合值
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
+    /// <param name="currentValue">当前值</param>
+    /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
-    public int? Next(int value)
+    public int? Next(int currentValue)
     {
-        var max = Constants.MaximumDateTimeValues[Kind];
+        // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types");
+        {
+            throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
+        }
 
-        var newValue = (int?)value + 1;
-        if (newValue > max) newValue = null;
+        // 步长为 1 自增
+        int? nextValue = currentValue + 1;
 
-        return newValue;
+        // 判断下一个值是否在最大值内
+        var maximum = Constants.MaximumDateTimeValues[Kind];
+        if (nextValue > maximum)
+        {
+            nextValue = null;
+        }
+
+        return nextValue;
     }
 
     /// <summary>
-    /// 获取时间起始值
+    /// 获取当前 Cron 字段种类起始值
     /// </summary>
-    /// <returns></returns>
+    /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
+        // 禁止当前 Cron 字段种类为日、月、周获取起始值
         if (Kind == CrontabFieldKind.Day
          || Kind == CrontabFieldKind.Month
          || Kind == CrontabFieldKind.DayOfWeek)
-            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types");
+        {
+            throw new TimeCrontabException("Cannot call First for Day, Month or DayOfWeek types.");
+        }
 
         return 0;
     }
 
     /// <summary>
-    /// 转换成 Cron 字符串
+    /// 重写 <see cref="ToString"/>
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

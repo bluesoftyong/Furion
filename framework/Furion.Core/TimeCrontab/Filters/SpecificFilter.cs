@@ -9,75 +9,112 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles filtering for a specific value
+/// 处理 Cron 字段具体值
 /// </summary>
+/// <remarks>
+/// <para>表示具体值，如 1,2,3,4... 支持所有 Cron 字段种类</para>
+/// </remarks>
 internal class SpecificFilter : ICronFilter, ITimeFilter
 {
-    public CrontabFieldKind Kind { get; }
-
-    public int SpecificValue { get; private set; }
-
     /// <summary>
-    /// Constructs a new RangeFilter instance
+    /// 构造函数
     /// </summary>
-    /// <param name="specificValue">The specific value you wish to match</param>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="specificValue">具体值</param>
+    /// <param name="kind">Cron 字段种类</param>
     public SpecificFilter(int specificValue, CrontabFieldKind kind)
     {
         SpecificValue = specificValue;
         Kind = kind;
 
+        // 验证值是否有效
         ValidateBounds(specificValue);
     }
 
-    private void ValidateBounds(int specificValue)
-    {
-        var minimum = Constants.MinimumDateTimeValues[Kind];
-        var maximum = Constants.MaximumDateTimeValues[Kind];
-
-        if (specificValue < minimum || specificValue > maximum)
-            throw new ArgumentOutOfRangeException(nameof(specificValue), $"{nameof(specificValue)} should be between {minimum} and {maximum} (was {SpecificValue})");
-
-        if (Kind == CrontabFieldKind.DayOfWeek)
-        {
-            // This allows Sunday to be represented by both 0 and 7
-            SpecificValue %= 7;
-        }
-    }
+    /// <summary>
+    /// Cron 字段种类
+    /// </summary>
+    public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// 具体值
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
+    public int SpecificValue { get; private set; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
     {
+        // 获取不同 Cron 字段种类对应时间值
         var evalValue = Kind switch
         {
-            CrontabFieldKind.Second => value.Second,
-            CrontabFieldKind.Minute => value.Minute,
-            CrontabFieldKind.Hour => value.Hour,
-            CrontabFieldKind.Day => value.Day,
-            CrontabFieldKind.Month => value.Month,
-            CrontabFieldKind.DayOfWeek => value.DayOfWeek.ToCronDayOfWeek(),
-            CrontabFieldKind.Year => value.Year,
-            _ => throw new ArgumentOutOfRangeException(nameof(value), Kind, null),
+            CrontabFieldKind.Second => datetime.Second,
+            CrontabFieldKind.Minute => datetime.Minute,
+            CrontabFieldKind.Hour => datetime.Hour,
+            CrontabFieldKind.Day => datetime.Day,
+            CrontabFieldKind.Month => datetime.Month,
+            CrontabFieldKind.DayOfWeek => datetime.DayOfWeek.ToCronDayOfWeek(),
+            CrontabFieldKind.Year => datetime.Year,
+            _ => throw new ArgumentOutOfRangeException(nameof(datetime), Kind, null),
         };
+
+        // 判断是否等于具体值
         return evalValue == SpecificValue;
     }
 
-    public virtual int? Next(int value)
+    /// <summary>
+    /// 计算当前 Cron 字段种类下一个符合值
+    /// </summary>
+    /// <remarks>由于是具体值，所以总是返回该值</remarks>
+    /// <param name="currentValue">当前值</param>
+    /// <returns><see cref="int"/></returns>
+    public virtual int? Next(int currentValue)
     {
         return SpecificValue;
     }
 
+    /// <summary>
+    /// 获取当前 Cron 字段种类起始值
+    /// </summary>
+    /// <remarks>由于是具体值，所以总是返回该值</remarks>
+    /// <returns><see cref="int"/></returns>
     public int First()
     {
         return SpecificValue;
     }
 
+    /// <summary>
+    /// 重写 <see cref="ToString"/>
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return SpecificValue.ToString();
+    }
+
+    /// <summary>
+    /// 验证具体值在当前 Cron 字段种类取值范围内是否有效
+    /// </summary>
+    /// <param name="value">具体值</param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void ValidateBounds(int value)
+    {
+        // 获取最小值和最大值
+        var minimum = Constants.MinimumDateTimeValues[Kind];
+        var maximum = Constants.MaximumDateTimeValues[Kind];
+
+        // 验证
+        if (value < minimum || value > maximum)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value), $"{nameof(value)} should be between {minimum} and {maximum} (was {SpecificValue}).");
+        }
+
+        // 支持星期日可以同时用 0 或 7 表示
+        if (Kind == CrontabFieldKind.DayOfWeek)
+        {
+            SpecificValue %= 7;
+        }
     }
 }

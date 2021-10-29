@@ -9,31 +9,33 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Handles filtering for a specific day of the week in the month (i.e. 3rd Tuesday of the month)
+/// 处理 Cron 字段 # 字符
 /// </summary>
+/// <remarks>
+/// <para>表示每个域第几个星期几，如 4#2，仅支持 <see cref="CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+/// </remarks>
 internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
 {
-    public CrontabFieldKind Kind { get; }
-
-    public int DayOfWeek { get; }
-
-    public int WeekNumber { get; }
-
-    private DayOfWeek DateTimeDayOfWeek { get; }
-
     /// <summary>
-    /// Constructs a new instance of LastDayOfWeekInMonthFilter
+    /// 构造函数
     /// </summary>
-    /// <param name="dayOfWeek">The cron day of the week (0 = Sunday...7 = Saturday)</param>
-    /// <param name="weekNumber">Indicates which occurence of the day to filter against</param>
-    /// <param name="kind">The crontab field kind to associate with this filter</param>
+    /// <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
+    /// <param name="weekNumber">每个月中第几个星期，一个月最多不会超过四个星期</param>
+    /// <param name="kind">Cron 字段种类</param>
+    /// <exception cref="TimeCrontabException"></exception>
     public SpecificDayOfWeekInMonthFilter(int dayOfWeek, int weekNumber, CrontabFieldKind kind)
     {
+        // 验证星期数有效值
         if (weekNumber <= 0 || weekNumber > 5)
+        {
             throw new TimeCrontabException(string.Format("Week number = {0} is out of bounds.", weekNumber));
+        }
 
+        // # 符号只能出现在 DayOfWeek 星期域
         if (kind != CrontabFieldKind.DayOfWeek)
+        {
             throw new TimeCrontabException(string.Format("<{0}#{1}> can only be used in the Day of Week field.", dayOfWeek, weekNumber));
+        }
 
         DayOfWeek = dayOfWeek;
         DateTimeDayOfWeek = dayOfWeek.ToDayOfWeek();
@@ -42,33 +44,74 @@ internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
     }
 
     /// <summary>
-    /// Checks if the value is accepted by the filter
+    /// Cron 字段种类
     /// </summary>
-    /// <param name="value">The value to check</param>
-    /// <returns>True if the value matches the condition, False if it does not match.</returns>
-    public bool IsMatch(DateTime value)
+    public CrontabFieldKind Kind { get; }
+
+    /// <summary>
+    /// 星期几
+    /// </summary>
+    public int DayOfWeek { get; }
+
+    /// <summary>
+    /// 第几个周
+    /// </summary>
+    public int WeekNumber { get; }
+
+    /// <summary>
+    /// <see cref="DayOfWeek"/> 类型星期几
+    /// </summary>
+    private DayOfWeek DateTimeDayOfWeek { get; }
+
+    /// <summary>
+    /// 是否匹配指定时间
+    /// </summary>
+    /// <param name="datetime">指定时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool IsMatch(DateTime datetime)
     {
+        // 记录循环中当前日期，默认从 1 号开始
+        var currentDay = new DateTime(datetime.Year, datetime.Month, 1);
+
         var weekCount = 0;
-        var currentDay = new DateTime(value.Year, value.Month, 1);
-        while (currentDay.Month == value.Month)
+
+        // 限制当前循环仅在本月
+        while (currentDay.Month == datetime.Month)
         {
+            // 首先确认星期是否相等，如果相等
             if (currentDay.DayOfWeek == DateTimeDayOfWeek)
             {
                 weekCount++;
-                if (weekCount == WeekNumber) break;
+
+                // 判断周在月中第几个是否相等，如果相等，退出循环
+                if (weekCount == WeekNumber)
+                {
+                    break;
+                }
+
+                // 否则当前时间加 7天，继续循环
                 currentDay = currentDay.AddDays(7);
             }
+            // 如果星期不相等，则追加 1 天继续判断
             else
             {
                 currentDay = currentDay.AddDays(1);
             }
         }
 
-        if (currentDay.Month != value.Month) return false;
+        // 处理跨月份的星期边界值
+        if (currentDay.Month != datetime.Month)
+        {
+            return false;
+        }
 
-        return value.Day == currentDay.Day;
+        return datetime.Day == currentDay.Day;
     }
 
+    /// <summary>
+    /// 重写 <see cref="ToString"/>
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return string.Format("{0}#{1}", DayOfWeek, WeekNumber);

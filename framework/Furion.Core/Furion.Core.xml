@@ -1860,44 +1860,47 @@
             <summary>
             处理 Cron 字段 * 字符
             </summary>
-            <remarks>表示任意时间点</remarks>
-        </member>
-        <member name="P:Furion.TimeCrontab.AnyFilter.Kind">
-            <summary>
-            Cron 表达式字段种类
-            </summary>
+            <remarks>
+            <para>表示任意值，支持所有 Cron 字段种类</para>
+            </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
             构造函数
             </summary>
-            <param name="kind">Cron 表达式字段种类</param>
+            <param name="kind">Cron 字段种类</param>
+        </member>
+        <member name="P:Furion.TimeCrontab.AnyFilter.Kind">
+            <summary>
+            Cron 字段种类
+            </summary>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.IsMatch(System.DateTime)">
             <summary>
-            Checks if the value is accepted by the filter
+            是否匹配指定时间
             </summary>
-            <param name="value">The value to check</param>
-            <returns>True if the value matches the condition, False if it does not match.</returns>
+            <param name="datetime">指定时间</param>
+            <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.Next(System.Int32)">
             <summary>
-            获取当前时间下一个值
+            计算当前 Cron 字段种类下一个符合值
             </summary>
-            <param name="value"></param>
-            <returns></returns>
+            <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
+            <param name="currentValue">当前值</param>
+            <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.First">
             <summary>
-            获取时间起始值
+            获取当前 Cron 字段种类起始值
             </summary>
-            <returns></returns>
+            <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.AnyFilter.ToString">
             <summary>
-            转换成 Cron 字符串
+            重写 <see cref="M:Furion.TimeCrontab.AnyFilter.ToString"/>
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
@@ -2007,54 +2010,135 @@
         </member>
         <member name="T:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter">
             <summary>
-            Handles filtering for a specific day of the week in the month (i.e. 3rd Tuesday of the month)
+            处理 Cron 字段 # 字符
             </summary>
+            <remarks>
+            <para>表示每个域第几个星期几，如 4#2，仅支持 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+            </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.#ctor(System.Int32,System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            Constructs a new instance of LastDayOfWeekInMonthFilter
+            构造函数
             </summary>
-            <param name="dayOfWeek">The cron day of the week (0 = Sunday...7 = Saturday)</param>
-            <param name="weekNumber">Indicates which occurence of the day to filter against</param>
-            <param name="kind">The crontab field kind to associate with this filter</param>
+            <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
+            <param name="weekNumber">每个月中第几个星期，一个月最多不会超过四个星期</param>
+            <param name="kind">Cron 字段种类</param>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.Kind">
+            <summary>
+            Cron 字段种类
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.DayOfWeek">
+            <summary>
+            星期几
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.WeekNumber">
+            <summary>
+            第几个周
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.DateTimeDayOfWeek">
+            <summary>
+            <see cref="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.DayOfWeek"/> 类型星期几
+            </summary>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.IsMatch(System.DateTime)">
             <summary>
-            Checks if the value is accepted by the filter
+            是否匹配指定时间
             </summary>
-            <param name="value">The value to check</param>
-            <returns>True if the value matches the condition, False if it does not match.</returns>
+            <param name="datetime">指定时间</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.ToString">
+            <summary>
+            重写 <see cref="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthFilter.ToString"/>
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.SpecificFilter">
             <summary>
-            Handles filtering for a specific value
+            处理 Cron 字段具体值
             </summary>
+            <remarks>
+            <para>表示具体值，如 1,2,3,4... 支持所有 Cron 字段种类</para>
+            </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            Constructs a new RangeFilter instance
+            构造函数
             </summary>
-            <param name="specificValue">The specific value you wish to match</param>
-            <param name="kind">The crontab field kind to associate with this filter</param>
+            <param name="specificValue">具体值</param>
+            <param name="kind">Cron 字段种类</param>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificFilter.Kind">
+            <summary>
+            Cron 字段种类
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificFilter.SpecificValue">
+            <summary>
+            具体值
+            </summary>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificFilter.IsMatch(System.DateTime)">
             <summary>
-            Checks if the value is accepted by the filter
+            是否匹配指定时间
             </summary>
-            <param name="value">The value to check</param>
-            <returns>True if the value matches the condition, False if it does not match.</returns>
+            <param name="datetime">指定时间</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.Next(System.Int32)">
+            <summary>
+            计算当前 Cron 字段种类下一个符合值
+            </summary>
+            <remarks>由于是具体值，所以总是返回该值</remarks>
+            <param name="currentValue">当前值</param>
+            <returns><see cref="T:System.Int32"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.First">
+            <summary>
+            获取当前 Cron 字段种类起始值
+            </summary>
+            <remarks>由于是具体值，所以总是返回该值</remarks>
+            <returns><see cref="T:System.Int32"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.ToString">
+            <summary>
+            重写 <see cref="M:Furion.TimeCrontab.SpecificFilter.ToString"/>
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificFilter.ValidateBounds(System.Int32)">
+            <summary>
+            验证具体值在当前 Cron 字段种类取值范围内是否有效
+            </summary>
+            <param name="value">具体值</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
         </member>
         <member name="T:Furion.TimeCrontab.SpecificYearFilter">
             <summary>
-            Handles filtering for a specific value
+            处理 Cron 字段具体值
             </summary>
+            <remarks>
+            <para>表示具体值，如 1,2,3,4... 仅支持 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Year"/> 字段种类</para>
+            </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificYearFilter.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            Constructs a new RangeFilter instance
+            构造函数
             </summary>
-            <param name="specificValue">The specific value you wish to match</param>
-            <param name="kind">The crontab field kind to associate with this filter</param>
+            <param name="specificValue">具体值</param>
+            <param name="kind">Cron 字段种类</param>
+        </member>
+        <member name="M:Furion.TimeCrontab.SpecificYearFilter.Next(System.Int32)">
+            <summary>
+            计算当前 Cron 字段种类下一个符合值
+            </summary>
+            <param name="currentValue">当前值</param>
+            <returns><see cref="T:System.Int32"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.StepFilter">
             <summary>

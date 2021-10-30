@@ -1719,10 +1719,20 @@
             </summary>
             <remarks>秒 分 时 天 月 周 年</remarks>
         </member>
-        <member name="M:Furion.TimeCrontab.Crontab.ToString">
+        <member name="M:Furion.TimeCrontab.Crontab.Parse(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>
-            转换 String 输出
+            转换
             </summary>
+            <param name="expression"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.TryParse(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            转换
+            </summary>
+            <param name="expression"></param>
+            <param name="format"></param>
             <returns></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.GetNextOccurrence(System.DateTime)">
@@ -1748,6 +1758,20 @@
             <param name="endTime"></param>
             <returns></returns>
         </member>
+        <member name="M:Furion.TimeCrontab.Crontab.ToString">
+            <summary>
+            转换 String 输出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.InternalGetNextOccurence(System.DateTime,System.DateTime)">
+            <summary>
+            内部计算
+            </summary>
+            <param name="baseValue"></param>
+            <param name="endValue"></param>
+            <returns></returns>
+        </member>
         <member name="M:Furion.TimeCrontab.Crontab.Increment(System.Collections.Generic.IEnumerable{Furion.TimeCrontab.ITimeParser},System.Int32,System.Int32,System.Boolean@)">
             <summary>
             获取下一个值
@@ -1766,14 +1790,6 @@
             <param name="endValue"></param>
             <returns></returns>
         </member>
-        <member name="M:Furion.TimeCrontab.Crontab.InternalGetNextOccurence(System.DateTime,System.DateTime)">
-            <summary>
-            内部计算
-            </summary>
-            <param name="baseValue"></param>
-            <param name="endValue"></param>
-            <returns></returns>
-        </member>
         <member name="M:Furion.TimeCrontab.Crontab.IsMatch(System.DateTime)">
             <summary>
             是否匹配
@@ -1787,22 +1803,6 @@
             </summary>
             <param name="value"></param>
             <param name="kind"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Furion.TimeCrontab.Crontab.Parse(System.String,Furion.TimeCrontab.CronStringFormat)">
-            <summary>
-            转换
-            </summary>
-            <param name="expression"></param>
-            <param name="format"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Furion.TimeCrontab.Crontab.TryParse(System.String,Furion.TimeCrontab.CronStringFormat)">
-            <summary>
-            转换
-            </summary>
-            <param name="expression"></param>
-            <param name="format"></param>
             <returns></returns>
         </member>
         <member name="T:Furion.TimeCrontab.TimeCrontabException">

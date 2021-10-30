@@ -18,7 +18,7 @@ internal sealed class CrontabSchedulerTaskWrapper : SchedulerTaskWrapper
     /// <summary>
     /// Cron 表达式
     /// </summary>
-    internal CrontabSchedule? Schedule { get; set; }
+    internal Crontab? Schedule { get; set; }
 
     /// <summary>
     /// 设置最近运行时间和下一次运行时间增量

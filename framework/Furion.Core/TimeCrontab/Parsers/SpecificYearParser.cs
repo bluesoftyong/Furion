@@ -9,19 +9,19 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 <see cref="CrontabFieldKind.Year"/> 字段具体值
+/// Cron 数字 字符解析器
 /// </summary>
 /// <remarks>
 /// <para>表示具体值，如 1,2,3,4... 仅支持 <see cref="CrontabFieldKind.Year"/> 字段种类</para>
 /// </remarks>
-internal sealed class SpecificYearFilter : SpecificFilter
+internal sealed class SpecificYearParser : SpecificParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="specificValue">具体值</param>
     /// <param name="kind">Cron 字段种类</param>
-    public SpecificYearFilter(int specificValue, CrontabFieldKind kind)
+    public SpecificYearParser(int specificValue, CrontabFieldKind kind)
         : base(specificValue, kind)
     {
     }

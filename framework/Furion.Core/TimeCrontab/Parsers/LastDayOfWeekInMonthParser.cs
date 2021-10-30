@@ -9,26 +9,29 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 <see cref="CrontabFieldKind.Day"/> 字段 L 字符
+/// Cron {0}L 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>月中最后一天，如 L，当前仅处理 <see cref="CrontabFieldKind.Day"/> 字段种类</para>
+/// <para>月中最后一个星期几，如 5L，当前仅处理 <see cref="CrontabFieldKind.DayOfWeek"/> 字段种类</para>
 /// </remarks>
-internal sealed class LastDayOfMonthFilter : ICronFilter
+internal sealed class LastDayOfWeekInMonthParser : ICronParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
+    /// <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
     /// <param name="kind">Cron 字段种类</param>
     /// <exception cref="TimeCrontabException"></exception>
-    public LastDayOfMonthFilter(CrontabFieldKind kind)
+    public LastDayOfWeekInMonthParser(int dayOfWeek, CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 Day 域
-        if (kind != CrontabFieldKind.Day)
+        // 限制当前过滤器只能作用于 Cron 字段种类 DayOfWeek 域
+        if (kind != CrontabFieldKind.DayOfWeek)
         {
-            throw new TimeCrontabException("The <L> filter can only be used with the Day field.");
+            throw new TimeCrontabException(string.Format("<{0}L> can only be used in the Day of Week field.", dayOfWeek));
         }
 
+        DayOfWeek = dayOfWeek;
+        DateTimeDayOfWeek = dayOfWeek.ToDayOfWeek();
         Kind = kind;
     }
 
@@ -38,13 +41,23 @@ internal sealed class LastDayOfMonthFilter : ICronFilter
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
+    /// 星期几
+    /// </summary>
+    public int DayOfWeek { get; }
+
+    /// <summary>
+    /// <see cref="DayOfWeek"/> 类型星期几
+    /// </summary>
+    private DayOfWeek DateTimeDayOfWeek { get; }
+
+    /// <summary>
     /// 是否匹配指定时间
     /// </summary>
     /// <param name="datetime">指定时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
-        return DateTime.DaysInMonth(datetime.Year, datetime.Month) == datetime.Day;
+        return datetime.Day == DateTimeDayOfWeek.LastDayOfMonth(datetime.Year, datetime.Month);
     }
 
     /// <summary>
@@ -53,6 +66,6 @@ internal sealed class LastDayOfMonthFilter : ICronFilter
     /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
-        return "L";
+        return string.Format("{0}L", DayOfWeek);
     }
 }

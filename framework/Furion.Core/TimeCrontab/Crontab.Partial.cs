@@ -8,7 +8,7 @@
 
 namespace Furion.TimeCrontab;
 
-public partial class CrontabSchedule
+public partial class Crontab
 {
     /// <summary>
     /// 转换
@@ -16,12 +16,12 @@ public partial class CrontabSchedule
     /// <param name="expression"></param>
     /// <param name="format"></param>
     /// <returns></returns>
-    public static CrontabSchedule Parse(string expression, CronStringFormat format = CronStringFormat.Default)
+    public static Crontab Parse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
-        return new CrontabSchedule
+        return new Crontab
         {
             Format = format,
-            Filters = ParseToDictionary(expression, format)
+            Parsers = ParseToDictionary(expression, format)
         };
     }
 
@@ -31,7 +31,7 @@ public partial class CrontabSchedule
     /// <param name="expression"></param>
     /// <param name="format"></param>
     /// <returns></returns>
-    public static CrontabSchedule? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
+    public static Crontab? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         try
         {
@@ -43,10 +43,10 @@ public partial class CrontabSchedule
         }
     }
 
-    private static void CheckForIllegalFilters(Dictionary<CrontabFieldKind, List<ICronFilter>> filters)
+    private static void CheckForIllegalParsers(Dictionary<CrontabFieldKind, List<ICronParser>> parsers)
     {
-        var monthSingle = GetSpecificFilters(filters, CrontabFieldKind.Month);
-        var daySingle = GetSpecificFilters(filters, CrontabFieldKind.Day);
+        var monthSingle = GetSpecificParsers(parsers, CrontabFieldKind.Month);
+        var daySingle = GetSpecificParsers(parsers, CrontabFieldKind.Day);
 
         if (monthSingle.Any() && monthSingle.All(x => x.SpecificValue == 2))
         {
@@ -55,21 +55,21 @@ public partial class CrontabSchedule
         }
     }
 
-    private static List<SpecificFilter> GetSpecificFilters(Dictionary<CrontabFieldKind, List<ICronFilter>> filters, CrontabFieldKind kind)
+    private static List<SpecificParser> GetSpecificParsers(Dictionary<CrontabFieldKind, List<ICronParser>> parsers, CrontabFieldKind kind)
     {
-        return filters[kind].Where(x => x.GetType() == typeof(SpecificFilter)).Cast<SpecificFilter>().Union(
-            filters[kind].Where(x => x.GetType() == typeof(RangeFilter)).SelectMany(x => ((RangeFilter)x).SpecificFilters)
+        return parsers[kind].Where(x => x.GetType() == typeof(SpecificParser)).Cast<SpecificParser>().Union(
+            parsers[kind].Where(x => x.GetType() == typeof(RangeParser)).SelectMany(x => ((RangeParser)x).SpecificParsers)
             ).Union(
-                filters[kind].Where(x => x.GetType() == typeof(StepFilter)).SelectMany(x => ((StepFilter)x).SpecificFilters)
+                parsers[kind].Where(x => x.GetType() == typeof(StepParser)).SelectMany(x => ((StepParser)x).SpecificParsers)
             ).ToList();
     }
 
-    private static Dictionary<CrontabFieldKind, List<ICronFilter>> ParseToDictionary(string cron, CronStringFormat format)
+    private static Dictionary<CrontabFieldKind, List<ICronParser>> ParseToDictionary(string cron, CronStringFormat format)
     {
         if (string.IsNullOrWhiteSpace(cron))
             throw new TimeCrontabException("The provided cron string is null, empty or contains only whitespace");
 
-        var fields = new Dictionary<CrontabFieldKind, List<ICronFilter>>();
+        var fields = new Dictionary<CrontabFieldKind, List<ICronParser>>();
 
         var instructions = cron.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -95,16 +95,16 @@ public partial class CrontabSchedule
         if (format == CronStringFormat.WithYears || format == CronStringFormat.WithSecondsAndYears)
             fields.Add(CrontabFieldKind.Year, ParseField(instructions[defaultFieldOffset + 5], CrontabFieldKind.Year));
 
-        CheckForIllegalFilters(fields);
+        CheckForIllegalParsers(fields);
 
         return fields;
     }
 
-    private static List<ICronFilter> ParseField(string field, CrontabFieldKind kind)
+    private static List<ICronParser> ParseField(string field, CrontabFieldKind kind)
     {
         try
         {
-            return field.Split(',').Select(filter => ParseFilter(filter, kind)).ToList();
+            return field.Split(',').Select(parser => ParseParser(parser, kind)).ToList();
         }
         catch (Exception e)
         {
@@ -112,121 +112,121 @@ public partial class CrontabSchedule
         }
     }
 
-    private static ICronFilter ParseFilter(string filter, CrontabFieldKind kind)
+    private static ICronParser ParseParser(string parser, CrontabFieldKind kind)
     {
-        var newFilter = filter.ToUpper();
+        var newParser = parser.ToUpper();
 
         try
         {
-            if (newFilter.StartsWith("*", StringComparison.OrdinalIgnoreCase))
+            if (newParser.StartsWith("*", StringComparison.OrdinalIgnoreCase))
             {
-                newFilter = newFilter[1..];
-                if (newFilter.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+                newParser = newParser[1..];
+                if (newParser.StartsWith("/", StringComparison.OrdinalIgnoreCase))
                 {
-                    newFilter = newFilter[1..];
-                    var steps = GetValue(ref newFilter, kind);
-                    return new StepFilter(0, steps, kind);
+                    newParser = newParser[1..];
+                    var steps = GetValue(ref newParser, kind);
+                    return new StepParser(0, steps, kind);
                 }
-                return new AnyFilter(kind);
+                return new AnyParser(kind);
             }
 
             // * * LW * *
             // * * L * *
-            if (newFilter.StartsWith("L") && kind == CrontabFieldKind.Day)
+            if (newParser.StartsWith("L") && kind == CrontabFieldKind.Day)
             {
-                newFilter = newFilter[1..];
-                if (newFilter == "W")
-                    return new LastWeekdayOfMonthFilter(kind);
+                newParser = newParser[1..];
+                if (newParser == "W")
+                    return new LastWeekdayOfMonthParser(kind);
                 else
-                    return new LastDayOfMonthFilter(kind);
+                    return new LastDayOfMonthParser(kind);
             }
 
-            if (newFilter == "?")
-                return new BlankDayOfMonthOrWeekFilter(kind);
+            if (newParser == "?")
+                return new BlankDayOfMonthOrWeekParser(kind);
 
-            var firstValue = GetValue(ref newFilter, kind);
+            var firstValue = GetValue(ref newParser, kind);
 
-            if (string.IsNullOrEmpty(newFilter))
+            if (string.IsNullOrEmpty(newParser))
             {
                 if (kind == CrontabFieldKind.Year)
-                    return new SpecificYearFilter(firstValue, kind);
+                    return new SpecificYearParser(firstValue, kind);
                 else
-                    return new SpecificFilter(firstValue, kind);
+                    return new SpecificParser(firstValue, kind);
             }
 
-            switch (newFilter[0])
+            switch (newParser[0])
             {
                 case '/':
                     {
-                        newFilter = newFilter[1..];
-                        var secondValue = GetValue(ref newFilter, kind);
-                        return new StepFilter(firstValue, secondValue, kind);
+                        newParser = newParser[1..];
+                        var secondValue = GetValue(ref newParser, kind);
+                        return new StepParser(firstValue, secondValue, kind);
                     }
                 case '-':
                     {
-                        newFilter = newFilter[1..];
-                        var secondValue = GetValue(ref newFilter, kind);
+                        newParser = newParser[1..];
+                        var secondValue = GetValue(ref newParser, kind);
                         int? steps = null;
-                        if (newFilter.StartsWith("/"))
+                        if (newParser.StartsWith("/"))
                         {
-                            newFilter = newFilter[1..];
-                            steps = GetValue(ref newFilter, kind);
+                            newParser = newParser[1..];
+                            steps = GetValue(ref newParser, kind);
                         }
-                        return new RangeFilter(firstValue, secondValue, steps, kind);
+                        return new RangeParser(firstValue, secondValue, steps, kind);
                     }
                 case '#':
                     {
-                        newFilter = newFilter[1..];
-                        var secondValue = GetValue(ref newFilter, kind);
+                        newParser = newParser[1..];
+                        var secondValue = GetValue(ref newParser, kind);
 
-                        if (!string.IsNullOrEmpty(newFilter))
-                            throw new TimeCrontabException(string.Format("Invalid filter '{0}'", filter));
+                        if (!string.IsNullOrEmpty(newParser))
+                            throw new TimeCrontabException(string.Format("Invalid parser '{0}'", parser));
 
-                        return new SpecificDayOfWeekInMonthFilter(firstValue, secondValue, kind);
+                        return new SpecificDayOfWeekInMonthParser(firstValue, secondValue, kind);
                     }
                 default:
-                    if (newFilter == "L" && kind == CrontabFieldKind.DayOfWeek)
+                    if (newParser == "L" && kind == CrontabFieldKind.DayOfWeek)
                     {
-                        return new LastDayOfWeekInMonthFilter(firstValue, kind);
+                        return new LastDayOfWeekInMonthParser(firstValue, kind);
                     }
-                    else if (newFilter == "W" && kind == CrontabFieldKind.Day)
+                    else if (newParser == "W" && kind == CrontabFieldKind.Day)
                     {
-                        return new NearestWeekdayFilter(firstValue, kind);
+                        return new NearestWeekdayParser(firstValue, kind);
                     }
                     break;
             }
 
-            throw new TimeCrontabException(string.Format("Invalid filter '{0}'", filter));
+            throw new TimeCrontabException(string.Format("Invalid parser '{0}'", parser));
         }
         catch (Exception e)
         {
-            throw new TimeCrontabException(string.Format("Invalid filter '{0}'.  See inner exception for details.", filter), e);
+            throw new TimeCrontabException(string.Format("Invalid parser '{0}'.  See inner exception for details.", parser), e);
         }
     }
 
-    private static int GetValue(ref string filter, CrontabFieldKind kind)
+    private static int GetValue(ref string parser, CrontabFieldKind kind)
     {
         var maxValue = Constants.MaximumDateTimeValues[kind];
 
-        if (string.IsNullOrEmpty(filter))
-            throw new TimeCrontabException("Expected number, but filter was empty.");
+        if (string.IsNullOrEmpty(parser))
+            throw new TimeCrontabException("Expected number, but parser was empty.");
 
         int i;
-        var isDigit = char.IsDigit(filter[0]);
-        var isLetter = char.IsLetter(filter[0]);
+        var isDigit = char.IsDigit(parser[0]);
+        var isLetter = char.IsLetter(parser[0]);
 
         // Because this could either numbers, or letters, but not a combination,
         // check each condition separately.
-        for (i = 0; i < filter.Length; i++)
-            if ((isDigit && !char.IsDigit(filter[i])) || (isLetter && !char.IsLetter(filter[i]))) break;
+        for (i = 0; i < parser.Length; i++)
+            if ((isDigit && !char.IsDigit(parser[i])) || (isLetter && !char.IsLetter(parser[i]))) break;
 
-        var valueToParse = filter[..i];
+        var valueToParse = parser[..i];
         if (int.TryParse(valueToParse, out var value))
         {
-            filter = filter[i..];
+            parser = parser[i..];
             var returnValue = value;
             if (returnValue > maxValue)
-                throw new TimeCrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+                throw new TimeCrontabException(string.Format("Value for {0} parser exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
             return returnValue;
         }
         else
@@ -240,21 +240,21 @@ public partial class CrontabSchedule
 
             if (replaceVal != null && replaceVal.Count == 1)
             {
-                // missingFilter addresses when a filter string of "SUNL" is passed in,
+                // missingParser addresses when a parser string of "SUNL" is passed in,
                 // which causes the isDigit/isLetter loop above to iterate through the end
                 // of the string.  This catches the edge case, and re-appends L to the end.
-                var missingFilter = "";
-                if (filter.Length == i && filter.EndsWith("L") && kind == CrontabFieldKind.DayOfWeek)
-                    missingFilter = "L";
+                var missingParser = "";
+                if (parser.Length == i && parser.EndsWith("L") && kind == CrontabFieldKind.DayOfWeek)
+                    missingParser = "L";
 
-                filter = filter[i..] + missingFilter;
+                parser = parser[i..] + missingParser;
                 var returnValue = replaceVal.First().Value;
                 if (returnValue > maxValue)
-                    throw new TimeCrontabException(string.Format("Value for {0} filter exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
+                    throw new TimeCrontabException(string.Format("Value for {0} parser exceeded maximum value of {1}", Enum.GetName(typeof(CrontabFieldKind), kind), maxValue));
                 return returnValue;
             }
         }
 
-        throw new TimeCrontabException("Filter does not contain expected number");
+        throw new TimeCrontabException("Parser does not contain expected number");
     }
 }

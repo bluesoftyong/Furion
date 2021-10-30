@@ -9,19 +9,19 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 Cron 字段具体值
+/// Cron 数字 字符解析器
 /// </summary>
 /// <remarks>
 /// <para>表示具体值，如 1,2,3,4... 支持所有 Cron 字段种类</para>
 /// </remarks>
-internal class SpecificFilter : ICronFilter, ITimeFilter
+internal class SpecificParser : ICronParser, ITimeParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="specificValue">具体值</param>
     /// <param name="kind">Cron 字段种类</param>
-    public SpecificFilter(int specificValue, CrontabFieldKind kind)
+    public SpecificParser(int specificValue, CrontabFieldKind kind)
     {
         SpecificValue = specificValue;
         Kind = kind;

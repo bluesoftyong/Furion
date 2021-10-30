@@ -8,14 +8,14 @@
 
 namespace Furion.TimeCrontab;
 
-public sealed partial class CrontabSchedule
+public sealed partial class Crontab
 {
-    private Dictionary<CrontabFieldKind, List<ICronFilter>> Filters { get; set; }
+    private Dictionary<CrontabFieldKind, List<ICronParser>> Parsers { get; set; }
 
     // In the event a developer creates their own instance
-    public CrontabSchedule()
+    private Crontab()
     {
-        Filters = new Dictionary<CrontabFieldKind, List<ICronFilter>>();
+        Parsers = new Dictionary<CrontabFieldKind, List<ICronParser>>();
         Format = CronStringFormat.Default;
     }
 
@@ -30,16 +30,16 @@ public sealed partial class CrontabSchedule
         var paramList = new List<string>();
 
         if (Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears)
-            JoinFilters(paramList, CrontabFieldKind.Second);
+            JoinParsers(paramList, CrontabFieldKind.Second);
 
-        JoinFilters(paramList, CrontabFieldKind.Minute);
-        JoinFilters(paramList, CrontabFieldKind.Hour);
-        JoinFilters(paramList, CrontabFieldKind.Day);
-        JoinFilters(paramList, CrontabFieldKind.Month);
-        JoinFilters(paramList, CrontabFieldKind.DayOfWeek);
+        JoinParsers(paramList, CrontabFieldKind.Minute);
+        JoinParsers(paramList, CrontabFieldKind.Hour);
+        JoinParsers(paramList, CrontabFieldKind.Day);
+        JoinParsers(paramList, CrontabFieldKind.Month);
+        JoinParsers(paramList, CrontabFieldKind.DayOfWeek);
 
         if (Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears)
-            JoinFilters(paramList, CrontabFieldKind.Year);
+            JoinParsers(paramList, CrontabFieldKind.Year);
 
         return string.Join(" ", paramList.ToArray());
     }
@@ -84,14 +84,14 @@ public sealed partial class CrontabSchedule
     /// <summary>
     /// 获取下一个值
     /// </summary>
-    /// <param name="filters"></param>
+    /// <param name="parsers"></param>
     /// <param name="value"></param>
     /// <param name="defaultValue"></param>
     /// <param name="overflow"></param>
     /// <returns></returns>
-    private static int Increment(IEnumerable<ITimeFilter> filters, int value, int defaultValue, out bool overflow)
+    private static int Increment(IEnumerable<ITimeParser> parsers, int value, int defaultValue, out bool overflow)
     {
-        var nextValue = filters.Select(x => x.Next(value)).Where(x => x > value).Min() ?? defaultValue;
+        var nextValue = parsers.Select(x => x.Next(value)).Where(x => x > value).Min() ?? defaultValue;
         overflow = nextValue <= value;
         return nextValue;
     }
@@ -125,19 +125,19 @@ public sealed partial class CrontabSchedule
         newValue = newValue.AddMilliseconds(-newValue.Millisecond);
         if (!isSecondFormat) newValue = newValue.AddSeconds(-newValue.Second);
 
-        var minuteFilters = Filters[CrontabFieldKind.Minute].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
-        var hourFilters = Filters[CrontabFieldKind.Hour].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+        var minuteParsers = Parsers[CrontabFieldKind.Minute].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
+        var hourParsers = Parsers[CrontabFieldKind.Hour].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
 
         var firstSecondValue = newValue.Second;
-        var firstMinuteValue = minuteFilters.Select(x => x.First()).Min();
-        var firstHourValue = hourFilters.Select(x => x.First()).Min();
+        var firstMinuteValue = minuteParsers.Select(x => x.First()).Min();
+        var firstHourValue = hourParsers.Select(x => x.First()).Min();
 
         var newSeconds = newValue.Second;
         if (isSecondFormat)
         {
-            var secondFilters = Filters[CrontabFieldKind.Second].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
-            firstSecondValue = secondFilters.Select(x => x.First()).Min();
-            newSeconds = Increment(secondFilters, newValue.Second, firstSecondValue, out overflow);
+            var secondParsers = Parsers[CrontabFieldKind.Second].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
+            firstSecondValue = secondParsers.Select(x => x.First()).Min();
+            newSeconds = Increment(secondParsers, newValue.Second, firstSecondValue, out overflow);
             newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newValue.Minute, newSeconds);
             if (!overflow && !IsMatch(newValue))
             {
@@ -148,7 +148,7 @@ public sealed partial class CrontabSchedule
             if (!overflow) return MinDate(newValue, endValue);
         }
 
-        var newMinutes = Increment(minuteFilters, newValue.Minute + (overflow ? 0 : -1), firstMinuteValue, out overflow);
+        var newMinutes = Increment(minuteParsers, newValue.Minute + (overflow ? 0 : -1), firstMinuteValue, out overflow);
         newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newMinutes, overflow ? firstSecondValue : newSeconds);
         if (!overflow && !IsMatch(newValue))
         {
@@ -159,7 +159,7 @@ public sealed partial class CrontabSchedule
         }
         if (!overflow) return MinDate(newValue, endValue);
 
-        var newHours = Increment(hourFilters, newValue.Hour + (overflow ? 0 : -1), firstHourValue, out overflow);
+        var newHours = Increment(hourParsers, newValue.Hour + (overflow ? 0 : -1), firstHourValue, out overflow);
         newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newHours,
             overflow ? firstMinuteValue : newMinutes,
             overflow ? firstSecondValue : newSeconds);
@@ -172,13 +172,13 @@ public sealed partial class CrontabSchedule
 
         if (!overflow) return MinDate(newValue, endValue);
 
-        List<ITimeFilter>? yearFilters = null;
-        if (isYearFormat) yearFilters = Filters[CrontabFieldKind.Year].Where(x => x is ITimeFilter).Cast<ITimeFilter>().ToList();
+        List<ITimeParser>? yearParsers = null;
+        if (isYearFormat) yearParsers = Parsers[CrontabFieldKind.Year].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
 
         // Sooo, this is where things get more complicated.
-        // Since the filtering of days relies on what month/year you're in
-        // (for weekday/nth day filters), we'll only increment the day, and
-        // check all day/month/year filters.  Might be a litle slow, but we
+        // Since the parsering of days relies on what month/year you're in
+        // (for weekday/nth day parsers), we'll only increment the day, and
+        // check all day/month/year parsers.  Might be a litle slow, but we
         // won't miss any days that way.
 
         // Also, if we increment to the next day, we need to set the hour, minute and second
@@ -195,9 +195,9 @@ public sealed partial class CrontabSchedule
         {
             if (newValue >= endValue) return MinDate(newValue, endValue);
 
-            // In instances where the year is filtered, this will speed up the path to get to endValue
+            // In instances where the year is parsered, this will speed up the path to get to endValue
             // (without having to actually go to endValue)
-            if (isYearFormat && yearFilters!.Select(x => x.Next(newValue.Year - 1)).All(x => x == null)) return endValue;
+            if (isYearFormat && yearParsers!.Select(x => x.Next(newValue.Year - 1)).All(x => x == null)) return endValue;
 
             // Ugh...have to do the try/catch again...
             try { newValue = newValue.AddDays(1); } catch { return endValue; }
@@ -213,8 +213,8 @@ public sealed partial class CrontabSchedule
     /// <returns></returns>
     private bool IsMatch(DateTime value)
     {
-        return Filters.All(fieldKind =>
-            fieldKind.Value.Any(filter => filter.IsMatch(value))
+        return Parsers.All(fieldKind =>
+            fieldKind.Value.Any(parser => parser.IsMatch(value))
         );
     }
 
@@ -226,13 +226,13 @@ public sealed partial class CrontabSchedule
     /// <returns></returns>
     private bool IsMatch(DateTime value, CrontabFieldKind kind)
     {
-        return Filters.Where(x => x.Key == kind).SelectMany(x => x.Value).Any(filter => filter.IsMatch(value));
+        return Parsers.Where(x => x.Key == kind).SelectMany(x => x.Value).Any(parser => parser.IsMatch(value));
     }
 
-    private void JoinFilters(List<string> paramList, CrontabFieldKind kind)
+    private void JoinParsers(List<string> paramList, CrontabFieldKind kind)
     {
         paramList.Add(
-            string.Join(",", Filters
+            string.Join(",", Parsers
                 .Where(x => x.Key == kind)
                 .SelectMany(x => x.Value.Select(y => y.ToString())).ToArray()
             )

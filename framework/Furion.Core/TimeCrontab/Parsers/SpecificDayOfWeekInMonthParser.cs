@@ -9,12 +9,12 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 Cron 字段 # 字符
+/// Cron # 字符解析器
 /// </summary>
 /// <remarks>
 /// <para>表示每个域第几个星期几，如 4#2，仅支持 <see cref="CrontabFieldKind.DayOfWeek"/> 字段种类</para>
 /// </remarks>
-internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
+internal sealed class SpecificDayOfWeekInMonthParser : ICronParser
 {
     /// <summary>
     /// 构造函数
@@ -23,7 +23,7 @@ internal sealed class SpecificDayOfWeekInMonthFilter : ICronFilter
     /// <param name="weekNumber">每个月中第几个星期，一个月最多不会超过四个星期</param>
     /// <param name="kind">Cron 字段种类</param>
     /// <exception cref="TimeCrontabException"></exception>
-    public SpecificDayOfWeekInMonthFilter(int dayOfWeek, int weekNumber, CrontabFieldKind kind)
+    public SpecificDayOfWeekInMonthParser(int dayOfWeek, int weekNumber, CrontabFieldKind kind)
     {
         // 验证星期数有效值
         if (weekNumber <= 0 || weekNumber > 5)

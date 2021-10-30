@@ -10,7 +10,7 @@ public class TimeCrontabController : ControllerBase
     [HttpPost]
     public DateTime GetNextOccurrence([FromBody] string cron)
     {
-        var crontabSchedule = CrontabSchedule.Parse(cron);
-        return crontabSchedule.GetNextOccurrence(DateTime.UtcNow);
+        var crontab = Crontab.Parse(cron);
+        return crontab.GetNextOccurrence(DateTime.UtcNow);
     }
 }

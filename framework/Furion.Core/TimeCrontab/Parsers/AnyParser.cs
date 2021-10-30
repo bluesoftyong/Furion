@@ -9,18 +9,18 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// 处理 Cron 字段 * 字符
+/// Cron * 字符解析器
 /// </summary>
 /// <remarks>
 /// <para>表示任意值，支持所有 Cron 字段种类</para>
 /// </remarks>
-internal sealed class AnyFilter : ICronFilter, ITimeFilter
+internal sealed class AnyParser : ICronParser, ITimeParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="kind">Cron 字段种类</param>
-    public AnyFilter(CrontabFieldKind kind)
+    public AnyParser(CrontabFieldKind kind)
     {
         Kind = kind;
     }

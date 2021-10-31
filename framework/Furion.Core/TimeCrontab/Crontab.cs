@@ -8,17 +8,28 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// Crontab
+/// </summary>
 public sealed partial class Crontab
 {
+    /// <summary>
+    /// Cron 字段解析器
+    /// </summary>
     private Dictionary<CrontabFieldKind, List<ICronParser>> Parsers { get; set; }
 
-    // In the event a developer creates their own instance
+    /// <summary>
+    /// 构造函数
+    /// </summary>
     private Crontab()
     {
         Parsers = new Dictionary<CrontabFieldKind, List<ICronParser>>();
         Format = CronStringFormat.Default;
     }
 
+    /// <summary>
+    /// Cron 表达式格式化
+    /// </summary>
     public CronStringFormat Format { get; set; }
 
     /// <summary>
@@ -53,7 +64,6 @@ public sealed partial class Crontab
             return null;
         }
     }
-
 
     /// <summary>
     /// 获取下一个执行时间，没有结束边界
@@ -100,17 +110,24 @@ public sealed partial class Crontab
     {
         var paramList = new List<string>();
 
+        // 处理带秒字段解析器
         if (Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears)
+        {
             JoinParsers(paramList, CrontabFieldKind.Second);
+        }
 
+        // 必须字段解析器
         JoinParsers(paramList, CrontabFieldKind.Minute);
         JoinParsers(paramList, CrontabFieldKind.Hour);
         JoinParsers(paramList, CrontabFieldKind.Day);
         JoinParsers(paramList, CrontabFieldKind.Month);
         JoinParsers(paramList, CrontabFieldKind.DayOfWeek);
 
+        // 处理带年字段解析器
         if (Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears)
+        {
             JoinParsers(paramList, CrontabFieldKind.Year);
+        }
 
         return string.Join(" ", paramList.ToArray());
     }

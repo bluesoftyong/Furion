@@ -1719,6 +1719,26 @@
             </summary>
             <remarks>秒 分 时 天 月 周 年</remarks>
         </member>
+        <member name="T:Furion.TimeCrontab.Crontab">
+            <summary>
+            Crontab
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.Crontab.Parsers">
+            <summary>
+            Cron 字段解析器
+            </summary>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.Crontab.Format">
+            <summary>
+            Cron 表达式格式化
+            </summary>
+        </member>
         <member name="M:Furion.TimeCrontab.Crontab.Parse(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>
             转换
@@ -1763,6 +1783,22 @@
             转换 String 输出
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.ParseToDictionary(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            解析 Cron 表达式
+            </summary>
+            <param name="expression">Cron 表达式</param>
+            <param name="format">Cron 表达式格式化</param>
+            <returns></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.CheckForIllegalParsers(System.Collections.Generic.Dictionary{Furion.TimeCrontab.CrontabFieldKind,System.Collections.Generic.List{Furion.TimeCrontab.ICronParser}})">
+            <summary>
+            检查非法解析器
+            </summary>
+            <param name="parsers"></param>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.InternalGetNextOccurence(System.DateTime,System.DateTime)">
             <summary>

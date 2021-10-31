@@ -59,7 +59,7 @@ public sealed partial class Crontab
         {
             return Parse(expression, format);
         }
-        catch (Exception)
+        catch
         {
             return null;
         }

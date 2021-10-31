@@ -1793,6 +1793,15 @@
             <returns></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
+        <member name="M:Furion.TimeCrontab.Crontab.ParseField(System.String,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            解析单个 Cron 字段
+            </summary>
+            <param name="field">Cron 字段字符串</param>
+            <param name="kind">Cron 字段种类</param>
+            <returns></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
         <member name="M:Furion.TimeCrontab.Crontab.CheckForIllegalParsers(System.Collections.Generic.Dictionary{Furion.TimeCrontab.CrontabFieldKind,System.Collections.Generic.List{Furion.TimeCrontab.ICronParser}})">
             <summary>
             检查非法解析器

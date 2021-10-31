@@ -25,10 +25,11 @@ public partial class Crontab
             throw new TimeCrontabException("The provided cron string is null, empty or contains only whitespace.");
         }
 
-        // Cron 表达式格式化字段个数检查
+        // 根据空格切割成 Cron 字段数组
         var instructions = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        var expectedCount = Constants.ExpectedFieldCounts[format];
 
+        // 判断特定 Cron 格式化类型长度是否一致
+        var expectedCount = Constants.ExpectedFieldCounts[format];
         if (instructions.Length > expectedCount)
         {
             throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too many parameters.", expression));
@@ -66,6 +67,13 @@ public partial class Crontab
         return fieldParsers;
     }
 
+    /// <summary>
+    /// 解析单个 Cron 字段
+    /// </summary>
+    /// <param name="field">Cron 字段字符串</param>
+    /// <param name="kind">Cron 字段种类</param>
+    /// <returns></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     private static List<ICronParser> ParseField(string field, CrontabFieldKind kind)
     {
         try
@@ -74,7 +82,10 @@ public partial class Crontab
         }
         catch (Exception ex)
         {
-            throw new TimeCrontabException(string.Format("There was an error parsing '{0}' for the {1} field", field, Enum.GetName(typeof(CrontabFieldKind), kind)), ex);
+            throw new TimeCrontabException(
+                string.Format("There was an error parsing '{0}' for the {1} field."
+                , field, Enum.GetName(typeof(CrontabFieldKind), kind))
+                , ex);
         }
     }
 
@@ -176,11 +187,11 @@ public partial class Crontab
                     break;
             }
 
-            throw new TimeCrontabException(string.Format("Invalid parser '{0}'", parser));
+            throw new TimeCrontabException(string.Format("Invalid parser '{0}'.", parser));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            throw new TimeCrontabException(string.Format("Invalid parser '{0}'.  See inner exception for details.", parser), e);
+            throw new TimeCrontabException(string.Format("Invalid parser '{0}'.  See inner exception for details.", parser), ex);
         }
     }
 

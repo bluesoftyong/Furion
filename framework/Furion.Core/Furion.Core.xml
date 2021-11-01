@@ -1854,10 +1854,10 @@
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.InternalGetNextOccurence(System.DateTime,System.DateTime)">
             <summary>
-            获取特定时间范围内下一个符合的发生时间
+            获取特定时间范围下一个发生时间
             </summary>
-            <param name="baseTime">起始计算时间</param>
-            <param name="endTime">终止计算时间</param>
+            <param name="baseTime">起始时间</param>
+            <param name="endTime">结束时间</param>
             <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.Increment(System.Collections.Generic.IEnumerable{Furion.TimeCrontab.ITimeParser},System.Int32,System.Int32,System.Boolean@)">
@@ -1881,18 +1881,18 @@
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.IsMatch(System.DateTime)">
             <summary>
-            判断解析器是否全部匹配
+            判断 Cron 所有字段字符解析器是否都能匹配当前时间各个部分
             </summary>
-            <param name="value">计算时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.IsMatch(System.DateTime,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            判断解析器是否有匹配的值
+            判断当前 Cron 字段类型字符解析器和当前时间至少存在一种匹配
             </summary>
-            <param name="value">计算时间</param>
+            <param name="datetime">当前时间</param>
             <param name="kind">Cron 字段种类</param>
-            <returns><see cref="T:System.Boolean"/></returns>
+            <returns></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.JoinParsers(System.Collections.Generic.List{System.String},Furion.TimeCrontab.CrontabFieldKind)">
             <summary>

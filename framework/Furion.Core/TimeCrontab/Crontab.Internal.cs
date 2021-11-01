@@ -397,111 +397,146 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 获取特定时间范围内下一个符合的发生时间
+    /// 获取特定时间范围下一个发生时间
     /// </summary>
-    /// <param name="baseTime">起始计算时间</param>
-    /// <param name="endTime">终止计算时间</param>
+    /// <param name="baseTime">起始时间</param>
+    /// <param name="endTime">结束时间</param>
     /// <returns><see cref="DateTime"/></returns>
     private DateTime InternalGetNextOccurence(DateTime baseTime, DateTime endTime)
     {
-        var newValue = baseTime;
-        var overflow = true;
-
-        // 判断是否支持秒或年格式化
+        // 判断当前 Cron 格式化类型是否支持秒
         var isSecondFormat = Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears;
-        var isYearFormat = Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears;
 
-        // 删除时间中毫秒，不需要参与计算
+        // 由于 Cron 格式化类型不包含毫秒，则裁剪掉毫秒部分
+        var newValue = baseTime;
         newValue = newValue.AddMilliseconds(-newValue.Millisecond);
 
-        // 如果不启用秒支持，则删除时间中秒
+        // 如果当前 Cron 格式化类型不支持秒，则裁剪掉秒部分
         if (!isSecondFormat)
         {
             newValue = newValue.AddSeconds(-newValue.Second);
         }
 
-        // 获取分钟和小时所有时间解析器
+        // 获取分钟、小时所有字符解析器
         var minuteParsers = Parsers[CrontabFieldKind.Minute].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
         var hourParsers = Parsers[CrontabFieldKind.Hour].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
 
-        // 获取秒、分、时起始值
+        // 获取秒、分钟、小时解析器中最小起始值
+        // 该值主要用来获取下一个发生值的输入参数
         var firstSecondValue = newValue.Second;
         var firstMinuteValue = minuteParsers.Select(x => x.First()).Min();
         var firstHourValue = hourParsers.Select(x => x.First()).Min();
 
-        var newSeconds = newValue.Second;
+        // 定义一个标识，标识当前时间下一个发生时间值是否进入新一轮循环
+        // 如：如果当前时间的秒数为 59，那么下一个秒数应该为 00，那么当前时间分钟就应该 +1
+        // 以此类推，如果 +1 后分钟数为 59，那么下一个分钟数也应该为 00，那么当前时间小时数就应该 +1
+        // ....
+        var overflow = true;
 
-        // 处理带秒格式
+        // 处理 Cron 格式化类型包含秒的情况 =================================================================
+        var newSeconds = newValue.Second;
         if (isSecondFormat)
         {
-            // 获取最小秒取值
+            // 获取秒所有字符解析器
             var secondParsers = Parsers[CrontabFieldKind.Second].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
+
+            // 获取秒解析器最小起始值
             firstSecondValue = secondParsers.Select(x => x.First()).Min();
 
-            // 获取下一个发生时间，此时只有秒向前拨动
+            // 获取秒下一个发生值
             newSeconds = Increment(secondParsers, newValue.Second, firstSecondValue, out overflow);
+
+            // 设置起始时间为下一个秒时间
             newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newValue.Minute, newSeconds);
 
-            // 如果秒没有到终止值（59）且不匹配，重新设置起始时间
+            // 如果当前秒并没有进入下一轮循环但存在不匹配的字符过滤器
             if (!overflow && !IsMatch(newValue))
             {
+                // 重置秒为起始值并标记 overflow 为 true 进入新一轮循环
                 newSeconds = firstSecondValue;
+
+                // 此时计算时间秒部分应该为起始值
+                // 如 22:10:59 -> 22:10:00
                 newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newValue.Minute, newSeconds);
+
+                // 标记进入下一轮循环
                 overflow = true;
             }
 
-            // 只有下一个秒值没有超出且完全匹配，那么直接返回
+            // 如果程序到达这里，说明并没有进入上面分支，则直接返回下一秒时间
             if (!overflow)
             {
                 return MinDate(newValue, endTime);
             }
         }
 
-        // 获取下一个发生时间，此时只有分钟向前拨动
+        // 程序到达这里，说明秒部分已经标识进入新一轮循环，那么分支就应该获取下一个分钟发生值 =================================================================
         var newMinutes = Increment(minuteParsers, newValue.Minute + (overflow ? 0 : -1), firstMinuteValue, out overflow);
+
+        // 设置起始时间为下一个分钟时间
         newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newMinutes, overflow ? firstSecondValue : newSeconds);
 
-        // 如果分钟没有到终止值（59）且不匹配，重新设置起始时间
+        // 如果当前分钟并没有进入下一轮循环但存在不匹配的字符过滤器
         if (!overflow && !IsMatch(newValue))
         {
+            // 重置秒，分钟为起始值并标记 overflow 为 true 进入新一轮循环
             newSeconds = firstSecondValue;
             newMinutes = firstMinuteValue;
+
+            // 此时计算时间秒和分钟部分应该为起始值
+            // 如 22:59:59 -> 22:00:00
             newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newValue.Hour, newMinutes, firstSecondValue);
+
+            // 标记进入下一轮循环
             overflow = true;
         }
 
-        // 只有下一个分钟值没有超出且完全匹配，那么直接返回
+        // 如果程序到达这里，说明并没有进入上面分支，则直接返回下一分钟时间
         if (!overflow)
         {
             return MinDate(newValue, endTime);
         }
 
-        // // 获取下一个发生时间，此时只有小时向前拨动
+        // 程序到达这里，说明分钟部分已经标识进入新一轮循环，那么分支就应该获取下一个小时发生值 =================================================================
         var newHours = Increment(hourParsers, newValue.Hour + (overflow ? 0 : -1), firstHourValue, out overflow);
+
+        // 设置起始时间为下一个小时时间
         newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newHours,
             overflow ? firstMinuteValue : newMinutes,
             overflow ? firstSecondValue : newSeconds);
 
-        // 如果小时没有到终止值（23）且不匹配，重新设置起始时间
+        // 如果当前小时并没有进入下一轮循环但存在不匹配的字符过滤器
         if (!overflow && !IsMatch(newValue))
         {
+            // 此时计算时间秒，分钟和小时部分应该为起始值
+            // 如 23:59:59 -> 23:00:00
             newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, firstHourValue, firstMinuteValue, firstSecondValue);
+
+            // 标记进入下一轮循环
             overflow = true;
         }
 
-        // 只有下一个小时值没有超出且完全匹配，那么直接返回
+        // 如果程序到达这里，说明并没有进入上面分支，则直接返回下一小时时间
         if (!overflow)
         {
             return MinDate(newValue, endTime);
         }
 
-        // 处理下一个年时间
+        // 如果程序达到这里，说明天数变了（一旦天数变了，那么月份可能也变了，星期可能也变了，年份也可能变了）
+        // 所以这里的计算最为复杂
         List<ITimeParser>? yearParsers = null;
+
+        // 首先先判断当前 Cron 格式化类型是否支持年份
+        var isYearFormat = Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears;
+
+        // 如果支持，读取年份字符过滤器
         if (isYearFormat)
         {
             yearParsers = Parsers[CrontabFieldKind.Year].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
         }
 
+        // 程序能够执行到这里，那么说明时间已经是 23:59:59，所以起始时间追加 1 天
+        // 这里的代码看起来很奇怪，但是是为了处理终止时间为 12/31/9999 23:59:59.999 的情况，也就是世界末日了~~~
         try
         {
             newValue = newValue.AddDays(1);
@@ -511,24 +546,29 @@ public partial class Crontab
             return endTime;
         }
 
-        // 由于计算天比较复杂，所以需要集合天，月，周，年一起参与计算
+        // 在有效的年份时间内死循环至天、周、月、年全部匹配才终止循环
         while (!(IsMatch(newValue, CrontabFieldKind.Day)
             && IsMatch(newValue, CrontabFieldKind.DayOfWeek)
             && IsMatch(newValue, CrontabFieldKind.Month)
             && (!isYearFormat || IsMatch(newValue, CrontabFieldKind.Year))))
         {
+            // 如果当前匹配到的时间已经大于或等于终止时间，则直接返回
             if (newValue >= endTime)
             {
                 return MinDate(newValue, endTime);
             }
 
+            // 如果 Cron 年份字段域获取下一个发生值为 null，那么直接返回 终止时间
+            // 也就是已经没有匹配项了
             if (isYearFormat && yearParsers!.Select(x => x.Next(newValue.Year - 1)).All(x => x == null))
             {
                 return endTime;
             }
 
+            // 同样防止终止时间为 12/31/9999 23:59:59.999 的情况
             try
             {
+                // 不断增加 1 天直至匹配成功
                 newValue = newValue.AddDays(1);
             }
             catch
@@ -574,28 +614,28 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 判断解析器是否全部匹配
+    /// 判断 Cron 所有字段字符解析器是否都能匹配当前时间各个部分
     /// </summary>
-    /// <param name="value">计算时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
-    private bool IsMatch(DateTime value)
+    private bool IsMatch(DateTime datetime)
     {
         return Parsers.All(fieldKind =>
-            fieldKind.Value.Any(parser => parser.IsMatch(value))
+            fieldKind.Value.Any(parser => parser.IsMatch(datetime))
         );
     }
 
     /// <summary>
-    /// 判断解析器是否有匹配的值
+    /// 判断当前 Cron 字段类型字符解析器和当前时间至少存在一种匹配
     /// </summary>
-    /// <param name="value">计算时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <param name="kind">Cron 字段种类</param>
-    /// <returns><see cref="bool"/></returns>
-    private bool IsMatch(DateTime value, CrontabFieldKind kind)
+    /// <returns></returns>
+    private bool IsMatch(DateTime datetime, CrontabFieldKind kind)
     {
         return Parsers.Where(x => x.Key == kind)
             .SelectMany(x => x.Value)
-            .Any(parser => parser.IsMatch(value));
+            .Any(parser => parser.IsMatch(datetime));
     }
 
     /// <summary>

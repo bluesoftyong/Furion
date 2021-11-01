@@ -38,15 +38,14 @@ public static class EventBusServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddEventBus(this IServiceCollection services, EventBusOptionsBuilder? eventBusOptionsBuilder = default)
     {
-        // 构建事件总线配置选项
+        // 初始化事件总线配置项
         eventBusOptionsBuilder ??= new EventBusOptionsBuilder();
-        eventBusOptionsBuilder.Build(services);
 
         // 注册内部服务
         services.AddInternalService(eventBusOptionsBuilder);
 
         // 通过工厂模式创建
-        return services.AddHostedService(serviceProvider =>
+        services.AddHostedService(serviceProvider =>
         {
             // 创建事件总线后台服务对象
             var eventBusHostedService = ActivatorUtilities.CreateInstance<EventBusHostedService>(serviceProvider);
@@ -60,6 +59,11 @@ public static class EventBusServiceCollectionExtensions
 
             return eventBusHostedService;
         });
+
+        // 构建事件总线服务
+        eventBusOptionsBuilder.Build(services);
+
+        return services;
     }
 
     /// <summary>

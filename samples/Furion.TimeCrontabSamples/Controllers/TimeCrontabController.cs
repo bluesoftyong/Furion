@@ -8,9 +8,9 @@ namespace Furion.TimeCrontabSamples;
 public class TimeCrontabController : ControllerBase
 {
     [HttpPost]
-    public DateTime GetNextOccurrence([FromBody] string cron)
+    public DateTime GetNextOccurrence([FromBody] string cron, CronStringFormat format = CronStringFormat.Default)
     {
-        var crontab = Crontab.Parse(cron);
-        return crontab.GetNextOccurrence(DateTime.UtcNow);
+        var crontab = Crontab.Parse(cron, format);
+        return crontab.GetNextOccurrence(DateTime.Now);
     }
 }

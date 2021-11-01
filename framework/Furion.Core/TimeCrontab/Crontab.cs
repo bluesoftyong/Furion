@@ -78,7 +78,7 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 获取下一个执行时间，带结束边界
+    /// 获取特定时间范围内下一个符合的发生时间
     /// </summary>
     /// <param name="baseTime">起始计算时间</param>
     /// <param name="endTime">终止计算时间</param>

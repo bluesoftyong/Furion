@@ -1776,7 +1776,7 @@
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.GetNextOccurrence(System.DateTime,System.DateTime)">
             <summary>
-            获取下一个执行时间，带结束边界
+            获取特定时间范围内下一个符合的发生时间
             </summary>
             <param name="baseTime">起始计算时间</param>
             <param name="endTime">终止计算时间</param>
@@ -1814,53 +1814,88 @@
             <returns><see cref="T:System.Collections.Generic.LinkedList`1"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
+        <member name="M:Furion.TimeCrontab.Crontab.ParseParser(System.String,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            解析 Cron 字段值并转换成 <see cref="T:Furion.TimeCrontab.ICronParser"/> 解析器
+            </summary>
+            <param name="parser">Cron 字段值中子项值</param>
+            <param name="kind">Cron 字段种类</param>
+            <returns></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.GetValue(System.String@,Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            拨针式解析 Cron 字段值
+            </summary>
+            <param name="parser">Cron 字段值中子项值</param>
+            <param name="kind">Cron 字段种类</param>
+            <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
         <member name="M:Furion.TimeCrontab.Crontab.CheckForIllegalParsers(System.Collections.Generic.Dictionary{Furion.TimeCrontab.CrontabFieldKind,System.Collections.Generic.List{Furion.TimeCrontab.ICronParser}})">
             <summary>
             检查非法解析器
             </summary>
-            <param name="parsers"></param>
+            <remarks>检查2月份没有30号和31号的情况</remarks>
+            <param name="parsers">解析器字典集合</param>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.GetSpecificParsers(System.Collections.Generic.Dictionary{Furion.TimeCrontab.CrontabFieldKind,System.Collections.Generic.List{Furion.TimeCrontab.ICronParser}},Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            获取所有具体值解析器
+            </summary>
+            <param name="parsers">解析器字典集合</param>
+            <param name="kind">Cron 字段种类</param>
+            <returns><see cref="T:System.Collections.Generic.List`1"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.InternalGetNextOccurence(System.DateTime,System.DateTime)">
             <summary>
-            内部计算
+            获取特定时间范围内下一个符合的发生时间
             </summary>
-            <param name="baseTime"></param>
-            <param name="endTime"></param>
-            <returns></returns>
+            <param name="baseTime">起始计算时间</param>
+            <param name="endTime">终止计算时间</param>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.Increment(System.Collections.Generic.IEnumerable{Furion.TimeCrontab.ITimeParser},System.Int32,System.Int32,System.Boolean@)">
             <summary>
-            获取下一个值
+            获取当前时间解析器下一个发生值
             </summary>
-            <param name="parsers"></param>
-            <param name="value"></param>
-            <param name="defaultValue"></param>
-            <param name="overflow"></param>
-            <returns></returns>
+            <param name="parsers">解析器</param>
+            <param name="value">当前值</param>
+            <param name="defaultValue">默认值</param>
+            <param name="overflow">控制秒、分钟、小时到达59秒/分和23小时开关</param>
+            <returns><see cref="T:System.Int32"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.MinDate(System.DateTime,System.DateTime)">
             <summary>
-            最小日期
+            获取下一个发生时间
             </summary>
-            <param name="newValue"></param>
-            <param name="endValue"></param>
-            <returns></returns>
+            <remarks>如果发生时间大于终止时间，则返回终止时间，否则返回发生时间</remarks>
+            <param name="newTime">下一个发生时间</param>
+            <param name="endTime">终止时间</param>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.IsMatch(System.DateTime)">
             <summary>
-            是否匹配
+            判断解析器是否全部匹配
             </summary>
-            <param name="value"></param>
-            <returns></returns>
+            <param name="value">计算时间</param>
+            <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.IsMatch(System.DateTime,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            是否匹配
+            判断解析器是否有匹配的值
             </summary>
-            <param name="value"></param>
-            <param name="kind"></param>
-            <returns></returns>
+            <param name="value">计算时间</param>
+            <param name="kind">Cron 字段种类</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="M:Furion.TimeCrontab.Crontab.JoinParsers(System.Collections.Generic.List{System.String},Furion.TimeCrontab.CrontabFieldKind)">
+            <summary>
+            将 Cron 字段解析器转换成字符串
+            </summary>
+            <param name="paramList">Cron 字段字符串集合</param>
+            <param name="kind">Cron 字段种类</param>
         </member>
         <member name="T:Furion.TimeCrontab.TimeCrontabException">
             <summary>

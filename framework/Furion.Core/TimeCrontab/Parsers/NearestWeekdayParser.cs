@@ -9,32 +9,32 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron {0}W 字符解析器
+/// Cron 字段值含 {0}W 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>离指定日期最近的工作日，即最后一个非周六周末的日期，如 5W，当前仅处理 <see cref="CrontabFieldKind.Day"/> 字段种类</para>
+/// <para>表示离指定日期最近的工作日，即最后一个非周六周末日，仅在 <see cref="CrontabFieldKind.Day"/> 字段域中使用</para>
 /// </remarks>
 internal sealed class NearestWeekdayParser : ICronParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="specificValue">天（具体值）</param>
-    /// <param name="kind"></param>
+    /// <param name="specificValue">天数（具体值）</param>
+    /// <param name="kind">Cron 字段种类</param>
     /// <exception cref="TimeCrontabException">Cron 字段种类</exception>
     public NearestWeekdayParser(int specificValue, CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 Day 域
+        // 验证 {0}W 字符是否在 Day 字段域中使用
         if (kind != CrontabFieldKind.Day)
         {
-            throw new TimeCrontabException(string.Format("<{0}W> can only be used in the Day field.", specificValue));
+            throw new TimeCrontabException(string.Format("The <{0}W> parser can only be used in the Day field.", specificValue));
         }
 
-        // 验证具体值范围
+        // 判断天数是否在有效取值范围内
         var maximum = Constants.MaximumDateTimeValues[CrontabFieldKind.Day];
         if (specificValue <= 0 || specificValue > maximum)
         {
-            throw new TimeCrontabException(string.Format("<{0}W> is out of bounds for the Day field.", specificValue));
+            throw new TimeCrontabException(string.Format("The <{0}W> is out of bounds for the Day field.", specificValue));
         }
 
         SpecificValue = specificValue;
@@ -47,21 +47,21 @@ internal sealed class NearestWeekdayParser : ICronParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 天（具体值）
+    /// 天数（具体值）
     /// </summary>
     public int SpecificValue { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
         /*
-         * W: 表示有效工作日(周一到周五),只能出现在 Day 域，系统将在离指定日期的最近的有效工作日触发事件。
-         * 例如：在 Day 使用 5W，如果 5 日是星期六，则将在最近的工作日：星期五，即 4 日触发。
-         * 如果 5 日是星期天，则在 6 日(周一)触发；如果 5 日在星期一到星期五中的一天，则就在 5 日触发。
+         * W：表示有效工作日(周一到周五),只能出现在 Day 域，系统将在离指定日期的最近的有效工作日触发事件
+         * 例如：在 Day 使用 5W，如果 5 日是星期六，则将在最近的工作日：星期五，即 4 日触发
+         * 如果 5 日是星期天，则在 6 日(周一)触发；如果 5 日在星期一到星期五中的一天，则就在 5 日触发
          * 另外一点，W 的最近寻找不会跨过月份
          */
 
@@ -71,9 +71,10 @@ internal sealed class NearestWeekdayParser : ICronParser
             return false;
         }
 
-        // 获取当前时间日期
+        // 获取当前时间特定天数时间
         var specificDay = new DateTime(datetime.Year, datetime.Month, SpecificValue);
 
+        // 最靠近的工作日时间
         DateTime closestWeekday;
 
         // 处理当天的不同情况
@@ -113,7 +114,7 @@ internal sealed class NearestWeekdayParser : ICronParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

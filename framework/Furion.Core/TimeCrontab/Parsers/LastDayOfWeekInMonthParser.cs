@@ -9,25 +9,25 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron {0}L 字符解析器
+/// Cron 字段值含 {0}L 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>月中最后一个星期几，如 5L，当前仅处理 <see cref="CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+/// <para>表示月中最后一个星期{0}，仅在 <see cref="CrontabFieldKind.DayOfWeek"/> 字段域中使用</para>
 /// </remarks>
 internal sealed class LastDayOfWeekInMonthParser : ICronParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
+    /// <param name="dayOfWeek">星期，0 = 星期天，7 = 星期六</param>
     /// <param name="kind">Cron 字段种类</param>
     /// <exception cref="TimeCrontabException"></exception>
     public LastDayOfWeekInMonthParser(int dayOfWeek, CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 DayOfWeek 域
+        // 验证 {0}L 字符是否在 DayOfWeek 字段域中使用
         if (kind != CrontabFieldKind.DayOfWeek)
         {
-            throw new TimeCrontabException(string.Format("<{0}L> can only be used in the Day of Week field.", dayOfWeek));
+            throw new TimeCrontabException(string.Format("The <{0}L> parser can only be used in the Day of Week field.", dayOfWeek));
         }
 
         DayOfWeek = dayOfWeek;
@@ -41,19 +41,19 @@ internal sealed class LastDayOfWeekInMonthParser : ICronParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 星期几
+    /// 星期
     /// </summary>
     public int DayOfWeek { get; }
 
     /// <summary>
-    /// <see cref="DayOfWeek"/> 类型星期几
+    /// <see cref="DayOfWeek"/> 类型星期
     /// </summary>
     private DayOfWeek DateTimeDayOfWeek { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -61,7 +61,7 @@ internal sealed class LastDayOfWeekInMonthParser : ICronParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

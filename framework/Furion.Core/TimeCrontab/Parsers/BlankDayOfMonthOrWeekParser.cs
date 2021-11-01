@@ -9,14 +9,14 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron ? 字符解析器
+/// Cron 字段值含 ? 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>只能用在 Day 和 DayOfWeek 两个域。它也匹配域的任意值，但实际不会。因为 Day 和 DayOfWeek 会相互影响。</para>
-/// <para>例如想在每月的 20 日触发调度，不管 20 日到底是星期几，则只能使用如下写法： 13 13 15 20 * ?</para>
-/// <para>其中最后一位只能用 ?，而不能使用 *，如果使用 * 表示不管星期几都会触发，实际上并不是这样。</para>
-/// <para>所以 ? 实际上是起着 互斥性 作用</para>
-/// <para>仅支持 <see cref="CrontabFieldKind.Day"/> 或 <see cref="CrontabFieldKind.DayOfWeek"/> 字段</para>
+/// <para>只能用在 Day 和 DayOfWeek 两个域使用。它也匹配域的任意值，但实际不会。因为 Day 和 DayOfWeek 会相互影响</para>
+/// <para>例如想在每月的 20 日触发调度，不管 20 日到底是星期几，则只能使用如下写法：13 15 20 * ?</para>
+/// <para>其中最后一位只能用 ?，而不能使用 *，如果使用 * 表示不管星期几都会触发，实际上并不是这样</para>
+/// <para>所以 ? 起着 Day 和 DayOfWeek 互斥性作用</para>
+/// <para>仅在 <see cref="CrontabFieldKind.Day"/> 或 <see cref="CrontabFieldKind.DayOfWeek"/> 字段域中使用</para>
 /// </remarks>
 internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
 {
@@ -27,10 +27,10 @@ internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
     /// <exception cref="TimeCrontabException"></exception>
     public BlankDayOfMonthOrWeekParser(CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 Day 和 DayOfWeek 域
+        // 验证 ? 字符是否在 DayOfWeek 和 Day 字段域中使用
         if (kind != CrontabFieldKind.DayOfWeek && kind != CrontabFieldKind.Day)
         {
-            throw new TimeCrontabException("The <?> filter can only be used in the Day-of-Week or Day-of-Month fields.");
+            throw new TimeCrontabException("The <?> parser can only be used in the Day-of-Week or Day-of-Month fields.");
         }
 
         Kind = kind;
@@ -42,9 +42,9 @@ internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -52,15 +52,14 @@ internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类（时间）下一个符合值
+    /// 获取 Cron 字段种类当前值的下一个发生值
     /// </summary>
-    /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-    /// <param name="currentValue">当前值</param>
+    /// <param name="currentValue">时间值</param>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int? Next(int currentValue)
     {
-        // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -68,22 +67,22 @@ internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
             throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
         }
 
-        // 步长为 1 自增
+        // 默认递增步长为 1
         int? newValue = currentValue + 1;
 
-        // 判断下一个值是否在最大值内
+        // 验证最大值
         var maximum = Constants.MaximumDateTimeValues[Kind];
         return newValue >= maximum ? null : newValue;
     }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类（时间）起始值
+    /// 获取 Cron 字段种类字段起始值
     /// </summary>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
-        // 禁止当前 Cron 字段种类为日、月、周获取起始值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -95,7 +94,7 @@ internal sealed class BlankDayOfMonthOrWeekParser : ICronParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

@@ -9,17 +9,17 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 数字 字符解析器
+/// Cron 字段值含 数值 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>表示具体值，如 1,2,3,4... 仅支持 <see cref="CrontabFieldKind.Year"/> 字段种类</para>
+/// <para>表示具体值，这里仅处理 <see cref="CrontabFieldKind.Year"/> 字段域</para>
 /// </remarks>
 internal sealed class SpecificYearParser : SpecificParser
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="specificValue">具体值</param>
+    /// <param name="specificValue">年（具体值)</param>
     /// <param name="kind">Cron 字段种类</param>
     public SpecificYearParser(int specificValue, CrontabFieldKind kind)
         : base(specificValue, kind)
@@ -27,10 +27,11 @@ internal sealed class SpecificYearParser : SpecificParser
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类下一个符合值
+    /// 获取 Cron 字段种类当前值的下一个发生值
     /// </summary>
-    /// <param name="currentValue">当前值</param>
+    /// <param name="currentValue">时间值</param>
     /// <returns><see cref="int"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public override int? Next(int currentValue)
     {
         // 如果当前年份小于具体值，则返回具体值，否则返回 null

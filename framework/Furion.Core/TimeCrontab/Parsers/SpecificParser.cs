@@ -9,10 +9,10 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 数字 字符解析器
+/// Cron 字段值含 数值 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>表示具体值，如 1,2,3,4... 支持所有 Cron 字段种类</para>
+/// <para>表示具体值，该字符支持在 Cron 所有字段域中设置</para>
 /// </remarks>
 internal class SpecificParser : ICronParser, ITimeParser
 {
@@ -26,7 +26,7 @@ internal class SpecificParser : ICronParser, ITimeParser
         SpecificValue = specificValue;
         Kind = kind;
 
-        // 验证值是否有效
+        // 验证值有效性
         ValidateBounds(specificValue);
     }
 
@@ -41,9 +41,9 @@ internal class SpecificParser : ICronParser, ITimeParser
     public int SpecificValue { get; private set; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -60,33 +60,32 @@ internal class SpecificParser : ICronParser, ITimeParser
             _ => throw new ArgumentOutOfRangeException(nameof(datetime), Kind, null),
         };
 
-        // 判断是否等于具体值
         return evalValue == SpecificValue;
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类（时间）下一个符合值
+    /// 获取 Cron 字段种类当前值的下一个发生值
     /// </summary>
-    /// <remarks>由于是具体值，所以总是返回该值</remarks>
-    /// <param name="currentValue">当前值</param>
+    /// <param name="currentValue">时间值</param>
     /// <returns><see cref="int"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public virtual int? Next(int currentValue)
     {
         return SpecificValue;
     }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类（时间）起始值
+    /// 获取 Cron 字段种类字段起始值
     /// </summary>
-    /// <remarks>由于是具体值，所以总是返回该值</remarks>
     /// <returns><see cref="int"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
         return SpecificValue;
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()
@@ -95,23 +94,22 @@ internal class SpecificParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 验证具体值在当前 Cron 字段种类取值范围内是否有效
+    /// 验证值有效性
     /// </summary>
     /// <param name="value">具体值</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void ValidateBounds(int value)
     {
-        // 获取最小值和最大值
         var minimum = Constants.MinimumDateTimeValues[Kind];
         var maximum = Constants.MaximumDateTimeValues[Kind];
 
-        // 验证
+        // 验证值有效性
         if (value < minimum || value > maximum)
         {
             throw new ArgumentOutOfRangeException(nameof(value), $"{nameof(value)} should be between {minimum} and {maximum} (was {SpecificValue}).");
         }
 
-        // 支持星期日可以同时用 0 或 7 表示
+        // 兼容星期日可以同时用 0 或 7 表示
         if (Kind == CrontabFieldKind.DayOfWeek)
         {
             SpecificValue %= 7;

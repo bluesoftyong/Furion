@@ -1950,10 +1950,10 @@
         </member>
         <member name="T:Furion.TimeCrontab.AnyParser">
             <summary>
-            Cron * 字符解析器
+            Cron 字段值含 * 字符解析器
             </summary>
             <remarks>
-            <para>表示任意值，支持所有 Cron 字段种类</para>
+            <para>* 表示任意值，该字符支持在 Cron 所有字段域中设置</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.AnyParser.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
@@ -1969,43 +1969,42 @@
         </member>
         <member name="M:Furion.TimeCrontab.AnyParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.AnyParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.AnyParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.AnyParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.AnyParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser">
             <summary>
-            Cron ? 字符解析器
+            Cron 字段值含 ? 字符解析器
             </summary>
             <remarks>
-            <para>只能用在 Day 和 DayOfWeek 两个域。它也匹配域的任意值，但实际不会。因为 Day 和 DayOfWeek 会相互影响。</para>
-            <para>例如想在每月的 20 日触发调度，不管 20 日到底是星期几，则只能使用如下写法： 13 13 15 20 * ?</para>
-            <para>其中最后一位只能用 ?，而不能使用 *，如果使用 * 表示不管星期几都会触发，实际上并不是这样。</para>
-            <para>所以 ? 实际上是起着 互斥性 作用</para>
-            <para>仅支持 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 或 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段</para>
+            <para>只能用在 Day 和 DayOfWeek 两个域使用。它也匹配域的任意值，但实际不会。因为 Day 和 DayOfWeek 会相互影响</para>
+            <para>例如想在每月的 20 日触发调度，不管 20 日到底是星期几，则只能使用如下写法：13 15 20 * ?</para>
+            <para>其中最后一位只能用 ?，而不能使用 *，如果使用 * 表示不管星期几都会触发，实际上并不是这样</para>
+            <para>所以 ? 起着 Day 和 DayOfWeek 互斥性作用</para>
+            <para>仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 或 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
@@ -2022,36 +2021,35 @@
         </member>
         <member name="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.BlankDayOfMonthOrWeekParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.ICronParser">
             <summary>
-            Cron 字符解析器
+            Cron 字段字符解析器依赖接口
             </summary>
         </member>
         <member name="P:Furion.TimeCrontab.ICronParser.Kind">
@@ -2061,35 +2059,38 @@
         </member>
         <member name="M:Furion.TimeCrontab.ICronParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.ITimeParser">
             <summary>
-            时间域解析器
+            DateTime 时间解析器依赖接口
             </summary>
+            <remarks>主要用于计算 DateTime 主要组成部分（秒，分，时，年）的下一个取值</remarks>
         </member>
         <member name="M:Furion.TimeCrontab.ITimeParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.ITimeParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="T:Furion.TimeCrontab.LastDayOfMonthParser">
             <summary>
-            Cron L 字符解析器
+            Cron 字段值含 L 字符解析器
             </summary>
             <remarks>
-            <para>月中最后一天，如 L，当前仅处理 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段种类</para>
+            <para>L 表示月中最后一天，仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfMonthParser.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
@@ -2106,30 +2107,30 @@
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfMonthParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfMonthParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.LastDayOfMonthParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.LastDayOfWeekInMonthParser">
             <summary>
-            Cron {0}L 字符解析器
+            Cron 字段值含 {0}L 字符解析器
             </summary>
             <remarks>
-            <para>月中最后一个星期几，如 5L，当前仅处理 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+            <para>表示月中最后一个星期{0}，仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfWeekInMonthParser.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
             构造函数
             </summary>
-            <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
+            <param name="dayOfWeek">星期，0 = 星期天，7 = 星期六</param>
             <param name="kind">Cron 字段种类</param>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
@@ -2140,33 +2141,33 @@
         </member>
         <member name="P:Furion.TimeCrontab.LastDayOfWeekInMonthParser.DayOfWeek">
             <summary>
-            星期几
+            星期
             </summary>
         </member>
         <member name="P:Furion.TimeCrontab.LastDayOfWeekInMonthParser.DateTimeDayOfWeek">
             <summary>
-            <see cref="P:Furion.TimeCrontab.LastDayOfWeekInMonthParser.DayOfWeek"/> 类型星期几
+            <see cref="P:Furion.TimeCrontab.LastDayOfWeekInMonthParser.DayOfWeek"/> 类型星期
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfWeekInMonthParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.LastDayOfWeekInMonthParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.LastDayOfWeekInMonthParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.LastWeekdayOfMonthParser">
             <summary>
-            Cron LW 字符解析器
+            Cron 字段值含 LW 字符解析器
             </summary>
             <remarks>
-            <para>月中最后一个工作日，即最后一个非周六周末的日期，如 LW，当前仅处理 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段种类</para>
+            <para>表示月中最后一个工作日，即最后一个非周六周末的日期，仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.LastWeekdayOfMonthParser.#ctor(Furion.TimeCrontab.CrontabFieldKind)">
@@ -2183,31 +2184,31 @@
         </member>
         <member name="M:Furion.TimeCrontab.LastWeekdayOfMonthParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.LastWeekdayOfMonthParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.LastWeekdayOfMonthParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.NearestWeekdayParser">
             <summary>
-            Cron {0}W 字符解析器
+            Cron 字段值含 {0}W 字符解析器
             </summary>
             <remarks>
-            <para>离指定日期最近的工作日，即最后一个非周六周末的日期，如 5W，当前仅处理 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段种类</para>
+            <para>表示离指定日期最近的工作日，即最后一个非周六周末日，仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Day"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.NearestWeekdayParser.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
             构造函数
             </summary>
-            <param name="specificValue">天（具体值）</param>
-            <param name="kind"></param>
+            <param name="specificValue">天数（具体值）</param>
+            <param name="kind">Cron 字段种类</param>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException">Cron 字段种类</exception>
         </member>
         <member name="P:Furion.TimeCrontab.NearestWeekdayParser.Kind">
@@ -2217,28 +2218,28 @@
         </member>
         <member name="P:Furion.TimeCrontab.NearestWeekdayParser.SpecificValue">
             <summary>
-            天（具体值）
+            天数（具体值）
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.NearestWeekdayParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.NearestWeekdayParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.NearestWeekdayParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.RangeParser">
             <summary>
-            Cron - 字符解析器
+            Cron 字段值含 - 字符解析器
             </summary>
             <remarks>
-            <para>表示特定访问，如 1-5 或 1-5/2，支持所有 Cron 字段种类</para>
+            <para>表示特定取值范围，如 1-5 或 1-5/2，该字符支持在 Cron 所有字段域中设置</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.#ctor(System.Int32,System.Int32,System.Nullable{System.Int32},Furion.TimeCrontab.CrontabFieldKind)">
@@ -2273,64 +2274,63 @@
         </member>
         <member name="P:Furion.TimeCrontab.RangeParser.SpecificParsers">
             <summary>
-            所有符合范围值或带步长算法的具体值过滤器
+            所有满足范围计算的解析器
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="P:Furion.TimeCrontab.RangeParser.FirstCache">
             <summary>
-            避免重复计算进而起始值
+            存储起始值，避免重复计算
             </summary>
-            <remarks>处理带步长的范围字符串</remarks>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.RangeParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.RangeParser.IsMatch(System.Int32)">
             <summary>
-            判断单个值是否符合取值范围或带步长算法
+            判断是否符合范围或带步长范围解析规则
             </summary>
-            <param name="evalValue">值</param>
+            <param name="evalValue">当前值</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser">
             <summary>
-            Cron # 字符解析器
+            Cron 字段值含 {0}#{1} 字符解析器
             </summary>
             <remarks>
-            <para>表示每个域第几个星期几，如 4#2，仅支持 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段种类</para>
+            <para>表示月中第{0}个星期{1}，仅在 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.DayOfWeek"/> 字段域中使用</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.#ctor(System.Int32,System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
             构造函数
             </summary>
-            <param name="dayOfWeek">星期，0=星期天，7=星期六</param>
-            <param name="weekNumber">每个月中第几个星期，一个月最多不会超过四个星期</param>
+            <param name="dayOfWeek">星期，0 = 星期天，7 = 星期六</param>
+            <param name="weekNumber">月中第几个星期</param>
             <param name="kind">Cron 字段种类</param>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
@@ -2341,38 +2341,38 @@
         </member>
         <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.DayOfWeek">
             <summary>
-            星期几
-            </summary>
-        </member>
-        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.WeekNumber">
-            <summary>
-            第几个周
+            星期
             </summary>
         </member>
         <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.DateTimeDayOfWeek">
             <summary>
-            <see cref="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.DayOfWeek"/> 类型星期几
+            <see cref="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.DayOfWeek"/> 类型星期
+            </summary>
+        </member>
+        <member name="P:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.WeekNumber">
+            <summary>
+            月中第几个星期
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.SpecificDayOfWeekInMonthParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.SpecificParser">
             <summary>
-            Cron 数字 字符解析器
+            Cron 字段值含 数值 字符解析器
             </summary>
             <remarks>
-            <para>表示具体值，如 1,2,3,4... 支持所有 Cron 字段种类</para>
+            <para>表示具体值，该字符支持在 Cron 所有字段域中设置</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
@@ -2394,67 +2394,68 @@
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <remarks>由于是具体值，所以总是返回该值</remarks>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
-            <remarks>由于是具体值，所以总是返回该值</remarks>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.SpecificParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificParser.ValidateBounds(System.Int32)">
             <summary>
-            验证具体值在当前 Cron 字段种类取值范围内是否有效
+            验证值有效性
             </summary>
             <param name="value">具体值</param>
             <exception cref="T:System.ArgumentOutOfRangeException"></exception>
         </member>
         <member name="T:Furion.TimeCrontab.SpecificYearParser">
             <summary>
-            Cron 数字 字符解析器
+            Cron 字段值含 数值 字符解析器
             </summary>
             <remarks>
-            <para>表示具体值，如 1,2,3,4... 仅支持 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Year"/> 字段种类</para>
+            <para>表示具体值，这里仅处理 <see cref="F:Furion.TimeCrontab.CrontabFieldKind.Year"/> 字段域</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificYearParser.#ctor(System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
             构造函数
             </summary>
-            <param name="specificValue">具体值</param>
+            <param name="specificValue">年（具体值)</param>
             <param name="kind">Cron 字段种类</param>
         </member>
         <member name="M:Furion.TimeCrontab.SpecificYearParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="T:Furion.TimeCrontab.StepParser">
             <summary>
-            Cron / 字符解析器
+            Cron 字段值含 / 字符解析器
             </summary>
             <remarks>
-            <para>表示每隔固定时间，如 5/20，支持所有 Cron 字段种类</para>
+            <para>表示从某值开始，每隔固定值触发，该字符支持在 Cron 所有字段域中设置</para>
             </remarks>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.#ctor(System.Int32,System.Int32,Furion.TimeCrontab.CrontabFieldKind)">
@@ -2483,47 +2484,47 @@
         </member>
         <member name="P:Furion.TimeCrontab.StepParser.SpecificParsers">
             <summary>
-            所有符合步长算法的具体值过滤器
+            所有满足间隔步长计算的解析器
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.IsMatch(System.DateTime)">
             <summary>
-            是否匹配指定时间
+            判断当前时间是否符合 Cron 字段种类解析规则
             </summary>
-            <param name="datetime">指定时间</param>
+            <param name="datetime">当前时间</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.Next(System.Int32)">
             <summary>
-            计算当前 Cron 字段种类（时间）下一个符合值
+            获取 Cron 字段种类当前值的下一个发生值
             </summary>
-            <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-            <param name="currentValue">当前值</param>
+            <param name="currentValue">时间值</param>
             <returns><see cref="T:System.Int32"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="P:Furion.TimeCrontab.StepParser.FirstCache">
             <summary>
-            避免重复计算进而起始值
+            存储起始值，避免重复计算
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.First">
             <summary>
-            获取当前 Cron 字段种类（时间）起始值
+            获取 Cron 字段种类字段起始值
             </summary>
             <returns><see cref="T:System.Int32"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.ToString">
             <summary>
-            重写 <see cref="M:Furion.TimeCrontab.StepParser.ToString"/>
+            将解析器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.StepParser.IsMatch(System.Int32)">
             <summary>
-            判断单个值是否符合步长算法
+            判断是否符合间隔或带步长间隔解析规则
             </summary>
-            <param name="evalValue">值</param>
+            <param name="evalValue">当前值</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="T:Microsoft.Extensions.Hosting.AppHostBuilderExtensions">

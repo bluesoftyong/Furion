@@ -9,10 +9,10 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron LW 字符解析器
+/// Cron 字段值含 LW 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>月中最后一个工作日，即最后一个非周六周末的日期，如 LW，当前仅处理 <see cref="CrontabFieldKind.Day"/> 字段种类</para>
+/// <para>表示月中最后一个工作日，即最后一个非周六周末的日期，仅在 <see cref="CrontabFieldKind.Day"/> 字段域中使用</para>
 /// </remarks>
 internal sealed class LastWeekdayOfMonthParser : ICronParser
 {
@@ -23,10 +23,10 @@ internal sealed class LastWeekdayOfMonthParser : ICronParser
     /// <exception cref="TimeCrontabException"></exception>
     public LastWeekdayOfMonthParser(CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 Day 域
+        // 验证 LW 字符是否在 Day 字段域中使用
         if (kind != CrontabFieldKind.Day)
         {
-            throw new TimeCrontabException("<LW> can only be used in the Day field.");
+            throw new TimeCrontabException("The <LW> parser can only be used in the Day field.");
         }
 
         Kind = kind;
@@ -38,20 +38,20 @@ internal sealed class LastWeekdayOfMonthParser : ICronParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
         /*
-         * W: 表示有效工作日(周一到周五),只能出现在 Day 域，系统将在离指定日期的最近的有效工作日触发事件。
-         * 例如：在 Day 使用 5W，如果 5 日是星期六，则将在最近的工作日：星期五，即 4 日触发。
-         * 如果 5 日是星期天，则在 6 日(周一)触发；如果 5 日在星期一到星期五中的一天，则就在 5 日触发。
+         * W：表示有效工作日(周一到周五),只能出现在 Day 域，系统将在离指定日期的最近的有效工作日触发事件
+         * 例如：在 Day 使用 5W，如果 5 日是星期六，则将在最近的工作日：星期五，即 4 日触发
+         * 如果 5 日是星期天，则在 6 日(周一)触发；如果 5 日在星期一到星期五中的一天，则就在 5 日触发
          * 另外一点，W 的最近寻找不会跨过月份
          */
 
-        // 获取当前时间所在月最后一天日期
+        // 获取当前时间所在月最后一天
         var specificValue = DateTime.DaysInMonth(datetime.Year, datetime.Month);
         var specificDay = new DateTime(datetime.Year, datetime.Month, specificValue);
 
@@ -64,12 +64,6 @@ internal sealed class LastWeekdayOfMonthParser : ICronParser
             // 如果最后一天是周六，则退一天
             case DayOfWeek.Saturday:
                 closestWeekday = specificDay.AddDays(-1);
-
-                //// 如果退一天不在本月，则转到下周一
-                //if (closestWeekday.Month != specificDay.Month)
-                //{
-                //    closestWeekday = specificDay.AddDays(2);
-                //}
 
                 break;
 
@@ -95,7 +89,7 @@ internal sealed class LastWeekdayOfMonthParser : ICronParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

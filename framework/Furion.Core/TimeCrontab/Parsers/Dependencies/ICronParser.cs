@@ -9,7 +9,7 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 字符解析器
+/// Cron 字段字符解析器依赖接口
 /// </summary>
 internal interface ICronParser
 {
@@ -19,9 +19,9 @@ internal interface ICronParser
     CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     bool IsMatch(DateTime datetime);
 }

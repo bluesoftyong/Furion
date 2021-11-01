@@ -9,10 +9,10 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron - 字符解析器
+/// Cron 字段值含 - 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>表示特定访问，如 1-5 或 1-5/2，支持所有 Cron 字段种类</para>
+/// <para>表示特定取值范围，如 1-5 或 1-5/2，该字符支持在 Cron 所有字段域中设置</para>
 /// </remarks>
 internal sealed class RangeParser : ICronParser, ITimeParser
 {
@@ -28,19 +28,19 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     {
         var maximum = Constants.MaximumDateTimeValues[kind];
 
-        // 验证起始值
+        // 验证起始值有效性
         if (start < 0 || start > maximum)
         {
             throw new TimeCrontabException(string.Format("Start = {0} is out of bounds for <{1}> field.", start, Enum.GetName(typeof(CrontabFieldKind), kind)));
         }
 
-        // 验证终止值
+        // 验证终止值有效性
         if (end < 0 || end > maximum)
         {
             throw new TimeCrontabException(string.Format("End = {0} is out of bounds for <{1}> field.", end, Enum.GetName(typeof(CrontabFieldKind), kind)));
         }
 
-        // 验证步长
+        // 验证步长有效性
         if (steps != null && (steps <= 0 || steps > maximum))
         {
             throw new TimeCrontabException(string.Format("Steps = {0} is out of bounds for <{1}> field.", steps, Enum.GetName(typeof(CrontabFieldKind), kind)));
@@ -51,17 +51,17 @@ internal sealed class RangeParser : ICronParser, ITimeParser
         Kind = kind;
         Steps = steps;
 
-        // 循环计算当前 Cron 字段种类符合取值范围的所有值并存入 SpecificFilters 中
-        var filters = new List<SpecificParser>();
+        // 计算所有满足范围计算的解析器
+        var parsers = new List<SpecificParser>();
         for (var evalValue = Start; evalValue <= End; evalValue++)
         {
             if (IsMatch(evalValue))
             {
-                filters.Add(new SpecificParser(evalValue, Kind));
+                parsers.Add(new SpecificParser(evalValue, Kind));
             }
         }
 
-        SpecificParsers = filters;
+        SpecificParsers = parsers;
     }
 
     /// <summary>
@@ -85,14 +85,14 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     public int? Steps { get; }
 
     /// <summary>
-    /// 所有符合范围值或带步长算法的具体值过滤器
+    /// 所有满足范围计算的解析器
     /// </summary>
     public IEnumerable<SpecificParser> SpecificParsers { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -113,14 +113,14 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类（时间）下一个符合值
+    /// 获取 Cron 字段种类当前值的下一个发生值
     /// </summary>
-    /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-    /// <param name="currentValue">当前值</param>
+    /// <param name="currentValue">时间值</param>
     /// <returns><see cref="int"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public int? Next(int currentValue)
     {
-        // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -128,10 +128,11 @@ internal sealed class RangeParser : ICronParser, ITimeParser
             throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
         }
 
-        var maximum = Constants.MaximumDateTimeValues[Kind];
+        // 默认递增步长为 1
         int? newValue = currentValue + 1;
 
-        // 获取下一个符合的值，值必须小于最大值且符合范围值或带步长算法内
+        // 获取下一个匹配的发生值
+        var maximum = Constants.MaximumDateTimeValues[Kind];
         while (newValue < maximum && !IsMatch(newValue.Value))
         {
             newValue++;
@@ -141,25 +142,24 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 避免重复计算进而起始值
+    /// 存储起始值，避免重复计算
     /// </summary>
-    /// <remarks>处理带步长的范围字符串</remarks>
     private int? FirstCache { get; set; }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类（时间）起始值
+    /// 获取 Cron 字段种类字段起始值
     /// </summary>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
-        // 判断是否缓存过起始值，如果有，则跳过
+        // 判断是否缓存过起始值，如果有则跳过
         if (FirstCache.HasValue)
         {
             return FirstCache.Value;
         }
 
-        // 禁止当前 Cron 字段种类为日、月、周获取起始值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -170,19 +170,21 @@ internal sealed class RangeParser : ICronParser, ITimeParser
         var maximum = Constants.MaximumDateTimeValues[Kind];
         var newValue = 0;
 
-        // 获取首个符合的值，值必须小于最大值且符合范围值或带步长算法内
+        // 获取首个符合的起始值
         while (newValue < maximum && !IsMatch(newValue))
         {
             newValue++;
         }
 
-        // 验证起始值边界
+        // 验证起始值有效性
         if (newValue > maximum)
+        {
             throw new TimeCrontabException(
                 string.Format("Next value for {0} on field {1} could not be found!",
                 ToString(),
                 Enum.GetName(typeof(CrontabFieldKind), Kind))
             );
+        }
 
         // 缓存起始值
         FirstCache = newValue;
@@ -190,7 +192,7 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()
@@ -201,9 +203,9 @@ internal sealed class RangeParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 判断单个值是否符合取值范围或带步长算法
+    /// 判断是否符合范围或带步长范围解析规则
     /// </summary>
-    /// <param name="evalValue">值</param>
+    /// <param name="evalValue">当前值</param>
     /// <returns><see cref="bool"/></returns>
     private bool IsMatch(int evalValue)
     {

@@ -9,10 +9,10 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron * 字符解析器
+/// Cron 字段值含 * 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>表示任意值，支持所有 Cron 字段种类</para>
+/// <para>* 表示任意值，该字符支持在 Cron 所有字段域中设置</para>
 /// </remarks>
 internal sealed class AnyParser : ICronParser, ITimeParser
 {
@@ -31,9 +31,9 @@ internal sealed class AnyParser : ICronParser, ITimeParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -41,15 +41,14 @@ internal sealed class AnyParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 计算当前 Cron 字段种类（时间）下一个符合值
+    /// 获取 Cron 字段种类当前值的下一个发生值
     /// </summary>
-    /// <remarks>仅支持 Cron 字段种类为时、分、秒的种类</remarks>
-    /// <param name="currentValue">当前值</param>
+    /// <param name="currentValue">时间值</param>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int? Next(int currentValue)
     {
-        // 禁止当前 Cron 字段种类为日、月、周获取下一个符合值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -57,22 +56,22 @@ internal sealed class AnyParser : ICronParser, ITimeParser
             throw new TimeCrontabException("Cannot call Next for Day, Month or DayOfWeek types.");
         }
 
-        // 步长为 1 自增
+        // 默认递增步长为 1
         int? newValue = currentValue + 1;
 
-        // 判断下一个值是否在最大值内
+        // 验证最大值
         var maximum = Constants.MaximumDateTimeValues[Kind];
         return newValue > maximum ? null : newValue;
     }
 
     /// <summary>
-    /// 获取当前 Cron 字段种类（时间）起始值
+    /// 获取 Cron 字段种类字段起始值
     /// </summary>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     public int First()
     {
-        // 禁止当前 Cron 字段种类为日、月、周获取起始值
+        // 由于天、月、周计算复杂，所以这里排除对它们的处理
         if (Kind == CrontabFieldKind.Day
             || Kind == CrontabFieldKind.Month
             || Kind == CrontabFieldKind.DayOfWeek)
@@ -84,7 +83,7 @@ internal sealed class AnyParser : ICronParser, ITimeParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

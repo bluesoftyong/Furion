@@ -9,10 +9,10 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron L 字符解析器
+/// Cron 字段值含 L 字符解析器
 /// </summary>
 /// <remarks>
-/// <para>月中最后一天，如 L，当前仅处理 <see cref="CrontabFieldKind.Day"/> 字段种类</para>
+/// <para>L 表示月中最后一天，仅在 <see cref="CrontabFieldKind.Day"/> 字段域中使用</para>
 /// </remarks>
 internal sealed class LastDayOfMonthParser : ICronParser
 {
@@ -23,10 +23,10 @@ internal sealed class LastDayOfMonthParser : ICronParser
     /// <exception cref="TimeCrontabException"></exception>
     public LastDayOfMonthParser(CrontabFieldKind kind)
     {
-        // 限制当前过滤器只能作用于 Cron 字段种类 Day 域
+        // 验证 L 字符是否在 Day 字段域中使用
         if (kind != CrontabFieldKind.Day)
         {
-            throw new TimeCrontabException("The <L> filter can only be used with the Day field.");
+            throw new TimeCrontabException("The <L> parser can only be used with the Day field.");
         }
 
         Kind = kind;
@@ -38,9 +38,9 @@ internal sealed class LastDayOfMonthParser : ICronParser
     public CrontabFieldKind Kind { get; }
 
     /// <summary>
-    /// 是否匹配指定时间
+    /// 判断当前时间是否符合 Cron 字段种类解析规则
     /// </summary>
-    /// <param name="datetime">指定时间</param>
+    /// <param name="datetime">当前时间</param>
     /// <returns><see cref="bool"/></returns>
     public bool IsMatch(DateTime datetime)
     {
@@ -48,7 +48,7 @@ internal sealed class LastDayOfMonthParser : ICronParser
     }
 
     /// <summary>
-    /// 重写 <see cref="ToString"/>
+    /// 将解析器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public override string ToString()

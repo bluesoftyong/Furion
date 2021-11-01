@@ -9,8 +9,9 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 表达式解析类
+/// Cron 表达式抽象类
 /// </summary>
+/// <remarks>主要将 Cron 表达式转换成 OOP 类进行操作</remarks>
 public partial class Crontab
 {
     /// <summary>

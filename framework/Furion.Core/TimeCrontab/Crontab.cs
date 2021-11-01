@@ -9,14 +9,15 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Cron 表达式解析类
+/// Cron 表达式抽象类
 /// </summary>
+/// <remarks>主要将 Cron 表达式转换成 OOP 类进行操作</remarks>
 public sealed partial class Crontab
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <remarks>限制只能通过 <see cref="Parse(string, CronStringFormat)"/> 或 <see cref="TryParse(string, CronStringFormat)"/> 创建</remarks>
+    /// <remarks>禁止外部 new 实例化</remarks>
     private Crontab()
     {
         Parsers = new Dictionary<CrontabFieldKind, List<ICronParser>>();
@@ -31,10 +32,11 @@ public sealed partial class Crontab
     /// <summary>
     /// Cron 表达式格式化类型
     /// </summary>
-    public CronStringFormat Format { get; set; }
+    /// <remarks>禁止运行时更改</remarks>
+    public CronStringFormat Format { get; private set; }
 
     /// <summary>
-    /// 解析 Cron 表达式并创建 <see cref="Crontab"/> 对象
+    /// 解析 Cron 表达式并转换成 <see cref="Crontab"/> 对象
     /// </summary>
     /// <param name="expression">Cron 表达式</param>
     /// <param name="format">Cron 表达式格式化类型</param>
@@ -50,11 +52,12 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 解析 Cron 表达式并创建 <see cref="Crontab"/> 对象
+    /// 解析 Cron 表达式并转换成 <see cref="Crontab"/> 对象
     /// </summary>
+    /// <remarks>解析失败返回 default</remarks>
     /// <param name="expression">Cron 表达式</param>
     /// <param name="format">Cron 表达式格式化类型</param>
-    /// <returns><see cref="Crontab"/> 或 null</returns>
+    /// <returns><see cref="Crontab"/></returns>
     public static Crontab? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         try
@@ -68,9 +71,9 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 获取下一个发生时间
+    /// 获取起始时间下一个发生时间
     /// </summary>
-    /// <param name="baseTime">起始计算时间</param>
+    /// <param name="baseTime">起始时间</param>
     /// <returns><see cref="DateTime"/></returns>
     public DateTime GetNextOccurrence(DateTime baseTime)
     {
@@ -78,10 +81,10 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 获取特定时间范围内下一个符合的发生时间
+    /// 获取特定时间范围下一个发生时间
     /// </summary>
-    /// <param name="baseTime">起始计算时间</param>
-    /// <param name="endTime">终止计算时间</param>
+    /// <param name="baseTime">起始时间</param>
+    /// <param name="endTime">结束时间</param>
     /// <returns><see cref="DateTime"/></returns>
     public DateTime GetNextOccurrence(DateTime baseTime, DateTime endTime)
     {
@@ -89,11 +92,11 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 获取特定时间范围内所有符合的发生时间
+    /// 获取特定时间范围所有发生时间
     /// </summary>
-    /// <param name="baseTime">起始计算时间</param>
-    /// <param name="endTime">终止计算时间</param>
-    /// <returns></returns>
+    /// <param name="baseTime">起始时间</param>
+    /// <param name="endTime">结束时间</param>
+    /// <returns><see cref="IEnumerable{T}"/></returns>
     public IEnumerable<DateTime> GetNextOccurrences(DateTime baseTime, DateTime endTime)
     {
         for (var occurrence = GetNextOccurrence(baseTime, endTime);
@@ -105,27 +108,27 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// <see cref="ToString"/>
+    /// 将 <see cref="Crontab"/> 对象转换成 Cron 表达式字符串
     /// </summary>
-    /// <returns><see cref="string"/></returns>
+    /// <returns></returns>
     public override string ToString()
     {
         var paramList = new List<string>();
 
-        // 判断 Cron 表达式格式化类型是否包含秒字段
+        // 判断当前 Cron 格式化类型是否包含秒字段域
         if (Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears)
         {
             JoinParsers(paramList, CrontabFieldKind.Second);
         }
 
-        // 必须字段解析器
+        // Cron 常规字段域
         JoinParsers(paramList, CrontabFieldKind.Minute);
         JoinParsers(paramList, CrontabFieldKind.Hour);
         JoinParsers(paramList, CrontabFieldKind.Day);
         JoinParsers(paramList, CrontabFieldKind.Month);
         JoinParsers(paramList, CrontabFieldKind.DayOfWeek);
 
-        // 判断 Cron 表达式格式化类型是否包含年字段
+        // 判断当前 Cron 格式化类型是否包含年字段域
         if (Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears)
         {
             JoinParsers(paramList, CrontabFieldKind.Year);

@@ -11,7 +11,6 @@ namespace Furion.TimeCrontab;
 /// <summary>
 /// Cron 字段种类
 /// </summary>
-/// <remarks>使用时保持以下顺序编写</remarks>
 internal enum CrontabFieldKind
 {
     /// <summary>

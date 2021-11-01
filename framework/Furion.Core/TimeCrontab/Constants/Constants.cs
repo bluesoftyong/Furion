@@ -14,7 +14,7 @@ namespace Furion.TimeCrontab;
 internal static class Constants
 {
     /// <summary>
-    /// Cron 每个字段最大值列表
+    /// Cron 字段种类最大值
     /// </summary>
     internal static readonly Dictionary<CrontabFieldKind, int> MaximumDateTimeValues = new()
     {
@@ -28,7 +28,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 每个字段最小值列表
+    /// Cron 字段种类最大值
     /// </summary>
     internal static readonly Dictionary<CrontabFieldKind, int> MinimumDateTimeValues = new()
     {
@@ -42,7 +42,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 表达式不同格式化类型字段数量
+    /// Cron 不同格式化类型字段数量
     /// </summary>
     internal static readonly Dictionary<CronStringFormat, int> ExpectedFieldCounts = new()
     {
@@ -53,8 +53,9 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 星期字段支持星期单词全拼列表
+    /// 配置 C# 中 <see cref="DayOfWeek"/> 枚举元素值
     /// </summary>
+    /// <remarks>主要解决 C# 中该类型和 Cron 星期字段域不对应问题</remarks>
     internal static readonly Dictionary<DayOfWeek, int> CronDays = new()
     {
         { DayOfWeek.Sunday, 0 },
@@ -67,7 +68,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 星期字段支持星期单词缩写列表
+    /// 定义 Cron 星期字段域值支持的星期英文缩写
     /// </summary>
     internal static readonly Dictionary<string, int> Days = new()
     {
@@ -81,7 +82,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 月字段支持月份单词缩写列表
+    /// 定义 Cron 月字段域值支持的星期英文缩写
     /// </summary>
     internal static readonly Dictionary<string, int> Months = new()
     {

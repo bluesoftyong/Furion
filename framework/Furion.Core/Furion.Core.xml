@@ -1628,39 +1628,39 @@
         </member>
         <member name="F:Furion.TimeCrontab.Constants.MaximumDateTimeValues">
             <summary>
-            Cron 每个字段最大值列表
+            Cron 字段种类最大值
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.MinimumDateTimeValues">
             <summary>
-            Cron 每个字段最小值列表
+            Cron 字段种类最大值
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.ExpectedFieldCounts">
             <summary>
-            Cron 表达式不同格式化类型字段数量
+            Cron 不同格式化类型字段数量
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.CronDays">
             <summary>
-            Cron 星期字段支持星期单词全拼列表
+            配置 C# 中 <see cref="T:System.DayOfWeek"/> 枚举元素值
             </summary>
+            <remarks>主要解决 C# 中该类型和 Cron 星期字段域不对应问题</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.Days">
             <summary>
-            Cron 星期字段支持星期单词缩写列表
+            定义 Cron 星期字段域值支持的星期英文缩写
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.Months">
             <summary>
-            Cron 月字段支持月份单词缩写列表
+            定义 Cron 月字段域值支持的星期英文缩写
             </summary>
         </member>
         <member name="T:Furion.TimeCrontab.CrontabFieldKind">
             <summary>
             Cron 字段种类
             </summary>
-            <remarks>使用时保持以下顺序编写</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CrontabFieldKind.Second">
             <summary>
@@ -1706,25 +1706,25 @@
             <summary>
             默认格式
             </summary>
-            <remarks>分 时 天 月 周</remarks>
+            <remarks>书写顺序：分 时 天 月 周</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithYears">
             <summary>
             带年份格式
             </summary>
-            <remarks>分 时 天 月 周 年</remarks>
+            <remarks>书写顺序：分 时 天 月 周 年</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithSeconds">
             <summary>
             带秒格式
             </summary>
-            <remarks>秒 分 时 天 月 周</remarks>
+            <remarks>书写顺序：秒 分 时 天 月 周</remarks>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.WithSecondsAndYears">
             <summary>
             带秒和年格式
             </summary>
-            <remarks>秒 分 时 天 月 周 年</remarks>
+            <remarks>书写顺序：秒 分 时 天 月 周 年</remarks>
         </member>
         <member name="T:Furion.TimeCrontab.Crontab">
             <summary>
@@ -1922,31 +1922,31 @@
         </member>
         <member name="T:Furion.TimeCrontab.DayOfWeekExtensions">
             <summary>
-            DayOfWeek 拓展类
+            <see cref="T:System.DayOfWeek"/> 拓展类
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.ToCronDayOfWeek(System.DayOfWeek)">
             <summary>
-            将 DayOfWeek 枚举转换成 Cron 周字段支持的数字
+            将 C# 中 <see cref="T:System.DayOfWeek"/> 枚举元素转换成数值
             </summary>
             <param name="dayOfWeek"><see cref="T:System.DayOfWeek"/> 枚举</param>
-            <returns><see cref="T:System.Int32"/> 0 代表 星期日，以此类推</returns>
+            <returns><see cref="T:System.Int32"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.ToDayOfWeek(System.Int32)">
             <summary>
-            将 Cron 字段周数字转换成 <see cref="T:System.DayOfWeek"/> 枚举
+            将数值转换成 C# 中 <see cref="T:System.DayOfWeek"/> 枚举元素
             </summary>
-            <param name="dayOfWeek">0-6 数字</param>
-            <returns><see cref="T:System.DayOfWeek"/> 数值</returns>
+            <param name="dayOfWeek"></param>
+            <returns></returns>
         </member>
         <member name="M:Furion.TimeCrontab.DayOfWeekExtensions.LastDayOfMonth(System.DayOfWeek,System.Int32,System.Int32)">
             <summary>
-            查找特定年月中最后一个星期几是哪一天
+            获取当前年月最后一个星期几
             </summary>
-            <param name="dayOfWeek"><see cref="T:System.DayOfWeek"/> 枚举</param>
+            <param name="dayOfWeek">星期几，<see cref="T:System.DayOfWeek"/> 类型</param>
             <param name="year">年</param>
             <param name="month">月</param>
-            <returns><see cref="T:System.Int32"/> 返回月中对应的天数</returns>
+            <returns><see cref="T:System.Int32"/></returns>
         </member>
         <member name="T:Furion.TimeCrontab.AnyParser">
             <summary>

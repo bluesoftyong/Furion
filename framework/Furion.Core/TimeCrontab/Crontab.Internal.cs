@@ -15,7 +15,7 @@ namespace Furion.TimeCrontab;
 public partial class Crontab
 {
     /// <summary>
-    /// 解析 Cron 表达式并生成每个字段解析器字典集合
+    /// 解析 Cron 表达式字段并存储其 所有发生值 字符解析器
     /// </summary>
     /// <param name="expression">Cron 表达式</param>
     /// <param name="format">Cron 表达式格式化类型</param>
@@ -23,70 +23,72 @@ public partial class Crontab
     /// <exception cref="TimeCrontabException"></exception>
     private static Dictionary<CrontabFieldKind, List<ICronParser>> ParseToDictionary(string expression, CronStringFormat format)
     {
-        // Cron 表达式不能为null，空，纯空白
+        // Cron 表达式空检查
         if (string.IsNullOrWhiteSpace(expression))
         {
             throw new TimeCrontabException("The provided cron string is null, empty or contains only whitespace.");
         }
 
-        // 根据空格切割 Cron 表达式每个字段域
+        // 通过空白符切割 Cron 表达式每个字段域
         var instructions = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        // 验证当前指定 Cron 表达式格式化类型数量
+        // 验证当前 Cron 格式化类型字段数量和表达式字段数量是否一致
         var expectedCount = Constants.ExpectedFieldCounts[format];
-
-        // 超出指定长度
         if (instructions.Length > expectedCount)
         {
             throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too many parameters.", expression));
         }
-        // 小于指定长度
         if (instructions.Length < expectedCount)
         {
             throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too few parameters.", expression));
         }
 
+        // 初始化字段偏移量和字段字符解析器
         var defaultFieldOffset = 0;
         var fieldParsers = new Dictionary<CrontabFieldKind, List<ICronParser>>();
 
-        // 解析带秒字段解析器
+        // 判断当前 Cron 格式化类型是否包含秒字段域，如果包含则优先解析秒字段域字符解析器
         if (format == CronStringFormat.WithSeconds || format == CronStringFormat.WithSecondsAndYears)
         {
             fieldParsers.Add(CrontabFieldKind.Second, ParseField(instructions[0], CrontabFieldKind.Second));
             defaultFieldOffset = 1;
         }
 
-        // 必备 Cron 字段解析
-        fieldParsers.Add(CrontabFieldKind.Minute, ParseField(instructions[defaultFieldOffset + 0], CrontabFieldKind.Minute));
-        fieldParsers.Add(CrontabFieldKind.Hour, ParseField(instructions[defaultFieldOffset + 1], CrontabFieldKind.Hour));
-        fieldParsers.Add(CrontabFieldKind.Day, ParseField(instructions[defaultFieldOffset + 2], CrontabFieldKind.Day));
-        fieldParsers.Add(CrontabFieldKind.Month, ParseField(instructions[defaultFieldOffset + 3], CrontabFieldKind.Month));
-        fieldParsers.Add(CrontabFieldKind.DayOfWeek, ParseField(instructions[defaultFieldOffset + 4], CrontabFieldKind.DayOfWeek));
+        // Cron 常规字段域
+        fieldParsers.Add(CrontabFieldKind.Minute, ParseField(instructions[defaultFieldOffset + 0], CrontabFieldKind.Minute));   // 偏移量 1
+        fieldParsers.Add(CrontabFieldKind.Hour, ParseField(instructions[defaultFieldOffset + 1], CrontabFieldKind.Hour));   // 偏移量 2
+        fieldParsers.Add(CrontabFieldKind.Day, ParseField(instructions[defaultFieldOffset + 2], CrontabFieldKind.Day)); // 偏移量 3
+        fieldParsers.Add(CrontabFieldKind.Month, ParseField(instructions[defaultFieldOffset + 3], CrontabFieldKind.Month)); // 偏移量 4
+        fieldParsers.Add(CrontabFieldKind.DayOfWeek, ParseField(instructions[defaultFieldOffset + 4], CrontabFieldKind.DayOfWeek)); // 偏移量 5
 
-        // 解析带年字段解析器
+        // 判断当前 Cron 格式化类型是否包含年字段域，如果包含则解析年字段域字符解析器
         if (format == CronStringFormat.WithYears || format == CronStringFormat.WithSecondsAndYears)
         {
-            fieldParsers.Add(CrontabFieldKind.Year, ParseField(instructions[defaultFieldOffset + 5], CrontabFieldKind.Year));
+            fieldParsers.Add(CrontabFieldKind.Year, ParseField(instructions[defaultFieldOffset + 5], CrontabFieldKind.Year));   // 偏移量 6
         }
 
-        // 检查非法解析器（2月份没有30号和31号的情况）
+        // 检查非法字符解析器，如 2 月没有 30 和 31 号
         CheckForIllegalParsers(fieldParsers);
 
         return fieldParsers;
     }
 
     /// <summary>
-    /// 解析单个 Cron 字段值并转换成解析器
+    /// 解析 Cron 单个字段域所有发生值 字符解析器
     /// </summary>
-    /// <param name="field">Cron 字段值</param>
-    /// <param name="kind">Cron 字段种类</param>
-    /// <returns><see cref="LinkedList{T}"/></returns>
+    /// <param name="field">字段值</param>
+    /// <param name="kind">Cron 表达式格式化类型</param>
+    /// <returns><see cref="List{T}"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     private static List<ICronParser> ParseField(string field, CrontabFieldKind kind)
     {
+        /*
+         * 在 Cron 表达式中，单个字段域值也支持定义多个值（我们成为值中值），如 1,2,3 或 SUN,FRI,SAT
+         * 所以，这里需要将字段域值通过 , 进行切割后独立处理
+         */
+
         try
         {
-            // 字段值中存在多个子值，如 1,2,3...，所以通过 , 切割
             return field.Split(',').Select(parser => ParseParser(parser, kind)).ToList();
         }
         catch (Exception ex)
@@ -98,118 +100,146 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 解析 Cron 字段值并转换成 <see cref="ICronParser"/> 解析器
+    /// 解析 Cron 字段域值中值
     /// </summary>
-    /// <param name="parser">Cron 字段值中子项值</param>
-    /// <param name="kind">Cron 字段种类</param>
-    /// <returns></returns>
+    /// <param name="parser">字段值中值</param>
+    /// <param name="kind">Cron 表达式格式化类型</param>
+    /// <returns><see cref="ICronParser"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     private static ICronParser ParseParser(string parser, CrontabFieldKind kind)
     {
+        // Cron 字段中所有字母均采用大写方式，所以需要转换所有为大写再操作
         var newParser = parser.ToUpper();
 
         try
         {
-            // 解析 * 开头的值
+            // 判断值是否以 * 字符开头
             if (newParser.StartsWith("*", StringComparison.OrdinalIgnoreCase))
             {
+                // 继续往后解析
                 newParser = newParser[1..];
 
-                // 判断是否带有 / 字符，如果有，转换成 StepParser 解析器
+                // 判断是否以 / 字符开头，如果是，则该值为带步长的 Cron 值
                 if (newParser.StartsWith("/", StringComparison.OrdinalIgnoreCase))
                 {
-                    // 获取步长
+                    // 继续往后解析
                     newParser = newParser[1..];
-                    var steps = GetValue(ref newParser, kind);
 
+                    // 解析 Cron 值步长并创建 StepParser 解析器
+                    var steps = GetValue(ref newParser, kind);
                     return new StepParser(0, steps, kind);
                 }
 
+                // 否则，创建 AnyParser 解析器
                 return new AnyParser(kind);
             }
 
-            // 解析 L 和 LW 值
+            // 判断值是否以 L 字符开头
             if (newParser.StartsWith("L") && kind == CrontabFieldKind.Day)
             {
+                // 继续往后解析
                 newParser = newParser[1..];
 
+                // 是否是 LW 字符，如果是，创建 LastWeekdayOfMonthParser 解析器
                 if (newParser == "W")
                 {
                     return new LastWeekdayOfMonthParser(kind);
                 }
+                // 否则创建 LastDayOfMonthParser 解析器
                 else
                 {
                     return new LastDayOfMonthParser(kind);
                 }
             }
 
-            // 解析 ? 值
+            // 判断值是否等于 ?
             if (newParser == "?")
             {
+                // 创建 BlankDayOfMonthOrWeekParser 解析器
                 return new BlankDayOfMonthOrWeekParser(kind);
             }
 
-            // 解析数字或字母开头值，如 2, 1/3, SUN，3W，3L，2#4，SUNL，JAN 等
+            /*
+             * 如果上面均不匹配，那么该值类似取值有：2，1/2，1-10，1-10/2，SUN，SUNDAY，SUNL，JAN，3W，3L，2#5 等
+             */
+
+            // 继续推进解析
             var firstValue = GetValue(ref newParser, kind);
 
-            // 判断是否是具体值（不含字母及符号），如2，3，10
+            // 如果没有返回新的待解析字符，则认为这是一个具体值
             if (string.IsNullOrEmpty(newParser))
             {
+                // 对年份进行特别处理
                 if (kind == CrontabFieldKind.Year)
                 {
                     return new SpecificYearParser(firstValue, kind);
                 }
                 else
                 {
+                    // 创建 SpecificParser 解析器
                     return new SpecificParser(firstValue, kind);
                 }
             }
 
-            // 如果存在符号或字符，如 - / # L W 值
+            // 如果存在待解析字符，如 - / # L W 值，则进一步解析
             switch (newParser[0])
             {
-                // 解析存在 / 符号
+                // 判断值是否以 / 字符开头
                 case '/':
                     {
+                        // 继续往后解析
                         newParser = newParser[1..];
-                        var secondValue = GetValue(ref newParser, kind);
 
-                        return new StepParser(firstValue, secondValue, kind);
+                        // 解析 Cron 值步长并创建 StepParser 解析器
+                        var steps = GetValue(ref newParser, kind);
+                        return new StepParser(firstValue, steps, kind);
                     }
-                // 解析存在 - 符号
+                // 判断值是否以 - 字符开头
                 case '-':
                     {
+                        // 继续往后解析
                         newParser = newParser[1..];
-                        var secondValue = GetValue(ref newParser, kind);
+
+                        // 获取范围结束值
+                        var endValue = GetValue(ref newParser, kind);
                         int? steps = null;
 
+                        // 继续推进解析，判断是否以 / 开头，如果是，则获取步长
                         if (newParser.StartsWith("/"))
                         {
                             newParser = newParser[1..];
                             steps = GetValue(ref newParser, kind);
                         }
 
-                        return new RangeParser(firstValue, secondValue, steps, kind);
+                        // 创建 RangeParser 解析器
+                        return new RangeParser(firstValue, endValue, steps, kind);
                     }
-                // 解析存在 # 符号
+                // 判断值是否以 # 字符开头
                 case '#':
                     {
+                        // 继续往后解析
                         newParser = newParser[1..];
-                        var secondValue = GetValue(ref newParser, kind);
 
+                        // 获取第几个
+                        var weekNumber = GetValue(ref newParser, kind);
+
+                        // 继续推进解析，如果存在其他字符，则抛异常
                         if (!string.IsNullOrEmpty(newParser))
                         {
                             throw new TimeCrontabException(string.Format("Invalid parser '{0}.'", parser));
                         }
 
-                        return new SpecificDayOfWeekInMonthParser(firstValue, secondValue, kind);
+                        // 创建 SpecificDayOfWeekInMonthParser 解析器
+                        return new SpecificDayOfWeekInMonthParser(firstValue, weekNumber, kind);
                     }
-                // 解析存在 L 或 W 符号
+                // 判断解析值是否等于 L 或 W
                 default:
+                    // 创建 LastDayOfWeekInMonthParser 解析器
                     if (newParser == "L" && kind == CrontabFieldKind.DayOfWeek)
                     {
                         return new LastDayOfWeekInMonthParser(firstValue, kind);
                     }
+                    // 创建 NearestWeekdayParser 解析器
                     else if (newParser == "W" && kind == CrontabFieldKind.Day)
                     {
                         return new NearestWeekdayParser(firstValue, kind);
@@ -226,29 +256,32 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 拨针式解析 Cron 字段值
+    /// 将 Cron 字段值中值进一步解析
     /// </summary>
-    /// <param name="parser">Cron 字段值中子项值</param>
-    /// <param name="kind">Cron 字段种类</param>
+    /// <param name="parser">当前解析值</param>
+    /// <param name="kind">Cron 表达式格式化类型</param>
     /// <returns><see cref="int"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     private static int GetValue(ref string parser, CrontabFieldKind kind)
     {
-        // 空检查
+        // 值空检查
         if (string.IsNullOrEmpty(parser))
         {
             throw new TimeCrontabException("Expected number, but parser was empty.");
         }
 
-        int i;
+        // 字符偏移量
+        int offset;
+
+        // 判断首个字符是数字还是字符串
         var isDigit = char.IsDigit(parser[0]);
         var isLetter = char.IsLetter(parser[0]);
 
-        // 拨针式检查解析器每一个字符
-        for (i = 0; i < parser.Length; i++)
+        // 推进式遍历值并检查每一个字符，一旦出现类型不连贯则停止检查
+        for (offset = 0; offset < parser.Length; offset++)
         {
             // 如果存在不连贯数字或字母则跳出循环
-            if ((isDigit && !char.IsDigit(parser[i])) || (isLetter && !char.IsLetter(parser[i])))
+            if ((isDigit && !char.IsDigit(parser[offset])) || (isLetter && !char.IsLetter(parser[offset])))
             {
                 break;
             }
@@ -256,14 +289,14 @@ public partial class Crontab
 
         var maximum = Constants.MaximumDateTimeValues[kind];
 
-        // 取不连贯之前的字符串
-        var valueToParse = parser[..i];
+        // 前面连贯类型的值
+        var valueToParse = parser[..offset];
 
-        // 处理数字开头值
+        // 处理数字开头的连贯类型值
         if (int.TryParse(valueToParse, out var value))
         {
-            // 存储下一轮拨针字符串
-            parser = parser[i..];
+            // 导出下一轮待解析的值（依旧采用推进式）
+            parser = parser[offset..];
 
             var returnValue = value;
 
@@ -275,34 +308,38 @@ public partial class Crontab
 
             return returnValue;
         }
-        // 处理字母开头值，如 SUN，SUNDAY，JAN等
+        // 处理字母开头的连贯类型值，通常认为这是一个单词，如SUN，JAN
         else
         {
             List<KeyValuePair<string, int>>? replaceVal = null;
 
-            // 获取所有匹配的星期或月份单词
+            // 判断当前 Cron 字段类型是否是星期，如果是，则查找该单词是否在 Constants.Days 定义之中
             if (kind == CrontabFieldKind.DayOfWeek)
             {
                 replaceVal = Constants.Days.Where(x => valueToParse.StartsWith(x.Key)).ToList();
             }
+            // 判断当前 Cron 字段类型是否是月份，如果是，则查找该单词是否在 Constants.Months 定义之中
             else if (kind == CrontabFieldKind.Month)
             {
                 replaceVal = Constants.Months.Where(x => valueToParse.StartsWith(x.Key)).ToList();
             }
 
-            // 判断是否完全唯一匹配
+            // 如果存在且唯一，则进入下一轮判断
+            // 接下来的判断是处理 SUN + L 的情况，如 SUNL == 0L == SUNDAY，它们都是合法的 Cron 值
             if (replaceVal != null && replaceVal.Count == 1)
             {
-                // 解析类似 SUNL 或 SUNDAYL 合法字符串
                 var missingParser = "";
-                if (parser.Length == i
+
+                // 处理带 L 和不带 L 的单词问题
+                if (parser.Length == offset
                     && parser.EndsWith("L")
                     && kind == CrontabFieldKind.DayOfWeek)
                 {
                     missingParser = "L";
                 }
+                parser = parser[offset..] + missingParser;
 
-                parser = parser[i..] + missingParser;
+                // 转换成 int 值返回（SUN，JAN.....）
                 var returnValue = replaceVal.First().Value;
 
                 // 验证值范围
@@ -319,16 +356,18 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 检查非法解析器
+    /// 检查非法字符解析器，如 2 月没有 30 和 31 号
     /// </summary>
-    /// <remarks>检查2月份没有30号和31号的情况</remarks>
-    /// <param name="parsers">解析器字典集合</param>
+    /// <remarks>检查 2 月份是否存在 30 和 31 天的非法数值解析器</remarks>
+    /// <param name="parsers">Cron 字段解析器字典集合</param>
     /// <exception cref="TimeCrontabException"></exception>
     private static void CheckForIllegalParsers(Dictionary<CrontabFieldKind, List<ICronParser>> parsers)
     {
+        // 获取当前 Cron 表达式月字段和天字段所有数值
         var monthSingle = GetSpecificParsers(parsers, CrontabFieldKind.Month);
         var daySingle = GetSpecificParsers(parsers, CrontabFieldKind.Day);
 
+        // 如果月份为 2 月单天数出现 30 和 31 天，则是无效数值
         if (monthSingle.Any() && monthSingle.All(x => x.SpecificValue == 2))
         {
             if (daySingle.Any() && daySingle.All(x => (x.SpecificValue == 30) || (x.SpecificValue == 31)))
@@ -339,18 +378,21 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 获取所有具体值解析器
+    /// 查找 Cron 字段类型所有具体值解析器
     /// </summary>
-    /// <param name="parsers">解析器字典集合</param>
+    /// <param name="parsers">Cron 字段解析器字典集合</param>
     /// <param name="kind">Cron 字段种类</param>
     /// <returns><see cref="List{T}"/></returns>
     private static List<SpecificParser> GetSpecificParsers(Dictionary<CrontabFieldKind, List<ICronParser>> parsers, CrontabFieldKind kind)
     {
-        return parsers[kind].Where(x => x.GetType() == typeof(SpecificParser)).Cast<SpecificParser>()
+        var kindParsers = parsers[kind];
+
+        // 查找 Cron 字段类型所有具体值解析器
+        return kindParsers.Where(x => x.GetType() == typeof(SpecificParser)).Cast<SpecificParser>()
             .Union(
-            parsers[kind].Where(x => x.GetType() == typeof(RangeParser)).SelectMany(x => ((RangeParser)x).SpecificParsers)
+            kindParsers.Where(x => x.GetType() == typeof(RangeParser)).SelectMany(x => ((RangeParser)x).SpecificParsers)
             ).Union(
-                parsers[kind].Where(x => x.GetType() == typeof(StepParser)).SelectMany(x => ((StepParser)x).SpecificParsers)
+                kindParsers.Where(x => x.GetType() == typeof(StepParser)).SelectMany(x => ((StepParser)x).SpecificParsers)
             ).ToList();
     }
 

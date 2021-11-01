@@ -14,29 +14,32 @@ namespace Furion.TimeCrontab;
 public partial class Crontab
 {
     /// <summary>
-    /// 解析 Cron 表达式
+    /// 解析 Cron 表达式并生成每个字段解析器字典集合
     /// </summary>
     /// <param name="expression">Cron 表达式</param>
-    /// <param name="format">Cron 表达式格式化</param>
-    /// <returns></returns>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    /// <returns><see cref="Dictionary{TKey, TValue}"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     private static Dictionary<CrontabFieldKind, List<ICronParser>> ParseToDictionary(string expression, CronStringFormat format)
     {
-        // Cron 表达式非空非空白检查
+        // Cron 表达式不能为null，空，纯空白
         if (string.IsNullOrWhiteSpace(expression))
         {
             throw new TimeCrontabException("The provided cron string is null, empty or contains only whitespace.");
         }
 
-        // 根据空格切割成 Cron 字段数组
+        // 根据空格切割 Cron 表达式每个字段域
         var instructions = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        // 判断特定 Cron 格式化类型长度是否一致
+        // 验证当前指定 Cron 表达式格式化类型数量
         var expectedCount = Constants.ExpectedFieldCounts[format];
+
+        // 超出指定长度
         if (instructions.Length > expectedCount)
         {
             throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too many parameters.", expression));
         }
+        // 小于指定长度
         if (instructions.Length < expectedCount)
         {
             throw new TimeCrontabException(string.Format("The provided cron string <{0}> has too few parameters.", expression));
@@ -71,11 +74,11 @@ public partial class Crontab
     }
 
     /// <summary>
-    /// 解析单个 Cron 字段
+    /// 解析单个 Cron 字段值并转换成解析器
     /// </summary>
-    /// <param name="field">Cron 字段字符串</param>
+    /// <param name="field">Cron 字段值</param>
     /// <param name="kind">Cron 字段种类</param>
-    /// <returns></returns>
+    /// <returns><see cref="LinkedList{T}"/></returns>
     /// <exception cref="TimeCrontabException"></exception>
     private static List<ICronParser> ParseField(string field, CrontabFieldKind kind)
     {
@@ -86,8 +89,7 @@ public partial class Crontab
         catch (Exception ex)
         {
             throw new TimeCrontabException(
-                string.Format("There was an error parsing '{0}' for the {1} field."
-                , field, Enum.GetName(typeof(CrontabFieldKind), kind))
+                string.Format("There was an error parsing '{0}' for the {1} field.", field, Enum.GetName(typeof(CrontabFieldKind), kind))
                 , ex);
         }
     }
@@ -303,12 +305,12 @@ public partial class Crontab
     /// <summary>
     /// 内部计算
     /// </summary>
-    /// <param name="baseValue"></param>
-    /// <param name="endValue"></param>
+    /// <param name="baseTime"></param>
+    /// <param name="endTime"></param>
     /// <returns></returns>
-    private DateTime InternalGetNextOccurence(DateTime baseValue, DateTime endValue)
+    private DateTime InternalGetNextOccurence(DateTime baseTime, DateTime endTime)
     {
-        var newValue = baseValue;
+        var newValue = baseTime;
         var overflow = true;
 
         var isSecondFormat = Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears;
@@ -345,7 +347,7 @@ public partial class Crontab
 
             if (!overflow)
             {
-                return MinDate(newValue, endValue);
+                return MinDate(newValue, endTime);
             }
         }
 
@@ -362,7 +364,7 @@ public partial class Crontab
 
         if (!overflow)
         {
-            return MinDate(newValue, endValue);
+            return MinDate(newValue, endTime);
         }
 
         var newHours = Increment(hourParsers, newValue.Hour + (overflow ? 0 : -1), firstHourValue, out overflow);
@@ -378,7 +380,7 @@ public partial class Crontab
 
         if (!overflow)
         {
-            return MinDate(newValue, endValue);
+            return MinDate(newValue, endTime);
         }
 
         List<ITimeParser>? yearParsers = null;
@@ -407,7 +409,7 @@ public partial class Crontab
         }
         catch
         {
-            return endValue;
+            return endTime;
         }
 
         while (!(IsMatch(newValue, CrontabFieldKind.Day)
@@ -415,16 +417,16 @@ public partial class Crontab
             && IsMatch(newValue, CrontabFieldKind.Month)
             && (!isYearFormat || IsMatch(newValue, CrontabFieldKind.Year))))
         {
-            if (newValue >= endValue)
+            if (newValue >= endTime)
             {
-                return MinDate(newValue, endValue);
+                return MinDate(newValue, endTime);
             }
 
             // In instances where the year is parsered, this will speed up the path to get to endValue
             // (without having to actually go to endValue)
             if (isYearFormat && yearParsers!.Select(x => x.Next(newValue.Year - 1)).All(x => x == null))
             {
-                return endValue;
+                return endTime;
             }
 
             // Ugh...have to do the try/catch again...
@@ -434,11 +436,11 @@ public partial class Crontab
             }
             catch
             {
-                return endValue;
+                return endTime;
             }
         }
 
-        return MinDate(newValue, endValue);
+        return MinDate(newValue, endTime);
     }
 
     /// <summary>

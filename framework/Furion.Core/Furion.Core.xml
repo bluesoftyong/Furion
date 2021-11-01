@@ -455,6 +455,13 @@
             <typeparam name="TEventSubscriber">实现自 <see cref="T:Furion.EventBus.IEventSubscriber"/></typeparam>
             <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
         </member>
+        <member name="M:Furion.EventBus.EventBusOptionsBuilder.AddSubscribers(System.Reflection.Assembly[])">
+            <summary>
+            批量注册事件订阅者
+            </summary>
+            <param name="assemblies">程序集</param>
+            <returns><see cref="T:Furion.EventBus.EventBusOptionsBuilder"/> 实例</returns>
+        </member>
         <member name="M:Furion.EventBus.EventBusOptionsBuilder.ReplacePublisher``1">
             <summary>
             替换事件发布者
@@ -1791,20 +1798,20 @@
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.ParseToDictionary(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>
-            解析 Cron 表达式
+            解析 Cron 表达式并生成每个字段解析器字典集合
             </summary>
             <param name="expression">Cron 表达式</param>
-            <param name="format">Cron 表达式格式化</param>
-            <returns></returns>
+            <param name="format">Cron 表达式格式化类型</param>
+            <returns><see cref="T:System.Collections.Generic.Dictionary`2"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.ParseField(System.String,Furion.TimeCrontab.CrontabFieldKind)">
             <summary>
-            解析单个 Cron 字段
+            解析单个 Cron 字段值并转换成解析器
             </summary>
-            <param name="field">Cron 字段字符串</param>
+            <param name="field">Cron 字段值</param>
             <param name="kind">Cron 字段种类</param>
-            <returns></returns>
+            <returns><see cref="T:System.Collections.Generic.LinkedList`1"/></returns>
             <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.CheckForIllegalParsers(System.Collections.Generic.Dictionary{Furion.TimeCrontab.CrontabFieldKind,System.Collections.Generic.List{Furion.TimeCrontab.ICronParser}})">
@@ -1818,8 +1825,8 @@
             <summary>
             内部计算
             </summary>
-            <param name="baseValue"></param>
-            <param name="endValue"></param>
+            <param name="baseTime"></param>
+            <param name="endTime"></param>
             <returns></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.Increment(System.Collections.Generic.IEnumerable{Furion.TimeCrontab.ITimeParser},System.Int32,System.Int32,System.Boolean@)">

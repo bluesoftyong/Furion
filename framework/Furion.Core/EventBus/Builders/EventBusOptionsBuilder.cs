@@ -8,6 +8,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Reflection;
 
 namespace Furion.EventBus;
 
@@ -61,6 +62,31 @@ public sealed class EventBusOptionsBuilder
         where TEventSubscriber : class, IEventSubscriber
     {
         _eventSubscribers.Add(typeof(TEventSubscriber));
+        return this;
+    }
+
+    /// <summary>
+    /// 批量注册事件订阅者
+    /// </summary>
+    /// <param name="assemblies">程序集</param>
+    /// <returns><see cref="EventBusOptionsBuilder"/> 实例</returns>
+    public EventBusOptionsBuilder AddSubscribers(params Assembly[] assemblies)
+    {
+        if (assemblies == null || assemblies.Length == 0)
+        {
+            throw new InvalidOperationException("The assemblies can be not null or empty.");
+        }
+
+        // 获取所有导出类型（非接口，非抽象类且实现 IEventSubscriber）接口
+        var subscribers = assemblies.SelectMany(ass =>
+              ass.GetExportedTypes()
+                 .Where(t => t.IsPublic && t.IsClass && !t.IsInterface && !t.IsAbstract && typeof(IEventSubscriber).IsAssignableFrom(t)));
+
+        foreach (var subscriber in subscribers)
+        {
+            _eventSubscribers.Add(subscriber);
+        }
+
         return this;
     }
 

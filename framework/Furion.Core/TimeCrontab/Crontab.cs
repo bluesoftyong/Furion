@@ -131,7 +131,7 @@ public sealed partial class Crontab
             JoinParsers(paramList, CrontabFieldKind.Year);
         }
 
-        // 采用空格分割并输出
+        // 空格分割并输出
         return string.Join(" ", paramList.ToArray());
     }
 }

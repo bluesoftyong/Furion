@@ -2,7 +2,7 @@
 
 namespace Furion.UnitTests;
 
-internal class TestEventSubscriber : IEventSubscriber
+public class TestEventSubscriber : IEventSubscriber
 {
     private Object obj = new();
 

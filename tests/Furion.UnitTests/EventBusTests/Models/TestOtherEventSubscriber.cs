@@ -2,7 +2,7 @@
 
 namespace Furion.UnitTests;
 
-internal class TestOtherEventSubscriber : IEventSubscriber
+public class TestOtherEventSubscriber : IEventSubscriber
 {
     [EventSubscribe("Unit:Other:Test")]
     public Task CreateTest(EventHandlerExecutingContext context)

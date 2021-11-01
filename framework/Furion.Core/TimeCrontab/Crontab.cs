@@ -9,18 +9,14 @@
 namespace Furion.TimeCrontab;
 
 /// <summary>
-/// Crontab
+/// Cron 表达式解析类
 /// </summary>
 public sealed partial class Crontab
 {
     /// <summary>
-    /// Cron 字段解析器
-    /// </summary>
-    private Dictionary<CrontabFieldKind, List<ICronParser>> Parsers { get; set; }
-
-    /// <summary>
     /// 构造函数
     /// </summary>
+    /// <remarks>限制只能通过 <see cref="Parse(string, CronStringFormat)"/> 或 <see cref="TryParse(string, CronStringFormat)"/> 创建</remarks>
     private Crontab()
     {
         Parsers = new Dictionary<CrontabFieldKind, List<ICronParser>>();
@@ -28,16 +24,22 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// Cron 表达式格式化
+    /// Cron 字段解析器字典集合
+    /// </summary>
+    private Dictionary<CrontabFieldKind, List<ICronParser>> Parsers { get; set; }
+
+    /// <summary>
+    /// Cron 表达式格式化类型
     /// </summary>
     public CronStringFormat Format { get; set; }
 
     /// <summary>
-    /// 转换
+    /// 解析 Cron 表达式并创建 <see cref="Crontab"/> 对象
     /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="format"></param>
-    /// <returns></returns>
+    /// <param name="expression">Cron 表达式</param>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    /// <returns><see cref="Crontab"/></returns>
+    /// <exception cref="TimeCrontabException"></exception>
     public static Crontab Parse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         return new Crontab
@@ -48,11 +50,11 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 转换
+    /// 解析 Cron 表达式并创建 <see cref="Crontab"/> 对象
     /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="format"></param>
-    /// <returns></returns>
+    /// <param name="expression">Cron 表达式</param>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    /// <returns><see cref="Crontab"/> 或 null</returns>
     public static Crontab? TryParse(string expression, CronStringFormat format = CronStringFormat.Default)
     {
         try
@@ -66,31 +68,31 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 获取下一个执行时间，没有结束边界
+    /// 获取下一个发生时间
     /// </summary>
-    /// <param name="baseValue"></param>
-    /// <returns></returns>
-    public DateTime GetNextOccurrence(DateTime baseValue)
+    /// <param name="baseTime">起始计算时间</param>
+    /// <returns><see cref="DateTime"/></returns>
+    public DateTime GetNextOccurrence(DateTime baseTime)
     {
-        return GetNextOccurrence(baseValue, DateTime.MaxValue);
+        return GetNextOccurrence(baseTime, DateTime.MaxValue);
     }
 
     /// <summary>
     /// 获取下一个执行时间，带结束边界
     /// </summary>
-    /// <param name="baseValue"></param>
-    /// <param name="endValue"></param>
-    /// <returns></returns>
-    public DateTime GetNextOccurrence(DateTime baseValue, DateTime endValue)
+    /// <param name="baseTime">起始计算时间</param>
+    /// <param name="endTime">终止计算时间</param>
+    /// <returns><see cref="DateTime"/></returns>
+    public DateTime GetNextOccurrence(DateTime baseTime, DateTime endTime)
     {
-        return InternalGetNextOccurence(baseValue, endValue);
+        return InternalGetNextOccurence(baseTime, endTime);
     }
 
     /// <summary>
-    /// 获取后面所有执行时间，带结束边界
+    /// 获取特定时间范围内所有符合的发生时间
     /// </summary>
-    /// <param name="baseTime"></param>
-    /// <param name="endTime"></param>
+    /// <param name="baseTime">起始计算时间</param>
+    /// <param name="endTime">终止计算时间</param>
     /// <returns></returns>
     public IEnumerable<DateTime> GetNextOccurrences(DateTime baseTime, DateTime endTime)
     {
@@ -103,14 +105,14 @@ public sealed partial class Crontab
     }
 
     /// <summary>
-    /// 转换 String 输出
+    /// <see cref="ToString"/>
     /// </summary>
-    /// <returns></returns>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         var paramList = new List<string>();
 
-        // 处理带秒字段解析器
+        // 判断 Cron 表达式格式化类型是否包含秒字段
         if (Format == CronStringFormat.WithSeconds || Format == CronStringFormat.WithSecondsAndYears)
         {
             JoinParsers(paramList, CrontabFieldKind.Second);
@@ -123,12 +125,13 @@ public sealed partial class Crontab
         JoinParsers(paramList, CrontabFieldKind.Month);
         JoinParsers(paramList, CrontabFieldKind.DayOfWeek);
 
-        // 处理带年字段解析器
+        // 判断 Cron 表达式格式化类型是否包含年字段
         if (Format == CronStringFormat.WithYears || Format == CronStringFormat.WithSecondsAndYears)
         {
             JoinParsers(paramList, CrontabFieldKind.Year);
         }
 
+        // 采用空格分割并输出
         return string.Join(" ", paramList.ToArray());
     }
 }

@@ -42,7 +42,7 @@ internal static class Constants
     };
 
     /// <summary>
-    /// Cron 不同格式表达式字段数量列表
+    /// Cron 表达式不同格式化类型字段数量
     /// </summary>
     internal static readonly Dictionary<CronStringFormat, int> ExpectedFieldCounts = new()
     {

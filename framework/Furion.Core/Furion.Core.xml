@@ -1631,7 +1631,7 @@
         </member>
         <member name="F:Furion.TimeCrontab.Constants.ExpectedFieldCounts">
             <summary>
-            Cron 不同格式表达式字段数量列表
+            Cron 表达式不同格式化类型字段数量
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.Constants.CronDays">
@@ -1692,7 +1692,7 @@
         </member>
         <member name="T:Furion.TimeCrontab.CronStringFormat">
             <summary>
-            Cron 表达式格式化
+            Cron 表达式格式化类型
             </summary>
         </member>
         <member name="F:Furion.TimeCrontab.CronStringFormat.Default">
@@ -1721,68 +1721,73 @@
         </member>
         <member name="T:Furion.TimeCrontab.Crontab">
             <summary>
-            Crontab
+            Cron 表达式解析类
             </summary>
-        </member>
-        <member name="P:Furion.TimeCrontab.Crontab.Parsers">
             <summary>
-            Cron 字段解析器
+            Cron 表达式解析类
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.#ctor">
             <summary>
             构造函数
             </summary>
+            <remarks>限制只能通过 <see cref="M:Furion.TimeCrontab.Crontab.Parse(System.String,Furion.TimeCrontab.CronStringFormat)"/> 或 <see cref="M:Furion.TimeCrontab.Crontab.TryParse(System.String,Furion.TimeCrontab.CronStringFormat)"/> 创建</remarks>
+        </member>
+        <member name="P:Furion.TimeCrontab.Crontab.Parsers">
+            <summary>
+            Cron 字段解析器字典集合
+            </summary>
         </member>
         <member name="P:Furion.TimeCrontab.Crontab.Format">
             <summary>
-            Cron 表达式格式化
+            Cron 表达式格式化类型
             </summary>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.Parse(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>
-            转换
+            解析 Cron 表达式并创建 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
             </summary>
-            <param name="expression"></param>
-            <param name="format"></param>
-            <returns></returns>
+            <param name="expression">Cron 表达式</param>
+            <param name="format">Cron 表达式格式化类型</param>
+            <returns><see cref="T:Furion.TimeCrontab.Crontab"/></returns>
+            <exception cref="T:Furion.TimeCrontab.TimeCrontabException"></exception>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.TryParse(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>
-            转换
+            解析 Cron 表达式并创建 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
             </summary>
-            <param name="expression"></param>
-            <param name="format"></param>
-            <returns></returns>
+            <param name="expression">Cron 表达式</param>
+            <param name="format">Cron 表达式格式化类型</param>
+            <returns><see cref="T:Furion.TimeCrontab.Crontab"/> 或 null</returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.GetNextOccurrence(System.DateTime)">
             <summary>
-            获取下一个执行时间，没有结束边界
+            获取下一个发生时间
             </summary>
-            <param name="baseValue"></param>
-            <returns></returns>
+            <param name="baseTime">起始计算时间</param>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.GetNextOccurrence(System.DateTime,System.DateTime)">
             <summary>
             获取下一个执行时间，带结束边界
             </summary>
-            <param name="baseValue"></param>
-            <param name="endValue"></param>
-            <returns></returns>
+            <param name="baseTime">起始计算时间</param>
+            <param name="endTime">终止计算时间</param>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.GetNextOccurrences(System.DateTime,System.DateTime)">
             <summary>
-            获取后面所有执行时间，带结束边界
+            获取特定时间范围内所有符合的发生时间
             </summary>
-            <param name="baseTime"></param>
-            <param name="endTime"></param>
+            <param name="baseTime">起始计算时间</param>
+            <param name="endTime">终止计算时间</param>
             <returns></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.ToString">
             <summary>
-            转换 String 输出
+            <see cref="M:Furion.TimeCrontab.Crontab.ToString"/>
             </summary>
-            <returns></returns>
+            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="M:Furion.TimeCrontab.Crontab.ParseToDictionary(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>

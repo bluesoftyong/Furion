@@ -8,6 +8,9 @@
 
 namespace Furion.TimeCrontab;
 
+/// <summary>
+/// Cron 表达式解析类
+/// </summary>
 public partial class Crontab
 {
     /// <summary>

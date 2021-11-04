@@ -17,7 +17,7 @@ namespace Furion.Scheduler;
 /// <summary>
 /// 任务调度后台主机服务
 /// </summary>
-internal sealed class SchedulerHostedService : BackgroundService
+public sealed class SchedulerHostedService : BackgroundService
 {
     /// <summary>
     /// 避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察

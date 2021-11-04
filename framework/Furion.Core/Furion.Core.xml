@@ -1380,6 +1380,11 @@
             Cron 表达式格式化类型
             </summary>
         </member>
+        <member name="T:Furion.Scheduler.ScheduledTaskStatus">
+            <summary>
+            任务状态
+            </summary>
+        </member>
         <member name="T:Furion.Scheduler.IScheduledTaskExecutor">
             <summary>
             任务处理程序执行器依赖接口

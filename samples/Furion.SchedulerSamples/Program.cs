@@ -1,6 +1,12 @@
+using Furion.Scheduler;
+using Furion.SchedulerSamples;
+
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 // Add services to the container.
+
+builder.Services.AddHostedService<SchedulerHostedService>();
+builder.Services.AddSingleton<IScheduledTask, TestScheduledTask>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

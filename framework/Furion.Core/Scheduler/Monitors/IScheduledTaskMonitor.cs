@@ -6,24 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.SchedulerTask;
+namespace Furion.Scheduler;
 
 /// <summary>
-/// 间隔调度任务包装类
+/// 任务执行监视器
 /// </summary>
-internal sealed class IntervalSchedulerTaskWrapper : SchedulerTaskWrapper
+public interface IScheduledTaskMonitor
 {
     /// <summary>
-    /// 间隔时间（分钟）
+    /// 执行前
     /// </summary>
-    internal int Interval { get; set; }
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task OnExecutingAsync(CancellationToken cancellationToken);
 
     /// <summary>
-    /// 设置最近运行时间和下一次运行时间增量
+    /// 执行后
     /// </summary>
-    internal override void Increment()
-    {
-        LastRunTime = NextRunTime;
-        NextRunTime = DateTime.UtcNow.AddMinutes(Interval);
-    }
+    /// <param name="exception"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task OnExecutedAsync(Exception? exception, CancellationToken cancellationToken);
 }

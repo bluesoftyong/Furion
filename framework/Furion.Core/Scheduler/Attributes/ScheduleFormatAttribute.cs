@@ -6,15 +6,28 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.SchedulerTask;
+using Furion.TimeCrontab;
+
+namespace Furion.Scheduler;
 
 /// <summary>
-/// 执行间隔任务
+/// 调度计划特性
 /// </summary>
-public interface IIntervalScheduledTask : IScheduledTask
+/// <remarks>配置 <see cref="IScheduledTask.Schedule"/> Cron 表达式格式化类型</remarks>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+public sealed class ScheduleFormatAttribute : Attribute
 {
     /// <summary>
-    /// 间隔时间（分钟）
+    /// 构造函数
     /// </summary>
-    int Interval { get; }
+    /// <param name="format">Cron 表达式格式化类型</param>
+    public ScheduleFormatAttribute(CronStringFormat format)
+    {
+        Format = format;
+    }
+
+    /// <summary>
+    /// Cron 表达式格式化类型
+    /// </summary>
+    public CronStringFormat Format { get; }
 }

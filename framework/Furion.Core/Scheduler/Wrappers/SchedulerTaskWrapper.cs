@@ -13,16 +13,16 @@ namespace Furion.Scheduler;
 /// <summary>
 /// 调度任务包装类
 /// </summary>
-/// <remarks>主要用于主机服务启动时讲所有调度任务进行包装绑定</remarks>
+/// <remarks>主要用于主机服务启动时将所有调度任务进行包装绑定</remarks>
 internal sealed class SchedulerTaskWrapper
 {
     /// <summary>
-    /// Crontab 调度对象
+    /// 调度计划的 <see cref="Crontab"/> 对象
     /// </summary>
     internal Crontab? Schedule { get; set; }
 
     /// <summary>
-    /// 任务处理程序
+    /// 调度任务
     /// </summary>
     internal IScheduledTask? Task { get; set; }
 
@@ -37,25 +37,25 @@ internal sealed class SchedulerTaskWrapper
     internal DateTime NextRunTime { get; set; }
 
     /// <summary>
-    /// 执行次数
+    /// 运行次数
     /// </summary>
-    internal long Times { get; set; }
+    internal long NumberOfRuns { get; set; }
 
     /// <summary>
-    /// 设置最近运行时间和下一次运行时间增量
+    /// 调度任务统计增量
     /// </summary>
     internal void Increment()
     {
-        Times++;
+        NumberOfRuns++;
         LastRunTime = NextRunTime;
         NextRunTime = Schedule!.GetNextOccurrence(NextRunTime);
     }
 
     /// <summary>
-    /// 是否开始执行任务
+    /// 是否符合条件执行处理程序
     /// </summary>
     /// <param name="currentTime">当前时间</param>
-    /// <returns>bool</returns>
+    /// <returns><see cref="bool"/> 实例</returns>
     internal bool ShouldRun(DateTime currentTime)
     {
         return NextRunTime < currentTime && LastRunTime != NextRunTime;

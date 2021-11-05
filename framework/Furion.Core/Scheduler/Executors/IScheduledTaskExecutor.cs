@@ -9,15 +9,15 @@
 namespace Furion.Scheduler;
 
 /// <summary>
-/// 任务处理程序执行器依赖接口
+/// 调度任务执行器
 /// </summary>
 public interface IScheduledTaskExecutor
 {
     /// <summary>
-    /// 执行任务处理程序
+    /// 调度任务执行器处理程序
     /// </summary>
-    /// <param name="task"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="task">调度任务对象</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task ExecuteAsync(IScheduledTask task, CancellationToken cancellationToken);
 }

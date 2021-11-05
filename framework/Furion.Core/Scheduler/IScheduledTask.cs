@@ -20,7 +20,7 @@ public interface IScheduledTask
     string Schedule { get; }
 
     /// <summary>
-    /// 任务具体执行程序
+    /// 任务具体处理程序
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>

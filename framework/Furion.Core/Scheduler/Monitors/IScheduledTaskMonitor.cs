@@ -9,22 +9,22 @@
 namespace Furion.Scheduler;
 
 /// <summary>
-/// 任务执行监视器
+/// 调度任务执行监视器
 /// </summary>
 public interface IScheduledTaskMonitor
 {
     /// <summary>
-    /// 执行前
+    /// 调度任务执行前监视
     /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task OnExecutingAsync(CancellationToken cancellationToken);
 
     /// <summary>
-    /// 执行后
+    /// 调度任务执行后监视
     /// </summary>
-    /// <param name="exception"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="exception">异常信息</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task OnExecutedAsync(Exception? exception, CancellationToken cancellationToken);
 }

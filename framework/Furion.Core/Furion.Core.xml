@@ -1463,45 +1463,45 @@
         </member>
         <member name="M:Furion.Scheduler.IScheduledTask.ExecuteAsync(System.Threading.CancellationToken)">
             <summary>
-            任务具体执行程序
+            任务具体处理程序
             </summary>
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="T:Furion.Scheduler.IScheduledTaskMonitor">
             <summary>
-            任务执行监视器
+            调度任务执行监视器
             </summary>
         </member>
         <member name="M:Furion.Scheduler.IScheduledTaskMonitor.OnExecutingAsync(System.Threading.CancellationToken)">
             <summary>
-            执行前
+            调度任务执行前监视
             </summary>
-            <param name="cancellationToken"></param>
-            <returns></returns>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="M:Furion.Scheduler.IScheduledTaskMonitor.OnExecutedAsync(System.Exception,System.Threading.CancellationToken)">
             <summary>
-            执行后
+            调度任务执行后监视
             </summary>
-            <param name="exception"></param>
-            <param name="cancellationToken"></param>
-            <returns></returns>
+            <param name="exception">异常信息</param>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="T:Furion.Scheduler.SchedulerTaskWrapper">
             <summary>
             调度任务包装类
             </summary>
-            <remarks>主要用于主机服务启动时讲所有调度任务进行包装绑定</remarks>
+            <remarks>主要用于主机服务启动时将所有调度任务进行包装绑定</remarks>
         </member>
         <member name="P:Furion.Scheduler.SchedulerTaskWrapper.Schedule">
             <summary>
-            Crontab 调度对象
+            调度计划的 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
             </summary>
         </member>
         <member name="P:Furion.Scheduler.SchedulerTaskWrapper.Task">
             <summary>
-            任务处理程序
+            调度任务
             </summary>
         </member>
         <member name="P:Furion.Scheduler.SchedulerTaskWrapper.LastRunTime">
@@ -1514,22 +1514,22 @@
             下一次运行时间
             </summary>
         </member>
-        <member name="P:Furion.Scheduler.SchedulerTaskWrapper.Times">
+        <member name="P:Furion.Scheduler.SchedulerTaskWrapper.NumberOfRuns">
             <summary>
-            执行次数
+            运行次数
             </summary>
         </member>
         <member name="M:Furion.Scheduler.SchedulerTaskWrapper.Increment">
             <summary>
-            设置最近运行时间和下一次运行时间增量
+            调度任务统计增量
             </summary>
         </member>
         <member name="M:Furion.Scheduler.SchedulerTaskWrapper.ShouldRun(System.DateTime)">
             <summary>
-            是否开始执行任务
+            是否符合条件执行处理程序
             </summary>
             <param name="currentTime">当前时间</param>
-            <returns>bool</returns>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="T:Furion.TaskQueue.Constants">
             <summary>

@@ -1,16 +1,15 @@
 ﻿using Furion.Scheduler;
 
-namespace Furion.SchedulerSamples
+namespace Furion.SchedulerSamples;
+
+public class TestScheduledTask : IJob
 {
-    public class TestScheduledTask : IScheduledTask
+    public string Schedule => "* * * * *";
+
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        public string Schedule => "* * * * *";
+        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-        public async Task ExecuteAsync(CancellationToken cancellationToken)
-        {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            await Task.CompletedTask;
-        }
+        await Task.CompletedTask;
     }
 }

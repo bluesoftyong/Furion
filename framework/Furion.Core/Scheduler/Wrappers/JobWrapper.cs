@@ -11,10 +11,9 @@ using Furion.TimeCrontab;
 namespace Furion.Scheduler;
 
 /// <summary>
-/// 调度任务包装类
+/// 作业包装类
 /// </summary>
-/// <remarks>主要用于主机服务启动时将所有调度任务进行包装绑定</remarks>
-internal sealed class SchedulerTaskWrapper
+internal sealed class JobWrapper
 {
     /// <summary>
     /// 调度计划的 <see cref="Crontab"/> 对象
@@ -24,7 +23,7 @@ internal sealed class SchedulerTaskWrapper
     /// <summary>
     /// 调度任务
     /// </summary>
-    internal IScheduledTask? Task { get; set; }
+    internal IJob? Task { get; set; }
 
     /// <summary>
     /// 最近运行时间

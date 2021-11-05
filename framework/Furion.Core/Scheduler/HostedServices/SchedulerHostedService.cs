@@ -32,17 +32,17 @@ public sealed class SchedulerHostedService : BackgroundService
     /// <summary>
     /// 调度任务集合
     /// </summary>
-    private readonly HashSet<SchedulerTaskWrapper> _scheduledTasks = new();
+    private readonly HashSet<JobWrapper> _scheduledTasks = new();
 
     /// <summary>
     /// 处理程序监视器
     /// </summary>
-    private IScheduledTaskMonitor? Monitor { get; }
+    private IJobMonitor? Monitor { get; }
 
     /// <summary>
     /// 处理程序执行器
     /// </summary>
-    private IScheduledTaskExecutor? Executor { get; }
+    private IJobExecutor? Executor { get; }
 
     /// <summary>
     ///
@@ -52,11 +52,11 @@ public sealed class SchedulerHostedService : BackgroundService
     /// <param name="scheduledTasks">调度任务集合</param>
     public SchedulerHostedService(ILogger<SchedulerHostedService> logger
         , IServiceProvider serviceProvider
-         , IEnumerable<IScheduledTask> scheduledTasks)
+         , IEnumerable<IJob> scheduledTasks)
     {
         _logger = logger;
-        Monitor = serviceProvider.GetService<IScheduledTaskMonitor>();
-        Executor = serviceProvider.GetService<IScheduledTaskExecutor>();
+        Monitor = serviceProvider.GetService<IJobMonitor>();
+        Executor = serviceProvider.GetService<IJobExecutor>();
 
         var referenceTime = DateTime.UtcNow;
 
@@ -65,12 +65,12 @@ public sealed class SchedulerHostedService : BackgroundService
         {
             var scheduledTaskType = scheduledTask.GetType();
 
-            var scheduleProperty = scheduledTaskType.GetProperty(nameof(IScheduledTask.Schedule), bindingAttr)!;
-            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(ScheduleFormatAttribute), false)
-                ? scheduleProperty.GetCustomAttribute<ScheduleFormatAttribute>(false) :
+            var scheduleProperty = scheduledTaskType.GetProperty(nameof(IJob.Schedule), bindingAttr)!;
+            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(ScheduleAttribute), false)
+                ? scheduleProperty.GetCustomAttribute<ScheduleAttribute>(false) :
                 default;
 
-            _scheduledTasks.Add(new SchedulerTaskWrapper
+            _scheduledTasks.Add(new JobWrapper
             {
                 Schedule = Crontab.Parse(scheduledTask.Schedule, scheduleFormatAttribute?.Format ?? CronStringFormat.Default),
                 Task = scheduledTask,

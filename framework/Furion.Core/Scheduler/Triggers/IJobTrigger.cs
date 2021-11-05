@@ -9,20 +9,24 @@
 namespace Furion.Scheduler;
 
 /// <summary>
-/// 调度任务依赖接口
+/// 作业触发器
 /// </summary>
-public interface IScheduledTask
+public interface IJobTrigger
 {
     /// <summary>
-    /// 调度计划
+    /// 心跳率
     /// </summary>
-    /// <remarks>Cron 表达式</remarks>
-    string Schedule { get; }
+    int HeartRate { get; }
 
     /// <summary>
-    /// 任务具体处理程序
+    /// 触发增量
     /// </summary>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(CancellationToken cancellationToken);
+    void Increment();
+
+    /// <summary>
+    /// 是否符合条件执行处理程序
+    /// </summary>
+    /// <param name="currentTime">当前时间</param>
+    /// <returns><see cref="bool"/> 实例</returns>
+    bool ShouldRun(DateTime currentTime);
 }

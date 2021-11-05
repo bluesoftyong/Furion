@@ -9,15 +9,8 @@
 namespace Furion.Scheduler;
 
 /// <summary>
-/// 调度任务执行器
+/// 作业状态
 /// </summary>
-public interface IScheduledTaskExecutor
+public enum JobStatus
 {
-    /// <summary>
-    /// 调度任务执行器处理程序
-    /// </summary>
-    /// <param name="task">调度任务对象</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(IScheduledTask task, CancellationToken cancellationToken);
 }

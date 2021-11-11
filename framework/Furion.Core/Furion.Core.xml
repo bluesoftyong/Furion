@@ -1512,6 +1512,11 @@
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
+        <member name="T:Furion.Scheduler.IJobStorer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
         <member name="T:Furion.Scheduler.IJobTrigger">
             <summary>
             作业触发器

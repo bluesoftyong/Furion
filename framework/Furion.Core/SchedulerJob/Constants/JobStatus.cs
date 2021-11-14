@@ -6,11 +6,40 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.Scheduler;
+namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业存储器
+/// 作业状态
 /// </summary>
-public interface IJobStorer
+public enum JobStatus
 {
+    /// <summary>
+    /// 不存在
+    /// </summary>
+    None = 0,
+
+    /// <summary>
+    /// 正常
+    /// </summary>
+    Normal = 1,
+
+    /// <summary>
+    /// 暂停
+    /// </summary>
+    Pause = 2,
+
+    /// <summary>
+    /// 完成
+    /// </summary>
+    Complete = 3,
+
+    /// <summary>
+    /// 出错
+    /// </summary>
+    Error = 4,
+
+    /// <summary>
+    /// 阻塞
+    /// </summary>
+    Blocked = 5
 }

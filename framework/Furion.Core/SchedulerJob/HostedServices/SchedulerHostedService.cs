@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Furion.Scheduler;
+namespace Furion.SchedulerJob;
 
 /// <summary>
 /// 任务调度后台主机服务
@@ -66,8 +66,8 @@ public sealed class SchedulerHostedService : BackgroundService
             var scheduledTaskType = scheduledTask.GetType();
 
             var scheduleProperty = scheduledTaskType.GetProperty(nameof(IJob.Schedule), bindingAttr)!;
-            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(ScheduleAttribute), false)
-                ? scheduleProperty.GetCustomAttribute<ScheduleAttribute>(false) :
+            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(ScheduledAttribute), false)
+                ? scheduleProperty.GetCustomAttribute<ScheduledAttribute>(false) :
                 default;
 
             _scheduledTasks.Add(new JobWrapper

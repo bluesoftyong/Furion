@@ -6,27 +6,34 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.Scheduler;
+using Furion.TimeCrontab;
+
+namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业触发器
+/// 调度任务细节配置
 /// </summary>
-public interface IJobTrigger
+/// <remarks>默认 Cron 格式化类型为 <see cref="CronStringFormat.Default"/></remarks>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+public sealed class ScheduledAttribute : Attribute
 {
     /// <summary>
-    /// 心跳率
+    /// 任务唯一标识
     /// </summary>
-    int HeartRate { get; }
+    private string Identity { get; set; }
 
     /// <summary>
-    /// 触发增量
+    /// 调度计划
     /// </summary>
-    void Increment();
+    public string Schedule { get; set; }
 
     /// <summary>
-    /// 是否符合条件执行处理程序
+    /// 任务描述
     /// </summary>
-    /// <param name="currentTime">当前时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    bool ShouldRun(DateTime currentTime);
+    public string Description { get; set; }
+
+    /// <summary>
+    /// Cron 表达式类型格式化
+    /// </summary>
+    public CronStringFormat Format { get; set; }
 }

@@ -6,23 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.Scheduler;
+namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业
+/// 作业监视器
 /// </summary>
-public interface IJob
+public interface IJobMonitor
 {
     /// <summary>
-    /// 调度计划
-    /// </summary>
-    /// <remarks>Cron 表达式</remarks>
-    string Schedule { get; }
-
-    /// <summary>
-    /// 任务具体处理程序
+    /// 调度任务执行前监视
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(CancellationToken cancellationToken);
+    Task OnExecutingAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// 调度任务执行后监视
+    /// </summary>
+    /// <param name="exception">异常信息</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    Task OnExecutedAsync(Exception? exception, CancellationToken cancellationToken);
 }

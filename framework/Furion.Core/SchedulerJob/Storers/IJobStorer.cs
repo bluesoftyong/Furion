@@ -6,25 +6,27 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.Scheduler;
+namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业监视器
+/// 作业存储器
 /// </summary>
-public interface IJobMonitor
+public interface IJobStorer
 {
     /// <summary>
-    /// 调度任务执行前监视
+    /// 根据唯一标识获取作业描述器
     /// </summary>
+    /// <param name="identity">唯一标识</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutingAsync(CancellationToken cancellationToken);
+    /// <returns><see cref="IJobDescriptor"/> 实例</returns>
+    Task<IJobDescriptor> GetAsync(string identity, CancellationToken cancellationToken);
 
     /// <summary>
-    /// 调度任务执行后监视
+    /// 更新作业状态
     /// </summary>
-    /// <param name="exception">异常信息</param>
+    /// <param name="identity">唯一标识</param>
+    /// <param name="status">作业状态</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutedAsync(Exception? exception, CancellationToken cancellationToken);
+    /// <returns><see cref="Task"/></returns>
+    Task UpdateStatusAsync(string identity, JobStatus status, CancellationToken cancellationToken);
 }

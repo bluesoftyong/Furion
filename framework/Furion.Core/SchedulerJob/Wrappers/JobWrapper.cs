@@ -8,7 +8,7 @@
 
 using Furion.TimeCrontab;
 
-namespace Furion.Scheduler;
+namespace Furion.SchedulerJob;
 
 /// <summary>
 /// 作业包装类

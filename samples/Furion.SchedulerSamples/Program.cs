@@ -1,4 +1,4 @@
-using Furion.Scheduler;
+using Furion.SchedulerJob;
 using Furion.SchedulerSamples;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();

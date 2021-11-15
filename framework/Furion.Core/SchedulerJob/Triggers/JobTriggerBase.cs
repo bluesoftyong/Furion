@@ -11,20 +11,20 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 作业触发器基类
 /// </summary>
-internal abstract class JobTriggerBase
+public abstract class JobTriggerBase
 {
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    internal DateTime LastRunTime { get; set; }
+    public DateTime LastRunTime { get; set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    internal DateTime NextRunTime { get; set; }
+    public DateTime NextRunTime { get; set; }
 
     /// <summary>
     /// 运行次数
     /// </summary>
-    internal long NumberOfRuns { get; set; }
+    public long NumberOfRuns { get; set; }
 }

@@ -8,6 +8,7 @@
 
 using Furion.TimeCrontab;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -23,6 +24,21 @@ public sealed class SchedulerJobOptionsBuilder
     /// 作业类型集合
     /// </summary>
     private readonly Dictionary<Type, (IJobIdentity, IJobTrigger)> _jobs = new();
+
+    /// <summary>
+    /// 作业存储器实现工厂
+    /// </summary>
+    private Func<IServiceProvider, IJobStorer>? _jobStorerImplementationFactory;
+
+    /// <summary>
+    /// 作业监视器
+    /// </summary>
+    private Type? _jobMonitor;
+
+    /// <summary>
+    /// 作业执行器
+    /// </summary>
+    private Type? _jobExecutor;
 
     /// <summary>
     /// 未察觉任务异常事件处理程序
@@ -111,6 +127,41 @@ public sealed class SchedulerJobOptionsBuilder
     }
 
     /// <summary>
+    /// 替换作业存储器
+    /// </summary>
+    /// <param name="implementationFactory">自定义作业存储器工厂</param>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
+    public SchedulerJobOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
+    {
+        _jobStorerImplementationFactory = implementationFactory;
+        return this;
+    }
+
+    /// <summary>
+    /// 注册作业监视器
+    /// </summary>
+    /// <typeparam name="TJobMonitor">实现自 <see cref="IJobMonitor"/></typeparam>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
+    public SchedulerJobOptionsBuilder AddMonitor<TJobMonitor>()
+        where TJobMonitor : class, IJobMonitor
+    {
+        _jobMonitor = typeof(TJobMonitor);
+        return this;
+    }
+
+    /// <summary>
+    /// 注册作业执行器
+    /// </summary>
+    /// <typeparam name="TJobExecutor">实现自 <see cref="IJobExecutor"/></typeparam>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
+    public SchedulerJobOptionsBuilder AddExecutor<TJobExecutor>()
+        where TJobExecutor : class, IJobExecutor
+    {
+        _jobExecutor = typeof(TJobExecutor);
+        return this;
+    }
+
+    /// <summary>
     /// 构建调度作业配置选项
     /// </summary>
     /// <param name="services">服务集合对象</param>
@@ -120,6 +171,24 @@ public sealed class SchedulerJobOptionsBuilder
         foreach (var (jobType, (identity, trigger)) in _jobs)
         {
             AddJob(services, jobType, identity, trigger);
+        }
+
+        // 替换作业存储器
+        if (_jobStorerImplementationFactory != default)
+        {
+            services.Replace(ServiceDescriptor.Singleton(_jobStorerImplementationFactory));
+        }
+
+        // 注册作业监视器
+        if (_jobMonitor != default)
+        {
+            services.AddSingleton(typeof(IJobMonitor), _jobMonitor);
+        }
+
+        // 注册作业执行器
+        if (_jobExecutor != default)
+        {
+            services.AddSingleton(typeof(IJobExecutor), _jobExecutor);
         }
     }
 

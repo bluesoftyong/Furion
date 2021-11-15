@@ -25,6 +25,11 @@ public abstract class JobExecutionContext
     }
 
     /// <summary>
+    /// 作业计数器
+    /// </summary>
+    public IJobCounter? JobCounter { get; }
+
+    /// <summary>
     /// 作业详细信息
     /// </summary>
     public IJobDetail JobDetail { get; }

@@ -30,14 +30,11 @@ internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
     /// <summary>
     /// 增量
     /// </summary>
-    /// <returns>最近执行时间</returns>
-    public DateTime Increment()
+    public void Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
         NextRunTime = NextRunTime.AddMilliseconds(Rates.TotalMilliseconds);
-
-        return LastRunTime;
     }
 
     /// <summary>

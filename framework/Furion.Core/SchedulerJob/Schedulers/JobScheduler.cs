@@ -152,26 +152,36 @@ internal sealed class JobScheduler : BackgroundService
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 计算下一个触发时机
-        var lastRunTime = Trigger.Increment();
+        Trigger.Increment();
 
         // 创建新的线程执行
         await taskFactory.StartNew(async () =>
         {
+            // 创建共享上下文数据对象
+            var properties = new Dictionary<object, object>();
+
+            // 创建执行前上下文
+            var jobExecutingContext = new JobExecutingContext(jobDetail, properties)
+            {
+                ExecutingTime = DateTime.UtcNow
+            };
+
             // 执行异常对象
             InvalidOperationException? executionException = default;
 
             try
             {
-                jobDetail.Status = JobStatus.Blocked;
-                jobDetail.NumberOfRuns++;
-                jobDetail.LastRunTime = lastRunTime;
-                await Storer.UpdateAsync(jobDetail, stoppingToken);
-
                 // 调用执行前监视器
                 if (Monitor != default)
                 {
-                    await Monitor.OnExecutingAsync(stoppingToken);
+                    await Monitor.OnExecutingAsync(jobExecutingContext, stoppingToken);
                 }
+
+                // 更新作业信息
+                jobDetail.Status = JobStatus.Blocked;
+                jobDetail.NumberOfRuns++;
+                jobDetail.LastRunTime = Trigger.LastRunTime;
+                await Storer.UpdateAsync(jobDetail, stoppingToken);
 
                 // 判断是否自定义了执行器
                 if (Executor == default)
@@ -180,7 +190,7 @@ internal sealed class JobScheduler : BackgroundService
                 }
                 else
                 {
-                    await Executor.ExecuteAsync(Job, stoppingToken);
+                    await Executor.ExecuteAsync(jobExecutingContext, Job, stoppingToken);
                 }
 
                 jobDetail.Status = JobStatus.Complete;
@@ -211,7 +221,14 @@ internal sealed class JobScheduler : BackgroundService
                 // 调用执行后监视器
                 if (Monitor != default)
                 {
-                    await Monitor.OnExecutedAsync(executionException, stoppingToken);
+                    // 创建执行后上下文
+                    var jobExecutedContext = new JobExecutedContext(jobDetail, properties)
+                    {
+                        ExecutedTime = DateTime.UtcNow,
+                        Exception = executionException
+                    };
+
+                    await Monitor.OnExecutedAsync(jobExecutedContext, stoppingToken);
                 }
             }
         }, stoppingToken);

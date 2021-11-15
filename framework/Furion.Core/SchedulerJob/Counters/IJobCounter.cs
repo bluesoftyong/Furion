@@ -9,23 +9,22 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业监视器
+/// 作业计数器
 /// </summary>
-public interface IJobMonitor
+public interface IJobCounter
 {
     /// <summary>
-    /// 作业执行前监视
+    /// 最近运行时间
     /// </summary>
-    /// <param name="context">上下文</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutingAsync(JobExecutingContext context, CancellationToken cancellationToken);
+    DateTime LastRunTime { get; internal set; }
 
     /// <summary>
-    /// 作业执行后监视
+    /// 下一次运行时间
     /// </summary>
-    /// <param name="context">上下文</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutedAsync(JobExecutedContext context, CancellationToken cancellationToken);
+    DateTime NextRunTime { get; internal set; }
+
+    /// <summary>
+    /// 运行次数
+    /// </summary>
+    long NumberOfRuns { get; internal set; }
 }

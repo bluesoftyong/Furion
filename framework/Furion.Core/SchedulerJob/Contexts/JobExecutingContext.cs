@@ -9,23 +9,22 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业监视器
+/// 作业执行前上下文
 /// </summary>
-public interface IJobMonitor
+public sealed class JobExecutingContext : JobExecutionContext
 {
     /// <summary>
-    /// 作业执行前监视
+    /// 构造函数
     /// </summary>
-    /// <param name="context">上下文</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutingAsync(JobExecutingContext context, CancellationToken cancellationToken);
+    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="properties">共享上下文数据</param>
+    internal JobExecutingContext(IJobDetail jobDetail, IDictionary<object, object> properties)
+        : base(jobDetail, properties)
+    {
+    }
 
     /// <summary>
-    /// 作业执行后监视
+    /// 执行前时间
     /// </summary>
-    /// <param name="context">上下文</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutedAsync(JobExecutedContext context, CancellationToken cancellationToken);
+    public DateTime ExecutingTime { get; internal set; }
 }

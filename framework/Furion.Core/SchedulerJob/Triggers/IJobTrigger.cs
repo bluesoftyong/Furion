@@ -11,7 +11,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 作业触发器
 /// </summary>
-public interface IJobTrigger
+public interface IJobTrigger : IJobCounter
 {
     /// <summary>
     /// 速率
@@ -25,8 +25,7 @@ public interface IJobTrigger
     /// <summary>
     /// 增量
     /// </summary>
-    /// <returns>最近执行时间</returns>
-    DateTime Increment();
+    void Increment();
 
     /// <summary>
     /// 是否符合执行逻辑

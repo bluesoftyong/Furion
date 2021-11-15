@@ -48,14 +48,11 @@ internal sealed class CronTrigger : JobTriggerBase, IJobTrigger
     /// <summary>
     /// 增量
     /// </summary>
-    /// <returns>最近执行时间</returns>
-    public DateTime Increment()
+    public void Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
         NextRunTime = ScheduleCrontab.GetNextOccurrence(NextRunTime);
-
-        return LastRunTime;
     }
 
     /// <summary>

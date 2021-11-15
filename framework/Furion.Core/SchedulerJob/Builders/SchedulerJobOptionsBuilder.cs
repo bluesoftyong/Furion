@@ -171,7 +171,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <param name="services">服务集合对象</param>
     internal void Build(IServiceCollection services)
     {
-        // 注册事件订阅者
+        // 注册作业
         foreach (var (jobType, (identity, trigger)) in _jobs)
         {
             AddJob(services, jobType, identity, trigger);

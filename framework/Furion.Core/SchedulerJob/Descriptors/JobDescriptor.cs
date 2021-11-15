@@ -9,22 +9,31 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业描述器
+/// 内置作业描述器
 /// </summary>
-public interface IJobDescriptor
+internal sealed class JobDescriptor : IJobDescriptor
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="identity">唯一标识</param>
+    internal JobDescriptor(string identity)
+    {
+        Identity = identity;
+    }
+
     /// <summary>
     /// 唯一标识
     /// </summary>
-    string Identity { get; }
+    public string Identity { get; }
 
     /// <summary>
     /// 作业描述
     /// </summary>
-    string? Description { get; }
+    public string? Description { get; internal set; }
 
     /// <summary>
     /// 作业附加属性
     /// </summary>
-    IDictionary<object, object> Properties { get; }
+    public IDictionary<object, object> Properties { get; } = new Dictionary<object, object>();
 }

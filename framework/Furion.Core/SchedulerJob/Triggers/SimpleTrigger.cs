@@ -30,17 +30,17 @@ internal sealed class SimpleTrigger : IJobTrigger, IJobCounter
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public DateTime LastRunTime { get; private set; }
+    public DateTime LastRunTime { get; internal set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    public DateTime NextRunTime { get; private set; }
+    public DateTime NextRunTime { get; internal set; }
 
     /// <summary>
     /// 运行次数
     /// </summary>
-    public long NumberOfRuns { get; private set; }
+    public long NumberOfRuns { get; internal set; }
 
     /// <summary>
     /// 增量

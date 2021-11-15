@@ -9,17 +9,17 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 周期作业触发器特性
+/// 周期作业特性
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public sealed class SimpleTriggerAttribute : JobTriggerAttribute
+public sealed class SimpleJobAttribute : JobAttribute
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
     /// <param name="interval">间隔时间</param>
-    public SimpleTriggerAttribute(string identity, int interval)
+    public SimpleJobAttribute(string identity, int interval)
         : base(identity)
     {
         Interval = interval;

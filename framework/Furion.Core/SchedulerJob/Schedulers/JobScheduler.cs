@@ -129,6 +129,9 @@ internal sealed class JobScheduler : BackgroundService
 
             try
             {
+                // 更新作业描述器状态
+                //Descriptor.Status = JobStatus.Blocked;
+
                 // 调用执行前监视器
                 if (Monitor != default)
                 {

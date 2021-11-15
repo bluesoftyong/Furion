@@ -11,17 +11,17 @@ using Furion.TimeCrontab;
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// Cron 表达式作业触发器特性
+/// Cron 表达式作业特性
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public sealed class CronTriggerAttribute : JobTriggerAttribute
+public sealed class CronJobAttribute : JobAttribute
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
     /// <param name="schedule">调度计划（Cron 表达式）</param>
-    public CronTriggerAttribute(string identity, string schedule)
+    public CronJobAttribute(string identity, string schedule)
         : base(identity)
     {
         Schedule = schedule;

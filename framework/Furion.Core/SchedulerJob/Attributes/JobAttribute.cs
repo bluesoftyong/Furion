@@ -9,16 +9,16 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业触发器特性
+/// 作业特性
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public class JobTriggerAttribute : Attribute
+public class JobAttribute : Attribute
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
-    public JobTriggerAttribute(string identity)
+    public JobAttribute(string identity)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(identity))

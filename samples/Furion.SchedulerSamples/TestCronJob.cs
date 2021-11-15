@@ -2,11 +2,9 @@
 
 namespace Furion.SchedulerSamples;
 
-[CronTrigger("cron_job", "* * * * *")]
-public class TestScheduledTask : IJob
+[CronJob("cron_job", "* * * * *")]
+public class TestCronJob : IJob
 {
-    public string Schedule => "* * * * *";
-
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));

@@ -35,5 +35,5 @@ public sealed class SimpleJobAttribute : JobAttribute
     /// <summary>
     /// 间隔时间（毫秒）
     /// </summary>
-    public int Interval { get; set; }
+    public int Interval { get; }
 }

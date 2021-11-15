@@ -37,7 +37,7 @@ public sealed class CronJobAttribute : JobAttribute
     /// <summary>
     /// 调度计划（Cron 表达式）
     /// </summary>
-    public string Schedule { get; set; }
+    public string Schedule { get; }
 
     /// <summary>
     /// Cron 表达式格式化类型

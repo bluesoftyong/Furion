@@ -37,7 +37,6 @@ internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
         LastRunTime = NextRunTime;
         NextRunTime = NextRunTime.AddMilliseconds(Rates.TotalMilliseconds);
 
-
         return LastRunTime;
     }
 

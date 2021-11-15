@@ -56,17 +56,4 @@ public sealed class JobDetail : IJobDetail
     /// 运行次数
     /// </summary>
     public long NumberOfRuns { get; set; } = 0;
-
-    /// <summary>
-    /// 空作业占位符
-    /// </summary>
-    /// <param name="identity"></param>
-    /// <returns></returns>
-    public static IJobDetail NoneJob(IJobIdentity identity)
-    {
-        return new JobDetail(identity.JobId)
-        {
-            Status = JobStatus.None
-        };
-    }
 }

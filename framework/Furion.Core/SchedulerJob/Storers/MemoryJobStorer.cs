@@ -41,7 +41,7 @@ internal sealed class MemoryJobStorer : IJobStorer
     public Task<IJobDetail> GetAsync(IJobIdentity identity, CancellationToken cancellationToken)
     {
         var isExist = _jobData.TryGetValue(identity.JobId, out var jobDetail);
-        return Task.FromResult(isExist ? jobDetail! : JobDetail.NoneJob(identity));
+        return Task.FromResult(isExist ? jobDetail! : default!);
     }
 
     /// <summary>

@@ -1730,13 +1730,6 @@
             运行次数
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.JobDetail.NoneJob(Furion.SchedulerJob.IJobIdentity)">
-            <summary>
-            空作业占位符
-            </summary>
-            <param name="identity"></param>
-            <returns></returns>
-        </member>
         <member name="T:Furion.SchedulerJob.IJobExecutor">
             <summary>
             作业执行器

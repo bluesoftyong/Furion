@@ -41,7 +41,7 @@ public sealed class SchedulerJobOptionsBuilder
     private Type? _jobExecutor;
 
     /// <summary>
-    /// 未察觉任务异常事件处理程序
+    /// 未察觉任务异常处理程序
     /// </summary>
     public EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskExceptionHandler { get; set; }
 
@@ -213,15 +213,16 @@ public sealed class SchedulerJobOptionsBuilder
         services.Add(ServiceDescriptor.Singleton<IHostedService>(serviceProvider =>
         {
             // 获取作业存储器
-            var storer = serviceProvider.GetRequiredService<IJobStorer>();
-            storer.Register(identity);
+            var jobStorer = serviceProvider.GetRequiredService<IJobStorer>();
+            jobStorer.Register(identity);
 
             // 创建作业调度器
-            var jobScheduler = new JobScheduler(serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
+            var jobScheduler = new JobScheduler(
+                serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
                 , serviceProvider
-                , storer
-                , identity,
-                (serviceProvider.GetRequiredService(jobType) as IJob)!
+                , jobStorer
+                , (serviceProvider.GetRequiredService(jobType) as IJob)!
+                , identity
                 , trigger);
 
             // 订阅未察觉任务异常事件

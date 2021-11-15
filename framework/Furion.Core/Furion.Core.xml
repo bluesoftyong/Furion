@@ -1448,7 +1448,7 @@
         </member>
         <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.UnobservedTaskExceptionHandler">
             <summary>
-            未察觉任务异常事件处理程序
+            未察觉任务异常处理程序
             </summary>
         </member>
         <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddJob``1(Furion.SchedulerJob.IJobTrigger)">
@@ -1887,15 +1887,15 @@
             作业执行器
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.JobScheduler.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.JobScheduler},System.IServiceProvider,Furion.SchedulerJob.IJobStorer,System.String,Furion.SchedulerJob.IJob,Furion.SchedulerJob.IJobTrigger)">
+        <member name="M:Furion.SchedulerJob.JobScheduler.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.JobScheduler},System.IServiceProvider,Furion.SchedulerJob.IJobStorer,Furion.SchedulerJob.IJob,System.String,Furion.SchedulerJob.IJobTrigger)">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
             <param name="serviceProvider">服务提供器</param>
             <param name="storer">作业存储器</param>
-            <param name="identity">作业唯一标识</param>
             <param name="job">作业执行程序</param>
+            <param name="identity">作业唯一标识</param>
             <param name="trigger">作业触发器</param>
         </member>
         <member name="M:Furion.SchedulerJob.JobScheduler.ExecuteAsync(System.Threading.CancellationToken)">

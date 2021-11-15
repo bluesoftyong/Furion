@@ -64,14 +64,14 @@ internal sealed class JobScheduler : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="storer">作业存储器</param>
-    /// <param name="identity">作业唯一标识</param>
     /// <param name="job">作业执行程序</param>
+    /// <param name="identity">作业唯一标识</param>
     /// <param name="trigger">作业触发器</param>
     public JobScheduler(ILogger<JobScheduler> logger
         , IServiceProvider serviceProvider
         , IJobStorer storer
-        , string identity
         , IJob job
+        , string identity
         , IJobTrigger trigger)
     {
         _logger = logger;
@@ -108,7 +108,7 @@ internal sealed class JobScheduler : BackgroundService
         }
 
         // 如果作业调度器停止，则更新作业状态为 None
-        var jobDetail = await Storer.GetAsync(Identity, stoppingToken);
+        var jobDetail = await Storer.GetAsync(Identity, default);
         if (jobDetail != null && jobDetail.Status != JobStatus.None)
         {
             jobDetail.Status = JobStatus.None;

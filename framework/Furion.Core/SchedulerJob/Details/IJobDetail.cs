@@ -9,23 +9,27 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业存储器
+/// 作业详细信息
 /// </summary>
-public interface IJobStorer
+public interface IJobDetail
 {
     /// <summary>
-    /// 根据作业标识获取作业详细信息
+    /// 唯一标识
     /// </summary>
-    /// <param name="identity">唯一标识</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="IJobDetail"/> 实例</returns>
-    Task<IJobDetail> GetAsync(IJobIdentity identity, CancellationToken cancellationToken);
+    IJobIdentity Identity { get; }
 
     /// <summary>
-    /// 更新作业详细信息
+    /// 作业计数器
     /// </summary>
-    /// <param name="detail">作业详细信息</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns></returns>
-    Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken);
+    IJobCounter Counter { get; }
+
+    /// <summary>
+    /// 作业状态
+    /// </summary>
+    JobStatus Status { get; }
+
+    /// <summary>
+    /// 作业附加数据
+    /// </summary>
+    IDictionary<object, object> Properties { get; }
 }

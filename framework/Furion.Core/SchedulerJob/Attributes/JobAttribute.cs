@@ -33,9 +33,4 @@ public class JobAttribute : Attribute
     /// 作业唯一标识
     /// </summary>
     public string Identity { get; set; }
-
-    /// <summary>
-    /// 作业描述
-    /// </summary>
-    public string? Description { get; set; }
 }

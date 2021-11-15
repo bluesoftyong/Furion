@@ -1401,11 +1401,6 @@
             作业唯一标识
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.JobAttribute.Description">
-            <summary>
-            作业描述
-            </summary>
-        </member>
         <member name="T:Furion.SchedulerJob.SimpleJobAttribute">
             <summary>
             周期作业特性
@@ -1452,13 +1447,13 @@
             </summary>
             <param name="services">服务集合对象</param>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,Furion.SchedulerJob.IJobDescriptor,Furion.SchedulerJob.IJobTrigger)">
+        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,Furion.SchedulerJob.IJobIdentity,Furion.SchedulerJob.IJobTrigger)">
             <summary>
             注册作业
             </summary>
             <param name="services">服务集合对象</param>
             <param name="jobType">作业类型</param>
-            <param name="descriptor">作业描述器</param>
+            <param name="identity">作业标识器</param>
             <param name="trigger">作业触发器</param>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>
@@ -1517,50 +1512,29 @@
             运行次数
             </summary>
         </member>
-        <member name="T:Furion.SchedulerJob.IJobDescriptor">
+        <member name="T:Furion.SchedulerJob.IJobDetail">
             <summary>
-            作业描述器
+            作业详细信息
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.IJobDescriptor.Identity">
+        <member name="P:Furion.SchedulerJob.IJobDetail.Identity">
             <summary>
             唯一标识
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.IJobDescriptor.Description">
+        <member name="P:Furion.SchedulerJob.IJobDetail.Counter">
             <summary>
-            作业描述
+            作业计数器
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.IJobDescriptor.Properties">
+        <member name="P:Furion.SchedulerJob.IJobDetail.Status">
             <summary>
-            作业附加属性
+            作业状态
             </summary>
         </member>
-        <member name="T:Furion.SchedulerJob.JobDescriptor">
+        <member name="P:Furion.SchedulerJob.IJobDetail.Properties">
             <summary>
-            内置作业描述器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDescriptor.#ctor(System.String)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="identity">唯一标识</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDescriptor.Identity">
-            <summary>
-            唯一标识
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDescriptor.Description">
-            <summary>
-            作业描述
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDescriptor.Properties">
-            <summary>
-            作业附加属性
+            作业附加数据
             </summary>
         </member>
         <member name="T:Furion.SchedulerJob.IJobExecutor">
@@ -1575,6 +1549,32 @@
             <param name="job">作业对象</param>
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.SchedulerJob.IJobIdentity">
+            <summary>
+            作业标识器
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobIdentity.JobId">
+            <summary>
+            唯一标识
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerJob.JobIdentity">
+            <summary>
+            作业标识器默认实现
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.JobIdentity.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">唯一标识</param>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobIdentity.JobId">
+            <summary>
+            唯一标识
+            </summary>
         </member>
         <member name="T:Furion.SchedulerJob.IJob">
             <summary>
@@ -1623,9 +1623,9 @@
             日志对象
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.JobScheduler.Descriptor">
+        <member name="P:Furion.SchedulerJob.JobScheduler.Identity">
             <summary>
-            作业描述器
+            作业标识器
             </summary>
         </member>
         <member name="P:Furion.SchedulerJob.JobScheduler.Job">
@@ -1648,13 +1648,13 @@
             作业执行器
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.JobScheduler.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.JobScheduler},System.IServiceProvider,Furion.SchedulerJob.IJobDescriptor,Furion.SchedulerJob.IJob,Furion.SchedulerJob.IJobTrigger)">
+        <member name="M:Furion.SchedulerJob.JobScheduler.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.JobScheduler},System.IServiceProvider,Furion.SchedulerJob.IJobIdentity,Furion.SchedulerJob.IJob,Furion.SchedulerJob.IJobTrigger)">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
             <param name="serviceProvider">服务提供器</param>
-            <param name="descriptor">作业描述器</param>
+            <param name="identity">作业标识器</param>
             <param name="job">作业执行程序</param>
             <param name="trigger">作业触发器</param>
         </member>
@@ -1677,30 +1677,21 @@
             作业存储器
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.IJobStorer.GetAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.IJobStorer.GetAsync(Furion.SchedulerJob.IJobIdentity,System.Threading.CancellationToken)">
             <summary>
-            根据唯一标识获取作业描述器
+            根据作业标识获取作业详细信息
             </summary>
             <param name="identity">唯一标识</param>
             <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:Furion.SchedulerJob.IJobDescriptor"/> 实例</returns>
+            <returns><see cref="T:Furion.SchedulerJob.IJobDetail"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.IJobStorer.UpdateAsync(Furion.SchedulerJob.IJobDescriptor,System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.IJobStorer.UpdateAsync(Furion.SchedulerJob.IJobDetail,System.Threading.CancellationToken)">
             <summary>
-            更新作业描述器
+            更新作业详细信息
             </summary>
-            <param name="descriptor">作业描述器</param>
+            <param name="detail">作业详细信息</param>
             <param name="cancellationToken">取消任务 Token</param>
             <returns></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.IJobStorer.UpdateStatusAsync(System.String,Furion.SchedulerJob.JobStatus,System.Threading.CancellationToken)">
-            <summary>
-            更新作业状态
-            </summary>
-            <param name="identity">唯一标识</param>
-            <param name="status">作业状态</param>
-            <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.CronTrigger">
             <summary>

@@ -21,7 +21,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 作业类型集合
     /// </summary>
-    private readonly Dictionary<Type, (IJobDescriptor, IJobTrigger)> _jobs = new();
+    private readonly Dictionary<Type, (IJobIdentity, IJobTrigger)> _jobs = new();
 
     /// <summary>
     /// 未察觉任务异常事件处理程序
@@ -48,11 +48,8 @@ public sealed class SchedulerJobOptionsBuilder
         // 获取 [Job] 特性具体类型
         var jobAttribute = jobType.GetCustomAttribute<JobAttribute>(false)!;
 
-        // 创建作业描述器
-        IJobDescriptor descriptor = new JobDescriptor(jobAttribute.Identity)
-        {
-            Description = jobAttribute.Description
-        };
+        // 创建作业标识器
+        IJobIdentity identity = new JobIdentity(jobAttribute.Identity);
 
         // 创建作业触发器
         IJobTrigger trigger;
@@ -87,7 +84,7 @@ public sealed class SchedulerJobOptionsBuilder
             }
         }
 
-        _jobs.Add(jobType, (descriptor, trigger));
+        _jobs.Add(jobType, (identity, trigger));
         return this;
     }
 
@@ -98,9 +95,9 @@ public sealed class SchedulerJobOptionsBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册事件订阅者
-        foreach (var (jobType, (descriptor, trigger)) in _jobs)
+        foreach (var (jobType, (identity, trigger)) in _jobs)
         {
-            AddJob(services, jobType, descriptor, trigger);
+            AddJob(services, jobType, identity, trigger);
         }
     }
 
@@ -109,10 +106,10 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="jobType">作业类型</param>
-    /// <param name="descriptor">作业描述器</param>
+    /// <param name="identity">作业标识器</param>
     /// <param name="trigger">作业触发器</param>
     /// <exception cref="InvalidOperationException"></exception>
-    private void AddJob(IServiceCollection services, Type jobType, IJobDescriptor descriptor, IJobTrigger trigger)
+    private void AddJob(IServiceCollection services, Type jobType, IJobIdentity identity, IJobTrigger trigger)
     {
         // 将作业注册为单例
         services.AddSingleton(jobType);
@@ -122,7 +119,7 @@ public sealed class SchedulerJobOptionsBuilder
         {
             var jobScheduler = new JobScheduler(serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
                 , serviceProvider
-                , descriptor,
+                , identity,
                 (serviceProvider.GetRequiredService(jobType) as IJob)!
                 , trigger);
 

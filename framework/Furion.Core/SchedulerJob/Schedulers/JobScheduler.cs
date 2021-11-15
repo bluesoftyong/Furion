@@ -28,9 +28,9 @@ internal sealed class JobScheduler : BackgroundService
     private readonly ILogger<JobScheduler> _logger;
 
     /// <summary>
-    /// 作业描述器
+    /// 作业标识器
     /// </summary>
-    private IJobDescriptor Descriptor { get; }
+    private IJobIdentity Identity { get; }
 
     /// <summary>
     /// 作业执行程序
@@ -57,17 +57,17 @@ internal sealed class JobScheduler : BackgroundService
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
-    /// <param name="descriptor">作业描述器</param>
+    /// <param name="identity">作业标识器</param>
     /// <param name="job">作业执行程序</param>
     /// <param name="trigger">作业触发器</param>
     public JobScheduler(ILogger<JobScheduler> logger
         , IServiceProvider serviceProvider
-        , IJobDescriptor descriptor
+        , IJobIdentity identity
         , IJob job
         , IJobTrigger trigger)
     {
         _logger = logger;
-        Descriptor = descriptor;
+        Identity = identity;
         Job = job;
         Trigger = trigger;
         Monitor = serviceProvider.GetService<IJobMonitor>();
@@ -81,11 +81,11 @@ internal sealed class JobScheduler : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Scheduler of <{Identity} | {Description}> Service is running.", Descriptor.Identity, Descriptor.Description);
+        _logger.LogInformation("Scheduler of <{Identity}> Service is running.", Identity.JobId);
 
         // 注册后台主机服务停止监听
         stoppingToken.Register(() =>
-            _logger.LogDebug("Scheduler of <{Identity} | {Description}> Service is stopping.", Descriptor.Identity, Descriptor.Description));
+            _logger.LogDebug("Scheduler of <{Identity}> Service is stopping.", Identity.JobId));
 
         // 监听服务是否取消
         while (!stoppingToken.IsCancellationRequested)
@@ -97,7 +97,7 @@ internal sealed class JobScheduler : BackgroundService
             await Task.Delay(Trigger.Rates, stoppingToken);
         }
 
-        _logger.LogCritical("Scheduler of <{Identity} | {Description}> Service is stopped.", Descriptor.Identity, Descriptor.Description);
+        _logger.LogCritical("Scheduler of <{Identity}> Service is stopped.", Identity.JobId);
     }
 
     /// <summary>
@@ -151,7 +151,7 @@ internal sealed class JobScheduler : BackgroundService
             catch (Exception ex)
             {
                 // 输出异常日志
-                _logger.LogError(ex, "Error occurred executing of <{Identity} | {Description}>.", Descriptor.Identity, Descriptor.Description);
+                _logger.LogError(ex, "Error occurred executing of <{Identity}>.", Identity.JobId);
 
                 // 标记异常
                 executionException = new InvalidOperationException(string.Format("Error occurred executing {0}.", "Identity"), ex);

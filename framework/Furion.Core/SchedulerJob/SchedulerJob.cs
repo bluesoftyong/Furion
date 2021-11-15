@@ -31,21 +31,22 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// 开始作业
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
+    /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    public async Task StartAsync(string identity)
+    public async Task StartAsync(string identity, CancellationToken cancellationToken = default)
     {
-        await UpdateStatusAsync(identity, JobStatus.Normal);
+        await UpdateStatusAsync(identity, JobStatus.Normal, cancellationToken);
     }
-
 
     /// <summary>
     /// 暂停作业
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
+    /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    public async Task PauseAsync(string identity)
+    public async Task PauseAsync(string identity, CancellationToken cancellationToken = default)
     {
-        await UpdateStatusAsync(identity, JobStatus.Pause);
+        await UpdateStatusAsync(identity, JobStatus.Pause, cancellationToken);
     }
 
     /// <summary>
@@ -53,17 +54,18 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
     /// <param name="status"><see cref="JobStatus"/></param>
+    /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    private async Task UpdateStatusAsync(string identity, JobStatus status)
+    private async Task UpdateStatusAsync(string identity, JobStatus status, CancellationToken cancellationToken = default)
     {
-        var jobDetail = await _jobStorer.GetAsync(identity, default);
+        var jobDetail = await _jobStorer.GetAsync(identity, cancellationToken);
         if (jobDetail == null)
         {
             throw new InvalidOperationException($"The <{identity}> job detail not found.");
         }
 
         jobDetail.Status = status;
-        await _jobStorer.UpdateAsync(jobDetail, default);
+        await _jobStorer.UpdateAsync(jobDetail, cancellationToken);
     }
 }

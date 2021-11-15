@@ -17,13 +17,15 @@ public interface ISchedulerJob
     /// 开始作业
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
+    /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task StartAsync(string identity);
+    Task StartAsync(string identity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 暂停作业
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
+    /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task PauseAsync(string identity);
+    Task PauseAsync(string identity, CancellationToken cancellationToken = default);
 }

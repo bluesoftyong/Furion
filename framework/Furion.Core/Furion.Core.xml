@@ -1528,7 +1528,7 @@
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.None">
             <summary>
-            不存在（未开始或取消）
+            未开始或取消
             </summary>
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.Normal">
@@ -1762,18 +1762,20 @@
             调度作业依赖接口
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.ISchedulerJob.StartAsync(System.String)">
+        <member name="M:Furion.SchedulerJob.ISchedulerJob.StartAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             开始作业
             </summary>
             <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.ISchedulerJob.PauseAsync(System.String)">
+        <member name="M:Furion.SchedulerJob.ISchedulerJob.PauseAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             暂停作业
             </summary>
             <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="T:Furion.SchedulerJob.IJobMonitor">
@@ -1813,26 +1815,29 @@
             </summary>
             <param name="jobStorer">作业存储器</param>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJob.StartAsync(System.String)">
+        <member name="M:Furion.SchedulerJob.SchedulerJob.StartAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             开始作业
             </summary>
             <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJob.PauseAsync(System.String)">
+        <member name="M:Furion.SchedulerJob.SchedulerJob.PauseAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             暂停作业
             </summary>
             <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJob.UpdateStatusAsync(System.String,Furion.SchedulerJob.JobStatus)">
+        <member name="M:Furion.SchedulerJob.SchedulerJob.UpdateStatusAsync(System.String,Furion.SchedulerJob.JobStatus,System.Threading.CancellationToken)">
             <summary>
             更新作业状态
             </summary>
             <param name="identity">作业唯一标识</param>
             <param name="status"><see cref="T:Furion.SchedulerJob.JobStatus"/></param>
+            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>

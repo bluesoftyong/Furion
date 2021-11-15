@@ -1767,10 +1767,11 @@
             作业执行程序
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.IJob.ExecuteAsync(System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.IJob.ExecuteAsync(Furion.SchedulerJob.JobExecutingContext,System.Threading.CancellationToken)">
             <summary>
             具体逻辑处理
             </summary>
+            <param name="context">上下文</param>
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>

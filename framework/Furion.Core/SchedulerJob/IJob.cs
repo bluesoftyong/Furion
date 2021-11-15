@@ -16,7 +16,8 @@ public interface IJob
     /// <summary>
     /// 具体逻辑处理
     /// </summary>
+    /// <param name="context">上下文</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(CancellationToken cancellationToken);
+    Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken);
 }

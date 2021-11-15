@@ -186,7 +186,7 @@ internal sealed class JobScheduler : BackgroundService
                 // 判断是否自定义了执行器
                 if (Executor == default)
                 {
-                    await Job.ExecuteAsync(stoppingToken);
+                    await Job.ExecuteAsync(jobExecutingContext, stoppingToken);
                 }
                 else
                 {

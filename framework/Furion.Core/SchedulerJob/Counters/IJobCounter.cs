@@ -11,6 +11,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 作业计数器
 /// </summary>
+/// <remarks>主要用来避免频繁从 <see cref="IJobDetail"/> 获取，同时在内存中存有一份</remarks>
 public interface IJobCounter
 {
     /// <summary>

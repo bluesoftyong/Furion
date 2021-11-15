@@ -16,7 +16,7 @@ public enum JobMode
     /// <summary>
     /// 并行执行
     /// </summary>
-    /// <remarks>无需等待上一次任务完成</remarks>
+    /// <remarks>无需等待上一次任务完成，默认值</remarks>
     Parallel = 0,
 
     /// <summary>

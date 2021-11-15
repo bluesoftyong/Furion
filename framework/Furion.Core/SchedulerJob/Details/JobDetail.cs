@@ -48,6 +48,11 @@ public sealed class JobDetail : IJobDetail
     public DateTime? LastRunTime { get; set; }
 
     /// <summary>
+    /// 下一次运行时间
+    /// </summary>
+    public DateTime? NextRunTime { get; set; }
+
+    /// <summary>
     /// 运行次数
     /// </summary>
     public long NumberOfRuns { get; set; } = 0;

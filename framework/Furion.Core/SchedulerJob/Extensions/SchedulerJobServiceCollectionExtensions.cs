@@ -23,7 +23,7 @@ public static class SchedulerJobServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddSchedulerJob(this IServiceCollection services, Action<SchedulerJobOptionsBuilder> configureOptionsBuilder)
     {
-        // 创建初始事件总线配置选项构建器
+        // 创建初始调度作业配置选项构建器
         var schedulerJobOptionsBuilder = new SchedulerJobOptionsBuilder();
         configureOptionsBuilder.Invoke(schedulerJobOptionsBuilder);
 
@@ -38,11 +38,11 @@ public static class SchedulerJobServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     public static IServiceCollection AddSchedulerJob(this IServiceCollection services, SchedulerJobOptionsBuilder? schedulerJobOptionsBuilder = default)
     {
-        // 初始化事件总线配置项
+        // 初始化调度作业配置项
         schedulerJobOptionsBuilder ??= new SchedulerJobOptionsBuilder();
 
         // 注册内部服务
-        services.AddInternalService(schedulerJobOptionsBuilder);
+        services.AddInternalService();
 
         // 构建调度作业服务
         schedulerJobOptionsBuilder.Build(services);
@@ -54,9 +54,8 @@ public static class SchedulerJobServiceCollectionExtensions
     /// 注册内部服务
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <param name="schedulerJobOptions">调度作业配置选项</param>
     /// <returns>服务集合实例</returns>
-    private static IServiceCollection AddInternalService(this IServiceCollection services, SchedulerJobOptionsBuilder schedulerJobOptions)
+    private static IServiceCollection AddInternalService(this IServiceCollection services)
     {
         // 注册作业存储器，采用工厂方式创建
         services.AddSingleton<IJobStorer>(_ =>

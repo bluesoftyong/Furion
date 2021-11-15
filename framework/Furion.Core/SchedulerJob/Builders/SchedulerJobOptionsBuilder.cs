@@ -65,6 +65,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
     public SchedulerJobOptionsBuilder AddJob(Type jobType, IJobTrigger? jobTrigger = default)
     {
+        // jobType 须实现 IJob 接口
         if (!typeof(IJob).IsAssignableFrom(jobType))
         {
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
@@ -90,10 +91,10 @@ public sealed class SchedulerJobOptionsBuilder
         }
         else
         {
-            // 解析 Cron 表达式触发器
+            // 解析 Cron 触发器
             if (jobAttribute is CronJobAttribute cronJobAttribute)
             {
-                // 解析速率
+                // 解析速率，支持秒的 Cron 表达式速率为 1秒，否则速率为 1分钟
                 var rates = cronJobAttribute.Format == CronStringFormat.WithSeconds || cronJobAttribute.Format == CronStringFormat.WithSecondsAndYears
                     ? TimeSpan.FromSeconds(1)
                     : TimeSpan.FromMinutes(1);
@@ -106,7 +107,10 @@ public sealed class SchedulerJobOptionsBuilder
             // 解析周期触发器
             else if (jobAttribute is SimpleJobAttribute simpleJobAttribute)
             {
-                trigger = new SimpleTrigger(TimeSpan.FromMilliseconds(simpleJobAttribute.Interval))
+                // 解析速率
+                var rates = TimeSpan.FromMilliseconds(simpleJobAttribute.Interval);
+
+                trigger = new SimpleTrigger(rates)
                 {
                     NextRunTime = DateTime.UtcNow
                 };
@@ -212,6 +216,7 @@ public sealed class SchedulerJobOptionsBuilder
             var storer = serviceProvider.GetRequiredService<IJobStorer>();
             storer.Register(identity);
 
+            // 创建作业调度器
             var jobScheduler = new JobScheduler(serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
                 , serviceProvider
                 , storer

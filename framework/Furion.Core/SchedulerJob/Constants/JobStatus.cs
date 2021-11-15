@@ -21,6 +21,7 @@ public enum JobStatus
     /// <summary>
     /// 正常
     /// </summary>
+    /// <remarks>初始值</remarks>
     Normal = 1,
 
     /// <summary>

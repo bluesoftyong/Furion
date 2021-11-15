@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 内存作业存储器（默认实现）
+/// 基于内存作业存储器（默认实现）
 /// </summary>
 internal sealed class MemoryJobStorer : IJobStorer
 {

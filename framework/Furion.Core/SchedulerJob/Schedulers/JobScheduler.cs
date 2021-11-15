@@ -112,6 +112,7 @@ internal sealed class JobScheduler : BackgroundService
         if (jobDetail != null && jobDetail.Status != JobStatus.None)
         {
             jobDetail.Status = JobStatus.None;
+            jobDetail.NextRunTime = null;
             await Storer.UpdateAsync(jobDetail, default);
         }
 
@@ -127,7 +128,7 @@ internal sealed class JobScheduler : BackgroundService
     {
         var referenceTime = DateTime.UtcNow;
 
-        // 判断是否符合执行作业时机
+        // 判断作业是否符合触发时机
         if (!Trigger.ShouldRun(Identity, referenceTime))
         {
             return;
@@ -136,7 +137,7 @@ internal sealed class JobScheduler : BackgroundService
         // 查询当前作业信息
         var jobDetail = await Storer.GetAsync(Identity, stoppingToken);
 
-        // 如果无法查询作业信息或作业状态标识为 None，Pause 则跳过执行
+        // 如果无法查询作业信息或作业状态标识为 None 或 Pause 则跳过执行
         if (jobDetail == default || jobDetail.Status == JobStatus.None || jobDetail!.Status == JobStatus.Pause)
         {
             return;
@@ -179,8 +180,9 @@ internal sealed class JobScheduler : BackgroundService
 
                 // 更新作业信息
                 jobDetail.Status = JobStatus.Blocked;
-                jobDetail.NumberOfRuns++;
+                jobDetail.NumberOfRuns = Trigger.NumberOfRuns;
                 jobDetail.LastRunTime = Trigger.LastRunTime;
+                jobDetail.NextRunTime = Trigger.NextRunTime;
                 await Storer.UpdateAsync(jobDetail, stoppingToken);
 
                 // 判断是否自定义了执行器

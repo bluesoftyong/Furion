@@ -1513,7 +1513,7 @@
             <summary>
             并行执行
             </summary>
-            <remarks>无需等待上一次任务完成</remarks>
+            <remarks>无需等待上一次任务完成，默认值</remarks>
         </member>
         <member name="F:Furion.SchedulerJob.JobMode.Serial">
             <summary>
@@ -1535,6 +1535,7 @@
             <summary>
             正常
             </summary>
+            <remarks>初始值</remarks>
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.Pause">
             <summary>
@@ -1626,6 +1627,7 @@
             <summary>
             作业计数器
             </summary>
+            <remarks>主要用来避免频繁从 <see cref="T:Furion.SchedulerJob.IJobDetail"/> 获取，同时在内存中存有一份</remarks>
         </member>
         <member name="P:Furion.SchedulerJob.IJobCounter.LastRunTime">
             <summary>
@@ -1672,6 +1674,11 @@
             最近运行时间
             </summary>
         </member>
+        <member name="P:Furion.SchedulerJob.IJobDetail.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
         <member name="P:Furion.SchedulerJob.IJobDetail.NumberOfRuns">
             <summary>
             运行次数
@@ -1711,6 +1718,11 @@
         <member name="P:Furion.SchedulerJob.JobDetail.LastRunTime">
             <summary>
             最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobDetail.NextRunTime">
+            <summary>
+            下一次运行时间
             </summary>
         </member>
         <member name="P:Furion.SchedulerJob.JobDetail.NumberOfRuns">
@@ -1899,7 +1911,7 @@
         </member>
         <member name="T:Furion.SchedulerJob.MemoryJobStorer">
             <summary>
-            内存作业存储器（默认实现）
+            基于内存作业存储器（默认实现）
             </summary>
         </member>
         <member name="F:Furion.SchedulerJob.MemoryJobStorer._jobData">
@@ -3366,12 +3378,11 @@
             <param name="schedulerJobOptionsBuilder">调度作业配置选项构建器</param>
             <returns>服务集合实例</returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddInternalService(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.SchedulerJob.SchedulerJobOptionsBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddInternalService(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
             注册内部服务
             </summary>
             <param name="services">服务集合对象</param>
-            <param name="schedulerJobOptions">调度作业配置选项</param>
             <returns>服务集合实例</returns>
         </member>
         <member name="T:Microsoft.Extensions.DependencyInjection.TaskQueueServiceCollectionExtensions">

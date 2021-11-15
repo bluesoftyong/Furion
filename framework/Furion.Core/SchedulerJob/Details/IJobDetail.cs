@@ -39,6 +39,11 @@ public interface IJobDetail
     DateTime? LastRunTime { get; internal set; }
 
     /// <summary>
+    /// 下一次运行时间
+    /// </summary>
+    DateTime? NextRunTime { get; internal set; }
+
+    /// <summary>
     /// 运行次数
     /// </summary>
     long NumberOfRuns { get; internal set; }

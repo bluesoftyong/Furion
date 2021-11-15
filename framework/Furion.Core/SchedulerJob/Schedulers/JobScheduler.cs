@@ -15,6 +15,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 作业调度器
 /// </summary>
+/// <remarks>每一个 <see cref="IJob"/> 都有一个对应的 Scheduler 调度器</remarks>
 internal sealed class JobScheduler : BackgroundService
 {
     /// <summary>
@@ -43,6 +44,11 @@ internal sealed class JobScheduler : BackgroundService
     private IJobTrigger Trigger { get; }
 
     /// <summary>
+    /// 作业存储器
+    /// </summary>
+    private IJobStorer Storer { get; }
+
+    /// <summary>
     /// 作业监视器
     /// </summary>
     private IJobMonitor? Monitor { get; }
@@ -57,19 +63,23 @@ internal sealed class JobScheduler : BackgroundService
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
+    /// <param name="storer">作业存储器</param>
     /// <param name="identity">作业标识器</param>
     /// <param name="job">作业执行程序</param>
     /// <param name="trigger">作业触发器</param>
     public JobScheduler(ILogger<JobScheduler> logger
         , IServiceProvider serviceProvider
+        , IJobStorer storer
         , IJobIdentity identity
         , IJob job
         , IJobTrigger trigger)
     {
         _logger = logger;
         Identity = identity;
+        Storer = storer;
         Job = job;
         Trigger = trigger;
+        Storer = serviceProvider.GetRequiredService<IJobStorer>();
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
     }
@@ -83,11 +93,11 @@ internal sealed class JobScheduler : BackgroundService
     {
         _logger.LogInformation("Scheduler of <{Identity}> Service is running.", Identity.JobId);
 
-        // 注册后台主机服务停止监听
+        // 调度器服务停止监听
         stoppingToken.Register(() =>
             _logger.LogDebug("Scheduler of <{Identity}> Service is stopping.", Identity.JobId));
 
-        // 监听服务是否取消
+        // 监听调度器服务是否取消
         while (!stoppingToken.IsCancellationRequested)
         {
             // 执行具体作业
@@ -110,7 +120,7 @@ internal sealed class JobScheduler : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 判断是否符合执行作业时机
-        if (!Trigger.ShouldRun(referenceTime))
+        if (!Trigger.ShouldRun(Identity, referenceTime))
         {
             return;
         }
@@ -129,9 +139,6 @@ internal sealed class JobScheduler : BackgroundService
 
             try
             {
-                // 更新作业描述器状态
-                //Descriptor.Status = JobStatus.Blocked;
-
                 // 调用执行前监视器
                 if (Monitor != default)
                 {

@@ -58,6 +58,13 @@ public static class SchedulerJobServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     private static IServiceCollection AddInternalService(this IServiceCollection services, SchedulerJobOptionsBuilder schedulerJobOptions)
     {
+        // 注册作业存储器，采用工厂方式创建
+        services.AddSingleton<IJobStorer>(_ =>
+        {
+            // 创建默认基于内存的作业存储器
+            return new MemoryJobStorer();
+        });
+
         return services;
     }
 }

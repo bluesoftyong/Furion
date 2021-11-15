@@ -31,13 +31,27 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <typeparam name="TJob">实现自 <see cref="IJob"/></typeparam>
+    /// <typeparam name="TJob"><see cref="IJob"/> 实例</typeparam>
     /// <param name="jobTrigger">作业触发器</param>
     /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
     public SchedulerJobOptionsBuilder AddJob<TJob>(IJobTrigger? jobTrigger = default)
         where TJob : class, IJob
     {
-        var jobType = typeof(TJob);
+        return AddJob(typeof(TJob), jobTrigger);
+    }
+
+    /// <summary>
+    /// 注册作业
+    /// </summary>
+    /// <param name="jobType">作业类型，必须实现 <see cref="IJob"/> 接口</param>
+    /// <param name="jobTrigger">作业触发器</param>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
+    public SchedulerJobOptionsBuilder AddJob(Type jobType, IJobTrigger? jobTrigger = default)
+    {
+        if (!typeof(IJob).IsAssignableFrom(jobType))
+        {
+            throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
+        }
 
         // 判断是否贴有 [Job] 或其派生类特性
         if (!jobType.IsDefined(typeof(JobAttribute), false))
@@ -59,6 +73,7 @@ public sealed class SchedulerJobOptionsBuilder
         }
         else
         {
+            // 解析 Cron 表达式触发器
             if (jobAttribute is CronJobAttribute cronJobAttribute)
             {
                 // 解析速率
@@ -71,6 +86,7 @@ public sealed class SchedulerJobOptionsBuilder
                     NextRunTime = DateTime.UtcNow
                 };
             }
+            // 解析周期触发器
             else if (jobAttribute is SimpleJobAttribute simpleJobAttribute)
             {
                 trigger = new SimpleTrigger(TimeSpan.FromMilliseconds(simpleJobAttribute.Interval))
@@ -80,11 +96,16 @@ public sealed class SchedulerJobOptionsBuilder
             }
             else
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Job trigger not found.");
             }
         }
 
-        _jobs.Add(jobType, (identity, trigger));
+        // 禁止重复注册作业
+        if (!_jobs.TryAdd(jobType, (identity, trigger)))
+        {
+            throw new InvalidOperationException("The job has been registered. Repeated registration is prohibited.");
+        }
+
         return this;
     }
 
@@ -117,8 +138,13 @@ public sealed class SchedulerJobOptionsBuilder
         // 创建作业调度器
         services.AddHostedService(serviceProvider =>
         {
+            // 获取作业存储器
+            var storer = serviceProvider.GetRequiredService<IJobStorer>();
+            storer.Register(identity.JobId);
+
             var jobScheduler = new JobScheduler(serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
                 , serviceProvider
+                , storer
                 , identity,
                 (serviceProvider.GetRequiredService(jobType) as IJob)!
                 , trigger);

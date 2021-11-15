@@ -17,8 +17,8 @@ public interface IJobTrigger
     /// 速率
     /// </summary>
     /// <remarks>
-    /// <para>对于周期任务，速率表示 Interval，间隔时间</para>
-    /// <para>对于 Cron 表达式任务，速率表示轮询时间</para>
+    /// <para>对于周期任务，速率表示 Interval（间隔时间）</para>
+    /// <para>对于 Cron 表达式任务，速率表示 Delay（轮询时间）</para>
     /// </remarks>
     TimeSpan Rates { get; }
 
@@ -30,7 +30,8 @@ public interface IJobTrigger
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
+    /// <param name="identity">作业标识器</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    bool ShouldRun(DateTime currentTime);
+    bool ShouldRun(IJobIdentity identity, DateTime currentTime);
 }

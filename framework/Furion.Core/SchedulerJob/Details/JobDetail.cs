@@ -9,22 +9,46 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业详细信息
+/// 作业详细信息默认实现
 /// </summary>
-public interface IJobDetail : IJobCounter
+internal sealed class JobDetail : IJobDetail
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="identity">作业唯一标识</param>
+    public JobDetail(string identity)
+    {
+        Identity = identity;
+    }
+
     /// <summary>
     /// 唯一标识
     /// </summary>
-    string Identity { get; }
+    public string Identity { get; }
 
     /// <summary>
     /// 作业描述
     /// </summary>
-    string? Description { get; }
+    public string? Description { get; internal set; }
 
     /// <summary>
     /// 作业状态
     /// </summary>
-    JobStatus Status { get; }
+    public JobStatus Status { get; internal set; }
+
+    /// <summary>
+    /// 最近运行时间
+    /// </summary>
+    public DateTime LastRunTime { get; }
+
+    /// <summary>
+    /// 下一次运行时间
+    /// </summary>
+    public DateTime NextRunTime { get; }
+
+    /// <summary>
+    /// 运行次数
+    /// </summary>
+    public long NumberOfRuns { get; }
 }

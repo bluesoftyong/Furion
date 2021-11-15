@@ -74,7 +74,7 @@ public static class EventBusServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     private static IServiceCollection AddInternalService(this IServiceCollection services, EventBusOptionsBuilder eventBusOptions)
     {
-        // 注册后台任务队列接口/实例为单例，采用工厂方式创建
+        // 注册事件存储器，采用工厂方式创建
         services.AddSingleton<IEventSourceStorer>(_ =>
         {
             // 创建默认内存通道事件源对象

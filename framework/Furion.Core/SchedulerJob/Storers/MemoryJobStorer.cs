@@ -9,16 +9,28 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业存储器
+/// 内存作业存储器（默认实现）
 /// </summary>
-public interface IJobStorer
+internal sealed class MemoryJobStorer : IJobStorer
 {
+    /// <summary>
+    /// 作业存储集合
+    /// </summary>
+    private readonly Dictionary<string, IJobDetail> _jobData = new();
+
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <param name="identity">唯一标识</param>
+    /// <param name="identity"></param>
     /// <returns></returns>
-    void Register(string identity);
+    public void Register(string identity)
+    {
+        _jobData.TryAdd(identity, new JobDetail(identity)
+        {
+            Description = $"{identity} job.",
+            Status = JobStatus.Normal
+        });
+    }
 
     /// <summary>
     /// 根据作业标识获取作业详细信息
@@ -26,7 +38,11 @@ public interface IJobStorer
     /// <param name="identity">唯一标识</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="IJobDetail"/> 实例</returns>
-    Task<IJobDetail> GetAsync(string identity, CancellationToken cancellationToken);
+    public Task<IJobDetail> GetAsync(string identity, CancellationToken cancellationToken)
+    {
+        var isExist = _jobData.TryGetValue(identity, out var jobDetail);
+        return Task.FromResult(isExist ? jobDetail : default);
+    }
 
     /// <summary>
     /// 更新作业详细信息
@@ -34,5 +50,10 @@ public interface IJobStorer
     /// <param name="detail">作业详细信息</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns></returns>
-    Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken);
+    public Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken)
+    {
+        _jobData[detail.Identity] = detail;
+
+        return Task.CompletedTask;
+    }
 }

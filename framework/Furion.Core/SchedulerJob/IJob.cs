@@ -14,7 +14,7 @@ namespace Furion.SchedulerJob;
 public interface IJob
 {
     /// <summary>
-    /// 作业具体执行程序
+    /// 具体逻辑处理
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>

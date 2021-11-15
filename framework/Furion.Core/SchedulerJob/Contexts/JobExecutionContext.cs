@@ -6,19 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace Furion.EventBus;
+namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 事件处理程序执行器依赖接口
+/// 作业执行上下文
 /// </summary>
-public interface IEventHandlerExecutor
+public abstract class JobExecutionContext
 {
-    /// <summary>
-    /// 执行事件处理程序
-    /// </summary>
-    /// <remarks>在这里可以实现超时控制，失败重试控制等等</remarks>
-    /// <param name="context">事件处理程序执行前上下文</param>
-    /// <param name="handler">事件处理程序</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task ExecuteAsync(EventExecutingContext context, Func<EventExecutingContext, Task> handler);
 }

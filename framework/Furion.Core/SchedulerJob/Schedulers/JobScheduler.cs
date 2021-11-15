@@ -128,8 +128,8 @@ internal sealed class JobScheduler : BackgroundService
         // 查询当前作业信息
         var jobDetail = await Storer.GetAsync(Identity, stoppingToken);
 
-        // 如果作业不存在或停止，则不执行
-        if (jobDetail.Status == JobStatus.None || jobDetail.Status == JobStatus.Pause)
+        // 如果无法查询作业信息或作业状态标识为 None，Pause 则跳过执行
+        if (jobDetail == default || jobDetail.Status == JobStatus.None || jobDetail!.Status == JobStatus.Pause)
         {
             return;
         }

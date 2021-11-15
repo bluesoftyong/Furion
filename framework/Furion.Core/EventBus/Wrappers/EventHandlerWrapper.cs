@@ -31,7 +31,7 @@ internal sealed class EventHandlerWrapper
     /// <summary>
     /// 事件处理程序
     /// </summary>
-    internal Func<EventHandlerExecutingContext, Task>? Handler { get; set; }
+    internal Func<EventExecutingContext, Task>? Handler { get; set; }
 
     /// <summary>
     /// 是否符合条件执行处理程序

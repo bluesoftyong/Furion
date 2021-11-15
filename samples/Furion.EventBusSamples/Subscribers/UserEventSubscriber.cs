@@ -12,21 +12,21 @@ namespace Furion.EventBusSamples.Subscribers
         }
 
         [EventSubscribe("User:Create")]
-        public Task Create(EventHandlerExecutingContext context)
+        public Task Create(EventExecutingContext context)
         {
             _logger.LogInformation("新增用户：{User} {CreatedTime} - {CallingTime}", JsonSerializer.Serialize(context.Source.Payload), context.Source.CreatedTime, context.ExecutingTime);
             return Task.CompletedTask;
         }
 
         [EventSubscribe("User:Update")]
-        public Task Update(EventHandlerExecutingContext context)
+        public Task Update(EventExecutingContext context)
         {
             _logger.LogInformation("更新用户：{User} {CreatedTime} - {CallingTime}", JsonSerializer.Serialize(context.Source.Payload), context.Source.CreatedTime, context.ExecutingTime);
             return Task.CompletedTask;
         }
 
         [EventSubscribe("User:Delete")]
-        public async Task Delete(EventHandlerExecutingContext context)
+        public async Task Delete(EventExecutingContext context)
         {
             await Task.Delay(2000, context.Source.CancellationToken);
             throw new Exception("出问题了");
@@ -34,7 +34,7 @@ namespace Furion.EventBusSamples.Subscribers
 
         [EventSubscribe("User:Create")]
         [EventSubscribe("User:Update")]
-        public Task CreateOrUpdate(EventHandlerExecutingContext context)
+        public Task CreateOrUpdate(EventExecutingContext context)
         {
             _logger.LogInformation("新增或更新触发");
             return Task.CompletedTask;

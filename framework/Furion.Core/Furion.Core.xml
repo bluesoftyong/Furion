@@ -527,65 +527,65 @@
             <param name="delay">延迟数（毫秒）</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="T:Furion.EventBus.EventHandlerContext">
-            <summary>
-            事件处理程序上下文
-            </summary>
-        </member>
-        <member name="M:Furion.EventBus.EventHandlerContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="eventSource">事件源（事件承载对象）</param>
-            <param name="properties">共享上下文数据</param>
-        </member>
-        <member name="P:Furion.EventBus.EventHandlerContext.Source">
-            <summary>
-            事件源（事件承载对象）
-            </summary>
-        </member>
-        <member name="P:Furion.EventBus.EventHandlerContext.Properties">
-            <summary>
-            共享上下文数据
-            </summary>
-        </member>
-        <member name="T:Furion.EventBus.EventHandlerExecutedContext">
+        <member name="T:Furion.EventBus.EventExecutedContext">
             <summary>
             事件处理程序执行后上下文
             </summary>
         </member>
-        <member name="M:Furion.EventBus.EventHandlerExecutedContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+        <member name="M:Furion.EventBus.EventExecutedContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
             <summary>
             构造函数
             </summary>
             <param name="eventSource">事件源（事件承载对象）</param>
             <param name="properties">共享上下文数据</param>
         </member>
-        <member name="P:Furion.EventBus.EventHandlerExecutedContext.ExecutedTime">
+        <member name="P:Furion.EventBus.EventExecutedContext.ExecutedTime">
             <summary>
             执行后时间
             </summary>
         </member>
-        <member name="P:Furion.EventBus.EventHandlerExecutedContext.Exception">
+        <member name="P:Furion.EventBus.EventExecutedContext.Exception">
             <summary>
             异常信息
             </summary>
         </member>
-        <member name="T:Furion.EventBus.EventHandlerExecutingContext">
+        <member name="T:Furion.EventBus.EventExecutingContext">
             <summary>
             事件处理程序执行前上下文
             </summary>
         </member>
-        <member name="M:Furion.EventBus.EventHandlerExecutingContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+        <member name="M:Furion.EventBus.EventExecutingContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
             <summary>
             构造函数
             </summary>
             <param name="eventSource">事件源（事件承载对象）</param>
             <param name="properties">共享上下文数据</param>
         </member>
-        <member name="P:Furion.EventBus.EventHandlerExecutingContext.ExecutingTime">
+        <member name="P:Furion.EventBus.EventExecutingContext.ExecutingTime">
             <summary>
             执行前时间
+            </summary>
+        </member>
+        <member name="T:Furion.EventBus.EventExecutionContext">
+            <summary>
+            事件执行上下文
+            </summary>
+        </member>
+        <member name="M:Furion.EventBus.EventExecutionContext.#ctor(Furion.EventBus.IEventSource,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="eventSource">事件源（事件承载对象）</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.EventBus.EventExecutionContext.Source">
+            <summary>
+            事件源（事件承载对象）
+            </summary>
+        </member>
+        <member name="P:Furion.EventBus.EventExecutionContext.Properties">
+            <summary>
+            共享上下文数据
             </summary>
         </member>
         <member name="T:Furion.EventBus.IEventHandlerExecutor">
@@ -593,7 +593,7 @@
             事件处理程序执行器依赖接口
             </summary>
         </member>
-        <member name="M:Furion.EventBus.IEventHandlerExecutor.ExecuteAsync(Furion.EventBus.EventHandlerExecutingContext,System.Func{Furion.EventBus.EventHandlerExecutingContext,System.Threading.Tasks.Task})">
+        <member name="M:Furion.EventBus.IEventHandlerExecutor.ExecuteAsync(Furion.EventBus.EventExecutingContext,System.Func{Furion.EventBus.EventExecutingContext,System.Threading.Tasks.Task})">
             <summary>
             执行事件处理程序
             </summary>
@@ -694,14 +694,14 @@
             事件处理程序监视器
             </summary>
         </member>
-        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutingAsync(Furion.EventBus.EventHandlerExecutingContext)">
+        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutingAsync(Furion.EventBus.EventExecutingContext)">
             <summary>
             事件处理程序执行前
             </summary>
             <param name="context">上下文</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutedAsync(Furion.EventBus.EventHandlerExecutedContext)">
+        <member name="M:Furion.EventBus.IEventHandlerMonitor.OnExecutedAsync(Furion.EventBus.EventExecutedContext)">
             <summary>
             事件处理程序执行后
             </summary>
@@ -1515,6 +1515,11 @@
         <member name="F:Furion.SchedulerJob.JobStatus.Blocked">
             <summary>
             阻塞
+            </summary>
+        </member>
+        <member name="T:Furion.SchedulerJob.JobExecutionContext">
+            <summary>
+            作业执行上下文
             </summary>
         </member>
         <member name="T:Furion.SchedulerJob.IJobDetail">

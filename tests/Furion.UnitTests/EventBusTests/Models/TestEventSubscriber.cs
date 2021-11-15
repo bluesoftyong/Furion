@@ -7,20 +7,20 @@ public class TestEventSubscriber : IEventSubscriber
     private Object obj = new();
 
     [EventSubscribe("Unit:Test")]
-    public Task CreateTest(EventHandlerExecutingContext context)
+    public Task CreateTest(EventExecutingContext context)
     {
         return Task.CompletedTask;
     }
 
     [EventSubscribe("Unit:Test2")]
     [EventSubscribe("Unit:Test3")]
-    public Task CreateTest2(EventHandlerExecutingContext context)
+    public Task CreateTest2(EventExecutingContext context)
     {
         return Task.CompletedTask;
     }
 
     [EventSubscribe("Unit:Publisher")]
-    public Task TestPublisher(EventHandlerExecutingContext context)
+    public Task TestPublisher(EventExecutingContext context)
     {
         lock (obj)
         {

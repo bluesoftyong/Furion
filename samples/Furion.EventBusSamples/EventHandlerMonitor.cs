@@ -10,13 +10,13 @@ public class EventHandlerMonitor : IEventHandlerMonitor
         _logger = logger;
     }
 
-    public Task OnExecutingAsync(EventHandlerExecutingContext context)
+    public Task OnExecutingAsync(EventExecutingContext context)
     {
         _logger.LogInformation("执行之前：{EventId}", context.Source.EventId);
         return Task.CompletedTask;
     }
 
-    public Task OnExecutedAsync(EventHandlerExecutedContext context)
+    public Task OnExecutedAsync(EventExecutedContext context)
     {
         _logger.LogInformation("执行之后：{EventId}", context.Source.EventId);
         if (context.Exception != null)

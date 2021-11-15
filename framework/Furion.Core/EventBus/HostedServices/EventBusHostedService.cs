@@ -80,7 +80,7 @@ internal sealed class EventBusHostedService : BackgroundService
             foreach (var eventHandlerMethod in eventHandlerMethods)
             {
                 // 将方法转换成 Func<EventHandlerExecutingContext, Task> 委托
-                var handler = eventHandlerMethod.CreateDelegate<Func<EventHandlerExecutingContext, Task>>(eventSubscriber);
+                var handler = eventHandlerMethod.CreateDelegate<Func<EventExecutingContext, Task>>(eventSubscriber);
 
                 // 处理同一个事件处理程序支持多个事件 Id 情况
                 var eventSubscribeAttributes = eventHandlerMethod.GetCustomAttributes<EventSubscribeAttribute>(false);
@@ -162,7 +162,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 var properties = new Dictionary<object, object>();
 
                 // 创建执行前上下文
-                var eventHandlerExecutingContext = new EventHandlerExecutingContext(eventSource, properties)
+                var eventExecutingContext = new EventExecutingContext(eventSource, properties)
                 {
                     ExecutingTime = DateTime.UtcNow
                 };
@@ -181,17 +181,17 @@ internal sealed class EventBusHostedService : BackgroundService
                     // 调用执行前监视器
                     if (Monitor != default)
                     {
-                        await Monitor.OnExecutingAsync(eventHandlerExecutingContext);
+                        await Monitor.OnExecutingAsync(eventExecutingContext);
                     }
 
                     // 判断是否自定义了执行器
                     if (Executor == default)
                     {
-                        await eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext);
+                        await eventHandlerThatShouldRun.Handler!(eventExecutingContext);
                     }
                     else
                     {
-                        await Executor.ExecuteAsync(eventHandlerExecutingContext, eventHandlerThatShouldRun.Handler!);
+                        await Executor.ExecuteAsync(eventExecutingContext, eventHandlerThatShouldRun.Handler!);
                     }
                 }
                 catch (Exception ex)
@@ -217,13 +217,13 @@ internal sealed class EventBusHostedService : BackgroundService
                     if (Monitor != default)
                     {
                         // 创建执行后上下文
-                        var eventHandlerExecutedContext = new EventHandlerExecutedContext(eventSource, properties)
+                        var eventExecutedContext = new EventExecutedContext(eventSource, properties)
                         {
                             ExecutedTime = DateTime.UtcNow,
                             Exception = executionException
                         };
 
-                        await Monitor.OnExecutedAsync(eventHandlerExecutedContext);
+                        await Monitor.OnExecutedAsync(eventExecutedContext);
                     }
                 }
             }, stoppingToken);

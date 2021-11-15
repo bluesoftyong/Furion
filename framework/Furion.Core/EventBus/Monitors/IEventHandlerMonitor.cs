@@ -18,12 +18,12 @@ public interface IEventHandlerMonitor
     /// </summary>
     /// <param name="context">上下文</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutingAsync(EventHandlerExecutingContext context);
+    Task OnExecutingAsync(EventExecutingContext context);
 
     /// <summary>
     /// 事件处理程序执行后
     /// </summary>
     /// <param name="context">上下文</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    Task OnExecutedAsync(EventHandlerExecutedContext context);
+    Task OnExecutedAsync(EventExecutedContext context);
 }

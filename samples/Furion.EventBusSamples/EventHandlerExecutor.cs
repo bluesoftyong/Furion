@@ -4,7 +4,7 @@ namespace Furion.EventBusSamples;
 
 public class EventHandlerExecutor : IEventHandlerExecutor
 {
-    public async Task ExecuteAsync(EventHandlerExecutingContext context, Func<EventHandlerExecutingContext, Task> handler)
+    public async Task ExecuteAsync(EventExecutingContext context, Func<EventExecutingContext, Task> handler)
     {
         if (context.Source.EventId == "User:Delete")
         {

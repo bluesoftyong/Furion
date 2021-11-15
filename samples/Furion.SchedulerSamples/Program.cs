@@ -8,6 +8,7 @@ builder.Services.AddSchedulerJob(builder =>
 {
     builder.AddJob<TestCronJob>();
     builder.AddJob<TestSimpleJob>();
+    builder.AddJob<TestCronWithSecondsJob>();
 });
 
 builder.Services.AddControllers();

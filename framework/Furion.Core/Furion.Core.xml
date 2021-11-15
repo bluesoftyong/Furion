@@ -1568,6 +1568,70 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
+        <member name="T:Furion.SchedulerJob.SchedulerHostedService">
+            <summary>
+            作业调度器后台主机服务
+            </summary>
+        </member>
+        <member name="E:Furion.SchedulerJob.SchedulerHostedService.UnobservedTaskException">
+            <summary>
+            避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
+            </summary>
+        </member>
+        <member name="F:Furion.SchedulerJob.SchedulerHostedService._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SchedulerHostedService.Descriptor">
+            <summary>
+            作业描述器
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SchedulerHostedService.Job">
+            <summary>
+            作业执行程序
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SchedulerHostedService.Trigger">
+            <summary>
+            作业触发器
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SchedulerHostedService.Monitor">
+            <summary>
+            处理程序监视器
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SchedulerHostedService.Executor">
+            <summary>
+            处理程序执行器
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.SchedulerHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.SchedulerHostedService},System.IServiceProvider,Furion.SchedulerJob.IJobDescriptor,Furion.SchedulerJob.IJob,Furion.SchedulerJob.IJobTrigger)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger">日志对象</param>
+            <param name="serviceProvider">服务提供器</param>
+            <param name="descriptor">作业描述器</param>
+            <param name="job">作业执行程序</param>
+            <param name="trigger">作业触发器</param>
+        </member>
+        <member name="M:Furion.SchedulerJob.SchedulerHostedService.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行后台任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.SchedulerJob.SchedulerHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
+            <summary>
+            后台调用作业处理程序
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
         <member name="T:Furion.SchedulerJob.SimpleSchedulerHostedService">
             <summary>
             周期作业调度器后台主机服务

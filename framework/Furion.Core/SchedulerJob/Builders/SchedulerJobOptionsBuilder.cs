@@ -8,6 +8,7 @@
 
 using Furion.TimeCrontab;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
@@ -135,8 +136,8 @@ public sealed class SchedulerJobOptionsBuilder
         // 将作业注册为单例
         services.AddSingleton(jobType);
 
-        // 创建作业调度器
-        services.AddHostedService(serviceProvider =>
+        // 注册作业调度器
+        services.Add(ServiceDescriptor.Singleton<IHostedService>(serviceProvider =>
         {
             // 获取作业存储器
             var storer = serviceProvider.GetRequiredService<IJobStorer>();
@@ -157,6 +158,6 @@ public sealed class SchedulerJobOptionsBuilder
             }
 
             return jobScheduler;
-        });
+        }));
     }
 }

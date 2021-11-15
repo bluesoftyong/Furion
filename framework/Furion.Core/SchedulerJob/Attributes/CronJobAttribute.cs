@@ -11,8 +11,9 @@ using Furion.TimeCrontab;
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// Cron 表达式作业特性
+/// Cron 作业特性
 /// </summary>
+/// <remarks>该特性是调度作业模块内置的特性，主要用来解析并创建 <see cref="CronTrigger"/> 触发器</remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public sealed class CronJobAttribute : JobAttribute
 {
@@ -24,6 +25,12 @@ public sealed class CronJobAttribute : JobAttribute
     public CronJobAttribute(string identity, string schedule)
         : base(identity)
     {
+        // 空检查
+        if (string.IsNullOrWhiteSpace(schedule))
+        {
+            throw new InvalidOperationException("The <schedule> can be not null or empty.");
+        }
+
         Schedule = schedule;
     }
 

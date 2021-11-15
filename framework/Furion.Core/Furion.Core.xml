@@ -1365,8 +1365,9 @@
         </member>
         <member name="T:Furion.SchedulerJob.CronJobAttribute">
             <summary>
-            Cron 表达式作业特性
+            Cron 作业特性
             </summary>
+            <remarks>该特性是调度作业模块内置的特性，主要用来解析并创建 <see cref="T:Furion.SchedulerJob.CronTrigger"/> 触发器</remarks>
         </member>
         <member name="M:Furion.SchedulerJob.CronJobAttribute.#ctor(System.String,System.String)">
             <summary>
@@ -1387,8 +1388,9 @@
         </member>
         <member name="T:Furion.SchedulerJob.JobAttribute">
             <summary>
-            作业特性
+            作业标识特性
             </summary>
+            <remarks>所有的 <see cref="T:Furion.SchedulerJob.IJob"/> 实现类须贴该特性或其派生特性</remarks>
         </member>
         <member name="M:Furion.SchedulerJob.JobAttribute.#ctor(System.String)">
             <summary>
@@ -1405,13 +1407,14 @@
             <summary>
             周期作业特性
             </summary>
+            <remarks>该特性是调度作业模块内置的特性，主要用来解析并创建 <see cref="T:Furion.SchedulerJob.SimpleTrigger"/> 触发器</remarks>
         </member>
         <member name="M:Furion.SchedulerJob.SimpleJobAttribute.#ctor(System.String,System.Int32)">
             <summary>
             构造函数
             </summary>
             <param name="identity">作业唯一标识</param>
-            <param name="interval">间隔时间</param>
+            <param name="interval">间隔时间（毫秒）</param>
         </member>
         <member name="P:Furion.SchedulerJob.SimpleJobAttribute.Interval">
             <summary>

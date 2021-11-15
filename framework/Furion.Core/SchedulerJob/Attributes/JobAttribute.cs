@@ -9,8 +9,9 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业特性
+/// 作业标识特性
 /// </summary>
+/// <remarks>所有的 <see cref="IJob"/> 实现类须贴该特性或其派生特性</remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public class JobAttribute : Attribute
 {
@@ -23,7 +24,7 @@ public class JobAttribute : Attribute
         // 空检查
         if (string.IsNullOrWhiteSpace(identity))
         {
-            throw new InvalidOperationException("The identity can be not null or empty.");
+            throw new InvalidOperationException("The <identity> can be not null or empty.");
         }
 
         Identity = identity;

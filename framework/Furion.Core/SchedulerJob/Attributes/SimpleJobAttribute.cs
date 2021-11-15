@@ -11,6 +11,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 周期作业特性
 /// </summary>
+/// <remarks>该特性是调度作业模块内置的特性，主要用来解析并创建 <see cref="SimpleTrigger"/> 触发器</remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public sealed class SimpleJobAttribute : JobAttribute
 {
@@ -18,10 +19,16 @@ public sealed class SimpleJobAttribute : JobAttribute
     /// 构造函数
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
-    /// <param name="interval">间隔时间</param>
+    /// <param name="interval">间隔时间（毫秒）</param>
     public SimpleJobAttribute(string identity, int interval)
         : base(identity)
     {
+        // 有效值检查
+        if (interval <= 0)
+        {
+            throw new InvalidOperationException("The <interval> must be greater than 0.");
+        }
+
         Interval = interval;
     }
 

@@ -107,6 +107,14 @@ internal sealed class JobScheduler : BackgroundService
             await Task.Delay(Trigger.Rates, stoppingToken);
         }
 
+        // 如果作业调度器停止，则更新作业状态为 None
+        var jobDetail = await Storer.GetAsync(Identity, stoppingToken);
+        if (jobDetail != null && jobDetail.Status != JobStatus.None)
+        {
+            jobDetail.Status = JobStatus.None;
+            await Storer.UpdateAsync(jobDetail, default);
+        }
+
         _logger.LogCritical("Scheduler of <{Identity}> Service is stopped.", Identity.JobId);
     }
 

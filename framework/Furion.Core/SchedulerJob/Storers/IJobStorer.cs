@@ -17,7 +17,6 @@ public interface IJobStorer
     /// 注册作业
     /// </summary>
     /// <param name="identity">唯一标识</param>
-    /// <returns></returns>
     void Register(IJobIdentity identity);
 
     /// <summary>
@@ -33,6 +32,6 @@ public interface IJobStorer
     /// </summary>
     /// <param name="detail">作业详细信息</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns></returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken);
 }

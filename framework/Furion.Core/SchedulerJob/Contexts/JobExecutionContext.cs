@@ -13,4 +13,24 @@ namespace Furion.SchedulerJob;
 /// </summary>
 public abstract class JobExecutionContext
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="properties">共享上下文数据</param>
+    public JobExecutionContext(IJobDetail jobDetail, IDictionary<object, object> properties)
+    {
+        JobDetail = jobDetail;
+        Properties = properties;
+    }
+
+    /// <summary>
+    /// 作业详细信息
+    /// </summary>
+    public IJobDetail JobDetail { get; }
+
+    /// <summary>
+    /// 共享上下文数据
+    /// </summary>
+    public IDictionary<object, object> Properties { get; }
 }

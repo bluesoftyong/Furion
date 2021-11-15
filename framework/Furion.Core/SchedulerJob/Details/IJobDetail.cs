@@ -21,25 +21,25 @@ public interface IJobDetail
     /// <summary>
     /// 作业描述
     /// </summary>
-    string? Description { get; set; }
+    string? Description { get; internal set; }
 
     /// <summary>
     /// 作业状态
     /// </summary>
-    JobStatus Status { get; set; }
+    JobStatus Status { get; internal set; }
 
     /// <summary>
     /// 作业执行方式
     /// </summary>
-    JobMode Mode { get; set; }
+    JobMode Mode { get; internal set; }
 
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    DateTime? LastRunTime { get; set; }
+    DateTime? LastRunTime { get; internal set; }
 
     /// <summary>
     /// 运行次数
     /// </summary>
-    long NumberOfRuns { get; set; }
+    long NumberOfRuns { get; internal set; }
 }

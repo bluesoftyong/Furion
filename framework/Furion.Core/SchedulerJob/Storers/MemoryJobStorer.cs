@@ -6,6 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Collections.Concurrent;
+
 namespace Furion.SchedulerJob;
 
 /// <summary>
@@ -16,13 +18,12 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <summary>
     /// 作业存储集合
     /// </summary>
-    private readonly Dictionary<string, IJobDetail> _jobData = new();
+    private readonly ConcurrentDictionary<string, IJobDetail> _jobData = new();
 
     /// <summary>
     /// 注册作业
     /// </summary>
     /// <param name="identity"></param>
-    /// <returns></returns>
     public void Register(IJobIdentity identity)
     {
         _jobData.TryAdd(identity.JobId, new JobDetail(identity.JobId)
@@ -48,10 +49,10 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// </summary>
     /// <param name="detail">作业详细信息</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns></returns>
+    /// <returns><see cref="Task"/> 实例</returns>
     public Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken)
     {
-        _jobData[detail.Identity] = detail;
+        _jobData.TryUpdate(detail.Identity, detail, detail);
 
         return Task.CompletedTask;
     }

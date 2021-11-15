@@ -22,6 +22,14 @@ public interface IJobStorer
     Task<IJobDescriptor> GetAsync(string identity, CancellationToken cancellationToken);
 
     /// <summary>
+    /// 更新作业描述器
+    /// </summary>
+    /// <param name="descriptor">作业描述器</param>
+    /// <param name="cancellationToken">取消任务 Token</param>
+    /// <returns></returns>
+    Task UpdateAsync(IJobDescriptor descriptor, CancellationToken cancellationToken);
+
+    /// <summary>
     /// 更新作业状态
     /// </summary>
     /// <param name="identity">唯一标识</param>

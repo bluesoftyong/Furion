@@ -6,34 +6,27 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.TimeCrontab;
-
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 调度任务细节配置
+/// 周期作业触发器特性
 /// </summary>
-/// <remarks>默认 Cron 格式化类型为 <see cref="CronStringFormat.Default"/></remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public sealed class ScheduledAttribute : Attribute
+public sealed class SimpleTriggerAttribute : JobTriggerAttribute
 {
     /// <summary>
-    /// 任务唯一标识
+    /// 构造函数
     /// </summary>
-    private string Identity { get; set; }
+    /// <param name="identity">作业唯一标识</param>
+    /// <param name="interval">间隔时间</param>
+    public SimpleTriggerAttribute(string identity, int interval)
+        : base(identity)
+    {
+        Interval = interval;
+    }
 
     /// <summary>
-    /// 调度计划
+    /// 间隔时间（毫秒）
     /// </summary>
-    public string Schedule { get; set; }
-
-    /// <summary>
-    /// 任务描述
-    /// </summary>
-    public string Description { get; set; }
-
-    /// <summary>
-    /// Cron 表达式类型格式化
-    /// </summary>
-    public CronStringFormat Format { get; set; }
+    public int Interval { get; set; }
 }

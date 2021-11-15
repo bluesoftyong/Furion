@@ -15,9 +15,9 @@ using System.Reflection;
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 任务调度后台主机服务
+/// Cron 表达式调度器后台主机服务
 /// </summary>
-public sealed class SchedulerHostedService : BackgroundService
+public sealed class CronSchedulerHostedService : BackgroundService
 {
     /// <summary>
     /// 避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
@@ -27,7 +27,7 @@ public sealed class SchedulerHostedService : BackgroundService
     /// <summary>
     /// 日志对象
     /// </summary>
-    private readonly ILogger<SchedulerHostedService> _logger;
+    private readonly ILogger<CronSchedulerHostedService> _logger;
 
     /// <summary>
     /// 调度任务集合
@@ -45,12 +45,12 @@ public sealed class SchedulerHostedService : BackgroundService
     private IJobExecutor? Executor { get; }
 
     /// <summary>
-    ///
+    /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="scheduledTasks">调度任务集合</param>
-    public SchedulerHostedService(ILogger<SchedulerHostedService> logger
+    public CronSchedulerHostedService(ILogger<CronSchedulerHostedService> logger
         , IServiceProvider serviceProvider
          , IEnumerable<IJob> scheduledTasks)
     {
@@ -66,8 +66,8 @@ public sealed class SchedulerHostedService : BackgroundService
             var scheduledTaskType = scheduledTask.GetType();
 
             var scheduleProperty = scheduledTaskType.GetProperty(nameof(IJob.Schedule), bindingAttr)!;
-            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(ScheduledAttribute), false)
-                ? scheduleProperty.GetCustomAttribute<ScheduledAttribute>(false) :
+            var scheduleFormatAttribute = scheduleProperty.IsDefined(typeof(CronTriggerAttribute), false)
+                ? scheduleProperty.GetCustomAttribute<CronTriggerAttribute>(false) :
                 default;
 
             _scheduledTasks.Add(new JobWrapper

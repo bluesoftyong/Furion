@@ -2,6 +2,7 @@
 
 namespace Furion.SchedulerSamples;
 
+[CronTrigger("cron_job", "* * * * *")]
 public class TestScheduledTask : IJob
 {
     public string Schedule => "* * * * *";

@@ -1458,6 +1458,26 @@
             阻塞
             </summary>
         </member>
+        <member name="T:Furion.SchedulerJob.IJobCounter">
+            <summary>
+            作业计数器
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobCounter.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobCounter.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobCounter.NumberOfRuns">
+            <summary>
+            运行次数
+            </summary>
+        </member>
         <member name="T:Furion.SchedulerJob.IJobDescriptor">
             <summary>
             作业描述器
@@ -1673,24 +1693,126 @@
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
         </member>
+        <member name="T:Furion.SchedulerJob.CronTrigger">
+            <summary>
+            Cron 表达式触发器
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.CronTrigger.#ctor(Furion.TimeCrontab.Crontab)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="scheduleCrontab">调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象</param>
+        </member>
+        <member name="M:Furion.SchedulerJob.CronTrigger.#ctor(System.TimeSpan,Furion.TimeCrontab.Crontab)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="rates">速率</param>
+            <param name="scheduleCrontab">调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象</param>
+        </member>
+        <member name="P:Furion.SchedulerJob.CronTrigger.ScheduleCrontab">
+            <summary>
+            调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.CronTrigger.Rates">
+            <summary>
+            速率
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.CronTrigger.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.CronTrigger.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.CronTrigger.NumberOfRuns">
+            <summary>
+            运行次数
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.CronTrigger.Increment">
+            <summary>
+            增量
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.CronTrigger.ShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
         <member name="T:Furion.SchedulerJob.IJobTrigger">
             <summary>
             作业触发器
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.IJobTrigger.HeartRate">
+        <member name="P:Furion.SchedulerJob.IJobTrigger.Rates">
             <summary>
-            心跳率
+            速率
             </summary>
+            <remarks>
+            <para>对于周期任务，速率表示 Interval，间隔时间</para>
+            <para>对于 Cron 表达式任务，速率表示轮询时间</para>
+            </remarks>
         </member>
         <member name="M:Furion.SchedulerJob.IJobTrigger.Increment">
             <summary>
-            触发增量
+            增量
             </summary>
         </member>
         <member name="M:Furion.SchedulerJob.IJobTrigger.ShouldRun(System.DateTime)">
             <summary>
-            是否符合条件执行处理程序
+            是否符合执行逻辑
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="T:Furion.SchedulerJob.SimpleTrigger">
+            <summary>
+            周期触发器
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.#ctor(System.TimeSpan)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="rates">速率</param>
+        </member>
+        <member name="P:Furion.SchedulerJob.SimpleTrigger.Rates">
+            <summary>
+            速率
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SimpleTrigger.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SimpleTrigger.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.SimpleTrigger.NumberOfRuns">
+            <summary>
+            运行次数
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.Increment">
+            <summary>
+            增量
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.ShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑
             </summary>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>

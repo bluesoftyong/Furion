@@ -9,28 +9,22 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业触发器
+/// 作业计数器
 /// </summary>
-public interface IJobTrigger
+public interface IJobCounter
 {
     /// <summary>
-    /// 速率
+    /// 最近运行时间
     /// </summary>
-    /// <remarks>
-    /// <para>对于周期任务，速率表示 Interval，间隔时间</para>
-    /// <para>对于 Cron 表达式任务，速率表示轮询时间</para>
-    /// </remarks>
-    TimeSpan Rates { get; }
+    DateTime LastRunTime { get; }
 
     /// <summary>
-    /// 增量
+    /// 下一次运行时间
     /// </summary>
-    void Increment();
+    DateTime NextRunTime { get; }
 
     /// <summary>
-    /// 是否符合执行逻辑
+    /// 运行次数
     /// </summary>
-    /// <param name="currentTime">当前时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    bool ShouldRun(DateTime currentTime);
+    long NumberOfRuns { get; }
 }

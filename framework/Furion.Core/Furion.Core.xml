@@ -1528,7 +1528,7 @@
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.None">
             <summary>
-            不存在（取消）
+            不存在（未开始或取消）
             </summary>
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.Normal">

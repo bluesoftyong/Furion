@@ -9,21 +9,21 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业标识器默认实现
+/// 调度作业依赖接口
 /// </summary>
-internal sealed class JobIdentity : IJobIdentity
+public interface ISchedulerJob
 {
     /// <summary>
-    /// 构造函数
+    /// 开始作业
     /// </summary>
-    /// <param name="jobId">唯一标识</param>
-    internal JobIdentity(string jobId)
-    {
-        JobId = jobId;
-    }
+    /// <param name="identity">作业唯一标识</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    Task StartAsync(string identity);
 
     /// <summary>
-    /// 唯一标识
+    /// 暂停作业
     /// </summary>
-    public string JobId { get; }
+    /// <param name="identity">作业唯一标识</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    Task PauseAsync(string identity);
 }

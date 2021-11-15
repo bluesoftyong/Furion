@@ -24,9 +24,9 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// 注册作业
     /// </summary>
     /// <param name="identity"></param>
-    public void Register(IJobIdentity identity)
+    public void Register(string identity)
     {
-        _jobData.TryAdd(identity.JobId, new JobDetail(identity.JobId)
+        _jobData.TryAdd(identity, new JobDetail(identity)
         {
             Status = JobStatus.Normal
         });
@@ -38,9 +38,9 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <param name="identity">唯一标识</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="IJobDetail"/> 实例</returns>
-    public Task<IJobDetail> GetAsync(IJobIdentity identity, CancellationToken cancellationToken)
+    public Task<IJobDetail> GetAsync(string identity, CancellationToken cancellationToken)
     {
-        var isExist = _jobData.TryGetValue(identity.JobId, out var jobDetail);
+        var isExist = _jobData.TryGetValue(identity, out var jobDetail);
         return Task.FromResult(isExist ? jobDetail! : default!);
     }
 

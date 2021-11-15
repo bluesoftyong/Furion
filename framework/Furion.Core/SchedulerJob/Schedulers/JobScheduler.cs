@@ -31,7 +31,7 @@ internal sealed class JobScheduler : BackgroundService
     /// <summary>
     /// 作业标识器
     /// </summary>
-    private IJobIdentity Identity { get; }
+    private string Identity { get; }
 
     /// <summary>
     /// 作业执行程序
@@ -64,13 +64,13 @@ internal sealed class JobScheduler : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="storer">作业存储器</param>
-    /// <param name="identity">作业标识器</param>
+    /// <param name="identity">作业唯一标识</param>
     /// <param name="job">作业执行程序</param>
     /// <param name="trigger">作业触发器</param>
     public JobScheduler(ILogger<JobScheduler> logger
         , IServiceProvider serviceProvider
         , IJobStorer storer
-        , IJobIdentity identity
+        , string identity
         , IJob job
         , IJobTrigger trigger)
     {
@@ -91,11 +91,11 @@ internal sealed class JobScheduler : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Scheduler of <{Identity}> Service is running.", Identity.JobId);
+        _logger.LogInformation("Scheduler of <{Identity}> Service is running.", Identity);
 
         // 调度器服务停止监听
         stoppingToken.Register(() =>
-            _logger.LogDebug("Scheduler of <{Identity}> Service is stopping.", Identity.JobId));
+            _logger.LogDebug("Scheduler of <{Identity}> Service is stopping.", Identity));
 
         // 监听调度器服务是否取消
         while (!stoppingToken.IsCancellationRequested)
@@ -116,7 +116,7 @@ internal sealed class JobScheduler : BackgroundService
             await Storer.UpdateAsync(jobDetail, default);
         }
 
-        _logger.LogCritical("Scheduler of <{Identity}> Service is stopped.", Identity.JobId);
+        _logger.LogCritical("Scheduler of <{Identity}> Service is stopped.", Identity);
     }
 
     /// <summary>
@@ -202,10 +202,10 @@ internal sealed class JobScheduler : BackgroundService
                 jobDetail.Status = JobStatus.Error;
 
                 // 输出异常日志
-                _logger.LogError(ex, "Error occurred executing of <{Identity}>.", Identity.JobId);
+                _logger.LogError(ex, "Error occurred executing of <{Identity}>.", Identity);
 
                 // 标记异常
-                executionException = new InvalidOperationException(string.Format("Error occurred executing {0}.", "Identity"), ex);
+                executionException = new InvalidOperationException(string.Format("Error occurred executing <{0}>.", Identity), ex);
 
                 // 捕获 Task 任务异常信息并统计所有异常
                 if (UnobservedTaskException != default)

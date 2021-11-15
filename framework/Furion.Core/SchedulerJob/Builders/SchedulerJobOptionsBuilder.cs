@@ -23,7 +23,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 作业类型集合
     /// </summary>
-    private readonly Dictionary<Type, (IJobIdentity, IJobTrigger)> _jobs = new();
+    private readonly Dictionary<Type, (string, IJobTrigger)> _jobs = new();
 
     /// <summary>
     /// 作业存储器实现工厂
@@ -81,7 +81,7 @@ public sealed class SchedulerJobOptionsBuilder
         var jobAttribute = jobType.GetCustomAttribute<JobAttribute>(false)!;
 
         // 创建作业标识器
-        IJobIdentity identity = new JobIdentity(jobAttribute.Identity);
+        var identity = jobAttribute.Identity;
 
         // 创建作业触发器
         IJobTrigger trigger;
@@ -201,10 +201,10 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="jobType">作业类型</param>
-    /// <param name="identity">作业标识器</param>
+    /// <param name="identity">作业唯一标识</param>
     /// <param name="trigger">作业触发器</param>
     /// <exception cref="InvalidOperationException"></exception>
-    private void AddJob(IServiceCollection services, Type jobType, IJobIdentity identity, IJobTrigger trigger)
+    private void AddJob(IServiceCollection services, Type jobType, string identity, IJobTrigger trigger)
     {
         // 将作业注册为单例
         services.AddSingleton(jobType);

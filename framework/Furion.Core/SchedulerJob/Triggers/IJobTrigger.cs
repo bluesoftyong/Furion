@@ -30,8 +30,8 @@ public interface IJobTrigger : IJobCounter
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="identity">作业标识器</param>
+    /// <param name="identity">作业唯一标识</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    bool ShouldRun(IJobIdentity identity, DateTime currentTime);
+    bool ShouldRun(string identity, DateTime currentTime);
 }

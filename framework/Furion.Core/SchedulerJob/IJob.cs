@@ -9,18 +9,12 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业
+/// 作业执行程序
 /// </summary>
 public interface IJob
 {
     /// <summary>
-    /// 调度计划
-    /// </summary>
-    /// <remarks>Cron 表达式</remarks>
-    string Schedule { get; }
-
-    /// <summary>
-    /// 任务具体处理程序
+    /// 作业具体执行程序
     /// </summary>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>

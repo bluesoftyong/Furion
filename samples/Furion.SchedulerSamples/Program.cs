@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 // Add services to the container.
 
-builder.Services.AddHostedService<CronSchedulerHostedService>();
+//builder.Services.AddHostedService<CronSchedulerHostedService>();
 builder.Services.AddSingleton<IJob, TestScheduledTask>();
 
 builder.Services.AddControllers();

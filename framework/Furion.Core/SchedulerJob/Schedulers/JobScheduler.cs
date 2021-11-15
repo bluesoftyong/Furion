@@ -13,9 +13,9 @@ using Microsoft.Extensions.Logging;
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业调度器后台主机服务
+/// 作业调度器
 /// </summary>
-internal sealed class SchedulerHostedService : BackgroundService
+internal sealed class JobScheduler : BackgroundService
 {
     /// <summary>
     /// 避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
@@ -25,7 +25,7 @@ internal sealed class SchedulerHostedService : BackgroundService
     /// <summary>
     /// 日志对象
     /// </summary>
-    private readonly ILogger<SchedulerHostedService> _logger;
+    private readonly ILogger<JobScheduler> _logger;
 
     /// <summary>
     /// 作业描述器
@@ -43,12 +43,12 @@ internal sealed class SchedulerHostedService : BackgroundService
     private IJobTrigger Trigger { get; }
 
     /// <summary>
-    /// 处理程序监视器
+    /// 作业监视器
     /// </summary>
     private IJobMonitor? Monitor { get; }
 
     /// <summary>
-    /// 处理程序执行器
+    /// 作业执行器
     /// </summary>
     private IJobExecutor? Executor { get; }
 
@@ -60,7 +60,7 @@ internal sealed class SchedulerHostedService : BackgroundService
     /// <param name="descriptor">作业描述器</param>
     /// <param name="job">作业执行程序</param>
     /// <param name="trigger">作业触发器</param>
-    public SchedulerHostedService(ILogger<SchedulerHostedService> logger
+    public JobScheduler(ILogger<JobScheduler> logger
         , IServiceProvider serviceProvider
         , IJobDescriptor descriptor
         , IJob job
@@ -81,11 +81,11 @@ internal sealed class SchedulerHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Scheduler of <{Identity} | {Description}> Hosted Service is running.", Descriptor.Identity, Descriptor.Description);
+        _logger.LogInformation("Scheduler of <{Identity} | {Description}> Service is running.", Descriptor.Identity, Descriptor.Description);
 
         // 注册后台主机服务停止监听
         stoppingToken.Register(() =>
-            _logger.LogDebug("Scheduler of <{Identity} | {Description}> Hosted Service is stopping.", Descriptor.Identity, Descriptor.Description));
+            _logger.LogDebug("Scheduler of <{Identity} | {Description}> Service is stopping.", Descriptor.Identity, Descriptor.Description));
 
         // 监听服务是否取消
         while (!stoppingToken.IsCancellationRequested)
@@ -97,7 +97,7 @@ internal sealed class SchedulerHostedService : BackgroundService
             await Task.Delay(Trigger.Rates, stoppingToken);
         }
 
-        _logger.LogCritical("Scheduler of <{Identity} | {Description}> Hosted Service is stopped.", Descriptor.Identity, Descriptor.Description);
+        _logger.LogCritical("Scheduler of <{Identity} | {Description}> Service is stopped.", Descriptor.Identity, Descriptor.Description);
     }
 
     /// <summary>

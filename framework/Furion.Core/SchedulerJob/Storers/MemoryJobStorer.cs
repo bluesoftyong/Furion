@@ -27,7 +27,6 @@ internal sealed class MemoryJobStorer : IJobStorer
     {
         _jobData.TryAdd(identity.JobId, new JobDetail(identity.JobId)
         {
-            Description = $"{identity.JobId} job.",
             Status = JobStatus.Normal
         });
     }
@@ -41,7 +40,7 @@ internal sealed class MemoryJobStorer : IJobStorer
     public Task<IJobDetail> GetAsync(IJobIdentity identity, CancellationToken cancellationToken)
     {
         var isExist = _jobData.TryGetValue(identity.JobId, out var jobDetail);
-        return Task.FromResult(isExist ? jobDetail : default);
+        return Task.FromResult(isExist ? jobDetail! : JobDetail.NoneJob(identity));
     }
 
     /// <summary>

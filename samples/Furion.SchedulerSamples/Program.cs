@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 builder.Services.AddSchedulerJob(builder =>
 {
     builder.AddJob<TestCronJob>();
+    builder.AddJob<TestSimpleJob>();
 });
 
 builder.Services.AddControllers();

@@ -125,11 +125,26 @@ internal sealed class JobScheduler : BackgroundService
             return;
         }
 
+        // 查询当前作业信息
+        var jobDetail = await Storer.GetAsync(Identity, stoppingToken);
+
+        // 如果作业不存在或停止，则不执行
+        if (jobDetail.Status == JobStatus.None || jobDetail.Status == JobStatus.Pause)
+        {
+            return;
+        }
+
+        // 如果作业采用串行执行，则只有非 Blocked 时才可往下执行
+        if (jobDetail.Mode == JobMode.Serial && jobDetail.Status == JobStatus.Blocked)
+        {
+            return;
+        }
+
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
         // 计算下一个触发时机
-        Trigger.Increment();
+        var lastRunTime = Trigger.Increment();
 
         // 创建新的线程执行
         await taskFactory.StartNew(async () =>
@@ -139,6 +154,11 @@ internal sealed class JobScheduler : BackgroundService
 
             try
             {
+                jobDetail.Status = JobStatus.Blocked;
+                jobDetail.NumberOfRuns++;
+                jobDetail.LastRunTime = lastRunTime;
+                await Storer.UpdateAsync(jobDetail, stoppingToken);
+
                 // 调用执行前监视器
                 if (Monitor != default)
                 {
@@ -154,9 +174,13 @@ internal sealed class JobScheduler : BackgroundService
                 {
                     await Executor.ExecuteAsync(Job, stoppingToken);
                 }
+
+                jobDetail.Status = JobStatus.Complete;
             }
             catch (Exception ex)
             {
+                jobDetail.Status = JobStatus.Error;
+
                 // 输出异常日志
                 _logger.LogError(ex, "Error occurred executing of <{Identity}>.", Identity.JobId);
 
@@ -174,6 +198,8 @@ internal sealed class JobScheduler : BackgroundService
             }
             finally
             {
+                await Storer.UpdateAsync(jobDetail, stoppingToken);
+
                 // 调用执行后监视器
                 if (Monitor != default)
                 {

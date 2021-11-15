@@ -11,7 +11,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 周期（间隔）触发器
 /// </summary>
-internal sealed class SimpleTrigger : IJobTrigger, IJobCounter
+internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
 {
     /// <summary>
     /// 构造函数
@@ -28,28 +28,17 @@ internal sealed class SimpleTrigger : IJobTrigger, IJobCounter
     public TimeSpan Rates { get; }
 
     /// <summary>
-    /// 最近运行时间
-    /// </summary>
-    public DateTime LastRunTime { get; internal set; }
-
-    /// <summary>
-    /// 下一次运行时间
-    /// </summary>
-    public DateTime NextRunTime { get; internal set; }
-
-    /// <summary>
-    /// 运行次数
-    /// </summary>
-    public long NumberOfRuns { get; internal set; }
-
-    /// <summary>
     /// 增量
     /// </summary>
-    public void Increment()
+    /// <returns>最近执行时间</returns>
+    public DateTime Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
         NextRunTime = NextRunTime.AddMilliseconds(Rates.TotalMilliseconds);
+
+
+        return LastRunTime;
     }
 
     /// <summary>

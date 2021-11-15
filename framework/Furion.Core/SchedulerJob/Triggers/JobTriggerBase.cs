@@ -9,37 +9,22 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业详细信息
+/// 作业触发器基类
 /// </summary>
-public interface IJobDetail
+internal abstract class JobTriggerBase
 {
-    /// <summary>
-    /// 唯一标识
-    /// </summary>
-    string Identity { get; }
-
-    /// <summary>
-    /// 作业描述
-    /// </summary>
-    string? Description { get; set; }
-
-    /// <summary>
-    /// 作业状态
-    /// </summary>
-    JobStatus Status { get; set; }
-
-    /// <summary>
-    /// 作业执行方式
-    /// </summary>
-    JobMode Mode { get; set; }
-
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    DateTime? LastRunTime { get; set; }
+    internal DateTime LastRunTime { get; set; }
+
+    /// <summary>
+    /// 下一次运行时间
+    /// </summary>
+    internal DateTime NextRunTime { get; set; }
 
     /// <summary>
     /// 运行次数
     /// </summary>
-    long NumberOfRuns { get; set; }
+    internal long NumberOfRuns { get; set; }
 }

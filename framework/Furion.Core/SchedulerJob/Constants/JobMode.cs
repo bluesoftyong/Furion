@@ -9,22 +9,19 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业计数器
+/// 作业执行方式
 /// </summary>
-public interface IJobCounter
+public enum JobMode
 {
     /// <summary>
-    /// 最近运行时间
+    /// 并行执行
     /// </summary>
-    DateTime LastRunTime { get; }
+    /// <remarks>无需等待上一次任务完成</remarks>
+    Parallel = 0,
 
     /// <summary>
-    /// 下一次运行时间
+    /// 串行执行
     /// </summary>
-    DateTime NextRunTime { get; }
-
-    /// <summary>
-    /// 运行次数
-    /// </summary>
-    long NumberOfRuns { get; }
+    /// <remarks>需等待上一次任务完成</remarks>
+    Serial = 1
 }

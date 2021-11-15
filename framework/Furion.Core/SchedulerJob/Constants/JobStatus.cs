@@ -14,7 +14,7 @@ namespace Furion.SchedulerJob;
 public enum JobStatus
 {
     /// <summary>
-    /// 不存在
+    /// 不存在（取消）
     /// </summary>
     None = 0,
 

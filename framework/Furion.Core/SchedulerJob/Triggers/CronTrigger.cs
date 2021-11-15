@@ -13,7 +13,7 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// Cron 表达式触发器
 /// </summary>
-internal sealed class CronTrigger : IJobTrigger, IJobCounter
+internal sealed class CronTrigger : JobTriggerBase, IJobTrigger
 {
     /// <summary>
     /// 构造函数
@@ -46,28 +46,16 @@ internal sealed class CronTrigger : IJobTrigger, IJobCounter
     public TimeSpan Rates { get; } = TimeSpan.FromMinutes(1);
 
     /// <summary>
-    /// 最近运行时间
-    /// </summary>
-    public DateTime LastRunTime { get; internal set; }
-
-    /// <summary>
-    /// 下一次运行时间
-    /// </summary>
-    public DateTime NextRunTime { get; internal set; }
-
-    /// <summary>
-    /// 运行次数
-    /// </summary>
-    public long NumberOfRuns { get; internal set; }
-
-    /// <summary>
     /// 增量
     /// </summary>
-    public void Increment()
+    /// <returns>最近执行时间</returns>
+    public DateTime Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
         NextRunTime = ScheduleCrontab.GetNextOccurrence(NextRunTime);
+
+        return LastRunTime;
     }
 
     /// <summary>

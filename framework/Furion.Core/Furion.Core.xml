@@ -1465,6 +1465,23 @@
             <param name="trigger">作业触发器</param>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>
+        <member name="T:Furion.SchedulerJob.JobMode">
+            <summary>
+            作业执行方式
+            </summary>
+        </member>
+        <member name="F:Furion.SchedulerJob.JobMode.Parallel">
+            <summary>
+            并行执行
+            </summary>
+            <remarks>无需等待上一次任务完成</remarks>
+        </member>
+        <member name="F:Furion.SchedulerJob.JobMode.Serial">
+            <summary>
+            串行执行
+            </summary>
+            <remarks>需等待上一次任务完成</remarks>
+        </member>
         <member name="T:Furion.SchedulerJob.JobStatus">
             <summary>
             作业状态
@@ -1472,7 +1489,7 @@
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.None">
             <summary>
-            不存在
+            不存在（取消）
             </summary>
         </member>
         <member name="F:Furion.SchedulerJob.JobStatus.Normal">
@@ -1500,26 +1517,6 @@
             阻塞
             </summary>
         </member>
-        <member name="T:Furion.SchedulerJob.IJobCounter">
-            <summary>
-            作业计数器
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.IJobCounter.LastRunTime">
-            <summary>
-            最近运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.IJobCounter.NextRunTime">
-            <summary>
-            下一次运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.IJobCounter.NumberOfRuns">
-            <summary>
-            运行次数
-            </summary>
-        </member>
         <member name="T:Furion.SchedulerJob.IJobDetail">
             <summary>
             作业详细信息
@@ -1538,6 +1535,21 @@
         <member name="P:Furion.SchedulerJob.IJobDetail.Status">
             <summary>
             作业状态
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobDetail.Mode">
+            <summary>
+            作业执行方式
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobDetail.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.IJobDetail.NumberOfRuns">
+            <summary>
+            运行次数
             </summary>
         </member>
         <member name="T:Furion.SchedulerJob.JobDetail">
@@ -1566,14 +1578,14 @@
             作业状态
             </summary>
         </member>
+        <member name="P:Furion.SchedulerJob.JobDetail.Mode">
+            <summary>
+            作业执行方式
+            </summary>
+        </member>
         <member name="P:Furion.SchedulerJob.JobDetail.LastRunTime">
             <summary>
             最近运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.NextRunTime">
-            <summary>
-            下一次运行时间
             </summary>
         </member>
         <member name="P:Furion.SchedulerJob.JobDetail.NumberOfRuns">
@@ -1728,14 +1740,14 @@
             作业存储器
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.IJobStorer.Register(System.String)">
+        <member name="M:Furion.SchedulerJob.IJobStorer.Register(Furion.SchedulerJob.IJobIdentity)">
             <summary>
             注册作业
             </summary>
             <param name="identity">唯一标识</param>
             <returns></returns>
         </member>
-        <member name="M:Furion.SchedulerJob.IJobStorer.GetAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.IJobStorer.GetAsync(Furion.SchedulerJob.IJobIdentity,System.Threading.CancellationToken)">
             <summary>
             根据作业标识获取作业详细信息
             </summary>
@@ -1761,14 +1773,14 @@
             作业存储集合
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.MemoryJobStorer.Register(System.String)">
+        <member name="M:Furion.SchedulerJob.MemoryJobStorer.Register(Furion.SchedulerJob.IJobIdentity)">
             <summary>
             注册作业
             </summary>
             <param name="identity"></param>
             <returns></returns>
         </member>
-        <member name="M:Furion.SchedulerJob.MemoryJobStorer.GetAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.MemoryJobStorer.GetAsync(Furion.SchedulerJob.IJobIdentity,System.Threading.CancellationToken)">
             <summary>
             根据作业标识获取作业详细信息
             </summary>
@@ -1812,25 +1824,11 @@
             速率
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.CronTrigger.LastRunTime">
-            <summary>
-            最近运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.CronTrigger.NextRunTime">
-            <summary>
-            下一次运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.CronTrigger.NumberOfRuns">
-            <summary>
-            运行次数
-            </summary>
-        </member>
         <member name="M:Furion.SchedulerJob.CronTrigger.Increment">
             <summary>
             增量
             </summary>
+            <returns>最近执行时间</returns>
         </member>
         <member name="M:Furion.SchedulerJob.CronTrigger.ShouldRun(Furion.SchedulerJob.IJobIdentity,System.DateTime)">
             <summary>
@@ -1858,6 +1856,7 @@
             <summary>
             增量
             </summary>
+            <returns>最近执行时间</returns>
         </member>
         <member name="M:Furion.SchedulerJob.IJobTrigger.ShouldRun(Furion.SchedulerJob.IJobIdentity,System.DateTime)">
             <summary>
@@ -1866,6 +1865,26 @@
             <param name="identity">作业标识器</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="T:Furion.SchedulerJob.JobTriggerBase">
+            <summary>
+            作业触发器基类
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobTriggerBase.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobTriggerBase.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobTriggerBase.NumberOfRuns">
+            <summary>
+            运行次数
+            </summary>
         </member>
         <member name="T:Furion.SchedulerJob.SimpleTrigger">
             <summary>
@@ -1883,25 +1902,11 @@
             速率
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.SimpleTrigger.LastRunTime">
-            <summary>
-            最近运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SimpleTrigger.NextRunTime">
-            <summary>
-            下一次运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SimpleTrigger.NumberOfRuns">
-            <summary>
-            运行次数
-            </summary>
-        </member>
         <member name="M:Furion.SchedulerJob.SimpleTrigger.Increment">
             <summary>
             增量
             </summary>
+            <returns>最近执行时间</returns>
         </member>
         <member name="M:Furion.SchedulerJob.SimpleTrigger.ShouldRun(Furion.SchedulerJob.IJobIdentity,System.DateTime)">
             <summary>

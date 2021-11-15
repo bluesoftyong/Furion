@@ -25,7 +25,8 @@ public interface IJobTrigger
     /// <summary>
     /// 增量
     /// </summary>
-    void Increment();
+    /// <returns>最近执行时间</returns>
+    DateTime Increment();
 
     /// <summary>
     /// 是否符合执行逻辑

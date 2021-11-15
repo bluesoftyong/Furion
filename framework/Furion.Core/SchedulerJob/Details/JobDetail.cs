@@ -17,7 +17,7 @@ internal sealed class JobDetail : IJobDetail
     /// 构造函数
     /// </summary>
     /// <param name="identity">作业唯一标识</param>
-    public JobDetail(string identity)
+    internal JobDetail(string identity)
     {
         Identity = identity;
     }
@@ -30,25 +30,25 @@ internal sealed class JobDetail : IJobDetail
     /// <summary>
     /// 作业描述
     /// </summary>
-    public string? Description { get; internal set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// 作业状态
     /// </summary>
-    public JobStatus Status { get; internal set; }
+    public JobStatus Status { get; set; } = JobStatus.Normal;
+
+    /// <summary>
+    /// 作业执行方式
+    /// </summary>
+    public JobMode Mode { get; set; } = JobMode.Parallel;
 
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public DateTime LastRunTime { get; }
-
-    /// <summary>
-    /// 下一次运行时间
-    /// </summary>
-    public DateTime NextRunTime { get; }
+    public DateTime? LastRunTime { get; set; }
 
     /// <summary>
     /// 运行次数
     /// </summary>
-    public long NumberOfRuns { get; }
+    public long NumberOfRuns { get; set; } = 0;
 }

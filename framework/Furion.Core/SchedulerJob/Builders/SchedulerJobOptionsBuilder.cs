@@ -140,7 +140,7 @@ public sealed class SchedulerJobOptionsBuilder
         {
             // 获取作业存储器
             var storer = serviceProvider.GetRequiredService<IJobStorer>();
-            storer.Register(identity.JobId);
+            storer.Register(identity);
 
             var jobScheduler = new JobScheduler(serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
                 , serviceProvider

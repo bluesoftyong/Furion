@@ -65,7 +65,7 @@ public static class SchedulerJobServiceCollectionExtensions
         });
 
         // 注册作业调度器
-        services.AddSingleton<ISchedulerJob, SchedulerJob>();
+        services.AddSingleton<IScheduler, Scheduler>();
 
         return services;
     }

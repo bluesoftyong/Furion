@@ -47,4 +47,13 @@ internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
     {
         return NextRunTime < currentTime && LastRunTime != NextRunTime;
     }
+
+    /// <summary>
+    /// 将触发器转换成字符串输出
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
+    public override string ToString()
+    {
+        return $"{Rates.TotalMilliseconds}";
+    }
 }

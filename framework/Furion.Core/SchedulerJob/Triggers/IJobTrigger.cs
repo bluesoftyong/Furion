@@ -34,4 +34,10 @@ public interface IJobTrigger : IJobCounter
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
     bool ShouldRun(string identity, DateTime currentTime);
+
+    /// <summary>
+    /// 将触发器转换成字符串输出
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
+    string? ToString();
 }

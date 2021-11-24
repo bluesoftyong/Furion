@@ -2012,6 +2012,12 @@
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
+        <member name="M:Furion.SchedulerJob.CronTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
+        </member>
         <member name="T:Furion.SchedulerJob.IJobTrigger">
             <summary>
             作业触发器
@@ -2038,6 +2044,12 @@
             <param name="identity">作业唯一标识</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="M:Furion.SchedulerJob.IJobTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.JobTriggerBase">
             <summary>
@@ -2087,6 +2099,12 @@
             <param name="identity">作业唯一标识</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.TaskQueue.Constants">
             <summary>

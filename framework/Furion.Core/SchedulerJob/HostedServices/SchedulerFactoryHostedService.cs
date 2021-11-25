@@ -44,20 +44,28 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private IJobExecutor? Executor { get; }
 
     /// <summary>
+    /// 调度器休眠后再度被激活前多少ms完成耗时操作
+    /// </summary>
+    private int TimeBeforeSync { get; }
+
+    /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="jobs">作业集合</param>
     /// <param name="schedulerJobMap">调度作业映射集合</param>
+    /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
     public SchedulerFactoryHostedService(ILogger<SchedulerFactoryHostedService> logger
         , IServiceProvider serviceProvider
         , IEnumerable<IJob> jobs
-        , ConcurrentDictionary<string, JobTriggerMap> schedulerJobMap)
+        , ConcurrentDictionary<string, JobTriggerMap> schedulerJobMap
+        , int timeBeforeSync)
     {
         _logger = logger;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
+        TimeBeforeSync = timeBeforeSync;
 
         var referenceTime = DateTime.UtcNow;
 
@@ -218,12 +226,41 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var interval = (closestNextRunTime - referenceTime).TotalMilliseconds;
 
         /*
-         * 在最早触发器触发之前同步存储器数据，并设定超时时间 = interval - 10ms;
+         * 在最早触发器触发之前同步存储器作业数据，并设定超时时间 = interval - TimeBeforeSync;
          * 如果在未超时时间内完成同步，则更新内存中的包装器
          * 否则取消同步，等待调度器工厂被再次激活，进入下一轮同步
          */
+        var syncTimeout = interval - TimeBeforeSync;
+        if (syncTimeout > 0)
+        {
+            // 同步存储器作业数据
+            _ = SynchronizationStorer(TimeSpan.FromMilliseconds(syncTimeout), stoppingToken);
+        }
 
         // 将当前线程休眠至下一次触发前，采用 Math.Floor 向下取整，也就是可以休眠到执行前
         await Task.Delay(TimeSpan.FromMilliseconds(interval), stoppingToken);
+    }
+
+    /// <summary>
+    /// 同步存储器作业数据
+    /// </summary>
+    /// <param name="timeout">超时时间戳</param>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+    /// <returns><see cref="Task"/> 实例</returns>
+    private Task SynchronizationStorer(TimeSpan timeout, CancellationToken stoppingToken)
+    {
+        var syncTask = Task.Run(async () =>
+        {
+            Console.WriteLine("同步存储器作业信息.....");
+            await Task.Delay(10000);
+        }, stoppingToken);
+
+        // 设置超时任务
+        var delay = syncTask.ContinueWith(t =>
+        {
+            _logger.LogWarning("The scheduler synchronization storer timed out and the operation was cancelled.");
+        }, new CancellationTokenSource(timeout).Token);
+
+        return Task.WhenAny(syncTask, delay).Unwrap();
     }
 }

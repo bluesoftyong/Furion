@@ -247,20 +247,38 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     /// <param name="timeout">超时时间戳</param>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    private Task SynchronizationStorer(TimeSpan timeout, CancellationToken stoppingToken)
+    private async Task SynchronizationStorer(TimeSpan timeout, CancellationToken stoppingToken)
     {
+        // 创建超时关联任务取消 Token
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken
+              , new CancellationTokenSource(timeout).Token);
+        var cancellationToken = cts.Token;
+
+        // 创建同步任务
         var syncTask = Task.Run(async () =>
         {
-            Console.WriteLine("同步存储器作业信息.....");
-            await Task.Delay(10000);
-        }, stoppingToken);
+            // 开始同步
+            _logger.LogInformation("The scheduler starts synchronizing the storer......");
 
-        // 设置超时任务
-        var delay = syncTask.ContinueWith(t =>
+            // 模拟超时
+            await Task.Delay(1000);
+
+            // 同步成功
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                _logger.LogInformation("The scheduler sync storer completed.");
+            }
+        }, cancellationToken);
+
+        // 判断是否超时
+        if (await Task.WhenAny(syncTask, Task.Delay(timeout, cancellationToken)) == syncTask)
+        {
+            cts.Cancel();
+            await syncTask;
+        }
+        else
         {
             _logger.LogWarning("The scheduler synchronization storer timed out and the operation was cancelled.");
-        }, new CancellationTokenSource(timeout).Token);
-
-        return Task.WhenAny(syncTask, delay).Unwrap();
+        }
     }
 }

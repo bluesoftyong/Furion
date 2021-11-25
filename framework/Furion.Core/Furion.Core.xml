@@ -1898,13 +1898,13 @@
             <summary>
             注册作业
             </summary>
-            <param name="identity">唯一标识</param>
+            <param name="jobId">作业 Id</param>
         </member>
         <member name="M:Furion.SchedulerJob.IJobStorer.GetAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             根据作业标识获取作业详细信息
             </summary>
-            <param name="identity">唯一标识</param>
+            <param name="jobId">作业 Id</param>
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:Furion.SchedulerJob.IJobDetail"/> 实例</returns>
         </member>

@@ -214,7 +214,16 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             ? closestTriggerJobs.Min(u => u.Trigger!.NextRunTime)
             : DateTime.MaxValue;
 
+        // 计算出总的休眠时间，在这段时间内可以做耗时操作
+        var interval = (closestNextRunTime - referenceTime).TotalMilliseconds;
+
+        /*
+         * 在最早触发器触发之前同步存储器数据，并设定超时时间 = interval - 10ms;
+         * 如果在未超时时间内完成同步，则更新内存中的包装器
+         * 否则取消同步，等待调度器工厂被再次激活，进入下一轮同步
+         */
+
         // 将当前线程休眠至下一次触发前，采用 Math.Floor 向下取整，也就是可以休眠到执行前
-        await Task.Delay(TimeSpan.FromMilliseconds((closestNextRunTime - referenceTime).TotalMilliseconds), stoppingToken);
+        await Task.Delay(TimeSpan.FromMilliseconds(interval), stoppingToken);
     }
 }

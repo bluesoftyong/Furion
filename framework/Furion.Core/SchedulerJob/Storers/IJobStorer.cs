@@ -16,16 +16,16 @@ public interface IJobStorer
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <param name="identity">唯一标识</param>
-    void Register(string identity);
+    /// <param name="jobId">作业 Id</param>
+    void Register(string jobId);
 
     /// <summary>
     /// 根据作业标识获取作业详细信息
     /// </summary>
-    /// <param name="identity">唯一标识</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="IJobDetail"/> 实例</returns>
-    Task<IJobDetail> GetAsync(string identity, CancellationToken cancellationToken);
+    Task<IJobDetail> GetAsync(string jobId, CancellationToken cancellationToken);
 
     /// <summary>
     /// 更新作业详细信息

@@ -54,6 +54,11 @@ public sealed class SchedulerJobOptionsBuilder
     public int TimeBeforeSync { get; set; } = 10;
 
     /// <summary>
+    /// 最小存储器同步间隔（秒）
+    /// </summary>
+    public int MinimumSyncInterval { get; set; } = 10;
+
+    /// <summary>
     /// 未察觉任务异常处理程序
     /// </summary>
     public EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskExceptionHandler { get; set; }

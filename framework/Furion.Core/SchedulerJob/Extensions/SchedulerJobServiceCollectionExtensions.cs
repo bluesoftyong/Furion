@@ -50,7 +50,8 @@ public static class SchedulerJobServiceCollectionExtensions
             // 创建调度器工厂后台服务对象
             var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<SchedulerFactoryHostedService>(serviceProvider
                 , schedulerJobOptionsBuilder.SchedulerJobMap
-                , schedulerJobOptionsBuilder.TimeBeforeSync);
+                , schedulerJobOptionsBuilder.TimeBeforeSync
+                , schedulerJobOptionsBuilder.MinimumSyncInterval);
 
             // 订阅未察觉任务异常事件
             var unobservedTaskExceptionHandler = schedulerJobOptionsBuilder.UnobservedTaskExceptionHandler;

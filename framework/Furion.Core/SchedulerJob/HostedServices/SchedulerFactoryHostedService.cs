@@ -49,6 +49,16 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private int TimeBeforeSync { get; }
 
     /// <summary>
+    /// 最小存储器同步间隔（秒）
+    /// </summary>
+    private int MinimumSyncInterval { get; }
+
+    /// <summary>
+    /// 记录存储器最近同步时间
+    /// </summary>
+    private DateTime? LastSyncTime { get; set; }
+
+    /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
@@ -56,16 +66,19 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     /// <param name="jobs">作业集合</param>
     /// <param name="schedulerJobMap">调度作业映射集合</param>
     /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
+    /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public SchedulerFactoryHostedService(ILogger<SchedulerFactoryHostedService> logger
         , IServiceProvider serviceProvider
         , IEnumerable<IJob> jobs
         , ConcurrentDictionary<string, JobTriggerMap> schedulerJobMap
-        , int timeBeforeSync)
+        , int timeBeforeSync
+        , int minimumSyncInterval)
     {
         _logger = logger;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
         TimeBeforeSync = timeBeforeSync;
+        MinimumSyncInterval = minimumSyncInterval;
 
         var referenceTime = DateTime.UtcNow;
 
@@ -231,8 +244,13 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
          * 否则取消同步，等待调度器工厂被再次激活，进入下一轮同步
          */
         var syncTimeout = interval - TimeBeforeSync;
-        if (syncTimeout > 0)
+        if (syncTimeout > 0
+            // 最低频率同步
+            && (LastSyncTime == null || (referenceTime - LastSyncTime.Value).TotalSeconds >= MinimumSyncInterval))
         {
+            // 存储最近更新时间
+            LastSyncTime = DateTime.UtcNow;
+
             // 同步存储器作业数据
             _ = SynchronizationStorer(TimeSpan.FromMilliseconds(syncTimeout), stoppingToken);
         }
@@ -260,8 +278,8 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             // 开始同步
             _logger.LogInformation("The scheduler starts synchronizing the storer......");
 
-            // 模拟超时
-            await Task.Delay(1000);
+            Console.WriteLine("模拟数据库操作.");
+            await Task.Delay(10);
 
             // 同步成功
             if (!cancellationToken.IsCancellationRequested)

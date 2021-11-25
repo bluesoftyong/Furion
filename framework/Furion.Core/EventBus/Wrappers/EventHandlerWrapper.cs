@@ -26,7 +26,7 @@ internal sealed class EventHandlerWrapper
     /// <summary>
     /// 事件 Id
     /// </summary>
-    internal string EventId { get; set; }
+    internal string EventId { get; }
 
     /// <summary>
     /// 事件处理程序

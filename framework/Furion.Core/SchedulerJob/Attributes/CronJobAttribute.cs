@@ -20,10 +20,10 @@ public sealed class CronJobAttribute : JobAttribute
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="schedule">调度计划（Cron 表达式）</param>
-    public CronJobAttribute(string identity, string schedule)
-        : base(identity)
+    public CronJobAttribute(string jobId, string schedule)
+        : base(jobId)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(schedule))

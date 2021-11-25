@@ -16,10 +16,10 @@ public sealed class JobExecutedContext : JobExecutionContext
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="properties">共享上下文数据</param>
-    internal JobExecutedContext(IJobDetail jobDetail, IDictionary<object, object> properties)
-        : base(jobDetail, properties)
+    internal JobExecutedContext(string jobId, IDictionary<object, object> properties)
+        : base(jobId, properties)
     {
     }
 

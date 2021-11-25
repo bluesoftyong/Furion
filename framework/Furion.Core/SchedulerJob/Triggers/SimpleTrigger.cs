@@ -11,39 +11,40 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 周期（间隔）触发器
 /// </summary>
-internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
+internal sealed class SimpleTrigger : JobTrigger
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="rates">速率</param>
-    internal SimpleTrigger(TimeSpan rates)
+    /// <param name="interval">间隔时间（毫秒）</param>
+    internal SimpleTrigger(int interval)
     {
-        Rates = rates;
+        Interval = interval;
     }
 
     /// <summary>
-    /// 速率
+    /// 间隔时间（毫秒）
     /// </summary>
-    public TimeSpan Rates { get; }
+    private int Interval { get; }
 
     /// <summary>
-    /// 增量
+    /// 计算当前触发器增量信息
     /// </summary>
-    public void Increment()
+    /// <param name="jobId">作业 Id</param>
+    public override void Increment(string jobId)
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
-        NextRunTime = NextRunTime.AddMilliseconds(Rates.TotalMilliseconds);
+        NextRunTime = NextRunTime.AddMilliseconds(Interval);
     }
 
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public bool ShouldRun(string identity, DateTime currentTime)
+    public override bool ShouldRun(string jobId, DateTime currentTime)
     {
         return NextRunTime < currentTime && LastRunTime != NextRunTime;
     }
@@ -52,8 +53,8 @@ internal sealed class SimpleTrigger : JobTriggerBase, IJobTrigger
     /// 将触发器转换成字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
-    public override string ToString()
+    public override string ToString(string jobId)
     {
-        return $"{Rates.TotalMilliseconds}";
+        return $"{Interval}ms";
     }
 }

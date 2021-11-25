@@ -6,39 +6,33 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.TimeCrontab;
-
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// Cron 表达式触发器
+/// 作业触发器基类
 /// </summary>
-internal sealed class CronTrigger : JobTrigger
+public abstract class JobTrigger
 {
     /// <summary>
-    /// 构造函数
+    /// 最近运行时间
     /// </summary>
-    /// <param name="scheduleCrontab">调度计划 <see cref="Crontab"/> 对象</param>
-    internal CronTrigger(Crontab scheduleCrontab)
-    {
-        ScheduleCrontab = scheduleCrontab;
-    }
+    public virtual DateTime LastRunTime { get; set; }
 
     /// <summary>
-    /// 调度计划 <see cref="Crontab"/> 对象
+    /// 下一次运行时间
     /// </summary>
-    private Crontab ScheduleCrontab { get; }
+    public virtual DateTime NextRunTime { get; set; }
+
+    /// <summary>
+    /// 触发次数
+    /// </summary>
+    public virtual long NumberOfRuns { get; set; }
 
     /// <summary>
     /// 计算当前触发器增量信息
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    public override void Increment(string jobId)
-    {
-        NumberOfRuns++;
-        LastRunTime = NextRunTime;
-        NextRunTime = ScheduleCrontab.GetNextOccurrence(NextRunTime);
-    }
+    public abstract void Increment(string jobId);
 
     /// <summary>
     /// 是否符合执行逻辑
@@ -46,17 +40,12 @@ internal sealed class CronTrigger : JobTrigger
     /// <param name="jobId">作业 Id</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public override bool ShouldRun(string jobId, DateTime currentTime)
-    {
-        return NextRunTime < currentTime && LastRunTime != NextRunTime;
-    }
+    public abstract bool ShouldRun(string jobId, DateTime currentTime);
 
     /// <summary>
     /// 将触发器转换成字符串输出
     /// </summary>
+    /// <param name="jobId">作业 Id</param>
     /// <returns><see cref="string"/></returns>
-    public override string ToString(string jobId)
-    {
-        return ScheduleCrontab.ToString();
-    }
+    public abstract string? ToString(string jobId);
 }

@@ -14,9 +14,9 @@ namespace Furion.SchedulerJob;
 public interface IJobDetail
 {
     /// <summary>
-    /// 唯一标识
+    /// 作业 Id
     /// </summary>
-    string Identity { get; }
+    string JobId { get; }
 
     /// <summary>
     /// 作业描述
@@ -32,19 +32,4 @@ public interface IJobDetail
     /// 作业执行方式
     /// </summary>
     JobMode Mode { get; internal set; }
-
-    /// <summary>
-    /// 最近运行时间
-    /// </summary>
-    DateTime? LastRunTime { get; internal set; }
-
-    /// <summary>
-    /// 下一次运行时间
-    /// </summary>
-    DateTime? NextRunTime { get; internal set; }
-
-    /// <summary>
-    /// 运行次数
-    /// </summary>
-    long NumberOfRuns { get; internal set; }
 }

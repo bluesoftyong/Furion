@@ -16,16 +16,16 @@ public sealed class JobDetail : IJobDetail
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    internal JobDetail(string identity)
+    /// <param name="jobId">作业 Id</param>
+    internal JobDetail(string jobId)
     {
-        Identity = identity;
+        JobId = jobId;
     }
 
     /// <summary>
-    /// 唯一标识
+    /// 作业 Id
     /// </summary>
-    public string Identity { get; }
+    public string JobId { get; }
 
     /// <summary>
     /// 作业描述
@@ -41,19 +41,4 @@ public sealed class JobDetail : IJobDetail
     /// 作业执行方式
     /// </summary>
     public JobMode Mode { get; set; } = JobMode.Parallel;
-
-    /// <summary>
-    /// 最近运行时间
-    /// </summary>
-    public DateTime? LastRunTime { get; set; }
-
-    /// <summary>
-    /// 下一次运行时间
-    /// </summary>
-    public DateTime? NextRunTime { get; set; }
-
-    /// <summary>
-    /// 运行次数
-    /// </summary>
-    public long NumberOfRuns { get; set; } = 0;
 }

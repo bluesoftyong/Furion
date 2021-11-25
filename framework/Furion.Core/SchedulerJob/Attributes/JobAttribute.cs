@@ -18,20 +18,20 @@ public class JobAttribute : Attribute
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    public JobAttribute(string identity)
+    /// <param name="jobId">作业 Id</param>
+    public JobAttribute(string jobId)
     {
         // 空检查
-        if (string.IsNullOrWhiteSpace(identity))
+        if (string.IsNullOrWhiteSpace(jobId))
         {
-            throw new InvalidOperationException("The <identity> can be not null or empty.");
+            throw new InvalidOperationException("The <jobId> can be not null or empty.");
         }
 
-        Identity = identity;
+        JobId = jobId;
     }
 
     /// <summary>
-    /// 作业唯一标识
+    /// 作业 Id
     /// </summary>
-    public string Identity { get; }
+    public string JobId { get; }
 }

@@ -9,35 +9,32 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业触发器
+/// 调度作业包装类
 /// </summary>
-public interface IJobTrigger : IJobCounter
+/// <remarks>主要用于主机服务启动时将所有作业和作业触发器进行包装绑定</remarks>
+internal sealed class SchedulerJobWrapper
 {
     /// <summary>
-    /// 速率
+    /// 构造函数
     /// </summary>
-    /// <remarks>
-    /// <para>对于周期任务，速率表示 Interval（间隔时间）</para>
-    /// <para>对于 Cron 表达式任务，速率表示 Delay（轮询时间）</para>
-    /// </remarks>
-    TimeSpan Rates { get; }
+    /// <param name="jobId">作业 Id</param>
+    internal SchedulerJobWrapper(string jobId)
+    {
+        JobId = jobId;
+    }
 
     /// <summary>
-    /// 增量
+    /// 作业 Id
     /// </summary>
-    void Increment();
+    internal string JobId { get; }
 
     /// <summary>
-    /// 是否符合执行逻辑
+    /// 作业
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    /// <param name="currentTime">当前时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    bool ShouldRun(string identity, DateTime currentTime);
+    internal IJob? Job { get; set; }
 
     /// <summary>
-    /// 将触发器转换成字符串输出
+    /// 作业触发器
     /// </summary>
-    /// <returns><see cref="string"/></returns>
-    string? ToString();
+    internal JobTrigger? Trigger { get; set; }
 }

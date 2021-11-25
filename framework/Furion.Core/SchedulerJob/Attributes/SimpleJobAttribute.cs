@@ -18,10 +18,10 @@ public sealed class SimpleJobAttribute : JobAttribute
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="interval">间隔时间（毫秒）</param>
-    public SimpleJobAttribute(string identity, int interval)
-        : base(identity)
+    public SimpleJobAttribute(string jobId, int interval)
+        : base(jobId)
     {
         // 有效值检查
         if (interval <= 0)

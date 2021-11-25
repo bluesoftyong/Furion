@@ -16,23 +16,23 @@ public abstract class JobExecutionContext
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="properties">共享上下文数据</param>
-    public JobExecutionContext(IJobDetail jobDetail, IDictionary<object, object> properties)
+    public JobExecutionContext(string jobId, IDictionary<object, object> properties)
     {
-        JobDetail = jobDetail;
+        JobId = jobId;
         Properties = properties;
     }
 
     /// <summary>
-    /// 作业计数器
+    /// 作业 Id
     /// </summary>
-    public IJobCounter? JobCounter { get; }
+    public string JobId { get; }
 
     /// <summary>
     /// 作业详细信息
     /// </summary>
-    public IJobDetail JobDetail { get; }
+    public IJobDetail? JobDetail { get; }
 
     /// <summary>
     /// 共享上下文数据

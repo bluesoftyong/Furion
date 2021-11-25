@@ -44,6 +44,22 @@ public static class SchedulerJobServiceCollectionExtensions
         // 注册内部服务
         services.AddInternalService();
 
+        // 通过工厂模式创建
+        services.AddHostedService(serviceProvider =>
+        {
+            // 创建调度器工厂后台服务对象
+            var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<SchedulerFactoryHostedService>(serviceProvider, schedulerJobOptionsBuilder.SchedulerJobMap);
+
+            // 订阅未察觉任务异常事件
+            var unobservedTaskExceptionHandler = schedulerJobOptionsBuilder.UnobservedTaskExceptionHandler;
+            if (unobservedTaskExceptionHandler != default)
+            {
+                schedulerFactoryHostedService.UnobservedTaskException += unobservedTaskExceptionHandler;
+            }
+
+            return schedulerFactoryHostedService;
+        });
+
         // 构建调度作业服务
         schedulerJobOptionsBuilder.Build(services);
 

@@ -52,7 +52,7 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <returns><see cref="Task"/> 实例</returns>
     public Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken)
     {
-        _jobData.TryUpdate(detail.Identity, detail, detail);
+        _jobData.TryUpdate(detail.JobId, detail, detail);
 
         return Task.CompletedTask;
     }

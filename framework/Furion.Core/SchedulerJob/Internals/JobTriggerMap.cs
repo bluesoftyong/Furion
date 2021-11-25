@@ -9,22 +9,28 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业触发器基类
+/// 作业和作业触发器映射关系类
 /// </summary>
-public abstract class JobTriggerBase
+internal sealed class JobTriggerMap
 {
     /// <summary>
-    /// 最近运行时间
+    /// 构造函数
     /// </summary>
-    public DateTime LastRunTime { get; set; }
+    /// <param name="jobType">作业类型</param>
+    /// <param name="trigger">作业触发器</param>
+    public JobTriggerMap(Type jobType, JobTrigger trigger)
+    {
+        JobType = jobType;
+        Trigger = trigger;
+    }
 
     /// <summary>
-    /// 下一次运行时间
+    /// 作业类型
     /// </summary>
-    public DateTime NextRunTime { get; set; }
+    public Type JobType { get; }
 
     /// <summary>
-    /// 运行次数
+    /// 作业触发器
     /// </summary>
-    public long NumberOfRuns { get; set; }
+    public JobTrigger Trigger { get; }
 }

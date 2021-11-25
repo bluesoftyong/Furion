@@ -9,8 +9,7 @@
 using Furion.TimeCrontab;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Furion.SchedulerJob;
@@ -20,11 +19,6 @@ namespace Furion.SchedulerJob;
 /// </summary>
 public sealed class SchedulerJobOptionsBuilder
 {
-    /// <summary>
-    /// 作业类型集合
-    /// </summary>
-    private readonly Dictionary<Type, (string, IJobTrigger)> _jobs = new();
-
     /// <summary>
     /// 作业存储器实现工厂
     /// </summary>
@@ -41,6 +35,19 @@ public sealed class SchedulerJobOptionsBuilder
     private Type? _jobExecutor;
 
     /// <summary>
+    /// 构造函数
+    /// </summary>
+    public SchedulerJobOptionsBuilder()
+    {
+        SchedulerJobMap = new();
+    }
+
+    /// <summary>
+    /// 调度作业映射集合
+    /// </summary>
+    internal ConcurrentDictionary<string, JobTriggerMap> SchedulerJobMap { get; }
+
+    /// <summary>
     /// 未察觉任务异常处理程序
     /// </summary>
     public EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskExceptionHandler { get; set; }
@@ -51,7 +58,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <typeparam name="TJob"><see cref="IJob"/> 实例</typeparam>
     /// <param name="jobTrigger">作业触发器</param>
     /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddJob<TJob>(IJobTrigger? jobTrigger = default)
+    public SchedulerJobOptionsBuilder AddJob<TJob>(JobTrigger? jobTrigger = default)
         where TJob : class, IJob
     {
         return AddJob(typeof(TJob), jobTrigger);
@@ -63,7 +70,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <param name="jobType">作业类型，必须实现 <see cref="IJob"/> 接口</param>
     /// <param name="jobTrigger">作业触发器</param>
     /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddJob(Type jobType, IJobTrigger? jobTrigger = default)
+    public SchedulerJobOptionsBuilder AddJob(Type jobType, JobTrigger? jobTrigger = default)
     {
         // jobType 须实现 IJob 接口
         if (!typeof(IJob).IsAssignableFrom(jobType))
@@ -79,41 +86,25 @@ public sealed class SchedulerJobOptionsBuilder
 
         // 获取 [Job] 特性具体类型
         var jobAttribute = jobType.GetCustomAttribute<JobAttribute>(false)!;
-
-        // 创建作业标识器
-        var identity = jobAttribute.Identity;
+        var jobId = jobAttribute.JobId;
 
         // 创建作业触发器
-        IJobTrigger trigger;
+        JobTrigger trigger;
         if (jobTrigger != default)
         {
             trigger = jobTrigger;
         }
         else
         {
-            // 解析 Cron 触发器
+            // 将 [CronJob] 特性转换成 CronTrigger 对象
             if (jobAttribute is CronJobAttribute cronJobAttribute)
             {
-                // 解析速率，支持秒的 Cron 表达式速率为 1秒，否则速率为 1分钟
-                var rates = cronJobAttribute.Format == CronStringFormat.WithSeconds || cronJobAttribute.Format == CronStringFormat.WithSecondsAndYears
-                    ? TimeSpan.FromSeconds(1)
-                    : TimeSpan.FromMinutes(1);
-
-                trigger = new CronTrigger(rates, Crontab.Parse(cronJobAttribute.Schedule, cronJobAttribute.Format))
-                {
-                    NextRunTime = DateTime.UtcNow
-                };
+                trigger = new CronTrigger(Crontab.Parse(cronJobAttribute.Schedule, cronJobAttribute.Format));
             }
-            // 解析周期触发器
+            // 将 [SimpleJob] 特性转换成 SimpleTrigger 对象
             else if (jobAttribute is SimpleJobAttribute simpleJobAttribute)
             {
-                // 解析速率
-                var rates = TimeSpan.FromMilliseconds(simpleJobAttribute.Interval);
-
-                trigger = new SimpleTrigger(rates)
-                {
-                    NextRunTime = DateTime.UtcNow
-                };
+                trigger = new SimpleTrigger(simpleJobAttribute.Interval);
             }
             else
             {
@@ -121,10 +112,10 @@ public sealed class SchedulerJobOptionsBuilder
             }
         }
 
-        // 禁止重复注册作业
-        if (!_jobs.TryAdd(jobType, (identity, trigger)))
+        // 作业 Id 须唯一
+        if (!SchedulerJobMap.TryAdd(jobId, new JobTriggerMap(jobType, trigger)))
         {
-            throw new InvalidOperationException("The job has been registered. Repeated registration is prohibited.");
+            throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
 
         return this;
@@ -172,9 +163,9 @@ public sealed class SchedulerJobOptionsBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册作业
-        foreach (var (jobType, (identity, trigger)) in _jobs)
+        foreach (var jobTriggerMap in SchedulerJobMap.Values)
         {
-            AddJob(services, jobType, identity, trigger);
+            services.AddSingleton(typeof(IJob), jobTriggerMap.JobType);
         }
 
         // 替换作业存储器
@@ -194,45 +185,5 @@ public sealed class SchedulerJobOptionsBuilder
         {
             services.AddSingleton(typeof(IJobExecutor), _jobExecutor);
         }
-    }
-
-    /// <summary>
-    /// 注册作业
-    /// </summary>
-    /// <param name="services">服务集合对象</param>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="identity">作业唯一标识</param>
-    /// <param name="trigger">作业触发器</param>
-    /// <exception cref="InvalidOperationException"></exception>
-    private void AddJob(IServiceCollection services, Type jobType, string identity, IJobTrigger trigger)
-    {
-        // 将作业注册为单例
-        services.AddSingleton(jobType);
-
-        // 注册作业调度器
-        services.Add(ServiceDescriptor.Singleton<IHostedService>(serviceProvider =>
-        {
-            // 获取作业存储器
-            var jobStorer = serviceProvider.GetRequiredService<IJobStorer>();
-            jobStorer.Register(identity);
-
-            // 创建作业调度器
-            var jobScheduler = new JobScheduler(
-                serviceProvider.GetRequiredService<ILogger<JobScheduler>>()
-                , serviceProvider
-                , jobStorer
-                , (serviceProvider.GetRequiredService(jobType) as IJob)!
-                , identity
-                , trigger);
-
-            // 订阅未察觉任务异常事件
-            var unobservedTaskExceptionHandler = UnobservedTaskExceptionHandler;
-            if (unobservedTaskExceptionHandler != default)
-            {
-                jobScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
-            }
-
-            return jobScheduler;
-        }));
     }
 }

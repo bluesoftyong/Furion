@@ -1,6 +1,5 @@
 ﻿using Furion.SchedulerJob;
 using Furion.TimeCrontab;
-using System.Text.Json;
 
 namespace Furion.SchedulerSamples;
 
@@ -9,7 +8,7 @@ public class TestCronWithSecondsJob : IJob
 {
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"<{context.JobDetail.Identity}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {JsonSerializer.Serialize(context.JobDetail)}");
+        Console.WriteLine($"<{context.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 
         await Task.CompletedTask;
     }

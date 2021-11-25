@@ -248,7 +248,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             // 最低频率同步
             && (LastSyncTime == null || (referenceTime - LastSyncTime.Value).TotalSeconds >= MinimumSyncInterval))
         {
-            // 存储最近更新时间
+            // 存储最近同步时间
             LastSyncTime = DateTime.UtcNow;
 
             // 同步存储器作业数据

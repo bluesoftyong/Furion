@@ -51,12 +51,12 @@ public sealed class SchedulerJobOptionsBuilder
     /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
     /// </summary>
     /// <remarks>通常用于同步存储器作业数据</remarks>
-    public int TimeBeforeSync { get; set; } = 10;
+    public int TimeBeforeSync { get; set; } = 30;
 
     /// <summary>
     /// 最小存储器同步间隔（秒）
     /// </summary>
-    public int MinimumSyncInterval { get; set; } = 10;
+    public int MinimumSyncInterval { get; set; } = 30;
 
     /// <summary>
     /// 未察觉任务异常处理程序

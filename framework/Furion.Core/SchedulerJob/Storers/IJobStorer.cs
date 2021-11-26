@@ -19,5 +19,5 @@ public interface IJobStorer
     /// <param name="jobIds">已注册的作业 Id 集合</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task{TResult}"/> 实例</returns>
-    Task<IEnumerable<JobBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default);
+    Task<IEnumerable<JobDetailBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default);
 }

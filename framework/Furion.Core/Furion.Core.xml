@@ -1421,12 +1421,12 @@
             间隔时间（毫秒）
             </summary>
         </member>
-        <member name="T:Furion.SchedulerJob.JobBinder">
+        <member name="T:Furion.SchedulerJob.JobDetailBinder">
             <summary>
-            作业绑定器
+            作业详细信息绑定器
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.JobBinder.#ctor(System.String,Furion.SchedulerJob.JobDetail,System.Byte[])">
+        <member name="M:Furion.SchedulerJob.JobDetailBinder.#ctor(System.String,Furion.SchedulerJob.JobDetail,System.Byte[])">
             <summary>
             构造函数
             </summary>
@@ -1434,17 +1434,17 @@
             <param name="jobDetail">作业详细信息</param>
             <param name="jobTrigger">作业触发器二进制对象</param>
         </member>
-        <member name="P:Furion.SchedulerJob.JobBinder.JobId">
+        <member name="P:Furion.SchedulerJob.JobDetailBinder.JobId">
             <summary>
             作业 Id
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.JobBinder.JobDetail">
+        <member name="P:Furion.SchedulerJob.JobDetailBinder.JobDetail">
             <summary>
             作业详细信息
             </summary>
         </member>
-        <member name="P:Furion.SchedulerJob.JobBinder.JobTrigger">
+        <member name="P:Furion.SchedulerJob.JobDetailBinder.JobTrigger">
             <summary>
             作业触发器二进制对象
             </summary>
@@ -2076,6 +2076,16 @@
             构造函数
             </summary>
             <param name="jobId">作业 Id</param>
+        </member>
+        <member name="M:Furion.SchedulerJob.SchedulerJobWrapper.Deconstruct(System.String@,Furion.SchedulerJob.IJob@,Furion.SchedulerJob.JobDetail@,Furion.SchedulerJob.JobTrigger@,System.String@)">
+            <summary>
+            解构函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="jobHandler">作业</param>
+            <param name="jobDetail">作业详细信息</param>
+            <param name="jobTrigger">作业触发器</param>
+            <param name="triggerString">触发器输出字符串</param>
         </member>
         <member name="P:Furion.SchedulerJob.SchedulerJobWrapper.JobId">
             <summary>

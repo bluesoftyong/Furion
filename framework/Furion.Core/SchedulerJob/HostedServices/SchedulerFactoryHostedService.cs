@@ -150,17 +150,23 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         // 逐条创建新线程调用
         foreach (var jobThatShouldRun in jobsThatShouldRun)
         {
+            // 解构包装器信息
+            (var jobId, var jobHandler, var jobDetail, var jobTrigger, var triggerString) = jobThatShouldRun;
+
             // 计算当前触发器增量信息
-            jobThatShouldRun.Trigger!.Increment(jobThatShouldRun.JobId);
+            jobTrigger.Increment(jobId);
 
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
             {
+                // 输出触发日志
+                _logger.LogInformation("Scheduler starts triggering job of <{JobId}>, {Trigger}.", jobId, triggerString);
+
                 // 创建共享上下文数据对象
                 var properties = new Dictionary<object, object>();
 
                 // 创建执行前上下文
-                var jobExecutingContext = new JobExecutingContext(jobThatShouldRun.JobId, properties)
+                var jobExecutingContext = new JobExecutingContext(jobId, properties)
                 {
                     ExecutingTime = DateTime.UtcNow
                 };
@@ -179,20 +185,20 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
                     // 判断是否自定义了执行器
                     if (Executor == default)
                     {
-                        await jobThatShouldRun.Job!.ExecuteAsync(jobExecutingContext, stoppingToken);
+                        await jobHandler.ExecuteAsync(jobExecutingContext, stoppingToken);
                     }
                     else
                     {
-                        await Executor.ExecuteAsync(jobExecutingContext, jobThatShouldRun.Job!, stoppingToken);
+                        await Executor.ExecuteAsync(jobExecutingContext, jobHandler, stoppingToken);
                     }
                 }
                 catch (Exception ex)
                 {
                     // 输出异常日志
-                    _logger.LogError(ex, "Error occurred executing of <{JobId}>.", jobThatShouldRun.JobId);
+                    _logger.LogError(ex, "Error occurred executing of <{JobId}>.", jobId);
 
                     // 标记异常
-                    executionException = new InvalidOperationException(string.Format("Error occurred executing <{0}>.", jobThatShouldRun.JobId), ex);
+                    executionException = new InvalidOperationException(string.Format("Error occurred executing <{0}>.", jobId), ex);
 
                     // 捕获 Task 任务异常信息并统计所有异常
                     if (UnobservedTaskException != default)
@@ -205,11 +211,14 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
                 }
                 finally
                 {
+                    // 输出触发完成日志
+                    _logger.LogInformation("Scheduler completes a job of <{JobId}> trigger.", jobId);
+
                     // 调用执行后监视器
                     if (Monitor != default)
                     {
                         // 创建执行后上下文
-                        var jobExecutedContext = new JobExecutedContext(jobThatShouldRun.JobId, properties)
+                        var jobExecutedContext = new JobExecutedContext(jobId, properties)
                         {
                             ExecutedTime = DateTime.UtcNow,
                             Exception = executionException
@@ -239,7 +248,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         // 获取最早执行的作业触发器时间
         var closestNextRunTime = closestTriggerJobs.Any()
             ? closestTriggerJobs.Min(u => u.Trigger!.NextRunTime)
-            : referenceTime.AddSeconds(MinimumSyncInterval);    // 避免无运行作业导致调度器永久休眠状态
+            : referenceTime.AddSeconds(MinimumSyncInterval);    // 避免无运行作业导致调度器处于永久休眠状态
 
         // 计算出总的休眠时间，在这段时间内可以做耗时操作
         var interval = (closestNextRunTime - referenceTime).TotalMilliseconds;

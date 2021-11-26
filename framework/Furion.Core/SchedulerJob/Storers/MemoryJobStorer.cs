@@ -18,7 +18,7 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <summary>
     /// 作业存储集合
     /// </summary>
-    private readonly ConcurrentDictionary<string, JobBinder> _jobBinders = new();
+    private readonly ConcurrentDictionary<string, JobDetailBinder> _jobBinders = new();
 
     /// <summary>
     /// 同步存储器作业数据
@@ -26,7 +26,7 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <param name="jobIds">已注册的作业 Id 集合</param>
     /// <param name="cancellationToken">取消任务 Token</param>
     /// <returns><see cref="Task{TResult}"/> 实例</returns>
-    public Task<IEnumerable<JobBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default)
+    public Task<IEnumerable<JobDetailBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

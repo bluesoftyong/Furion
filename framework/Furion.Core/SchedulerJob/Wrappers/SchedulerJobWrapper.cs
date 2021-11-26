@@ -24,6 +24,27 @@ internal sealed class SchedulerJobWrapper
     }
 
     /// <summary>
+    /// 解构函数
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="jobHandler">作业</param>
+    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="jobTrigger">作业触发器</param>
+    /// <param name="triggerString">触发器输出字符串</param>
+    internal void Deconstruct(out string jobId
+        , out IJob jobHandler
+        , out JobDetail? jobDetail
+        , out JobTrigger jobTrigger
+        , out string? triggerString)
+    {
+        jobId = JobId;
+        jobHandler = Job!;
+        jobDetail = JobDetail;
+        jobTrigger = Trigger!;
+        triggerString = Trigger!.ToString(JobId);
+    }
+
+    /// <summary>
     /// 作业 Id
     /// </summary>
     internal string JobId { get; }

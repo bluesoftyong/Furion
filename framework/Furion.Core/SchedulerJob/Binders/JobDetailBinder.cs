@@ -9,9 +9,9 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业绑定器
+/// 作业详细信息绑定器
 /// </summary>
-public sealed class JobBinder
+public sealed class JobDetailBinder
 {
     /// <summary>
     /// 构造函数
@@ -19,7 +19,7 @@ public sealed class JobBinder
     /// <param name="jobId">作业 Id</param>
     /// <param name="jobDetail">作业详细信息</param>
     /// <param name="jobTrigger">作业触发器二进制对象</param>
-    public JobBinder(string jobId
+    public JobDetailBinder(string jobId
         , JobDetail jobDetail
         , byte[] jobTrigger)
     {

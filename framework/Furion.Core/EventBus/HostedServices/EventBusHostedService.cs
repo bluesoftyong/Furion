@@ -158,6 +158,9 @@ internal sealed class EventBusHostedService : BackgroundService
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>
             {
+                // 输出触发日志
+                _logger.LogInformation("The event of <{EventId}> starts triggering.", eventSource.EventId);
+
                 // 创建共享上下文数据对象
                 var properties = new Dictionary<object, object>();
 
@@ -213,6 +216,9 @@ internal sealed class EventBusHostedService : BackgroundService
                 }
                 finally
                 {
+                    // 输出触发完成日志
+                    _logger.LogInformation("The event of <{EventId}> trigger completed.", eventSource.EventId);
+
                     // 调用执行后监视器
                     if (Monitor != default)
                     {

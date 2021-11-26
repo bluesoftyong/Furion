@@ -142,7 +142,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = _schedulerJobs.Where(u => u.Trigger!.ShouldRun(u.JobId, referenceTime) && IsEffectiveJob(u.JobDetail));
+        var jobsThatShouldRun = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Trigger!.ShouldRun(u.JobId, referenceTime));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -243,7 +243,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private async Task WaitingClosestTrigger(DateTime referenceTime, CancellationToken stoppingToken)
     {
         // 查找下一次符合触发时机的所有作业
-        var closestTriggerJobs = _schedulerJobs.Where(u => u.Trigger!.NextRunTime >= referenceTime && IsEffectiveJob(u.JobDetail));
+        var closestTriggerJobs = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Trigger!.NextRunTime >= referenceTime);
 
         // 获取最早执行的作业触发器时间
         var closestNextRunTime = closestTriggerJobs.Any()

@@ -9,28 +9,37 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业和作业触发器映射关系类
+/// 作业绑定器
 /// </summary>
-internal sealed class JobTriggerMap
+public sealed class JobBinder
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="trigger">作业触发器</param>
-    public JobTriggerMap(Type jobType, JobTrigger trigger)
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="jobTrigger">作业触发器二进制对象</param>
+    public JobBinder(string jobId
+        , JobDetail jobDetail
+        , byte[] jobTrigger)
     {
-        JobType = jobType;
-        Trigger = trigger;
+        JobId = jobId;
+        JobDetail = jobDetail;
+        JobTrigger = jobTrigger;
     }
 
     /// <summary>
-    /// 作业类型
+    /// 作业 Id
     /// </summary>
-    public Type JobType { get; }
+    public string JobId { get; }
 
     /// <summary>
-    /// 作业触发器
+    /// 作业详细信息
     /// </summary>
-    public JobTrigger Trigger { get; }
+    public JobDetail JobDetail { get; }
+
+    /// <summary>
+    /// 作业触发器二进制对象
+    /// </summary>
+    public byte[] JobTrigger { get; }
 }

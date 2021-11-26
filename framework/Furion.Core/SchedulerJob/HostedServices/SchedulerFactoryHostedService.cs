@@ -64,13 +64,13 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="jobs">作业集合</param>
-    /// <param name="schedulerJobMap">调度作业映射集合</param>
+    /// <param name="jobTriggerBinders">作业和作业触发器绑定器集合</param>
     /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
     /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public SchedulerFactoryHostedService(ILogger<SchedulerFactoryHostedService> logger
         , IServiceProvider serviceProvider
         , IEnumerable<IJob> jobs
-        , ConcurrentDictionary<string, JobTriggerMap> schedulerJobMap
+        , ConcurrentDictionary<string, JobTriggerBinder> jobTriggerBinders
         , int timeBeforeSync
         , int minimumSyncInterval)
     {
@@ -89,16 +89,16 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             var jobType = job.GetType();
 
             // 查找作业和作业触发器映射对象
-            var (jobId, jobTriggerMap) = schedulerJobMap.Single(u => u.Value.JobType == jobType);
+            var (jobId, jobTriggerBinder) = jobTriggerBinders.Single(u => u.Value.JobType == jobType);
 
             // 设置当前时间为起始计算时间
-            jobTriggerMap.Trigger.NextRunTime = referenceTime;
+            jobTriggerBinder.Trigger.NextRunTime = referenceTime;
 
             // 逐条包装并添加到 HashSet 集合中
             _schedulerJobs.Add(new SchedulerJobWrapper(jobId)
             {
                 Job = job,
-                Trigger = jobTriggerMap.Trigger,
+                Trigger = jobTriggerBinder.Trigger,
             });
         }
     }

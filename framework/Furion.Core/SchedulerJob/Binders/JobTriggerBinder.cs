@@ -9,23 +9,28 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业计数器
+/// 作业和作业触发器绑定器
 /// </summary>
-/// <remarks>主要用来避免频繁从 <see cref="IJobDetail"/> 获取，同时在内存中存有一份</remarks>
-public interface IJobCounter
+internal sealed class JobTriggerBinder
 {
     /// <summary>
-    /// 最近运行时间
+    /// 构造函数
     /// </summary>
-    DateTime LastRunTime { get; internal set; }
+    /// <param name="jobType">作业类型</param>
+    /// <param name="trigger">作业触发器</param>
+    internal JobTriggerBinder(Type jobType, JobTrigger trigger)
+    {
+        JobType = jobType;
+        Trigger = trigger;
+    }
 
     /// <summary>
-    /// 下一次运行时间
+    /// 作业类型
     /// </summary>
-    DateTime NextRunTime { get; internal set; }
+    internal Type JobType { get; }
 
     /// <summary>
-    /// 运行次数
+    /// 作业触发器
     /// </summary>
-    long NumberOfRuns { get; internal set; }
+    internal JobTrigger Trigger { get; }
 }

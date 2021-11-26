@@ -39,13 +39,13 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     public SchedulerJobOptionsBuilder()
     {
-        SchedulerJobMap = new();
+        JobTriggerBinders = new();
     }
 
     /// <summary>
-    /// 调度作业映射集合
+    /// 作业和作业触发器绑定器集合
     /// </summary>
-    internal ConcurrentDictionary<string, JobTriggerMap> SchedulerJobMap { get; }
+    internal ConcurrentDictionary<string, JobTriggerBinder> JobTriggerBinders { get; }
 
     /// <summary>
     /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
@@ -124,7 +124,7 @@ public sealed class SchedulerJobOptionsBuilder
         }
 
         // 作业 Id 须唯一
-        if (!SchedulerJobMap.TryAdd(jobId, new JobTriggerMap(jobType, trigger)))
+        if (!JobTriggerBinders.TryAdd(jobId, new JobTriggerBinder(jobType, trigger)))
         {
             throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
@@ -174,7 +174,7 @@ public sealed class SchedulerJobOptionsBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册作业
-        foreach (var jobTriggerMap in SchedulerJobMap.Values)
+        foreach (var jobTriggerMap in JobTriggerBinders.Values)
         {
             services.AddSingleton(typeof(IJob), jobTriggerMap.JobType);
         }

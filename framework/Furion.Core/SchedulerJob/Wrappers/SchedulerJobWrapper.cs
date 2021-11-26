@@ -37,4 +37,9 @@ internal sealed class SchedulerJobWrapper
     /// 作业触发器
     /// </summary>
     internal JobTrigger? Trigger { get; set; }
+
+    /// <summary>
+    /// 作业详细信息
+    /// </summary>
+    internal JobDetail? JobDetail { get; set; }
 }

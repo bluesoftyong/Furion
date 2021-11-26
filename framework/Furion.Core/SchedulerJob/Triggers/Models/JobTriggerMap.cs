@@ -9,33 +9,17 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业执行上下文
+/// 作业和触发器映射基类
 /// </summary>
-public abstract class JobExecutionContext
+public abstract class JobTriggerMap
 {
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    /// <param name="properties">共享上下文数据</param>
-    public JobExecutionContext(string jobId, IDictionary<object, object> properties)
-    {
-        JobId = jobId;
-        Properties = properties;
-    }
-
     /// <summary>
     /// 作业 Id
     /// </summary>
-    public string JobId { get; }
+    public virtual string? JobId { get; set; }
 
     /// <summary>
-    /// 作业详细信息
+    /// 作业触发器二进制对象
     /// </summary>
-    public JobDetail? JobDetail { get; }
-
-    /// <summary>
-    /// 共享上下文数据
-    /// </summary>
-    public IDictionary<object, object> Properties { get; }
+    public virtual byte[]? Trigger { get; set; }
 }

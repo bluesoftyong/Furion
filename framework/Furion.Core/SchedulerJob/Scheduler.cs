@@ -33,9 +33,9 @@ internal sealed class Scheduler : IScheduler
     /// <param name="identity">作业唯一标识</param>
     /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    public async Task StartAsync(string identity, CancellationToken cancellationToken = default)
+    public Task StartAsync(string identity, CancellationToken cancellationToken = default)
     {
-        await UpdateStatusAsync(identity, JobStatus.Normal, cancellationToken);
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -44,28 +44,8 @@ internal sealed class Scheduler : IScheduler
     /// <param name="identity">作业唯一标识</param>
     /// <param name="cancellationToken"> 取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    public async Task PauseAsync(string identity, CancellationToken cancellationToken = default)
+    public Task PauseAsync(string identity, CancellationToken cancellationToken = default)
     {
-        await UpdateStatusAsync(identity, JobStatus.Pause, cancellationToken);
-    }
-
-    /// <summary>
-    /// 更新作业状态
-    /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    /// <param name="status"><see cref="JobStatus"/></param>
-    /// <param name="cancellationToken"> 取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    private async Task UpdateStatusAsync(string identity, JobStatus status, CancellationToken cancellationToken = default)
-    {
-        var jobDetail = await _jobStorer.GetAsync(identity, cancellationToken);
-        if (jobDetail == null)
-        {
-            throw new InvalidOperationException($"The <{identity}> job detail not found.");
-        }
-
-        jobDetail.Status = status;
-        await _jobStorer.UpdateAsync(jobDetail, cancellationToken);
+        throw new NotImplementedException();
     }
 }

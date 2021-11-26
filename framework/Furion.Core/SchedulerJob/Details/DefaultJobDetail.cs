@@ -9,27 +9,8 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业详细信息
+/// 默认作业详细信息派生类
 /// </summary>
-public interface IJobDetail
+internal sealed class DefaultJobDetail : JobDetail
 {
-    /// <summary>
-    /// 作业 Id
-    /// </summary>
-    string JobId { get; }
-
-    /// <summary>
-    /// 作业描述
-    /// </summary>
-    string? Description { get; internal set; }
-
-    /// <summary>
-    /// 作业状态
-    /// </summary>
-    JobStatus Status { get; internal set; }
-
-    /// <summary>
-    /// 作业执行方式
-    /// </summary>
-    JobMode Mode { get; internal set; }
 }

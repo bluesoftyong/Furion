@@ -9,36 +9,27 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业详细信息默认实现
+/// 作业详细信息基类
 /// </summary>
-public sealed class JobDetail : IJobDetail
+public abstract class JobDetail
 {
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    internal JobDetail(string jobId)
-    {
-        JobId = jobId;
-    }
-
     /// <summary>
     /// 作业 Id
     /// </summary>
-    public string JobId { get; }
+    public virtual string? JobId { get; set; }
 
     /// <summary>
     /// 作业描述
     /// </summary>
-    public string? Description { get; set; }
+    public virtual string? Description { get; set; }
 
     /// <summary>
     /// 作业状态
     /// </summary>
-    public JobStatus Status { get; set; } = JobStatus.Normal;
+    public virtual JobStatus Status { get; set; } = JobStatus.Normal;
 
     /// <summary>
     /// 作业执行方式
     /// </summary>
-    public JobMode Mode { get; set; } = JobMode.Parallel;
+    public virtual JobMode Mode { get; set; } = JobMode.Parallel;
 }

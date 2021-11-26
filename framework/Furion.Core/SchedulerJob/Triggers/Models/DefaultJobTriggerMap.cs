@@ -9,15 +9,8 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业存储器
+/// 默认作业和触发器映射派生类
 /// </summary>
-public interface IJobStorer
+internal sealed class DefaultJobTriggerMap : JobTriggerMap
 {
-    /// <summary>
-    /// 同步存储器作业数据
-    /// </summary>
-    /// <param name="jobIds">已注册的作业 Id 集合</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task{TResult}"/> 实例</returns>
-    Task<IEnumerable<JobBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default);
 }

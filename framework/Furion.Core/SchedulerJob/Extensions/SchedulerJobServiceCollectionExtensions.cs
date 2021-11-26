@@ -49,7 +49,7 @@ public static class SchedulerJobServiceCollectionExtensions
         {
             // 创建调度器工厂后台服务对象
             var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<SchedulerFactoryHostedService>(serviceProvider
-                , schedulerJobOptionsBuilder.SchedulerJobMap
+                , schedulerJobOptionsBuilder.JobTriggerBinders
                 , schedulerJobOptionsBuilder.TimeBeforeSync
                 , schedulerJobOptionsBuilder.MinimumSyncInterval);
 

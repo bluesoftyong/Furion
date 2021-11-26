@@ -18,42 +18,16 @@ internal sealed class MemoryJobStorer : IJobStorer
     /// <summary>
     /// 作业存储集合
     /// </summary>
-    private readonly ConcurrentDictionary<string, IJobDetail> _jobData = new();
+    private readonly ConcurrentDictionary<string, JobBinder> _jobBinders = new();
 
     /// <summary>
-    /// 注册作业
+    /// 同步存储器作业数据
     /// </summary>
-    /// <param name="identity"></param>
-    public void Register(string identity)
-    {
-        _jobData.TryAdd(identity, new JobDetail(identity)
-        {
-            Status = JobStatus.Normal
-        });
-    }
-
-    /// <summary>
-    /// 根据作业标识获取作业详细信息
-    /// </summary>
-    /// <param name="identity">唯一标识</param>
+    /// <param name="jobIds">已注册的作业 Id 集合</param>
     /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="IJobDetail"/> 实例</returns>
-    public Task<IJobDetail> GetAsync(string identity, CancellationToken cancellationToken)
+    /// <returns><see cref="Task{TResult}"/> 实例</returns>
+    public Task<IEnumerable<JobBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default)
     {
-        var isExist = _jobData.TryGetValue(identity, out var jobDetail);
-        return Task.FromResult(isExist ? jobDetail! : default!);
-    }
-
-    /// <summary>
-    /// 更新作业详细信息
-    /// </summary>
-    /// <param name="detail">作业详细信息</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    public Task UpdateAsync(IJobDetail detail, CancellationToken cancellationToken)
-    {
-        _jobData.TryUpdate(detail.JobId, detail, detail);
-
-        return Task.CompletedTask;
+        throw new NotImplementedException();
     }
 }

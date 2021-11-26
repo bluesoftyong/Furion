@@ -127,6 +127,12 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     }
 
     /// <summary>
+    /// 判断是否是有效的作业
+    /// </summary>
+    private static readonly Func<JobDetail?, bool> IsEffectiveJob =
+        u => u == null || !(u.Status == JobStatus.None || u.Status == JobStatus.Pause || (u.Mode == JobMode.Serial && u.Status == JobStatus.Blocked));
+
+    /// <summary>
     /// 后台调用作业处理程序
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
@@ -136,7 +142,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = _schedulerJobs.Where(u => u.Trigger!.ShouldRun(u.JobId, referenceTime));
+        var jobsThatShouldRun = _schedulerJobs.Where(u => u.Trigger!.ShouldRun(u.JobId, referenceTime) && IsEffectiveJob(u.JobDetail));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -228,12 +234,12 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private async Task WaitingClosestTrigger(DateTime referenceTime, CancellationToken stoppingToken)
     {
         // 查找下一次符合触发时机的所有作业
-        var closestTriggerJobs = _schedulerJobs.Where(u => u.Trigger!.NextRunTime >= referenceTime);
+        var closestTriggerJobs = _schedulerJobs.Where(u => u.Trigger!.NextRunTime >= referenceTime && IsEffectiveJob(u.JobDetail));
 
         // 获取最早执行的作业触发器时间
         var closestNextRunTime = closestTriggerJobs.Any()
             ? closestTriggerJobs.Min(u => u.Trigger!.NextRunTime)
-            : DateTime.MaxValue;
+            : referenceTime.AddSeconds(MinimumSyncInterval);    // 避免无运行作业导致调度器永久休眠状态
 
         // 计算出总的休眠时间，在这段时间内可以做耗时操作
         var interval = (closestNextRunTime - referenceTime).TotalMilliseconds;

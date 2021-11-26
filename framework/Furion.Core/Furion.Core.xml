@@ -1786,6 +1786,11 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
+        <member name="F:Furion.SchedulerJob.SchedulerFactoryHostedService.IsEffectiveJob">
+            <summary>
+            判断是否是有效的作业
+            </summary>
+        </member>
         <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
             <summary>
             后台调用作业处理程序

@@ -50,13 +50,20 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
     /// </summary>
-    /// <remarks>通常用于同步存储器作业数据</remarks>
+    /// <remarks>当 <see cref="Persistent"/> 为 true 有效</remarks>
     public int TimeBeforeSync { get; set; } = 30;
 
     /// <summary>
     /// 最小存储器同步间隔（秒）
     /// </summary>
+    /// <remarks>当 <see cref="Persistent"/> 为 true 有效</remarks>
     public int MinimumSyncInterval { get; set; } = 30;
+
+    /// <summary>
+    /// 是否开启持久化支持
+    /// </summary>
+    /// <remarks>默认 false</remarks>
+    public bool Persistent { get; set; } = false;
 
     /// <summary>
     /// 未察觉任务异常处理程序

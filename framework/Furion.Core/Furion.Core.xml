@@ -1505,19 +1505,11 @@
             <summary>
             设置调度器休眠后再度被激活前多少ms完成耗时操作
             </summary>
-            <remarks>当 <see cref="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.Persistent"/> 为 true 有效</remarks>
         </member>
         <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.MinimumSyncInterval">
             <summary>
             最小存储器同步间隔（秒）
             </summary>
-            <remarks>当 <see cref="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.Persistent"/> 为 true 有效</remarks>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.Persistent">
-            <summary>
-            是否开启持久化支持
-            </summary>
-            <remarks>默认 false</remarks>
         </member>
         <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.UnobservedTaskExceptionHandler">
             <summary>

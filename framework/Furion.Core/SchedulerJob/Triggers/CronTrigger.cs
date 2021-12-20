@@ -18,10 +18,11 @@ internal sealed class CronTrigger : JobTrigger
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="scheduleCrontab">调度计划 <see cref="Crontab"/> 对象</param>
-    internal CronTrigger(Crontab scheduleCrontab)
+    /// <param name="schedule">调度计划（Cron 表达式）</param>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    internal CronTrigger(string schedule, CronStringFormat format = CronStringFormat.Default)
     {
-        ScheduleCrontab = scheduleCrontab;
+        ScheduleCrontab = Crontab.Parse(schedule, format);
     }
 
     /// <summary>

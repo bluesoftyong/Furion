@@ -6,7 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using Furion.TimeCrontab;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Concurrent;
@@ -109,7 +108,7 @@ public sealed class SchedulerJobOptionsBuilder
             // 将 [CronJob] 特性转换成 CronTrigger 对象
             if (jobAttribute is CronJobAttribute cronJobAttribute)
             {
-                trigger = new CronTrigger(Crontab.Parse(cronJobAttribute.Schedule, cronJobAttribute.Format));
+                trigger = new CronTrigger(cronJobAttribute.Schedule, cronJobAttribute.Format);
             }
             // 将 [SimpleJob] 特性转换成 SimpleTrigger 对象
             else if (jobAttribute is SimpleJobAttribute simpleJobAttribute)

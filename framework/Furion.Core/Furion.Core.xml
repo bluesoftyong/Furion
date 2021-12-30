@@ -1499,6 +1499,13 @@
             <typeparam name="TJobTrigger"><see cref="T:Furion.SchedulerJob.JobTrigger"/> 派生类</typeparam>
             <param name="args">触发器构造函数参数</param>
         </member>
+        <member name="M:Furion.SchedulerJob.JobDetailBuilder.AddTrigger(System.Type,System.Object[])">
+            <summary>
+            添加作业触发器
+            </summary>
+            <param name="triggerType">作业触发器类型</param>
+            <param name="args">触发器构造函数参数</param>
+        </member>
         <member name="M:Furion.SchedulerJob.JobDetailBuilder.Build">
             <summary>
             构建作业详情构建器

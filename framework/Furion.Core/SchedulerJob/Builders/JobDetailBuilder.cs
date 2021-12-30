@@ -41,10 +41,26 @@ public sealed class JobDetailBuilder
     public void AddTrigger<TJobTrigger>(params object[] args)
         where TJobTrigger : JobTrigger
     {
+        AddTrigger(typeof(TJobTrigger), args);
+    }
+
+    /// <summary>
+    /// 添加作业触发器
+    /// </summary>
+    /// <param name="triggerType">作业触发器类型</param>
+    /// <param name="args">触发器构造函数参数</param>
+    public void AddTrigger(Type triggerType, params object[] args)
+    {
+        // 检查 triggerType 类型是否派生自 JobTrigger
+        if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
+        {
+            throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
+        }
+
         // 反射创建作业触发器
-        var jobTrigger = args == null || args.Length == 0
-            ? Activator.CreateInstance<TJobTrigger>()
-            : Activator.CreateInstance(typeof(TJobTrigger), args) as JobTrigger;
+        var jobTrigger = (args == null || args.Length == 0
+            ? Activator.CreateInstance(triggerType)
+            : Activator.CreateInstance(triggerType, args)) as JobTrigger;
 
         _triggers.Add(jobTrigger!);
     }

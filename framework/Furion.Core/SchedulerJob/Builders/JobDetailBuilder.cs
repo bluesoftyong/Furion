@@ -6,6 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Collections.Concurrent;
+
 namespace Furion.SchedulerJob;
 
 /// <summary>
@@ -14,9 +16,9 @@ namespace Furion.SchedulerJob;
 public sealed class JobDetailBuilder
 {
     /// <summary>
-    /// 作业触发器
+    /// 动态作业触发器元数据集合
     /// </summary>
-    private readonly IList<JobTrigger> _triggers;
+    private readonly ConcurrentDictionary<Type, object[]> _dynamicTriggers;
 
     /// <summary>
     /// 构造函数
@@ -24,7 +26,7 @@ public sealed class JobDetailBuilder
     /// <param name="jobId">作业 Id</param>
     public JobDetailBuilder(string jobId)
     {
-        _triggers = new List<JobTrigger>();
+        _dynamicTriggers = new(new RepeatKeysEqualityComparer());
         JobId = jobId;
     }
 
@@ -41,7 +43,7 @@ public sealed class JobDetailBuilder
     public void AddTrigger<TJobTrigger>(params object[] args)
         where TJobTrigger : JobTrigger
     {
-        AddTrigger(typeof(TJobTrigger), args);
+        _dynamicTriggers.TryAdd(typeof(TJobTrigger), args);
     }
 
     /// <summary>
@@ -57,15 +59,7 @@ public sealed class JobDetailBuilder
             throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
         }
 
-        // 反射创建作业触发器
-        var jobTrigger = (args == null || args.Length == 0
-            ? Activator.CreateInstance(triggerType)
-            : Activator.CreateInstance(triggerType, args)) as JobTrigger;
-
-        // 设置作业触发器 Id（不可更改）
-        jobTrigger!.JobTriggerId = $"{JobId}_trigger_{_triggers.Count + 1}";
-
-        _triggers.Add(jobTrigger!);
+        _dynamicTriggers.TryAdd(triggerType, args);
     }
 
     /// <summary>
@@ -74,6 +68,22 @@ public sealed class JobDetailBuilder
     /// <returns>作业触发器集合</returns>
     public IEnumerable<JobTrigger> Build()
     {
-        return _triggers;
+        var jobTriggers = new List<JobTrigger>();
+
+        // 动态创建作业触发器
+        foreach (var (triggerType, args) in _dynamicTriggers)
+        {
+            // 反射创建作业触发器
+            var jobTrigger = (args == null || args.Length == 0
+                ? Activator.CreateInstance(triggerType)
+                : Activator.CreateInstance(triggerType, args)) as JobTrigger;
+
+            // 设置作业触发器 Id（不可更改）
+            jobTrigger!.JobTriggerId = $"{JobId}_trigger_{jobTriggers.Count + 1}";
+
+            jobTriggers.Add(jobTrigger);
+        }
+
+        return jobTriggers;
     }
 }

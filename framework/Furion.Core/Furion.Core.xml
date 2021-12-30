@@ -1476,9 +1476,9 @@
             作业详情构建器
             </summary>
         </member>
-        <member name="F:Furion.SchedulerJob.JobDetailBuilder._triggers">
+        <member name="F:Furion.SchedulerJob.JobDetailBuilder._dynamicTriggers">
             <summary>
-            作业触发器
+            动态作业触发器元数据集合
             </summary>
         </member>
         <member name="M:Furion.SchedulerJob.JobDetailBuilder.#ctor(System.String)">
@@ -1866,6 +1866,26 @@
             <param name="context">上下文</param>
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.SchedulerJob.RepeatKeysEqualityComparer">
+            <summary>
+            支持重复 Key 的字典集合比较器
+            </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.RepeatKeysEqualityComparer.Equals(System.Type,System.Type)">
+            <summary>
+            实现相等逻辑判断
+            </summary>
+            <param name="x">x</param>
+            <param name="y">y</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="M:Furion.SchedulerJob.RepeatKeysEqualityComparer.GetHashCode(System.Type)">
+            <summary>
+            获取对象 HashCode
+            </summary>
+            <param name="obj">对象</param>
+            <returns><see cref="T:System.Int32"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.IScheduler">
             <summary>

@@ -142,7 +142,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Trigger!.ShouldRun(u.JobId, referenceTime));
+        var jobsThatShouldRun = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Trigger!.ShouldRun(referenceTime));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -154,7 +154,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             (var jobId, var jobHandler, var jobDetail, var jobTrigger, var triggerString) = jobThatShouldRun;
 
             // 计算当前触发器增量信息
-            jobTrigger.Increment(jobId);
+            jobTrigger.Increment();
 
             // 创建新的线程执行
             await taskFactory.StartNew(async () =>

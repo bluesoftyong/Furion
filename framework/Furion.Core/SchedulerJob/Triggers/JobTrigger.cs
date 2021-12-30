@@ -14,6 +14,11 @@ namespace Furion.SchedulerJob;
 public abstract class JobTrigger
 {
     /// <summary>
+    /// 作业触发器 Id
+    /// </summary>
+    public virtual string? JobTriggerId { get; internal set; }
+
+    /// <summary>
     /// 最近运行时间
     /// </summary>
     public virtual DateTime LastRunTime { get; set; }
@@ -31,21 +36,18 @@ public abstract class JobTrigger
     /// <summary>
     /// 计算当前触发器增量信息
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    public abstract void Increment(string jobId);
+    public abstract void Increment();
 
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public abstract bool ShouldRun(string jobId, DateTime currentTime);
+    public abstract bool ShouldRun(DateTime currentTime);
 
     /// <summary>
     /// 将触发器转换成字符串输出
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
     /// <returns><see cref="string"/></returns>
-    public abstract string? ToString(string jobId);
+    public abstract new string? ToString();
 }

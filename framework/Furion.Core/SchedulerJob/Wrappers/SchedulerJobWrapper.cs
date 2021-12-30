@@ -41,7 +41,7 @@ internal sealed class SchedulerJobWrapper
         jobHandler = Job!;
         jobDetail = JobDetail;
         jobTrigger = Trigger!;
-        triggerString = Trigger!.ToString(JobId);
+        triggerString = Trigger!.ToString();
     }
 
     /// <summary>

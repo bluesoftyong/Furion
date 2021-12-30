@@ -33,8 +33,7 @@ internal sealed class CronTrigger : JobTrigger
     /// <summary>
     /// 计算当前触发器增量信息
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    public override void Increment(string jobId)
+    public override void Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
@@ -44,10 +43,9 @@ internal sealed class CronTrigger : JobTrigger
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
     /// <param name="currentTime">当前时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public override bool ShouldRun(string jobId, DateTime currentTime)
+    public override bool ShouldRun(DateTime currentTime)
     {
         return NextRunTime < currentTime && LastRunTime != NextRunTime;
     }
@@ -55,8 +53,7 @@ internal sealed class CronTrigger : JobTrigger
     /// <summary>
     /// 将触发器转换成字符串输出
     /// </summary>
-    /// <returns><see cref="string"/></returns>
-    public override string ToString(string jobId)
+    public override string ToString()
     {
         return ScheduleCrontab.ToString();
     }

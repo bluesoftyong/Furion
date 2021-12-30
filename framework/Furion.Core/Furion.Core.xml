@@ -1989,29 +1989,31 @@
             调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.Increment(System.String)">
+        <member name="M:Furion.SchedulerJob.CronTrigger.Increment">
             <summary>
             计算当前触发器增量信息
             </summary>
-            <param name="jobId">作业 Id</param>
         </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.ShouldRun(System.String,System.DateTime)">
+        <member name="M:Furion.SchedulerJob.CronTrigger.ShouldRun(System.DateTime)">
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="jobId">作业 Id</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.ToString(System.String)">
+        <member name="M:Furion.SchedulerJob.CronTrigger.ToString">
             <summary>
             将触发器转换成字符串输出
             </summary>
-            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.JobTrigger">
             <summary>
             作业触发器基类
+            </summary>
+        </member>
+        <member name="P:Furion.SchedulerJob.JobTrigger.JobTriggerId">
+            <summary>
+            作业触发器 Id
             </summary>
         </member>
         <member name="P:Furion.SchedulerJob.JobTrigger.LastRunTime">
@@ -2029,25 +2031,22 @@
             触发次数
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.Increment(System.String)">
+        <member name="M:Furion.SchedulerJob.JobTrigger.Increment">
             <summary>
             计算当前触发器增量信息
             </summary>
-            <param name="jobId">作业 Id</param>
         </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.ShouldRun(System.String,System.DateTime)">
+        <member name="M:Furion.SchedulerJob.JobTrigger.ShouldRun(System.DateTime)">
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="jobId">作业 Id</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.ToString(System.String)">
+        <member name="M:Furion.SchedulerJob.JobTrigger.ToString">
             <summary>
             将触发器转换成字符串输出
             </summary>
-            <param name="jobId">作业 Id</param>
             <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.DefaultJobTriggerMap">
@@ -2086,25 +2085,22 @@
             间隔时间（毫秒）
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.Increment(System.String)">
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.Increment">
             <summary>
             计算当前触发器增量信息
             </summary>
-            <param name="jobId">作业 Id</param>
         </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.ShouldRun(System.String,System.DateTime)">
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.ShouldRun(System.DateTime)">
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="jobId">作业 Id</param>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.ToString(System.String)">
+        <member name="M:Furion.SchedulerJob.SimpleTrigger.ToString">
             <summary>
             将触发器转换成字符串输出
             </summary>
-            <returns><see cref="T:System.String"/></returns>
         </member>
         <member name="T:Furion.SchedulerJob.SchedulerJobWrapper">
             <summary>

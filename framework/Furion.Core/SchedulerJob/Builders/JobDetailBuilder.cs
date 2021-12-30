@@ -62,6 +62,9 @@ public sealed class JobDetailBuilder
             ? Activator.CreateInstance(triggerType)
             : Activator.CreateInstance(triggerType, args)) as JobTrigger;
 
+        // 设置作业触发器 Id（不可更改）
+        jobTrigger!.JobTriggerId = $"{JobId}_trigger_{_triggers.Count + 1}";
+
         _triggers.Add(jobTrigger!);
     }
 

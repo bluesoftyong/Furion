@@ -6,9 +6,17 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 builder.Services.AddSchedulerJob(builder =>
 {
-    builder.AddJob<TestCronJob>();
-    builder.AddJob<TestSimpleJob>();
-    builder.AddJob<TestCronWithSecondsJob>();
+    builder.AddJob<TestCronJob>("cron_job", builder =>
+    {
+        builder.AddCronTrigger("* * * * *");
+    });
+
+    builder.AddJob<TestSimpleJob>("simple_job", builder =>
+    {
+        builder.AddSimpleTrigger(10000)
+               .AddCronTrigger("* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
+    });
+    //builder.AddJob<TestCronWithSecondsJob>();
 });
 
 builder.Services.AddControllers();

@@ -32,4 +32,9 @@ public abstract class JobDetail
     /// 作业执行方式
     /// </summary>
     public virtual JobMode Mode { get; set; } = JobMode.Parallel;
+
+    /// <summary>
+    /// 记录详细日志
+    /// </summary>
+    public virtual bool WithExecutionLog { get; set; } = false;
 }

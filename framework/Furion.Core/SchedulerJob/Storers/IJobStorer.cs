@@ -13,11 +13,4 @@ namespace Furion.SchedulerJob;
 /// </summary>
 public interface IJobStorer
 {
-    /// <summary>
-    /// 同步存储器作业数据
-    /// </summary>
-    /// <param name="jobIds">已注册的作业 Id 集合</param>
-    /// <param name="cancellationToken">取消任务 Token</param>
-    /// <returns><see cref="Task{TResult}"/> 实例</returns>
-    Task<IEnumerable<JobDetailBinder>> SyncAsync(string[] jobIds, CancellationToken cancellationToken = default);
 }

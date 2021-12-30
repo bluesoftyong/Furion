@@ -20,7 +20,7 @@ internal sealed class CronTrigger : JobTrigger
     /// </summary>
     /// <param name="schedule">调度计划（Cron 表达式）</param>
     /// <param name="format">Cron 表达式格式化类型</param>
-    internal CronTrigger(string schedule, CronStringFormat format = CronStringFormat.Default)
+    public CronTrigger(string schedule, CronStringFormat format = CronStringFormat.Default)
     {
         ScheduleCrontab = Crontab.Parse(schedule, format);
     }

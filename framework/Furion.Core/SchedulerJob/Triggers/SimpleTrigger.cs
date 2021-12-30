@@ -17,7 +17,7 @@ internal sealed class SimpleTrigger : JobTrigger
     /// 构造函数
     /// </summary>
     /// <param name="interval">间隔时间（毫秒）</param>
-    internal SimpleTrigger(int interval)
+    public SimpleTrigger(int interval)
     {
         Interval = interval;
     }

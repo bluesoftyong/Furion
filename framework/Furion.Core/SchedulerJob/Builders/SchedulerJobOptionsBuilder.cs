@@ -9,7 +9,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Concurrent;
-using System.Reflection;
 
 namespace Furion.SchedulerJob;
 
@@ -38,13 +37,13 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     public SchedulerJobOptionsBuilder()
     {
-        JobTriggerBinders = new();
+        JobDetailBuilders = new();
     }
 
     /// <summary>
-    /// 作业和作业触发器绑定器集合
+    /// 作业详情构建器集合
     /// </summary>
-    internal ConcurrentDictionary<string, JobTriggerBinder> JobTriggerBinders { get; }
+    internal ConcurrentDictionary<string, JobDetailBuilder> JobDetailBuilders { get; }
 
     /// <summary>
     /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
@@ -64,68 +63,46 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实例</typeparam>
-    /// <param name="jobTrigger">作业触发器</param>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddJob<TJob>(JobTrigger? jobTrigger = default)
+    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="configureDetailBuilder">作业详情构建器委托</param>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
+    public SchedulerJobOptionsBuilder AddJob<TJob>(string jobId, Action<JobDetailBuilder> configureDetailBuilder)
         where TJob : class, IJob
     {
-        return AddJob(typeof(TJob), jobTrigger);
+        return AddJob(jobId, typeof(TJob), configureDetailBuilder);
     }
 
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <param name="jobType">作业类型，必须实现 <see cref="IJob"/> 接口</param>
-    /// <param name="jobTrigger">作业触发器</param>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddJob(Type jobType, JobTrigger? jobTrigger = default)
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="jobType">作业类型</param>
+    /// <param name="configureDetailBuilder">作业详情构建器委托</param>
+    /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public SchedulerJobOptionsBuilder AddJob(string jobId, Type jobType, Action<JobDetailBuilder> configureDetailBuilder)
     {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(configureDetailBuilder);
+
         // jobType 须实现 IJob 接口
         if (!typeof(IJob).IsAssignableFrom(jobType))
         {
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
         }
 
-        // 判断是否贴有 [Job] 或其派生类特性
-        if (!jobType.IsDefined(typeof(JobAttribute), false))
-        {
-            throw new InvalidOperationException("The [Job] attribute is not added to the current job.");
-        }
-
-        // 获取 [Job] 特性具体类型
-        var jobAttribute = jobType.GetCustomAttribute<JobAttribute>(false)!;
-        var jobId = jobAttribute.JobId;
-
-        // 创建作业触发器
-        JobTrigger trigger;
-        if (jobTrigger != default)
-        {
-            trigger = jobTrigger;
-        }
-        else
-        {
-            // 将 [CronJob] 特性转换成 CronTrigger 对象
-            if (jobAttribute is CronJobAttribute cronJobAttribute)
-            {
-                trigger = new CronTrigger(cronJobAttribute.Schedule, cronJobAttribute.Format);
-            }
-            // 将 [SimpleJob] 特性转换成 SimpleTrigger 对象
-            else if (jobAttribute is SimpleJobAttribute simpleJobAttribute)
-            {
-                trigger = new SimpleTrigger(simpleJobAttribute.Interval);
-            }
-            else
-            {
-                throw new InvalidOperationException("Job trigger not found.");
-            }
-        }
+        // 创建作业详情构建器
+        var jobDetailBuilder = new JobDetailBuilder(jobId, jobType);
 
         // 作业 Id 须唯一
-        if (!JobTriggerBinders.TryAdd(jobId, new JobTriggerBinder(jobType, trigger)))
+        if (!JobDetailBuilders.TryAdd(jobId, jobDetailBuilder))
         {
             throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
+
+        // 调用委托
+        configureDetailBuilder(jobDetailBuilder);
 
         return this;
     }
@@ -172,9 +149,9 @@ public sealed class SchedulerJobOptionsBuilder
     internal void Build(IServiceCollection services)
     {
         // 注册作业
-        foreach (var jobTriggerMap in JobTriggerBinders.Values)
+        foreach (var jobDetailBuilder in JobDetailBuilders.Values)
         {
-            services.AddSingleton(typeof(IJob), jobTriggerMap.JobType);
+            services.AddSingleton(typeof(IJob), jobDetailBuilder.JobType);
         }
 
         // 替换作业存储器

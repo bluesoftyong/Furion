@@ -113,6 +113,7 @@ public sealed class JobDetailBuilder
         };
 
         var jobTriggers = new List<JobTrigger>();
+        var referenceTime = DateTime.UtcNow;
 
         // 动态创建作业触发器
         foreach (var (triggerType, args) in _dynamicTriggers)
@@ -124,6 +125,7 @@ public sealed class JobDetailBuilder
 
             // 设置作业触发器 Id（不可更改）
             jobTrigger!.JobTriggerId = $"{JobId}_trigger_{jobTriggers.Count + 1}";
+            jobTrigger!.NextRunTime = referenceTime;
 
             jobTriggers.Add(jobTrigger);
         }

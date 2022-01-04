@@ -16,7 +16,7 @@ builder.Services.AddSchedulerJob(builder =>
         builder.AddSimpleTrigger(10000)
                .AddCronTrigger("* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
     });
-    //builder.AddJob<TestCronWithSecondsJob>();
+    builder.AddJob<TestCronJob2>("cron_job_2", builder => builder.AddSimpleTrigger(3000));
 });
 
 builder.Services.AddControllers();

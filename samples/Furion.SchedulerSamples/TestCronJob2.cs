@@ -2,7 +2,7 @@
 
 namespace Furion.SchedulerSamples;
 
-public class TestCronWithSecondsJob : IJob
+public class TestCronJob2 : IJob
 {
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {

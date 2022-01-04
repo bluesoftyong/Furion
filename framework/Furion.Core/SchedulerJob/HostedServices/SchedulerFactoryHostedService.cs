@@ -256,12 +256,12 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 查找下一次符合触发时机的所有作业触发器
-        var closesJobTriggers = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Triggers!.Any(t => t.NextRunTime >= referenceTime))
+        var closestJobTriggers = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail) && u.Triggers!.Any(t => t.NextRunTime >= referenceTime))
                                                                   .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= referenceTime));
 
         // 获取最早执行的作业触发器时间
-        var closestNextRunTime = closesJobTriggers.Any()
-            ? closesJobTriggers.Min(t => t.NextRunTime)
+        var closestNextRunTime = closestJobTriggers.Any()
+            ? closestJobTriggers.Min(t => t.NextRunTime)
             : referenceTime.AddSeconds(MinimumSyncInterval);    // 避免无运行作业导致调度器处于永久休眠状态
 
         // 计算出总的休眠时间，在这段时间内可以做耗时操作

@@ -1716,6 +1716,11 @@
             作业执行器
             </summary>
         </member>
+        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.Storer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
         <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.TimeBeforeSync">
             <summary>
             调度器休眠后再度被激活前多少ms完成耗时操作
@@ -1731,13 +1736,14 @@
             记录存储器最近同步时间
             </summary>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.SchedulerJob.IJob},System.Collections.Concurrent.ConcurrentDictionary{System.String,Furion.SchedulerJob.JobDetailBuilder},System.Int32,System.Int32)">
+        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.SchedulerJob.IJob},Furion.SchedulerJob.IJobStorer,System.Collections.Concurrent.ConcurrentDictionary{System.String,Furion.SchedulerJob.JobDetailBuilder},System.Int32,System.Int32)">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
             <param name="serviceProvider">服务提供器</param>
             <param name="jobs">作业集合</param>
+            <param name="storer">作业存储器</param>
             <param name="jobDetailBuilders">作业详情构建器集合</param>
             <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
             <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>

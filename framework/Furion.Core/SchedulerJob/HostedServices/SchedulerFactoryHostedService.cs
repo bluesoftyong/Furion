@@ -44,6 +44,11 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private IJobExecutor? Executor { get; }
 
     /// <summary>
+    /// 作业存储器
+    /// </summary>
+    private IJobStorer Storer { get; }
+
+    /// <summary>
     /// 调度器休眠后再度被激活前多少ms完成耗时操作
     /// </summary>
     private int TimeBeforeSync { get; }
@@ -64,12 +69,14 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="jobs">作业集合</param>
+    /// <param name="storer">作业存储器</param>
     /// <param name="jobDetailBuilders">作业详情构建器集合</param>
     /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
     /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public SchedulerFactoryHostedService(ILogger<SchedulerFactoryHostedService> logger
         , IServiceProvider serviceProvider
         , IEnumerable<IJob> jobs
+        , IJobStorer storer
         , ConcurrentDictionary<string, JobDetailBuilder> jobDetailBuilders
         , int timeBeforeSync
         , int minimumSyncInterval)
@@ -77,17 +84,16 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         _logger = logger;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
+        Storer = storer;
         TimeBeforeSync = timeBeforeSync;
         MinimumSyncInterval = minimumSyncInterval;
 
-        // 逐条获取作业并进行包装
-        foreach (var job in jobs)
+        // 逐条对作业详情构建器进行包装
+        foreach (var (jobId, jobDetailBuilder) in jobDetailBuilders)
         {
-            // 获取作业类型
-            var jobType = job.GetType();
-
-            // 查找作业和作业触发器映射对象
-            var (jobId, jobDetailBuilder) = jobDetailBuilders.Single(u => u.Value.JobType == jobType);
+            // 查询作业处理程序实例
+            var jobInstance = jobs.SingleOrDefault(j => j.GetType() == jobDetailBuilder.JobType);
+            if (jobInstance == null) continue;
 
             // 构建作业详情构建器
             var (jobDetail, jobTriggers) = jobDetailBuilder.Build();
@@ -95,7 +101,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             // 逐条包装并添加到 HashSet 集合中
             _schedulerJobs.Add(new SchedulerJobWrapper(jobId)
             {
-                Job = job,
+                Job = jobInstance,
                 JobDetail = jobDetail,
                 Triggers = jobTriggers,
             });

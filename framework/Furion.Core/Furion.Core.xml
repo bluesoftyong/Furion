@@ -961,6 +961,693 @@
             <param name="outputType">输出类型</param>
             <returns>Action或Func 委托类型</returns>
         </member>
+        <member name="T:Furion.JobScheduler.SchedulerJobBuilder">
+            <summary>
+            调度作业构建器
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerJobBuilder._dynamicTriggers">
+            <summary>
+            动态作业触发器元数据集合
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.#ctor(System.String,System.Type)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="jobType">作业类型</param>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobBuilder.JobId">
+            <summary>
+            作业 Id
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobBuilder.JobType">
+            <summary>
+            作业类型
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddSimpleTrigger(System.Int32)">
+            <summary>
+            添加简单作业触发器
+            </summary>
+            <param name="interval">间隔时间（毫秒）</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddCronTrigger(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            添加 Cron 表达式作业触发器
+            </summary>
+            <param name="schedule">调度计划（Cron 表达式）</param>
+            <param name="format">Cron 表达式格式化类型</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddTrigger``1(System.Object[])">
+            <summary>
+            添加作业触发器
+            </summary>
+            <typeparam name="TJobTrigger"><see cref="T:Furion.JobScheduler.JobTrigger"/> 派生类</typeparam>
+            <param name="args">触发器构造函数参数</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddTrigger(System.Type,System.Object[])">
+            <summary>
+            添加作业触发器
+            </summary>
+            <param name="triggerType">作业触发器类型</param>
+            <param name="args">触发器构造函数参数</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.Build(Furion.JobScheduler.IJob)">
+            <summary>
+            构建调度作业对象
+            </summary>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJob"/></returns>
+        </member>
+        <member name="T:Furion.JobScheduler.SchedulerJobOptionsBuilder">
+            <summary>
+            调度作业配置选项构建器
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobStorerImplementationFactory">
+            <summary>
+            作业存储器实现工厂
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobMonitor">
+            <summary>
+            作业监视器
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobExecutor">
+            <summary>
+            作业执行器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.SchedulerJobBuilders">
+            <summary>
+            调度作业构建器集合
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.TimeBeforeSync">
+            <summary>
+            设置调度器休眠后再度被激活前多少ms完成耗时操作
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.MinimumSyncInterval">
+            <summary>
+            最小存储器同步间隔（秒）
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.UnobservedTaskExceptionHandler">
+            <summary>
+            未察觉任务异常处理程序
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddJob``1(System.String,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
+            <summary>
+            注册作业
+            </summary>
+            <typeparam name="TJob"><see cref="T:Furion.JobScheduler.IJob"/> 实现类</typeparam>
+            <param name="jobId">作业 Id</param>
+            <param name="configureDetailBuilder">作业详情构建器委托</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddJob(System.String,System.Type,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
+            <summary>
+            注册作业
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="jobType">作业类型</param>
+            <param name="configureDetailBuilder">作业详情构建器委托</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.JobScheduler.IJobStorer})">
+            <summary>
+            替换作业存储器
+            </summary>
+            <param name="implementationFactory">自定义作业存储器工厂</param>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddMonitor``1">
+            <summary>
+            注册作业监视器
+            </summary>
+            <typeparam name="TJobMonitor">实现自 <see cref="T:Furion.JobScheduler.IJobMonitor"/></typeparam>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddExecutor``1">
+            <summary>
+            注册作业执行器
+            </summary>
+            <typeparam name="TJobExecutor">实现自 <see cref="T:Furion.JobScheduler.IJobExecutor"/></typeparam>
+            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            构建调度作业配置选项
+            </summary>
+            <param name="services">服务集合对象</param>
+        </member>
+        <member name="T:Furion.JobScheduler.JobMode">
+            <summary>
+            作业执行方式
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobMode.Parallel">
+            <summary>
+            并行执行
+            </summary>
+            <remarks>无需等待上一次任务完成，默认值</remarks>
+        </member>
+        <member name="F:Furion.JobScheduler.JobMode.Serial">
+            <summary>
+            串行执行
+            </summary>
+            <remarks>需等待上一次任务完成</remarks>
+        </member>
+        <member name="T:Furion.JobScheduler.JobStatus">
+            <summary>
+            作业状态
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.None">
+            <summary>
+            未开始或取消
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.Normal">
+            <summary>
+            正常
+            </summary>
+            <remarks>初始值</remarks>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.Pause">
+            <summary>
+            暂停
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.Complete">
+            <summary>
+            完成
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.Error">
+            <summary>
+            出错
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobStatus.Blocked">
+            <summary>
+            阻塞
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.JobExecutedContext">
+            <summary>
+            作业执行后上下文
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobExecutedContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutedContext.ExecutedTime">
+            <summary>
+            执行后时间
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutedContext.Exception">
+            <summary>
+            异常信息
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.JobExecutingContext">
+            <summary>
+            作业执行前上下文
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobExecutingContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutingContext.ExecutingTime">
+            <summary>
+            执行前时间
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.JobExecutionContext">
+            <summary>
+            作业执行上下文
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobExecutionContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="properties">共享上下文数据</param>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutionContext.JobId">
+            <summary>
+            作业 Id
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutionContext.JobDetail">
+            <summary>
+            作业详细信息
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobExecutionContext.Properties">
+            <summary>
+            共享上下文数据
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.JobDetail">
+            <summary>
+            作业详细信息
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobDetail.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+        </member>
+        <member name="P:Furion.JobScheduler.JobDetail.JobId">
+            <summary>
+            作业 Id
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobDetail.Description">
+            <summary>
+            作业描述
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobDetail.Status">
+            <summary>
+            作业状态
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobDetail.Mode">
+            <summary>
+            作业执行方式
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobDetail.WithExecutionLog">
+            <summary>
+            记录详细日志
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.IJobExecutor">
+            <summary>
+            作业执行器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.IJobExecutor.ExecuteAsync(Furion.JobScheduler.JobExecutingContext,Furion.JobScheduler.IJob,System.Threading.CancellationToken)">
+            <summary>
+            调度任务执行器处理程序
+            </summary>
+            <param name="context">上下文</param>
+            <param name="job">作业对象</param>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.SchedulerFactoryHostedService">
+            <summary>
+            调度器工厂后台主机服务
+            </summary>
+        </member>
+        <member name="E:Furion.JobScheduler.SchedulerFactoryHostedService.UnobservedTaskException">
+            <summary>
+            避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerFactoryHostedService._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerFactoryHostedService._schedulerJobs">
+            <summary>
+            调度作业集合
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.Monitor">
+            <summary>
+            作业监视器
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.Executor">
+            <summary>
+            作业执行器
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.Storer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.TimeBeforeSync">
+            <summary>
+            调度器休眠后再度被激活前多少ms完成耗时操作
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.MinimumSyncInterval">
+            <summary>
+            最小存储器同步间隔（秒）
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.LastSyncTime">
+            <summary>
+            记录存储器最近同步时间
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.JobScheduler.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.JobScheduler.IJob},Furion.JobScheduler.IJobStorer,System.Collections.Concurrent.ConcurrentDictionary{System.String,Furion.JobScheduler.SchedulerJobBuilder},System.Int32,System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger">日志对象</param>
+            <param name="serviceProvider">服务提供器</param>
+            <param name="jobs">作业集合</param>
+            <param name="storer">作业存储器</param>
+            <param name="schedulerJobBuilders">调度作业构建器集合</param>
+            <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
+            <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.ExecuteAsync(System.Threading.CancellationToken)">
+            <summary>
+            执行后台任务
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="F:Furion.JobScheduler.SchedulerFactoryHostedService.IsEffectiveJob">
+            <summary>
+            判断是否是有效的作业
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
+            <summary>
+            后台调用作业处理程序
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.WaitingClosestTrigger(System.Threading.CancellationToken)">
+            <summary>
+            将当前线程休眠直至最快触发的作业之前
+            </summary>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.SynchronizationStorer(System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            同步存储器作业数据
+            </summary>
+            <param name="timeout">超时时间戳</param>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.IJob">
+            <summary>
+            作业执行程序
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.IJob.ExecuteAsync(Furion.JobScheduler.JobExecutingContext,System.Threading.CancellationToken)">
+            <summary>
+            具体逻辑处理
+            </summary>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.RepeatKeysEqualityComparer">
+            <summary>
+            支持重复 Key 的字典集合比较器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.RepeatKeysEqualityComparer.Equals(System.Type,System.Type)">
+            <summary>
+            实现相等逻辑判断
+            </summary>
+            <param name="x">x</param>
+            <param name="y">y</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.RepeatKeysEqualityComparer.GetHashCode(System.Type)">
+            <summary>
+            获取对象 HashCode
+            </summary>
+            <param name="obj">对象</param>
+            <returns><see cref="T:System.Int32"/></returns>
+        </member>
+        <member name="T:Furion.JobScheduler.IScheduler">
+            <summary>
+            调度作业依赖接口
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.IScheduler.StartAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            开始作业
+            </summary>
+            <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.IScheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            暂停作业
+            </summary>
+            <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.IJobMonitor">
+            <summary>
+            作业监视器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.IJobMonitor.OnExecutingAsync(Furion.JobScheduler.JobExecutingContext,System.Threading.CancellationToken)">
+            <summary>
+            作业执行前监视
+            </summary>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.IJobMonitor.OnExecutedAsync(Furion.JobScheduler.JobExecutedContext,System.Threading.CancellationToken)">
+            <summary>
+            作业执行后监视
+            </summary>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.Scheduler">
+            <summary>
+            调度作业默认实现
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.Scheduler._jobStorer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.Scheduler.#ctor(Furion.JobScheduler.IJobStorer)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobStorer">作业存储器</param>
+        </member>
+        <member name="M:Furion.JobScheduler.Scheduler.StartAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            开始作业
+            </summary>
+            <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.Scheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            暂停作业
+            </summary>
+            <param name="identity">作业唯一标识</param>
+            <param name="cancellationToken"> 取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+        </member>
+        <member name="T:Furion.JobScheduler.SchedulerJob">
+            <summary>
+            调度作业
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJob.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerJob.Deconstruct(System.String@,Furion.JobScheduler.IJob@,Furion.JobScheduler.JobDetail@,System.Collections.Generic.IList{Furion.JobScheduler.JobTrigger}@)">
+            <summary>
+            解构函数
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="jobHandler">作业</param>
+            <param name="jobDetail">作业详细信息</param>
+            <param name="jobTriggers">作业触发器</param>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJob.JobId">
+            <summary>
+            作业 Id
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJob.Job">
+            <summary>
+            作业
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJob.Triggers">
+            <summary>
+            作业触发器
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.SchedulerJob.JobDetail">
+            <summary>
+            作业详细信息
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.IJobStorer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.MemoryJobStorer">
+            <summary>
+            基于内存作业存储器（默认实现）
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.CronTrigger">
+            <summary>
+            Cron 表达式触发器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.CronTrigger.#ctor(System.String,Furion.TimeCrontab.CronStringFormat)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="schedule">调度计划（Cron 表达式）</param>
+            <param name="format">Cron 表达式格式化类型</param>
+        </member>
+        <member name="P:Furion.JobScheduler.CronTrigger.ScheduleCrontab">
+            <summary>
+            调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.CronTrigger.Increment">
+            <summary>
+            计算当前触发器增量信息
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.CronTrigger.ShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.CronTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+        </member>
+        <member name="T:Furion.JobScheduler.JobTrigger">
+            <summary>
+            作业触发器基类
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobTrigger.JobTriggerId">
+            <summary>
+            作业触发器 Id
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobTrigger.LastRunTime">
+            <summary>
+            最近运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobTrigger.NextRunTime">
+            <summary>
+            下一次运行时间
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobTrigger.NumberOfRuns">
+            <summary>
+            触发次数
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobTrigger.Increment">
+            <summary>
+            计算当前触发器增量信息
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobTrigger.ShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+            <returns><see cref="T:System.String"/></returns>
+        </member>
+        <member name="T:Furion.JobScheduler.SimpleTrigger">
+            <summary>
+            周期（间隔）触发器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SimpleTrigger.#ctor(System.Int32)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="interval">间隔时间（毫秒）</param>
+        </member>
+        <member name="P:Furion.JobScheduler.SimpleTrigger.Interval">
+            <summary>
+            间隔时间（毫秒）
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SimpleTrigger.Increment">
+            <summary>
+            计算当前触发器增量信息
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SimpleTrigger.ShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.SimpleTrigger.ToString">
+            <summary>
+            将触发器转换成字符串输出
+            </summary>
+        </member>
         <member name="T:Furion.Options.FailureMessageAttribute">
             <summary>
             选项校验失败消息特性
@@ -1362,694 +2049,6 @@
             <param name="dep3">依赖服务</param>
             <param name="dep4">依赖服务</param>
             <param name="dep5">依赖服务</param>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobDetailBuilder">
-            <summary>
-            作业详情构建器
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobDetailBuilder._dynamicTriggers">
-            <summary>
-            动态作业触发器元数据集合
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.#ctor(System.String,System.Type)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="jobType">作业类型</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetailBuilder.JobId">
-            <summary>
-            作业 Id
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetailBuilder.JobType">
-            <summary>
-            作业类型
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.AddSimpleTrigger(System.Int32)">
-            <summary>
-            添加简单作业触发器
-            </summary>
-            <param name="interval">间隔时间（毫秒）</param>
-            <returns><see cref="T:Furion.SchedulerJob.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.AddCronTrigger(System.String,Furion.TimeCrontab.CronStringFormat)">
-            <summary>
-            添加 Cron 表达式作业触发器
-            </summary>
-            <param name="schedule">调度计划（Cron 表达式）</param>
-            <param name="format">Cron 表达式格式化类型</param>
-            <returns><see cref="T:Furion.SchedulerJob.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.AddTrigger``1(System.Object[])">
-            <summary>
-            添加作业触发器
-            </summary>
-            <typeparam name="TJobTrigger"><see cref="T:Furion.SchedulerJob.JobTrigger"/> 派生类</typeparam>
-            <param name="args">触发器构造函数参数</param>
-            <returns><see cref="T:Furion.SchedulerJob.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.AddTrigger(System.Type,System.Object[])">
-            <summary>
-            添加作业触发器
-            </summary>
-            <param name="triggerType">作业触发器类型</param>
-            <param name="args">触发器构造函数参数</param>
-            <returns><see cref="T:Furion.SchedulerJob.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetailBuilder.Build">
-            <summary>
-            构建作业详情构建器
-            </summary>
-            <returns>作业详情及触发器</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder">
-            <summary>
-            调度作业配置选项构建器
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerJobOptionsBuilder._jobStorerImplementationFactory">
-            <summary>
-            作业存储器实现工厂
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerJobOptionsBuilder._jobMonitor">
-            <summary>
-            作业监视器
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerJobOptionsBuilder._jobExecutor">
-            <summary>
-            作业执行器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.#ctor">
-            <summary>
-            构造函数
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.JobDetailBuilders">
-            <summary>
-            作业详情构建器集合
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.TimeBeforeSync">
-            <summary>
-            设置调度器休眠后再度被激活前多少ms完成耗时操作
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.MinimumSyncInterval">
-            <summary>
-            最小存储器同步间隔（秒）
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobOptionsBuilder.UnobservedTaskExceptionHandler">
-            <summary>
-            未察觉任务异常处理程序
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddJob``1(System.String,System.Action{Furion.SchedulerJob.JobDetailBuilder})">
-            <summary>
-            注册作业
-            </summary>
-            <typeparam name="TJob"><see cref="T:Furion.SchedulerJob.IJob"/> 实现类</typeparam>
-            <param name="jobId">作业 Id</param>
-            <param name="configureDetailBuilder">作业详情构建器委托</param>
-            <returns><see cref="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddJob(System.String,System.Type,System.Action{Furion.SchedulerJob.JobDetailBuilder})">
-            <summary>
-            注册作业
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="jobType">作业类型</param>
-            <param name="configureDetailBuilder">作业详情构建器委托</param>
-            <returns><see cref="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder"/></returns>
-            <exception cref="T:System.InvalidOperationException"></exception>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.SchedulerJob.IJobStorer})">
-            <summary>
-            替换作业存储器
-            </summary>
-            <param name="implementationFactory">自定义作业存储器工厂</param>
-            <returns><see cref="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddMonitor``1">
-            <summary>
-            注册作业监视器
-            </summary>
-            <typeparam name="TJobMonitor">实现自 <see cref="T:Furion.SchedulerJob.IJobMonitor"/></typeparam>
-            <returns><see cref="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.AddExecutor``1">
-            <summary>
-            注册作业执行器
-            </summary>
-            <typeparam name="TJobExecutor">实现自 <see cref="T:Furion.SchedulerJob.IJobExecutor"/></typeparam>
-            <returns><see cref="T:Furion.SchedulerJob.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-            <summary>
-            构建调度作业配置选项
-            </summary>
-            <param name="services">服务集合对象</param>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobMode">
-            <summary>
-            作业执行方式
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobMode.Parallel">
-            <summary>
-            并行执行
-            </summary>
-            <remarks>无需等待上一次任务完成，默认值</remarks>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobMode.Serial">
-            <summary>
-            串行执行
-            </summary>
-            <remarks>需等待上一次任务完成</remarks>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobStatus">
-            <summary>
-            作业状态
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.None">
-            <summary>
-            未开始或取消
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.Normal">
-            <summary>
-            正常
-            </summary>
-            <remarks>初始值</remarks>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.Pause">
-            <summary>
-            暂停
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.Complete">
-            <summary>
-            完成
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.Error">
-            <summary>
-            出错
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.JobStatus.Blocked">
-            <summary>
-            阻塞
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobExecutedContext">
-            <summary>
-            作业执行后上下文
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobExecutedContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="properties">共享上下文数据</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutedContext.ExecutedTime">
-            <summary>
-            执行后时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutedContext.Exception">
-            <summary>
-            异常信息
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobExecutingContext">
-            <summary>
-            作业执行前上下文
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobExecutingContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="properties">共享上下文数据</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutingContext.ExecutingTime">
-            <summary>
-            执行前时间
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobExecutionContext">
-            <summary>
-            作业执行上下文
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobExecutionContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="properties">共享上下文数据</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutionContext.JobId">
-            <summary>
-            作业 Id
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutionContext.JobDetail">
-            <summary>
-            作业详细信息
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobExecutionContext.Properties">
-            <summary>
-            共享上下文数据
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobDetail">
-            <summary>
-            作业详细信息
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobDetail.#ctor(System.String)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.JobId">
-            <summary>
-            作业 Id
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.Description">
-            <summary>
-            作业描述
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.Status">
-            <summary>
-            作业状态
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.Mode">
-            <summary>
-            作业执行方式
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobDetail.WithExecutionLog">
-            <summary>
-            记录详细日志
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.IJobExecutor">
-            <summary>
-            作业执行器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.IJobExecutor.ExecuteAsync(Furion.SchedulerJob.JobExecutingContext,Furion.SchedulerJob.IJob,System.Threading.CancellationToken)">
-            <summary>
-            调度任务执行器处理程序
-            </summary>
-            <param name="context">上下文</param>
-            <param name="job">作业对象</param>
-            <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.SchedulerFactoryHostedService">
-            <summary>
-            调度器工厂后台主机服务
-            </summary>
-        </member>
-        <member name="E:Furion.SchedulerJob.SchedulerFactoryHostedService.UnobservedTaskException">
-            <summary>
-            避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerFactoryHostedService._logger">
-            <summary>
-            日志对象
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerFactoryHostedService._schedulerJobs">
-            <summary>
-            调度作业集合
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.Monitor">
-            <summary>
-            作业监视器
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.Executor">
-            <summary>
-            作业执行器
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.Storer">
-            <summary>
-            作业存储器
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.TimeBeforeSync">
-            <summary>
-            调度器休眠后再度被激活前多少ms完成耗时操作
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.MinimumSyncInterval">
-            <summary>
-            最小存储器同步间隔（秒）
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerFactoryHostedService.LastSyncTime">
-            <summary>
-            记录存储器最近同步时间
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.SchedulerJob.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.SchedulerJob.IJob},Furion.SchedulerJob.IJobStorer,System.Collections.Concurrent.ConcurrentDictionary{System.String,Furion.SchedulerJob.JobDetailBuilder},System.Int32,System.Int32)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="logger">日志对象</param>
-            <param name="serviceProvider">服务提供器</param>
-            <param name="jobs">作业集合</param>
-            <param name="storer">作业存储器</param>
-            <param name="jobDetailBuilders">作业详情构建器集合</param>
-            <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
-            <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.ExecuteAsync(System.Threading.CancellationToken)">
-            <summary>
-            执行后台任务
-            </summary>
-            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="F:Furion.SchedulerJob.SchedulerFactoryHostedService.IsEffectiveJob">
-            <summary>
-            判断是否是有效的作业
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.BackgroundProcessing(System.Threading.CancellationToken)">
-            <summary>
-            后台调用作业处理程序
-            </summary>
-            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.WaitingClosestTrigger(System.Threading.CancellationToken)">
-            <summary>
-            将当前线程休眠直至最快触发的作业之前
-            </summary>
-            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.SynchronizationStorer(System.TimeSpan,System.Threading.CancellationToken)">
-            <summary>
-            同步存储器作业数据
-            </summary>
-            <param name="timeout">超时时间戳</param>
-            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.IJob">
-            <summary>
-            作业执行程序
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.IJob.ExecuteAsync(Furion.SchedulerJob.JobExecutingContext,System.Threading.CancellationToken)">
-            <summary>
-            具体逻辑处理
-            </summary>
-            <param name="context">上下文</param>
-            <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.RepeatKeysEqualityComparer">
-            <summary>
-            支持重复 Key 的字典集合比较器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.RepeatKeysEqualityComparer.Equals(System.Type,System.Type)">
-            <summary>
-            实现相等逻辑判断
-            </summary>
-            <param name="x">x</param>
-            <param name="y">y</param>
-            <returns><see cref="T:System.Boolean"/></returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.RepeatKeysEqualityComparer.GetHashCode(System.Type)">
-            <summary>
-            获取对象 HashCode
-            </summary>
-            <param name="obj">对象</param>
-            <returns><see cref="T:System.Int32"/></returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.IScheduler">
-            <summary>
-            调度作业依赖接口
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.IScheduler.StartAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            开始作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.IScheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            暂停作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.IJobMonitor">
-            <summary>
-            作业监视器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.IJobMonitor.OnExecutingAsync(Furion.SchedulerJob.JobExecutingContext,System.Threading.CancellationToken)">
-            <summary>
-            作业执行前监视
-            </summary>
-            <param name="context">上下文</param>
-            <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.IJobMonitor.OnExecutedAsync(Furion.SchedulerJob.JobExecutedContext,System.Threading.CancellationToken)">
-            <summary>
-            作业执行后监视
-            </summary>
-            <param name="context">上下文</param>
-            <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.Scheduler">
-            <summary>
-            调度作业默认实现
-            </summary>
-        </member>
-        <member name="F:Furion.SchedulerJob.Scheduler._jobStorer">
-            <summary>
-            作业存储器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.Scheduler.#ctor(Furion.SchedulerJob.IJobStorer)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobStorer">作业存储器</param>
-        </member>
-        <member name="M:Furion.SchedulerJob.Scheduler.StartAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            开始作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.Scheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            暂停作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.IJobStorer">
-            <summary>
-            作业存储器
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.MemoryJobStorer">
-            <summary>
-            基于内存作业存储器（默认实现）
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.CronTrigger">
-            <summary>
-            Cron 表达式触发器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.#ctor(System.String,Furion.TimeCrontab.CronStringFormat)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="schedule">调度计划（Cron 表达式）</param>
-            <param name="format">Cron 表达式格式化类型</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.CronTrigger.ScheduleCrontab">
-            <summary>
-            调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.Increment">
-            <summary>
-            计算当前触发器增量信息
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.ShouldRun(System.DateTime)">
-            <summary>
-            是否符合执行逻辑
-            </summary>
-            <param name="currentTime">当前时间</param>
-            <returns><see cref="T:System.Boolean"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.CronTrigger.ToString">
-            <summary>
-            将触发器转换成字符串输出
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.JobTrigger">
-            <summary>
-            作业触发器基类
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobTrigger.JobTriggerId">
-            <summary>
-            作业触发器 Id
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobTrigger.LastRunTime">
-            <summary>
-            最近运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobTrigger.NextRunTime">
-            <summary>
-            下一次运行时间
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.JobTrigger.NumberOfRuns">
-            <summary>
-            触发次数
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.Increment">
-            <summary>
-            计算当前触发器增量信息
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.ShouldRun(System.DateTime)">
-            <summary>
-            是否符合执行逻辑
-            </summary>
-            <param name="currentTime">当前时间</param>
-            <returns><see cref="T:System.Boolean"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.JobTrigger.ToString">
-            <summary>
-            将触发器转换成字符串输出
-            </summary>
-            <returns><see cref="T:System.String"/></returns>
-        </member>
-        <member name="T:Furion.SchedulerJob.SimpleTrigger">
-            <summary>
-            周期（间隔）触发器
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.#ctor(System.Int32)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="interval">间隔时间（毫秒）</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.SimpleTrigger.Interval">
-            <summary>
-            间隔时间（毫秒）
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.Increment">
-            <summary>
-            计算当前触发器增量信息
-            </summary>
-        </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.ShouldRun(System.DateTime)">
-            <summary>
-            是否符合执行逻辑
-            </summary>
-            <param name="currentTime">当前时间</param>
-            <returns><see cref="T:System.Boolean"/> 实例</returns>
-        </member>
-        <member name="M:Furion.SchedulerJob.SimpleTrigger.ToString">
-            <summary>
-            将触发器转换成字符串输出
-            </summary>
-        </member>
-        <member name="T:Furion.SchedulerJob.SchedulerJobWrapper">
-            <summary>
-            调度作业包装类
-            </summary>
-            <remarks>主要用于主机服务启动时将所有作业和作业触发器进行包装绑定</remarks>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobWrapper.#ctor(System.String)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-        </member>
-        <member name="M:Furion.SchedulerJob.SchedulerJobWrapper.Deconstruct(System.String@,Furion.SchedulerJob.IJob@,Furion.SchedulerJob.JobDetail@,System.Collections.Generic.IList{Furion.SchedulerJob.JobTrigger}@)">
-            <summary>
-            解构函数
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="jobHandler">作业</param>
-            <param name="jobDetail">作业详细信息</param>
-            <param name="jobTriggers">作业触发器</param>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobWrapper.JobId">
-            <summary>
-            作业 Id
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobWrapper.Job">
-            <summary>
-            作业
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobWrapper.Triggers">
-            <summary>
-            作业触发器
-            </summary>
-        </member>
-        <member name="P:Furion.SchedulerJob.SchedulerJobWrapper.JobDetail">
-            <summary>
-            作业详细信息
-            </summary>
         </member>
         <member name="T:Furion.TaskQueue.Constants">
             <summary>
@@ -3355,7 +3354,7 @@
             SchedulerJob 模块服务拓展
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Furion.SchedulerJob.SchedulerJobOptionsBuilder})">
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Furion.JobScheduler.SchedulerJobOptionsBuilder})">
             <summary>
             添加 SchedulerJob 模块注册
             </summary>
@@ -3363,7 +3362,7 @@
             <param name="configureOptionsBuilder">调度作业配置选项构建器委托</param>
             <returns>服务集合实例</returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.SchedulerJob.SchedulerJobOptionsBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.JobScheduler.SchedulerJobOptionsBuilder)">
             <summary>
             添加 SchedulerJob 模块注册
             </summary>

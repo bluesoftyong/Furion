@@ -1,4 +1,4 @@
-﻿using Furion.SchedulerJob;
+﻿using Furion.JobScheduler;
 
 namespace Furion.SchedulerSamples;
 

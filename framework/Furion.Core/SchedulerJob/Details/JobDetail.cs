@@ -9,7 +9,7 @@
 namespace Furion.SchedulerJob;
 
 /// <summary>
-/// 作业详细信息基类
+/// 作业详细信息
 /// </summary>
 public sealed class JobDetail
 {

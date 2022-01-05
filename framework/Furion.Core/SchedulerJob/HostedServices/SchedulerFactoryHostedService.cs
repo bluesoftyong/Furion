@@ -255,7 +255,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     /// <summary>
     /// 将当前线程休眠直至最快触发的作业之前
     /// </summary>
-    /// <param name="referenceTime">当前调度执行时间</param>
+    /// <param name="referenceTime">当前调度时间</param>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
     private async Task WaitingClosestTrigger(DateTime referenceTime, CancellationToken stoppingToken)

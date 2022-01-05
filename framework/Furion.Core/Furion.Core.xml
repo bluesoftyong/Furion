@@ -1639,7 +1639,7 @@
         </member>
         <member name="T:Furion.SchedulerJob.JobDetail">
             <summary>
-            作业详细信息基类
+            作业详细信息
             </summary>
         </member>
         <member name="M:Furion.SchedulerJob.JobDetail.#ctor(System.String)">
@@ -1772,7 +1772,7 @@
             <summary>
             将当前线程休眠直至最快触发的作业之前
             </summary>
-            <param name="referenceTime">当前调度执行时间</param>
+            <param name="referenceTime">当前调度时间</param>
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>

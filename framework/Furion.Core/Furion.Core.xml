@@ -1768,11 +1768,10 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.WaitingClosestTrigger(System.DateTime,System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.WaitingClosestTrigger(System.Threading.CancellationToken)">
             <summary>
             将当前线程休眠直至最快触发的作业之前
             </summary>
-            <param name="referenceTime">当前调度时间</param>
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>

@@ -249,20 +249,26 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         }
 
         // 将当前线程休眠直至最快触发的作业之前
-        await WaitingClosestTrigger(referenceTime, stoppingToken);
+        await WaitingClosestTrigger(stoppingToken);
     }
 
     /// <summary>
     /// 将当前线程休眠直至最快触发的作业之前
     /// </summary>
-    /// <param name="referenceTime">当前调度时间</param>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    private async Task WaitingClosestTrigger(DateTime referenceTime, CancellationToken stoppingToken)
+    private async Task WaitingClosestTrigger(CancellationToken stoppingToken)
     {
+        /*
+         * 为了避免程序在未知情况下存在不必要的耗时操作从而导致事件出现偏差
+         * 所以这里采用 DateTimeKind.Unspecified 转换当前时间并忽略毫秒部分
+         */
+        var referenceTime = DateTime.UtcNow;
+        var unspecifiedTime = new DateTime(referenceTime.Year, referenceTime.Month, referenceTime.Day, referenceTime.Hour, referenceTime.Minute, referenceTime.Second);
+
         // 查找下一次符合触发时机的所有作业触发器
         var closestJobTriggers = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail))
-                                                                  .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= referenceTime));
+                                                                  .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间
         var closestNextRunTime = closestJobTriggers.Any()

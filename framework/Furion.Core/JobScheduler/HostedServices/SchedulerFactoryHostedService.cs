@@ -87,7 +87,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         TimeBeforeSync = timeBeforeSync;
         MinimumSyncInterval = minimumSyncInterval;
 
-        // 逐条对调度作业构建器进行包装
+        // 逐条对调度作业构建器进行构建
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
             // 查询作业处理程序实例

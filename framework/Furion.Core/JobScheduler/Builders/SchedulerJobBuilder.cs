@@ -85,18 +85,18 @@ public sealed class SchedulerJobBuilder
     /// <summary>
     /// 添加作业触发器
     /// </summary>
-    /// <param name="triggerType">作业触发器类型</param>
+    /// <param name="jobTriggerType">作业触发器类型</param>
     /// <param name="args">触发器构造函数参数</param>
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    public SchedulerJobBuilder AddTrigger(Type triggerType, params object[] args)
+    public SchedulerJobBuilder AddTrigger(Type jobTriggerType, params object[] args)
     {
         // 检查 triggerType 类型是否派生自 JobTrigger
-        if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
+        if (!typeof(JobTrigger).IsAssignableFrom(jobTriggerType))
         {
             throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
         }
 
-        _jobTriggersData.TryAdd(triggerType, args);
+        _jobTriggersData.TryAdd(jobTriggerType, args);
 
         return this;
     }

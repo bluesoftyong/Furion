@@ -44,12 +44,15 @@ public static class SchedulerJobServiceCollectionExtensions
         // 注册内部服务
         services.AddInternalService();
 
+        // 构建调度作业服务
+        var schedulerJobBuilders = schedulerJobOptionsBuilder.Build(services);
+
         // 通过工厂模式创建
         services.AddHostedService(serviceProvider =>
         {
             // 创建调度器工厂后台服务对象
             var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<SchedulerFactoryHostedService>(serviceProvider
-                , schedulerJobOptionsBuilder.SchedulerJobBuilders
+                , schedulerJobBuilders
                 , schedulerJobOptionsBuilder.TimeBeforeSync
                 , schedulerJobOptionsBuilder.MinimumSyncInterval);
 
@@ -63,8 +66,6 @@ public static class SchedulerJobServiceCollectionExtensions
             return schedulerFactoryHostedService;
         });
 
-        // 构建调度作业服务
-        schedulerJobOptionsBuilder.Build(services);
 
         return services;
     }

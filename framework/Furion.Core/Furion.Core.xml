@@ -1030,6 +1030,11 @@
             调度作业配置选项构建器
             </summary>
         </member>
+        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._schedulerJobBuilders">
+            <summary>
+            调度作业构建器集合
+            </summary>
+        </member>
         <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobStorerImplementationFactory">
             <summary>
             作业存储器实现工厂
@@ -1048,11 +1053,6 @@
         <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.#ctor">
             <summary>
             构造函数
-            </summary>
-        </member>
-        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.SchedulerJobBuilders">
-            <summary>
-            调度作业构建器集合
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.TimeBeforeSync">
@@ -1085,7 +1085,7 @@
             </summary>
             <param name="jobId">作业 Id</param>
             <param name="jobType">作业类型</param>
-            <param name="configureDetailBuilder">作业详情构建器委托</param>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/></returns>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>
@@ -1115,6 +1115,7 @@
             构建调度作业配置选项
             </summary>
             <param name="services">服务集合对象</param>
+            <returns>调度作业构建器</returns>
         </member>
         <member name="T:Furion.JobScheduler.JobMode">
             <summary>
@@ -1335,7 +1336,7 @@
             记录存储器最近同步时间
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.JobScheduler.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.JobScheduler.IJob},Furion.JobScheduler.IJobStorer,System.Collections.Concurrent.ConcurrentDictionary{System.String,Furion.JobScheduler.SchedulerJobBuilder},System.Int32,System.Int32)">
+        <member name="M:Furion.JobScheduler.SchedulerFactoryHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.JobScheduler.SchedulerFactoryHostedService},System.IServiceProvider,System.Collections.Generic.IEnumerable{Furion.JobScheduler.IJob},Furion.JobScheduler.IJobStorer,System.Collections.Generic.IEnumerable{Furion.JobScheduler.SchedulerJobBuilder},System.Int32,System.Int32)">
             <summary>
             构造函数
             </summary>

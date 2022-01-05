@@ -18,6 +18,11 @@ namespace Furion.JobScheduler;
 public sealed class SchedulerJobOptionsBuilder
 {
     /// <summary>
+    /// 调度作业构建器集合
+    /// </summary>
+    private readonly ConcurrentDictionary<string, SchedulerJobBuilder> _schedulerJobBuilders;
+
+    /// <summary>
     /// 作业存储器实现工厂
     /// </summary>
     private Func<IServiceProvider, IJobStorer>? _jobStorerImplementationFactory;
@@ -37,13 +42,8 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     public SchedulerJobOptionsBuilder()
     {
-        SchedulerJobBuilders = new();
+        _schedulerJobBuilders = new();
     }
-
-    /// <summary>
-    /// 调度作业构建器集合
-    /// </summary>
-    internal ConcurrentDictionary<string, SchedulerJobBuilder> SchedulerJobBuilders { get; }
 
     /// <summary>
     /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
@@ -78,13 +78,13 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     /// <param name="jobId">作业 Id</param>
     /// <param name="jobType">作业类型</param>
-    /// <param name="configureDetailBuilder">作业详情构建器委托</param>
+    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
     /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public SchedulerJobOptionsBuilder AddJob(string jobId, Type jobType, Action<SchedulerJobBuilder> configureDetailBuilder)
+    public SchedulerJobOptionsBuilder AddJob(string jobId, Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
     {
         // 空检查
-        ArgumentNullException.ThrowIfNull(configureDetailBuilder);
+        ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
 
         // jobType 须实现 IJob 接口
         if (!typeof(IJob).IsAssignableFrom(jobType))
@@ -92,17 +92,17 @@ public sealed class SchedulerJobOptionsBuilder
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
         }
 
-        // 创建作业详情构建器
-        var jobDetailBuilder = new SchedulerJobBuilder(jobId, jobType);
+        // 创建调度作业对象
+        var schedulerJobBuilder = new SchedulerJobBuilder(jobId, jobType);
 
         // 作业 Id 须唯一
-        if (!SchedulerJobBuilders.TryAdd(jobId, jobDetailBuilder))
+        if (!_schedulerJobBuilders.TryAdd(jobId, schedulerJobBuilder))
         {
             throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
 
         // 调用委托
-        configureDetailBuilder(jobDetailBuilder);
+        configureSchedulerJobBuilder(schedulerJobBuilder);
 
         return this;
     }
@@ -146,12 +146,15 @@ public sealed class SchedulerJobOptionsBuilder
     /// 构建调度作业配置选项
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    internal void Build(IServiceCollection services)
+    /// <returns>调度作业构建器</returns>
+    internal IEnumerable<SchedulerJobBuilder> Build(IServiceCollection services)
     {
+        var schedulerJobBuilders = _schedulerJobBuilders.Values;
+
         // 注册作业
-        foreach (var jobDetailBuilder in SchedulerJobBuilders.Values)
+        foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
-            services.AddSingleton(typeof(IJob), jobDetailBuilder.JobType);
+            services.AddSingleton(typeof(IJob), schedulerJobBuilder.JobType);
         }
 
         // 替换作业存储器
@@ -171,5 +174,7 @@ public sealed class SchedulerJobOptionsBuilder
         {
             services.AddSingleton(typeof(IJobExecutor), _jobExecutor);
         }
+
+        return schedulerJobBuilders;
     }
 }

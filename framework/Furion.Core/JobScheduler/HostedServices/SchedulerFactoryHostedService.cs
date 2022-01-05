@@ -9,7 +9,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 
 namespace Furion.JobScheduler;
 
@@ -77,7 +76,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         , IServiceProvider serviceProvider
         , IEnumerable<IJob> jobs
         , IJobStorer storer
-        , ConcurrentDictionary<string, SchedulerJobBuilder> schedulerJobBuilders
+        , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders
         , int timeBeforeSync
         , int minimumSyncInterval)
     {
@@ -89,7 +88,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         MinimumSyncInterval = minimumSyncInterval;
 
         // 逐条对作业详情构建器进行包装
-        foreach (var (jobId, schedulerJobBuilder) in schedulerJobBuilders)
+        foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
             // 查询作业处理程序实例
             var jobHandler = jobs.SingleOrDefault(j => j.GetType() == schedulerJobBuilder.JobType);

@@ -1637,15 +1637,16 @@
             共享上下文数据
             </summary>
         </member>
-        <member name="T:Furion.SchedulerJob.DefaultJobDetail">
-            <summary>
-            默认作业详细信息派生类
-            </summary>
-        </member>
         <member name="T:Furion.SchedulerJob.JobDetail">
             <summary>
             作业详细信息基类
             </summary>
+        </member>
+        <member name="M:Furion.SchedulerJob.JobDetail.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="jobId">作业 Id</param>
         </member>
         <member name="P:Furion.SchedulerJob.JobDetail.JobId">
             <summary>
@@ -1767,10 +1768,11 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.WaitingClosestTrigger(System.Threading.CancellationToken)">
+        <member name="M:Furion.SchedulerJob.SchedulerFactoryHostedService.WaitingClosestTrigger(System.DateTime,System.Threading.CancellationToken)">
             <summary>
             将当前线程休眠直至最快触发的作业之前
             </summary>
+            <param name="referenceTime">当前调度执行时间</param>
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>

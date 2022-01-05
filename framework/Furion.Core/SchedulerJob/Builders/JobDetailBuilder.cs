@@ -107,10 +107,8 @@ public sealed class JobDetailBuilder
     /// <returns>作业详情及触发器</returns>
     internal (JobDetail JobDetail, List<JobTrigger> JobTriggers) Build()
     {
-        var jobDetail = new DefaultJobDetail
-        {
-            JobId = JobId,
-        };
+        // 创建作业详情对象
+        var jobDetail = new JobDetail(JobId);
 
         var jobTriggers = new List<JobTrigger>();
         var referenceTime = DateTime.UtcNow;

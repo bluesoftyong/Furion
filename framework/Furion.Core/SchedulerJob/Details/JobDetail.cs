@@ -11,30 +11,39 @@ namespace Furion.SchedulerJob;
 /// <summary>
 /// 作业详细信息基类
 /// </summary>
-public abstract class JobDetail
+public sealed class JobDetail
 {
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    public JobDetail(string jobId)
+    {
+        JobId = jobId;
+    }
+
     /// <summary>
     /// 作业 Id
     /// </summary>
-    public virtual string? JobId { get; set; }
+    public string JobId { get; }
 
     /// <summary>
     /// 作业描述
     /// </summary>
-    public virtual string? Description { get; set; }
+    public string? Description { get; internal set; }
 
     /// <summary>
     /// 作业状态
     /// </summary>
-    public virtual JobStatus Status { get; set; } = JobStatus.Normal;
+    public JobStatus Status { get; internal set; } = JobStatus.Normal;
 
     /// <summary>
     /// 作业执行方式
     /// </summary>
-    public virtual JobMode Mode { get; set; } = JobMode.Parallel;
+    public JobMode Mode { get; internal set; } = JobMode.Parallel;
 
     /// <summary>
     /// 记录详细日志
     /// </summary>
-    public virtual bool WithExecutionLog { get; set; } = false;
+    public bool WithExecutionLog { get; internal set; } = false;
 }

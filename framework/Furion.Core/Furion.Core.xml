@@ -966,9 +966,9 @@
             调度作业构建器
             </summary>
         </member>
-        <member name="F:Furion.JobScheduler.SchedulerJobBuilder._dynamicTriggers">
+        <member name="F:Furion.JobScheduler.SchedulerJobBuilder._jobTriggersData">
             <summary>
-            动态作业触发器元数据集合
+            作业触发器数据字典
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJobBuilder.#ctor(System.String,System.Type)">

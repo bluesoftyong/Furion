@@ -17,9 +17,9 @@ namespace Furion.JobScheduler;
 public sealed class SchedulerJobBuilder
 {
     /// <summary>
-    /// 动态作业触发器元数据集合
+    /// 作业触发器数据字典
     /// </summary>
-    private readonly ConcurrentDictionary<Type, object[]> _dynamicTriggers;
+    private readonly ConcurrentDictionary<Type, object[]> _jobTriggersData;
 
     /// <summary>
     /// 构造函数
@@ -28,7 +28,7 @@ public sealed class SchedulerJobBuilder
     /// <param name="jobType">作业类型</param>
     public SchedulerJobBuilder(string jobId, Type jobType)
     {
-        _dynamicTriggers = new(new RepeatKeysEqualityComparer());
+        _jobTriggersData = new(new RepeatKeysEqualityComparer());
         JobId = jobId;
         JobType = jobType;
     }
@@ -50,7 +50,7 @@ public sealed class SchedulerJobBuilder
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
     public SchedulerJobBuilder AddSimpleTrigger(int interval)
     {
-        _dynamicTriggers.TryAdd(typeof(SimpleTrigger), new object[] { interval });
+        _jobTriggersData.TryAdd(typeof(SimpleTrigger), new object[] { interval });
 
         return this;
     }
@@ -63,7 +63,7 @@ public sealed class SchedulerJobBuilder
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
     public SchedulerJobBuilder AddCronTrigger(string schedule, CronStringFormat format = CronStringFormat.Default)
     {
-        _dynamicTriggers.TryAdd(typeof(CronTrigger), new object[] { schedule, format });
+        _jobTriggersData.TryAdd(typeof(CronTrigger), new object[] { schedule, format });
 
         return this;
     }
@@ -77,7 +77,7 @@ public sealed class SchedulerJobBuilder
     public SchedulerJobBuilder AddTrigger<TJobTrigger>(params object[] args)
         where TJobTrigger : JobTrigger
     {
-        _dynamicTriggers.TryAdd(typeof(TJobTrigger), args);
+        _jobTriggersData.TryAdd(typeof(TJobTrigger), args);
 
         return this;
     }
@@ -96,7 +96,7 @@ public sealed class SchedulerJobBuilder
             throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
         }
 
-        _dynamicTriggers.TryAdd(triggerType, args);
+        _jobTriggersData.TryAdd(triggerType, args);
 
         return this;
     }
@@ -114,7 +114,7 @@ public sealed class SchedulerJobBuilder
         var referenceTime = DateTime.UtcNow;
 
         // 动态创建作业触发器
-        foreach (var (triggerType, args) in _dynamicTriggers)
+        foreach (var (triggerType, args) in _jobTriggersData)
         {
             // 反射创建作业触发器
             var jobTrigger = (args == null || args.Length == 0

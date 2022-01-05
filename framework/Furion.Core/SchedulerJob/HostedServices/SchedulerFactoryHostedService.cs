@@ -298,7 +298,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         // 避免刚好触发的情况
         if (interval > 0)
         {
-            // 将当前线程休眠至下一次触发前，采用 Math.Floor 向下取整，也就是可以休眠到执行前
+            // 将当前线程休眠至下一次触发前，也就是可以休眠到执行前
             await Task.Delay(TimeSpan.FromMilliseconds(interval), stoppingToken);
         }
     }

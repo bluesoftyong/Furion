@@ -82,6 +82,8 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         TimeBeforeSync = timeBeforeSync;
         MinimumSyncInterval = minimumSyncInterval;
 
+        var referenceTime = DateTime.UtcNow;
+
         // 逐条对调度作业构建器进行构建
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
@@ -90,7 +92,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             if (jobHandler == null) continue;
 
             // 构建调度作业
-            var schedulerJob = schedulerJobBuilder.Build(jobHandler);
+            var schedulerJob = schedulerJobBuilder.Build(jobHandler, referenceTime);
 
             // 逐条包装并添加到 HashSet 集合中
             Storer.AddSchedulerJob(schedulerJob);

@@ -13,8 +13,8 @@ builder.Services.AddSchedulerJob(builder =>
 
     builder.AddJob<TestPeriodJob>("period_job", builder =>
     {
-        builder.AddPeriodTrigger("period_trigger", 10000)
-               .AddCronTrigger("period_trigger2", "* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
+        //builder.AddPeriodTrigger("period_trigger", 10000)
+        builder.AddCronTrigger("period_trigger2", "* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
     });
     builder.AddJob<TestCronJob2>("cron_job_2", builder =>
     {

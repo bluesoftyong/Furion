@@ -144,14 +144,16 @@ public sealed class SchedulerJobBuilder
     /// <summary>
     /// 构建调度作业对象
     /// </summary>
+    /// <param name="job">作业对象</param>
+    /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="SchedulerJob"/></returns>
-    internal SchedulerJob Build(IJob job)
+    internal SchedulerJob Build(IJob job, DateTime referenceTime)
     {
         // 构建作业详情
         var jobDetail = _jobDetailBuilder.Build();
 
         // 构建作业触发器
-        var jobTriggers = _jobTriggerBuilders.Values.Select(t => t.Build());
+        var jobTriggers = _jobTriggerBuilders.Values.Select(t => t.Build(referenceTime)).ToList();
 
         return new SchedulerJob(JobId)
         {

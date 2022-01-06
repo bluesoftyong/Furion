@@ -74,7 +74,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
 
         // 解析作业实例
         var job = _serviceProvider.GetRequiredService(jobType) as IJob;
-        var schedulerJob = schedulerJobBuilder.Build(job!);
+        var schedulerJob = schedulerJobBuilder.Build(job!, DateTime.UtcNow);
 
         // 存储调度作业
         _jobStorer.AddSchedulerJob(schedulerJob);
@@ -98,7 +98,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
         // 调用委托
         configureSchedulerJobBuilder(schedulerJobBuilder);
 
-        var schedulerJob = schedulerJobBuilder.Build(job);
+        var schedulerJob = schedulerJobBuilder.Build(job, DateTime.UtcNow);
 
         // 存储调度作业
         _jobStorer.AddSchedulerJob(schedulerJob);

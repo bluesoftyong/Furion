@@ -1055,10 +1055,11 @@
             </summary>
             <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
         </member>
-        <member name="M:Furion.JobScheduler.JobTriggerBuilder.Build">
+        <member name="M:Furion.JobScheduler.JobTriggerBuilder.Build(System.DateTime)">
             <summary>
             构建作业触发器
             </summary>
+            <param name="referenceTime">初始引用时间</param>
             <returns><see cref="T:Furion.JobScheduler.JobTrigger"/></returns>
         </member>
         <member name="T:Furion.JobScheduler.SchedulerJobBuilder">
@@ -1139,10 +1140,12 @@
             <param name="configureJobTriggerBuilder">作业触发器构建器委托</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.Build(Furion.JobScheduler.IJob)">
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.Build(Furion.JobScheduler.IJob,System.DateTime)">
             <summary>
             构建调度作业对象
             </summary>
+            <param name="job">作业对象</param>
+            <param name="referenceTime">初始引用时间</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJob"/></returns>
         </member>
         <member name="T:Furion.JobScheduler.SchedulerJobOptionsBuilder">
@@ -1696,7 +1699,7 @@
             </summary>
             <param name="jobId">作业 Id</param>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerJob.Deconstruct(System.String@,Furion.JobScheduler.IJob@,Furion.JobScheduler.JobDetail@,System.Collections.Generic.IEnumerable{Furion.JobScheduler.JobTrigger}@)">
+        <member name="M:Furion.JobScheduler.SchedulerJob.Deconstruct(System.String@,Furion.JobScheduler.IJob@,Furion.JobScheduler.JobDetail@,System.Collections.Generic.IList{Furion.JobScheduler.JobTrigger}@)">
             <summary>
             解构函数
             </summary>

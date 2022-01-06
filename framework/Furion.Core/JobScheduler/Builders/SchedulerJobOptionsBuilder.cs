@@ -65,12 +65,12 @@ public sealed class SchedulerJobOptionsBuilder
     /// </summary>
     /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
     /// <param name="jobId">作业 Id</param>
-    /// <param name="configureDetailBuilder">作业详情构建器委托</param>
+    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
     /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
-    public SchedulerJobOptionsBuilder AddJob<TJob>(string jobId, Action<SchedulerJobBuilder> configureDetailBuilder)
+    public SchedulerJobOptionsBuilder AddJob<TJob>(string jobId, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
         where TJob : class, IJob
     {
-        return AddJob(jobId, typeof(TJob), configureDetailBuilder);
+        return AddJob(jobId, typeof(TJob), configureSchedulerJobBuilder);
     }
 
     /// <summary>
@@ -154,6 +154,7 @@ public sealed class SchedulerJobOptionsBuilder
         // 注册作业
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
+            services.AddSingleton(schedulerJobBuilder.JobType);
             services.AddSingleton(typeof(IJob), schedulerJobBuilder.JobType);
         }
 

@@ -84,6 +84,9 @@ public static class SchedulerJobServiceCollectionExtensions
             return new MemoryJobStorer();
         });
 
+        // 作业作业工厂
+        services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
+
         // 注册作业调度器
         services.AddSingleton<IScheduler, Scheduler>();
 

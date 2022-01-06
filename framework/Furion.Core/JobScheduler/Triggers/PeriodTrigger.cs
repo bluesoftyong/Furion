@@ -11,13 +11,13 @@ namespace Furion.JobScheduler;
 /// <summary>
 /// 周期（间隔）触发器
 /// </summary>
-internal sealed class SimpleTrigger : JobTrigger
+internal sealed class PeriodTrigger : JobTrigger
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="interval">间隔时间（毫秒）</param>
-    public SimpleTrigger(int interval)
+    public PeriodTrigger(int interval)
     {
         Interval = interval;
     }

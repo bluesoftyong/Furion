@@ -968,7 +968,7 @@
         </member>
         <member name="F:Furion.JobScheduler.SchedulerJobBuilder._jobTriggersData">
             <summary>
-            作业触发器数据字典
+            作业触发器构造函数参数字典
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJobBuilder.#ctor(System.String,System.Type)">
@@ -988,9 +988,9 @@
             作业类型
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddSimpleTrigger(System.Int32)">
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddPeriodTrigger(System.Int32)">
             <summary>
-            添加简单作业触发器
+            添加周期作业触发器
             </summary>
             <param name="interval">间隔时间（毫秒）</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
@@ -1720,35 +1720,35 @@
             </summary>
             <returns><see cref="T:System.String"/></returns>
         </member>
-        <member name="T:Furion.JobScheduler.SimpleTrigger">
+        <member name="T:Furion.JobScheduler.PeriodTrigger">
             <summary>
             周期（间隔）触发器
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SimpleTrigger.#ctor(System.Int32)">
+        <member name="M:Furion.JobScheduler.PeriodTrigger.#ctor(System.Int32)">
             <summary>
             构造函数
             </summary>
             <param name="interval">间隔时间（毫秒）</param>
         </member>
-        <member name="P:Furion.JobScheduler.SimpleTrigger.Interval">
+        <member name="P:Furion.JobScheduler.PeriodTrigger.Interval">
             <summary>
             间隔时间（毫秒）
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SimpleTrigger.Increment">
+        <member name="M:Furion.JobScheduler.PeriodTrigger.Increment">
             <summary>
             计算当前触发器增量信息
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SimpleTrigger.ShouldRun(System.DateTime)">
+        <member name="M:Furion.JobScheduler.PeriodTrigger.ShouldRun(System.DateTime)">
             <summary>
             是否符合执行逻辑
             </summary>
             <param name="currentTime">当前时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
-        <member name="M:Furion.JobScheduler.SimpleTrigger.ToString">
+        <member name="M:Furion.JobScheduler.PeriodTrigger.ToString">
             <summary>
             将触发器转换成字符串输出
             </summary>

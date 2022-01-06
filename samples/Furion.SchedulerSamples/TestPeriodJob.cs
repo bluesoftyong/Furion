@@ -2,7 +2,7 @@
 
 namespace Furion.SchedulerSamples;
 
-public class TestSimpleJob : IJob
+public class TestPeriodJob : IJob
 {
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {

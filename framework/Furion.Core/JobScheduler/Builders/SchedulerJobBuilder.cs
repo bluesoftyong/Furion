@@ -17,7 +17,7 @@ namespace Furion.JobScheduler;
 public sealed class SchedulerJobBuilder
 {
     /// <summary>
-    /// 作业触发器数据字典
+    /// 作业触发器构造函数参数字典
     /// </summary>
     private readonly ConcurrentDictionary<Type, object[]> _jobTriggersData;
 
@@ -28,6 +28,7 @@ public sealed class SchedulerJobBuilder
     /// <param name="jobType">作业类型</param>
     public SchedulerJobBuilder(string jobId, Type jobType)
     {
+        // 支持触发器类型一样，但参数不一样字典
         _jobTriggersData = new(new RepeatKeysEqualityComparer());
         JobId = jobId;
         JobType = jobType;
@@ -44,13 +45,13 @@ public sealed class SchedulerJobBuilder
     public Type JobType { get; }
 
     /// <summary>
-    /// 添加简单作业触发器
+    /// 添加周期作业触发器
     /// </summary>
     /// <param name="interval">间隔时间（毫秒）</param>
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    public SchedulerJobBuilder AddSimpleTrigger(int interval)
+    public SchedulerJobBuilder AddPeriodTrigger(int interval)
     {
-        _jobTriggersData.TryAdd(typeof(SimpleTrigger), new object[] { interval });
+        _jobTriggersData.TryAdd(typeof(PeriodTrigger), new object[] { interval });
 
         return this;
     }
@@ -93,7 +94,7 @@ public sealed class SchedulerJobBuilder
         // 检查 triggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(jobTriggerType))
         {
-            throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
+            throw new InvalidOperationException("The <jobTriggerType> is not a valid JobTrigger type.");
         }
 
         _jobTriggersData.TryAdd(jobTriggerType, args);

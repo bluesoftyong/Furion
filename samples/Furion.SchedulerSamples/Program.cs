@@ -11,12 +11,12 @@ builder.Services.AddSchedulerJob(builder =>
         builder.AddCronTrigger("* * * * *");
     });
 
-    builder.AddJob<TestSimpleJob>("simple_job", builder =>
+    builder.AddJob<TestPeriodJob>("period_job", builder =>
     {
-        builder.AddSimpleTrigger(10000)
+        builder.AddPeriodTrigger(10000)
                .AddCronTrigger("* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
     });
-    builder.AddJob<TestCronJob2>("cron_job_2", builder => builder.AddSimpleTrigger(3000));
+    builder.AddJob<TestCronJob2>("cron_job_2", builder => builder.AddPeriodTrigger(3000));
 });
 
 builder.Services.AddControllers();

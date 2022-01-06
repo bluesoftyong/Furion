@@ -148,7 +148,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             (var jobId, var jobHandler, var jobDetail, var jobTriggers) = jobThatShouldRun;
 
             // 查询所有符合触发的触发器
-            var triggersThatShouldRun = jobTriggers.Where(t => t.ShouldRun(referenceTime));
+            var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(referenceTime));
 
             // 逐一触发
             foreach (var jobTrigger in triggersThatShouldRun)

@@ -1702,6 +1702,12 @@
             触发次数
             </summary>
         </member>
+        <member name="P:Furion.JobScheduler.JobTrigger.MaxNumberOfRuns">
+            <summary>
+            最大执行次数
+            </summary>
+            <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
+        </member>
         <member name="M:Furion.JobScheduler.JobTrigger.Increment">
             <summary>
             计算当前触发器增量信息
@@ -1719,6 +1725,13 @@
             将触发器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobTrigger.InternalShouldRun(System.DateTime)">
+            <summary>
+            是否符合执行逻辑（内部检查）
+            </summary>
+            <param name="currentTime">当前时间</param>
+            <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="T:Furion.JobScheduler.PeriodTrigger">
             <summary>

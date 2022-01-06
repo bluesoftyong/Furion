@@ -31,7 +31,13 @@ public abstract class JobTrigger
     /// <summary>
     /// 触发次数
     /// </summary>
-    public virtual long NumberOfRuns { get; set; }
+    public virtual long NumberOfRuns { get; set; } = 0;
+
+    /// <summary>
+    /// 最大执行次数
+    /// </summary>
+    /// <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
+    public virtual long MaxNumberOfRuns { get; set; } = -1;
 
     /// <summary>
     /// 计算当前触发器增量信息
@@ -50,4 +56,21 @@ public abstract class JobTrigger
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public abstract new string? ToString();
+
+    /// <summary>
+    /// 是否符合执行逻辑（内部检查）
+    /// </summary>
+    /// <param name="currentTime">当前时间</param>
+    /// <returns><see cref="bool"/> 实例</returns>
+    internal bool InternalShouldRun(DateTime currentTime)
+    {
+        // 最大次数控制
+        if (MaxNumberOfRuns == 0 || (MaxNumberOfRuns != -1 && NumberOfRuns >= MaxNumberOfRuns))
+        {
+            return false;
+        }
+
+        // 调用自定义处理逻辑
+        return ShouldRun(currentTime);
+    }
 }

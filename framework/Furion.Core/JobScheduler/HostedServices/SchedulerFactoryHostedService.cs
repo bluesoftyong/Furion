@@ -94,7 +94,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             // 构建调度作业
             var schedulerJob = schedulerJobBuilder.Build(jobHandler, referenceTime);
 
-            // 逐条包装并添加到 HashSet 集合中
+            // 将调度作业存储起来
             Storer.AddSchedulerJob(schedulerJob);
         }
     }

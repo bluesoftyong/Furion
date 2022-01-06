@@ -19,6 +19,12 @@ public abstract class JobTrigger
     public virtual string? JobTriggerId { get; internal set; }
 
     /// <summary>
+    /// 作业触发器类型完整限定名（含程序集名称）
+    /// </summary>
+    /// <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
+    public string? TriggerTypeWithAssembly { get; internal set; }
+
+    /// <summary>
     /// 作业触发器描述
     /// </summary>
     public virtual string? Description { get; set; }
@@ -43,12 +49,6 @@ public abstract class JobTrigger
     /// </summary>
     /// <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
     public virtual long MaxNumberOfRuns { get; set; } = -1;
-
-    /// <summary>
-    /// 作业触发器类型名（含程序集名）
-    /// </summary>
-    /// <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public string? TriggerTypeWithAssembly { get; internal set; }
 
     /// <summary>
     /// 计算当前触发器增量信息

@@ -39,9 +39,9 @@ public sealed class JobTriggerBuilder
     public string JobTriggerId { get; }
 
     /// <summary>
-    /// 作业触发器类型名（含程序集名）
+    /// 作业触发器类型完整限定名（含程序集名称）
     /// </summary>
-    /// <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
+    /// <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
     public string? TriggerTypeWithAssembly { get; }
 
     /// <summary>
@@ -66,7 +66,7 @@ public sealed class JobTriggerBuilder
     public long MaxNumberOfRuns { get; set; } = -1;
 
     /// <summary>
-    /// 构建作业触发器
+    /// 构建作业触发器对象
     /// </summary>
     /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="JobTrigger"/></returns>
@@ -83,7 +83,7 @@ public sealed class JobTriggerBuilder
             ? Activator.CreateInstance(JobTriggerType)
             : Activator.CreateInstance(JobTriggerType, Args)) as JobTrigger;
 
-        // 初始化作业触发器参数
+        // 初始化作业触发器属性
         jobTrigger!.JobTriggerId = JobTriggerId;
         jobTrigger!.Description = Description;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;

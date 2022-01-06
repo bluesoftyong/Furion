@@ -11,8 +11,4 @@
 	<ItemGroup>
 		<PackageReference Include="System.Text.Json" Version="6.0.1" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="JobScheduler\Wrappers\" />
-	</ItemGroup>
 </Project>

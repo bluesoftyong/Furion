@@ -62,20 +62,19 @@ public sealed class JobDetailBuilder
     public bool WithExecutionLog { get; set; } = false;
 
     /// <summary>
-    /// 构建作业详情
+    /// 构建作业信息对象
     /// </summary>
     /// <returns><see cref="JobDetail"/></returns>
     internal JobDetail Build()
     {
-        // 创建作业详情对象
-        var jobDetail = new JobDetail(JobId);
+        // 创建作业信息对象
+        var jobDetail = new JobDetail(JobId, JobTypeWithAssembly);
 
-        // 初始化作业详情参数
+        // 初始化作业信息属性
         jobDetail!.Description = Description;
         jobDetail!.Status = Status;
         jobDetail!.Mode = Mode;
         jobDetail!.WithExecutionLog = WithExecutionLog;
-        jobDetail!.JobTypeWithAssembly = JobTypeWithAssembly;
 
         return jobDetail;
     }

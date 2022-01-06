@@ -254,7 +254,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private async Task WaitingClosestTrigger(CancellationToken stoppingToken)
     {
         /*
-         * 为了避免程序在未知情况下存在不必要的耗时操作从而导致事件出现偏差
+         * 为了避免程序在未知情况下存在不必要的耗时操作从而导致时间出现偏差
          * 所以这里采用 DateTimeKind.Unspecified 转换当前时间并忽略毫秒部分
          */
         var referenceTime = DateTime.UtcNow;
@@ -283,7 +283,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             && (LastSyncTime == null || (referenceTime - LastSyncTime.Value).TotalSeconds >= MinimumSyncInterval))
         {
             // 存储最近同步时间
-            LastSyncTime = DateTime.UtcNow;
+            LastSyncTime = referenceTime;
 
             // 同步存储器作业数据
             _ = SynchronizationStorer(TimeSpan.FromMilliseconds(syncTimeout), stoppingToken);

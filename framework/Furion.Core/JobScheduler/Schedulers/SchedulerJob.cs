@@ -9,7 +9,7 @@
 namespace Furion.JobScheduler;
 
 /// <summary>
-/// 调度作业
+/// 作业调度器
 /// </summary>
 public sealed class SchedulerJob
 {
@@ -26,16 +26,16 @@ public sealed class SchedulerJob
     /// 解构函数
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <param name="jobHandler">作业</param>
-    /// <param name="jobDetail">作业详细信息</param>
+    /// <param name="job">作业执行程序</param>
+    /// <param name="jobDetail">作业信息对象</param>
     /// <param name="jobTriggers">作业触发器</param>
     internal void Deconstruct(out string jobId
-        , out IJob jobHandler
+        , out IJob job
         , out JobDetail? jobDetail
         , out IList<JobTrigger> jobTriggers)
     {
         jobId = JobId;
-        jobHandler = Job!;
+        job = Job!;
         jobDetail = JobDetail;
         jobTriggers = Triggers!;
     }
@@ -46,17 +46,17 @@ public sealed class SchedulerJob
     internal string JobId { get; }
 
     /// <summary>
-    /// 作业
+    /// 作业执行程序
     /// </summary>
     internal IJob? Job { get; set; }
 
     /// <summary>
-    /// 作业触发器
+    /// 作业触发器集合
     /// </summary>
     internal IList<JobTrigger>? Triggers { get; set; }
 
     /// <summary>
-    /// 作业详细信息
+    /// 作业信息
     /// </summary>
     internal JobDetail? JobDetail { get; set; }
 }

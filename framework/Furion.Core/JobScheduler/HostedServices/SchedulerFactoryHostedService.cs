@@ -147,7 +147,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         foreach (var jobThatShouldRun in jobsThatShouldRun)
         {
             // 解构包装器信息
-            (var jobId, var jobHandler, var jobDetail, var jobTriggers) = jobThatShouldRun;
+            (var jobId, var job, var jobDetail, var jobTriggers) = jobThatShouldRun;
 
             // 查询所有符合触发的触发器
             var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(referenceTime));
@@ -190,11 +190,11 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
                         // 判断是否自定义了执行器
                         if (Executor == default)
                         {
-                            await jobHandler.ExecuteAsync(jobExecutingContext, stoppingToken);
+                            await job.ExecuteAsync(jobExecutingContext, stoppingToken);
                         }
                         else
                         {
-                            await Executor.ExecuteAsync(jobExecutingContext, jobHandler, stoppingToken);
+                            await Executor.ExecuteAsync(jobExecutingContext, job, stoppingToken);
                         }
                     }
                     catch (Exception ex)

@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 namespace Furion.JobScheduler;
 
 /// <summary>
-/// 调度作业构建器
+/// 作业调度器构建器
 /// </summary>
 public sealed class SchedulerJobBuilder
 {
@@ -22,7 +22,7 @@ public sealed class SchedulerJobBuilder
     private readonly ConcurrentDictionary<string, JobTriggerBuilder> _jobTriggerBuilders;
 
     /// <summary>
-    /// 作业详情构建器
+    /// 作业信息构建器
     /// </summary>
     private readonly JobDetailBuilder _jobDetailBuilder;
 
@@ -50,11 +50,11 @@ public sealed class SchedulerJobBuilder
     public Type JobType { get; }
 
     /// <summary>
-    /// 配置作业详情构建器
+    /// 配置作业信息
     /// </summary>
-    /// <param name="configureJobDetailBuilder">作业详情构建器委托</param>
+    /// <param name="configureJobDetailBuilder">作业信息构建器委托</param>
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    public SchedulerJobBuilder WithDetail(Action<JobDetailBuilder> configureJobDetailBuilder)
+    public SchedulerJobBuilder ConfigureDetail(Action<JobDetailBuilder> configureJobDetailBuilder)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(configureJobDetailBuilder);
@@ -120,7 +120,7 @@ public sealed class SchedulerJobBuilder
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
     public SchedulerJobBuilder AddTrigger(string jobTriggerId, Type jobTriggerType, object[] args, Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
     {
-        // 检查 triggerType 类型是否派生自 JobTrigger
+        // 检查 jobTriggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(jobTriggerType))
         {
             throw new InvalidOperationException("The <jobTriggerType> is not a valid JobTrigger type.");
@@ -129,7 +129,7 @@ public sealed class SchedulerJobBuilder
         // 创建作业触发器构建器
         var jobTriggerBuilder = new JobTriggerBuilder(jobTriggerId, jobTriggerType, args);
 
-        // 作业触发器 Id 须唯一
+        // 检查作业触发器唯一性
         if (!_jobTriggerBuilders.TryAdd(jobTriggerId, jobTriggerBuilder))
         {
             throw new InvalidOperationException($"The JobTrigger <{jobTriggerId}> has been registered. Repeated registration is prohibited.");
@@ -142,19 +142,20 @@ public sealed class SchedulerJobBuilder
     }
 
     /// <summary>
-    /// 构建调度作业对象
+    /// 构建作业调度器对象
     /// </summary>
     /// <param name="job">作业对象</param>
     /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="SchedulerJob"/></returns>
     internal SchedulerJob Build(IJob job, DateTime referenceTime)
     {
-        // 构建作业详情
+        // 构建作业信息对象
         var jobDetail = _jobDetailBuilder.Build();
 
-        // 构建作业触发器
+        // 构建作业触发器集合
         var jobTriggers = _jobTriggerBuilders.Values.Select(t => t.Build(referenceTime)).ToList();
 
+        // 创建作业调度器对象
         return new SchedulerJob(JobId)
         {
             Job = job,

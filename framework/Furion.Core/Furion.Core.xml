@@ -1064,7 +1064,7 @@
         </member>
         <member name="T:Furion.JobScheduler.SchedulerJobBuilder">
             <summary>
-            调度作业构建器
+            作业调度器构建器
             </summary>
         </member>
         <member name="F:Furion.JobScheduler.SchedulerJobBuilder._jobTriggerBuilders">
@@ -1074,7 +1074,7 @@
         </member>
         <member name="F:Furion.JobScheduler.SchedulerJobBuilder._jobDetailBuilder">
             <summary>
-            作业详情构建器
+            作业信息构建器
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJobBuilder.#ctor(System.String,System.Type)">
@@ -1094,11 +1094,11 @@
             作业类型
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.WithDetail(System.Action{Furion.JobScheduler.JobDetailBuilder})">
+        <member name="M:Furion.JobScheduler.SchedulerJobBuilder.ConfigureDetail(System.Action{Furion.JobScheduler.JobDetailBuilder})">
             <summary>
-            配置作业详情构建器
+            配置作业信息
             </summary>
-            <param name="configureJobDetailBuilder">作业详情构建器委托</param>
+            <param name="configureJobDetailBuilder">作业信息构建器委托</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJobBuilder"/></returns>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJobBuilder.AddPeriodTrigger(System.String,System.Int32,System.Action{Furion.JobScheduler.JobTriggerBuilder})">
@@ -1142,7 +1142,7 @@
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJobBuilder.Build(Furion.JobScheduler.IJob,System.DateTime)">
             <summary>
-            构建调度作业对象
+            构建作业调度器对象
             </summary>
             <param name="job">作业对象</param>
             <param name="referenceTime">初始引用时间</param>
@@ -1691,7 +1691,7 @@
         </member>
         <member name="T:Furion.JobScheduler.SchedulerJob">
             <summary>
-            调度作业
+            作业调度器
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerJob.#ctor(System.String)">
@@ -1705,8 +1705,8 @@
             解构函数
             </summary>
             <param name="jobId">作业 Id</param>
-            <param name="jobHandler">作业</param>
-            <param name="jobDetail">作业详细信息</param>
+            <param name="job">作业执行程序</param>
+            <param name="jobDetail">作业信息对象</param>
             <param name="jobTriggers">作业触发器</param>
         </member>
         <member name="P:Furion.JobScheduler.SchedulerJob.JobId">
@@ -1716,17 +1716,17 @@
         </member>
         <member name="P:Furion.JobScheduler.SchedulerJob.Job">
             <summary>
-            作业
+            作业执行程序
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.SchedulerJob.Triggers">
             <summary>
-            作业触发器
+            作业触发器集合
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.SchedulerJob.JobDetail">
             <summary>
-            作业详细信息
+            作业信息
             </summary>
         </member>
         <member name="T:Furion.JobScheduler.IJobStorer">

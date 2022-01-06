@@ -32,7 +32,7 @@ public sealed class SchedulerJob
     internal void Deconstruct(out string jobId
         , out IJob jobHandler
         , out JobDetail? jobDetail
-        , out IList<JobTrigger> jobTriggers)
+        , out IEnumerable<JobTrigger> jobTriggers)
     {
         jobId = JobId;
         jobHandler = Job!;
@@ -53,7 +53,7 @@ public sealed class SchedulerJob
     /// <summary>
     /// 作业触发器
     /// </summary>
-    internal IList<JobTrigger>? Triggers { get; set; }
+    internal IEnumerable<JobTrigger>? Triggers { get; set; }
 
     /// <summary>
     /// 作业详细信息

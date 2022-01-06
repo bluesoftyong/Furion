@@ -46,4 +46,10 @@ public sealed class JobDetail
     /// 记录详细日志
     /// </summary>
     public bool WithExecutionLog { get; internal set; } = false;
+
+    /// <summary>
+    /// 作业类型名（含程序集名）
+    /// </summary>
+    /// <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
+    public string? JobTypeWithAssembly { get; internal set; }
 }

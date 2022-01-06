@@ -6,22 +6,49 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Collections.Concurrent;
+
 namespace Furion.JobScheduler;
 
 /// <summary>
-/// 作业存储器
+/// 基于运行时内存作业存储实现
 /// </summary>
-public interface IJobStorer
+internal sealed class RuntimeJobStorer : IJobStorer
 {
+    /// <summary>
+    /// 调度作业
+    /// </summary>
+    private readonly ConcurrentDictionary<string, SchedulerJob> _schedulerJobs;
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public RuntimeJobStorer()
+    {
+        _schedulerJobs = new();
+    }
+
     /// <summary>
     /// 添加调度作业
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
-    void AddSchedulerJob(SchedulerJob schedulerJob);
+    public void AddSchedulerJob(SchedulerJob schedulerJob)
+    {
+        var jobId = schedulerJob.JobId;
+
+        // 作业 Id 须唯一
+        if (!_schedulerJobs.TryAdd(jobId, schedulerJob))
+        {
+            throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
+        }
+    }
 
     /// <summary>
     /// 获取所有调度作业
     /// </summary>
     /// <returns><see cref="ICollection{T}"/></returns>
-    ICollection<SchedulerJob> GetSchedulerJobs();
+    public ICollection<SchedulerJob> GetSchedulerJobs()
+    {
+        return _schedulerJobs.Values;
+    }
 }

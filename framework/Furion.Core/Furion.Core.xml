@@ -1325,11 +1325,17 @@
             服务提供器
             </summary>
         </member>
-        <member name="M:Furion.JobScheduler.SchedulerFactory.#ctor(System.IServiceProvider)">
+        <member name="F:Furion.JobScheduler.SchedulerFactory._jobStorer">
+            <summary>
+            作业存储器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.SchedulerFactory.#ctor(System.IServiceProvider,Furion.JobScheduler.IJobStorer)">
             <summary>
             构造函数
             </summary>
             <param name="serviceProvider">服务提供器</param>
+            <param name="jobStorer">作业存储器</param>
         </member>
         <member name="M:Furion.JobScheduler.SchedulerFactory.AddJob``1(System.String,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
             <summary>
@@ -1368,11 +1374,6 @@
         <member name="F:Furion.JobScheduler.SchedulerFactoryHostedService._logger">
             <summary>
             日志对象
-            </summary>
-        </member>
-        <member name="F:Furion.JobScheduler.SchedulerFactoryHostedService._schedulerJobs">
-            <summary>
-            调度作业集合
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.SchedulerFactoryHostedService.Monitor">
@@ -1603,10 +1604,44 @@
             作业存储器
             </summary>
         </member>
-        <member name="T:Furion.JobScheduler.MemoryJobStorer">
+        <member name="M:Furion.JobScheduler.IJobStorer.AddSchedulerJob(Furion.JobScheduler.SchedulerJob)">
             <summary>
-            基于内存作业存储器（默认实现）
+            添加调度作业
             </summary>
+            <param name="schedulerJob">调度作业对象</param>
+        </member>
+        <member name="M:Furion.JobScheduler.IJobStorer.GetSchedulerJobs">
+            <summary>
+            获取所有调度作业
+            </summary>
+            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
+        </member>
+        <member name="T:Furion.JobScheduler.RuntimeJobStorer">
+            <summary>
+            基于运行时内存作业存储实现
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.RuntimeJobStorer._schedulerJobs">
+            <summary>
+            调度作业
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.RuntimeJobStorer.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.RuntimeJobStorer.AddSchedulerJob(Furion.JobScheduler.SchedulerJob)">
+            <summary>
+            添加调度作业
+            </summary>
+            <param name="schedulerJob">调度作业对象</param>
+        </member>
+        <member name="M:Furion.JobScheduler.RuntimeJobStorer.GetSchedulerJobs">
+            <summary>
+            获取所有调度作业
+            </summary>
+            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.JobScheduler.CronTrigger">
             <summary>

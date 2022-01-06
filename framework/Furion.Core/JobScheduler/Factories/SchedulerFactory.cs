@@ -21,12 +21,20 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
+    /// 作业存储器
+    /// </summary>
+    private readonly IJobStorer _jobStorer;
+
+    /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="serviceProvider">服务提供器</param>
-    public SchedulerFactory(IServiceProvider serviceProvider)
+    /// <param name="jobStorer">作业存储器</param>
+    public SchedulerFactory(IServiceProvider serviceProvider
+        , IJobStorer jobStorer)
     {
         _serviceProvider = serviceProvider;
+        _jobStorer = jobStorer;
     }
 
     /// <summary>
@@ -66,7 +74,10 @@ internal sealed class SchedulerFactory : ISchedulerFactory
 
         // 解析作业实例
         var job = _serviceProvider.GetRequiredService(jobType) as IJob;
-        _ = schedulerJobBuilder.Build(job!);
+        var schedulerJob = schedulerJobBuilder.Build(job!);
+
+        // 存储调度作业
+        _jobStorer.AddSchedulerJob(schedulerJob);
     }
 
     /// <summary>
@@ -87,6 +98,9 @@ internal sealed class SchedulerFactory : ISchedulerFactory
         // 调用委托
         configureSchedulerJobBuilder(schedulerJobBuilder);
 
-        _ = schedulerJobBuilder.Build(job);
+        var schedulerJob = schedulerJobBuilder.Build(job);
+
+        // 存储调度作业
+        _jobStorer.AddSchedulerJob(schedulerJob);
     }
 }

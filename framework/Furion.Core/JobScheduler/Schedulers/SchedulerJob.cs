@@ -11,7 +11,7 @@ namespace Furion.JobScheduler;
 /// <summary>
 /// 调度作业
 /// </summary>
-internal sealed class SchedulerJob
+public sealed class SchedulerJob
 {
     /// <summary>
     /// 构造函数

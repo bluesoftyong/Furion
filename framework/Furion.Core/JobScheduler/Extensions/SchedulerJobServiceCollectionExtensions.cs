@@ -66,7 +66,6 @@ public static class SchedulerJobServiceCollectionExtensions
             return schedulerFactoryHostedService;
         });
 
-
         return services;
     }
 
@@ -80,11 +79,11 @@ public static class SchedulerJobServiceCollectionExtensions
         // 注册作业存储器，采用工厂方式创建
         services.AddSingleton<IJobStorer>(_ =>
         {
-            // 创建默认基于内存的作业存储器
-            return new MemoryJobStorer();
+            // 创建基于运行时内存作业存储实现
+            return new RuntimeJobStorer();
         });
 
-        // 作业作业工厂
+        // 注册作业工厂
         services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
 
         // 注册作业调度器

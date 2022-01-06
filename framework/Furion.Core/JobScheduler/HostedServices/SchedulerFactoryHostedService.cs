@@ -28,11 +28,6 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
     private readonly ILogger<SchedulerFactoryHostedService> _logger;
 
     /// <summary>
-    /// 调度作业集合
-    /// </summary>
-    private readonly HashSet<SchedulerJob> _schedulerJobs = new();
-
-    /// <summary>
     /// 作业监视器
     /// </summary>
     private IJobMonitor? Monitor { get; }
@@ -98,7 +93,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
             var schedulerJob = schedulerJobBuilder.Build(jobHandler);
 
             // 逐条包装并添加到 HashSet 集合中
-            _schedulerJobs.Add(schedulerJob);
+            Storer.AddSchedulerJob(schedulerJob);
         }
     }
 
@@ -141,7 +136,7 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail));
+        var jobsThatShouldRun = Storer.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -261,8 +256,8 @@ internal sealed class SchedulerFactoryHostedService : BackgroundService
         var unspecifiedTime = new DateTime(referenceTime.Year, referenceTime.Month, referenceTime.Day, referenceTime.Hour, referenceTime.Minute, referenceTime.Second);
 
         // 查找下一次符合触发时机的所有作业触发器
-        var closestJobTriggers = _schedulerJobs.Where(u => IsEffectiveJob(u.JobDetail))
-                                                                  .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
+        var closestJobTriggers = Storer.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail))
+                                                           .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间
         var closestNextRunTime = closestJobTriggers.Any()

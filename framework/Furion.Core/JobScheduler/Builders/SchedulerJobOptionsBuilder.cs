@@ -154,7 +154,6 @@ public sealed class SchedulerJobOptionsBuilder
         // 注册作业
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
-            services.AddSingleton(schedulerJobBuilder.JobType);
             services.AddSingleton(typeof(IJob), schedulerJobBuilder.JobType);
         }
 

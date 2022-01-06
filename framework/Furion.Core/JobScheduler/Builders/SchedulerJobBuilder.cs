@@ -51,7 +51,7 @@ public sealed class SchedulerJobBuilder
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
     public SchedulerJobBuilder AddPeriodTrigger(int interval)
     {
-        _jobTriggersData.TryAdd(typeof(PeriodTrigger), new object[] { interval });
+        AddTrigger<PeriodTrigger>(interval);
 
         return this;
     }
@@ -64,7 +64,7 @@ public sealed class SchedulerJobBuilder
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
     public SchedulerJobBuilder AddCronTrigger(string schedule, CronStringFormat format = CronStringFormat.Default)
     {
-        _jobTriggersData.TryAdd(typeof(CronTrigger), new object[] { schedule, format });
+        AddTrigger<CronTrigger>(schedule, format);
 
         return this;
     }
@@ -78,7 +78,7 @@ public sealed class SchedulerJobBuilder
     public SchedulerJobBuilder AddTrigger<TJobTrigger>(params object[] args)
         where TJobTrigger : JobTrigger
     {
-        _jobTriggersData.TryAdd(typeof(TJobTrigger), args);
+        AddTrigger(typeof(TJobTrigger), args);
 
         return this;
     }

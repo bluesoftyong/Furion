@@ -11,7 +11,7 @@ namespace Furion.JobScheduler;
 /// <summary>
 /// 作业执行方式
 /// </summary>
-public enum JobMode
+public enum JobMode : int
 {
     /// <summary>
     /// 并行执行

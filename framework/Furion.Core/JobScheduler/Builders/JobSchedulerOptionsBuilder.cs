@@ -13,12 +13,12 @@ using System.Collections.Concurrent;
 namespace Furion.JobScheduler;
 
 /// <summary>
-/// 调度作业配置选项构建器
+/// JobScheduler 模块配置选项构建器
 /// </summary>
-public sealed class SchedulerJobOptionsBuilder
+public sealed class JobSchedulerOptionsBuilder
 {
     /// <summary>
-    /// 调度作业构建器集合
+    /// 作业调度器集合
     /// </summary>
     private readonly ConcurrentDictionary<string, SchedulerJobBuilder> _schedulerJobBuilders;
 
@@ -40,7 +40,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    public SchedulerJobOptionsBuilder()
+    public JobSchedulerOptionsBuilder()
     {
         _schedulerJobBuilders = new();
     }
@@ -66,8 +66,8 @@ public sealed class SchedulerJobOptionsBuilder
     /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
     /// <param name="jobId">作业 Id</param>
     /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
-    public SchedulerJobOptionsBuilder AddJob<TJob>(string jobId, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
+    /// <returns><see cref="JobSchedulerOptionsBuilder"/></returns>
+    public JobSchedulerOptionsBuilder AddJob<TJob>(string jobId, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
         where TJob : class, IJob
     {
         return AddJob(jobId, typeof(TJob), configureSchedulerJobBuilder);
@@ -79,9 +79,9 @@ public sealed class SchedulerJobOptionsBuilder
     /// <param name="jobId">作业 Id</param>
     /// <param name="jobType">作业类型</param>
     /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/></returns>
+    /// <returns><see cref="JobSchedulerOptionsBuilder"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public SchedulerJobOptionsBuilder AddJob(string jobId, Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
+    public JobSchedulerOptionsBuilder AddJob(string jobId, Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
@@ -92,16 +92,16 @@ public sealed class SchedulerJobOptionsBuilder
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
         }
 
-        // 创建调度作业对象
+        // 创建作业调度器对象
         var schedulerJobBuilder = new SchedulerJobBuilder(jobId, jobType);
 
-        // 作业 Id 须唯一
+        // 检查作业 Id 唯一性
         if (!_schedulerJobBuilders.TryAdd(jobId, schedulerJobBuilder))
         {
             throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
 
-        // 调用委托
+        // 外部调用
         configureSchedulerJobBuilder(schedulerJobBuilder);
 
         return this;
@@ -111,8 +111,8 @@ public sealed class SchedulerJobOptionsBuilder
     /// 替换作业存储器
     /// </summary>
     /// <param name="implementationFactory">自定义作业存储器工厂</param>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
+    /// <returns><see cref="JobSchedulerOptionsBuilder"/> 实例</returns>
+    public JobSchedulerOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
     {
         _jobStorerImplementationFactory = implementationFactory;
         return this;
@@ -122,8 +122,8 @@ public sealed class SchedulerJobOptionsBuilder
     /// 注册作业监视器
     /// </summary>
     /// <typeparam name="TJobMonitor">实现自 <see cref="IJobMonitor"/></typeparam>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddMonitor<TJobMonitor>()
+    /// <returns><see cref="JobSchedulerOptionsBuilder"/> 实例</returns>
+    public JobSchedulerOptionsBuilder AddMonitor<TJobMonitor>()
         where TJobMonitor : class, IJobMonitor
     {
         _jobMonitor = typeof(TJobMonitor);
@@ -134,8 +134,8 @@ public sealed class SchedulerJobOptionsBuilder
     /// 注册作业执行器
     /// </summary>
     /// <typeparam name="TJobExecutor">实现自 <see cref="IJobExecutor"/></typeparam>
-    /// <returns><see cref="SchedulerJobOptionsBuilder"/> 实例</returns>
-    public SchedulerJobOptionsBuilder AddExecutor<TJobExecutor>()
+    /// <returns><see cref="JobSchedulerOptionsBuilder"/> 实例</returns>
+    public JobSchedulerOptionsBuilder AddExecutor<TJobExecutor>()
         where TJobExecutor : class, IJobExecutor
     {
         _jobExecutor = typeof(TJobExecutor);
@@ -146,7 +146,7 @@ public sealed class SchedulerJobOptionsBuilder
     /// 构建调度作业配置选项
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <returns>调度作业构建器</returns>
+    /// <returns>作业调度器构建器集合</returns>
     internal IEnumerable<SchedulerJobBuilder> Build(IServiceCollection services)
     {
         var schedulerJobBuilders = _schedulerJobBuilders.Values;

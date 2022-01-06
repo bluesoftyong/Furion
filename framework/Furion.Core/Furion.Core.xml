@@ -409,7 +409,7 @@
         </member>
         <member name="T:Furion.EventBus.EventBusOptionsBuilder">
             <summary>
-            事件总线配置选项构建器
+            EventBus 模块配置选项构建器
             </summary>
         </member>
         <member name="F:Furion.EventBus.EventBusOptionsBuilder._eventSubscribers">
@@ -1010,6 +1010,98 @@
             </summary>
             <returns><see cref="T:Furion.JobScheduler.JobDetail"/></returns>
         </member>
+        <member name="T:Furion.JobScheduler.JobSchedulerOptionsBuilder">
+            <summary>
+            JobScheduler 模块配置选项构建器
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobSchedulerOptionsBuilder._schedulerJobBuilders">
+            <summary>
+            作业调度器集合
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobSchedulerOptionsBuilder._jobStorerImplementationFactory">
+            <summary>
+            作业存储器实现工厂
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobSchedulerOptionsBuilder._jobMonitor">
+            <summary>
+            作业监视器
+            </summary>
+        </member>
+        <member name="F:Furion.JobScheduler.JobSchedulerOptionsBuilder._jobExecutor">
+            <summary>
+            作业执行器
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobSchedulerOptionsBuilder.TimeBeforeSync">
+            <summary>
+            设置调度器休眠后再度被激活前多少ms完成耗时操作
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobSchedulerOptionsBuilder.MinimumSyncInterval">
+            <summary>
+            最小存储器同步间隔（秒）
+            </summary>
+        </member>
+        <member name="P:Furion.JobScheduler.JobSchedulerOptionsBuilder.UnobservedTaskExceptionHandler">
+            <summary>
+            未察觉任务异常处理程序
+            </summary>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.AddJob``1(System.String,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
+            <summary>
+            注册作业
+            </summary>
+            <typeparam name="TJob"><see cref="T:Furion.JobScheduler.IJob"/> 实现类</typeparam>
+            <param name="jobId">作业 Id</param>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <returns><see cref="T:Furion.JobScheduler.JobSchedulerOptionsBuilder"/></returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.AddJob(System.String,System.Type,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
+            <summary>
+            注册作业
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="jobType">作业类型</param>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <returns><see cref="T:Furion.JobScheduler.JobSchedulerOptionsBuilder"/></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.JobScheduler.IJobStorer})">
+            <summary>
+            替换作业存储器
+            </summary>
+            <param name="implementationFactory">自定义作业存储器工厂</param>
+            <returns><see cref="T:Furion.JobScheduler.JobSchedulerOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.AddMonitor``1">
+            <summary>
+            注册作业监视器
+            </summary>
+            <typeparam name="TJobMonitor">实现自 <see cref="T:Furion.JobScheduler.IJobMonitor"/></typeparam>
+            <returns><see cref="T:Furion.JobScheduler.JobSchedulerOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.AddExecutor``1">
+            <summary>
+            注册作业执行器
+            </summary>
+            <typeparam name="TJobExecutor">实现自 <see cref="T:Furion.JobScheduler.IJobExecutor"/></typeparam>
+            <returns><see cref="T:Furion.JobScheduler.JobSchedulerOptionsBuilder"/> 实例</returns>
+        </member>
+        <member name="M:Furion.JobScheduler.JobSchedulerOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            构建调度作业配置选项
+            </summary>
+            <param name="services">服务集合对象</param>
+            <returns>作业调度器构建器集合</returns>
+        </member>
         <member name="T:Furion.JobScheduler.JobTriggerBuilder">
             <summary>
             作业触发器构建器
@@ -1147,98 +1239,6 @@
             <param name="job">作业对象</param>
             <param name="referenceTime">初始引用时间</param>
             <returns><see cref="T:Furion.JobScheduler.SchedulerJob"/></returns>
-        </member>
-        <member name="T:Furion.JobScheduler.SchedulerJobOptionsBuilder">
-            <summary>
-            调度作业配置选项构建器
-            </summary>
-        </member>
-        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._schedulerJobBuilders">
-            <summary>
-            调度作业构建器集合
-            </summary>
-        </member>
-        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobStorerImplementationFactory">
-            <summary>
-            作业存储器实现工厂
-            </summary>
-        </member>
-        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobMonitor">
-            <summary>
-            作业监视器
-            </summary>
-        </member>
-        <member name="F:Furion.JobScheduler.SchedulerJobOptionsBuilder._jobExecutor">
-            <summary>
-            作业执行器
-            </summary>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.#ctor">
-            <summary>
-            构造函数
-            </summary>
-        </member>
-        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.TimeBeforeSync">
-            <summary>
-            设置调度器休眠后再度被激活前多少ms完成耗时操作
-            </summary>
-        </member>
-        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.MinimumSyncInterval">
-            <summary>
-            最小存储器同步间隔（秒）
-            </summary>
-        </member>
-        <member name="P:Furion.JobScheduler.SchedulerJobOptionsBuilder.UnobservedTaskExceptionHandler">
-            <summary>
-            未察觉任务异常处理程序
-            </summary>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddJob``1(System.String,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
-            <summary>
-            注册作业
-            </summary>
-            <typeparam name="TJob"><see cref="T:Furion.JobScheduler.IJob"/> 实现类</typeparam>
-            <param name="jobId">作业 Id</param>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/></returns>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddJob(System.String,System.Type,System.Action{Furion.JobScheduler.SchedulerJobBuilder})">
-            <summary>
-            注册作业
-            </summary>
-            <param name="jobId">作业 Id</param>
-            <param name="jobType">作业类型</param>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/></returns>
-            <exception cref="T:System.InvalidOperationException"></exception>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.JobScheduler.IJobStorer})">
-            <summary>
-            替换作业存储器
-            </summary>
-            <param name="implementationFactory">自定义作业存储器工厂</param>
-            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddMonitor``1">
-            <summary>
-            注册作业监视器
-            </summary>
-            <typeparam name="TJobMonitor">实现自 <see cref="T:Furion.JobScheduler.IJobMonitor"/></typeparam>
-            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.AddExecutor``1">
-            <summary>
-            注册作业执行器
-            </summary>
-            <typeparam name="TJobExecutor">实现自 <see cref="T:Furion.JobScheduler.IJobExecutor"/></typeparam>
-            <returns><see cref="T:Furion.JobScheduler.SchedulerJobOptionsBuilder"/> 实例</returns>
-        </member>
-        <member name="M:Furion.JobScheduler.SchedulerJobOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-            <summary>
-            构建调度作业配置选项
-            </summary>
-            <param name="services">服务集合对象</param>
-            <returns>调度作业构建器</returns>
         </member>
         <member name="T:Furion.JobScheduler.JobMode">
             <summary>
@@ -3610,23 +3610,23 @@
         </member>
         <member name="T:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions">
             <summary>
-            SchedulerJob 模块服务拓展
+            JobScheduler 模块服务拓展
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Furion.JobScheduler.SchedulerJobOptionsBuilder})">
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddJobScheduler(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Furion.JobScheduler.JobSchedulerOptionsBuilder})">
             <summary>
-            添加 SchedulerJob 模块注册
+            添加 JobScheduler 模块注册
             </summary>
             <param name="services">服务集合对象</param>
             <param name="configureOptionsBuilder">调度作业配置选项构建器委托</param>
             <returns>服务集合实例</returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddSchedulerJob(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.JobScheduler.SchedulerJobOptionsBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddJobScheduler(Microsoft.Extensions.DependencyInjection.IServiceCollection,Furion.JobScheduler.JobSchedulerOptionsBuilder)">
             <summary>
-            添加 SchedulerJob 模块注册
+            添加 JobScheduler 模块注册
             </summary>
             <param name="services">服务集合对象</param>
-            <param name="schedulerJobOptionsBuilder">调度作业配置选项构建器</param>
+            <param name="jobSchedulerOptionsBuilder">调度作业配置选项构建器</param>
             <returns>服务集合实例</returns>
         </member>
         <member name="M:Microsoft.Extensions.DependencyInjection.SchedulerJobServiceCollectionExtensions.AddInternalService(Microsoft.Extensions.DependencyInjection.IServiceCollection)">

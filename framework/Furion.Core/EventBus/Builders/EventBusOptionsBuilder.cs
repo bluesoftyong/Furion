@@ -13,7 +13,7 @@ using System.Reflection;
 namespace Furion.EventBus;
 
 /// <summary>
-/// 事件总线配置选项构建器
+/// EventBus 模块配置选项构建器
 /// </summary>
 public sealed class EventBusOptionsBuilder
 {

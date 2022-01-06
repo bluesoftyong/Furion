@@ -11,41 +11,41 @@ using Furion.JobScheduler;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// SchedulerJob 模块服务拓展
+/// JobScheduler 模块服务拓展
 /// </summary>
 public static class SchedulerJobServiceCollectionExtensions
 {
     /// <summary>
-    /// 添加 SchedulerJob 模块注册
+    /// 添加 JobScheduler 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <param name="configureOptionsBuilder">调度作业配置选项构建器委托</param>
     /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddSchedulerJob(this IServiceCollection services, Action<SchedulerJobOptionsBuilder> configureOptionsBuilder)
+    public static IServiceCollection AddJobScheduler(this IServiceCollection services, Action<JobSchedulerOptionsBuilder> configureOptionsBuilder)
     {
         // 创建初始调度作业配置选项构建器
-        var schedulerJobOptionsBuilder = new SchedulerJobOptionsBuilder();
-        configureOptionsBuilder.Invoke(schedulerJobOptionsBuilder);
+        var jobSchedulerOptionsBuilder = new JobSchedulerOptionsBuilder();
+        configureOptionsBuilder.Invoke(jobSchedulerOptionsBuilder);
 
-        return services.AddSchedulerJob(schedulerJobOptionsBuilder);
+        return services.AddJobScheduler(jobSchedulerOptionsBuilder);
     }
 
     /// <summary>
-    /// 添加 SchedulerJob 模块注册
+    /// 添加 JobScheduler 模块注册
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <param name="schedulerJobOptionsBuilder">调度作业配置选项构建器</param>
+    /// <param name="jobSchedulerOptionsBuilder">调度作业配置选项构建器</param>
     /// <returns>服务集合实例</returns>
-    public static IServiceCollection AddSchedulerJob(this IServiceCollection services, SchedulerJobOptionsBuilder? schedulerJobOptionsBuilder = default)
+    public static IServiceCollection AddJobScheduler(this IServiceCollection services, JobSchedulerOptionsBuilder? jobSchedulerOptionsBuilder = default)
     {
         // 初始化调度作业配置项
-        schedulerJobOptionsBuilder ??= new SchedulerJobOptionsBuilder();
+        jobSchedulerOptionsBuilder ??= new JobSchedulerOptionsBuilder();
 
         // 注册内部服务
         services.AddInternalService();
 
-        // 构建调度作业服务
-        var schedulerJobBuilders = schedulerJobOptionsBuilder.Build(services);
+        // 构建作业调度器集合
+        var schedulerJobBuilders = jobSchedulerOptionsBuilder.Build(services);
 
         // 通过工厂模式创建
         services.AddHostedService(serviceProvider =>
@@ -53,11 +53,11 @@ public static class SchedulerJobServiceCollectionExtensions
             // 创建调度器工厂后台服务对象
             var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<SchedulerFactoryHostedService>(serviceProvider
                 , schedulerJobBuilders
-                , schedulerJobOptionsBuilder.TimeBeforeSync
-                , schedulerJobOptionsBuilder.MinimumSyncInterval);
+                , jobSchedulerOptionsBuilder.TimeBeforeSync
+                , jobSchedulerOptionsBuilder.MinimumSyncInterval);
 
             // 订阅未察觉任务异常事件
-            var unobservedTaskExceptionHandler = schedulerJobOptionsBuilder.UnobservedTaskExceptionHandler;
+            var unobservedTaskExceptionHandler = jobSchedulerOptionsBuilder.UnobservedTaskExceptionHandler;
             if (unobservedTaskExceptionHandler != default)
             {
                 schedulerFactoryHostedService.UnobservedTaskException += unobservedTaskExceptionHandler;

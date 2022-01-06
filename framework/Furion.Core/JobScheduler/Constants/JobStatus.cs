@@ -11,7 +11,7 @@ namespace Furion.JobScheduler;
 /// <summary>
 /// 作业状态
 /// </summary>
-public enum JobStatus
+public enum JobStatus : int
 {
     /// <summary>
     /// 未开始或取消

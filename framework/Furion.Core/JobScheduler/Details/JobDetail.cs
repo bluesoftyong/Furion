@@ -9,7 +9,7 @@
 namespace Furion.JobScheduler;
 
 /// <summary>
-/// 作业详细信息
+/// 作业信息
 /// </summary>
 public sealed class JobDetail
 {
@@ -17,7 +17,7 @@ public sealed class JobDetail
     /// 构造函数
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    public JobDetail(string jobId)
+    internal JobDetail(string jobId)
     {
         JobId = jobId;
     }
@@ -28,7 +28,7 @@ public sealed class JobDetail
     public string JobId { get; }
 
     /// <summary>
-    /// 作业描述
+    /// 作业描述信息
     /// </summary>
     public string? Description { get; internal set; }
 
@@ -43,13 +43,13 @@ public sealed class JobDetail
     public JobMode Mode { get; internal set; } = JobMode.Parallel;
 
     /// <summary>
-    /// 记录详细日志
+    /// 是否打印详细执行日志
     /// </summary>
     public bool WithExecutionLog { get; internal set; } = false;
 
     /// <summary>
-    /// 作业类型名（含程序集名）
+    /// 作业类型完整限定名（含程序集名称）
     /// </summary>
-    /// <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
+    /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
     public string? JobTypeWithAssembly { get; internal set; }
 }

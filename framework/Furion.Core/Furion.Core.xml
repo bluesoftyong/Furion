@@ -963,7 +963,7 @@
         </member>
         <member name="T:Furion.JobScheduler.JobDetailBuilder">
             <summary>
-            作业详情构建器
+            作业信息构建器
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.JobDetailBuilder.#ctor(System.String,System.Type)">
@@ -980,13 +980,13 @@
         </member>
         <member name="P:Furion.JobScheduler.JobDetailBuilder.JobTypeWithAssembly">
             <summary>
-            作业类型名（含程序集名）
+            作业类型完整限定名（含程序集名称）
             </summary>
-            <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
+            <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
         </member>
         <member name="P:Furion.JobScheduler.JobDetailBuilder.Description">
             <summary>
-            作业描述
+            作业描述信息
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.JobDetailBuilder.Status">
@@ -1001,7 +1001,7 @@
         </member>
         <member name="P:Furion.JobScheduler.JobDetailBuilder.WithExecutionLog">
             <summary>
-            记录详细日志
+            是否打印详细执行日志
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.JobDetailBuilder.Build">
@@ -1361,7 +1361,7 @@
         </member>
         <member name="T:Furion.JobScheduler.JobDetail">
             <summary>
-            作业详细信息
+            作业信息
             </summary>
         </member>
         <member name="M:Furion.JobScheduler.JobDetail.#ctor(System.String)">
@@ -1377,7 +1377,7 @@
         </member>
         <member name="P:Furion.JobScheduler.JobDetail.Description">
             <summary>
-            作业描述
+            作业描述信息
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.JobDetail.Status">
@@ -1392,14 +1392,14 @@
         </member>
         <member name="P:Furion.JobScheduler.JobDetail.WithExecutionLog">
             <summary>
-            记录详细日志
+            是否打印详细执行日志
             </summary>
         </member>
         <member name="P:Furion.JobScheduler.JobDetail.JobTypeWithAssembly">
             <summary>
-            作业类型名（含程序集名）
+            作业类型完整限定名（含程序集名称）
             </summary>
-            <remarks>格式：程序集名;命名空间.类型名，如：Furion;Furion.Jobs.MyJob</remarks>
+            <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
         </member>
         <member name="T:Furion.JobScheduler.IJobExecutor">
             <summary>

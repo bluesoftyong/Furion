@@ -193,6 +193,9 @@ internal sealed class ScheduleHostedService : BackgroundService
                     }
                     catch (Exception ex)
                     {
+                        // 递增错误次数
+                        jobTrigger.IncrementErrors();
+
                         // 输出异常日志
                         _logger.LogError(ex, LogTemplateHelpers.JobExecutionFailedTemplate, jobId, ex.Message);
 
@@ -210,9 +213,6 @@ internal sealed class ScheduleHostedService : BackgroundService
                     }
                     finally
                     {
-                        // 递增错误次数
-                        jobTrigger.IncrementErrors();
-
                         // 当前时间
                         var executedTime = DateTime.UtcNow;
 

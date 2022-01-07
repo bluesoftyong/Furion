@@ -77,9 +77,9 @@ public abstract class JobTrigger
     public string? JobId { get; internal set; }
 
     /// <summary>
-    /// 启动时执行一次
+    /// 是否加入调度计划时自执行一次
     /// </summary>
-    public bool ExecuteOnStart { get; internal set; } = false;
+    public bool ExecuteOnAdded { get; internal set; } = false;
 
     /// <summary>
     /// 计算当前触发器增量信息

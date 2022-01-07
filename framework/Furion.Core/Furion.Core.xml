@@ -1460,9 +1460,9 @@
             </summary>
             <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
         </member>
-        <member name="P:Furion.Schedule.JobTriggerBuilder.ExecuteOnStart">
+        <member name="P:Furion.Schedule.JobTriggerBuilder.ExecuteOnAdded">
             <summary>
-            启动时执行一次
+            是否加入调度计划时自执行一次
             </summary>
         </member>
         <member name="M:Furion.Schedule.JobTriggerBuilder.WithIdentity(System.String)">
@@ -2312,9 +2312,9 @@
             作业 Id
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobTrigger.ExecuteOnStart">
+        <member name="P:Furion.Schedule.JobTrigger.ExecuteOnAdded">
             <summary>
-            启动时执行一次
+            是否加入调度计划时自执行一次
             </summary>
         </member>
         <member name="M:Furion.Schedule.JobTrigger.Increment">

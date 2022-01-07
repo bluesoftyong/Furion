@@ -6,6 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Text.Json;
+
 namespace Furion.Schedule;
 
 /// <summary>
@@ -16,43 +18,26 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobTriggerId">作业触发器 Id</param>
-    /// <param name="jobTriggerType">作业触发器类型</param>
-    /// <param name="args">作业触发器构造函数参数</param>
-    internal JobTriggerBuilder(string jobTriggerId, Type jobTriggerType, params object[] args)
+    /// <param name="triggerType">作业触发器类型</param>
+    internal JobTriggerBuilder(Type triggerType)
     {
-        // 空检查
-        if (string.IsNullOrWhiteSpace(jobTriggerId))
-        {
-            throw new ArgumentNullException(nameof(jobTriggerId));
-        }
-
-        JobTriggerId = jobTriggerId;
-        JobTriggerType = jobTriggerType;
-        Args = args;
-        TriggerTypeWithAssembly = $"{jobTriggerType.Assembly.GetName().Name};{jobTriggerType.FullName}";
+        TriggerType = triggerType;
     }
 
     /// <summary>
     /// 作业触发器 Id
     /// </summary>
-    public string JobTriggerId { get; }
-
-    /// <summary>
-    /// 作业触发器类型完整限定名（含程序集名称）
-    /// </summary>
-    /// <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
-    public string? TriggerTypeWithAssembly { get; }
+    public string? TriggerId { get; private set; }
 
     /// <summary>
     /// 作业触发器
     /// </summary>
-    public Type JobTriggerType { get; }
+    public Type TriggerType { get; }
 
     /// <summary>
     /// 作业触发器构造函数参数
     /// </summary>
-    public object[] Args { get; }
+    public object?[]? Args { get; private set; }
 
     /// <summary>
     /// 作业触发器描述
@@ -66,6 +51,30 @@ public sealed class JobTriggerBuilder
     public long MaxNumberOfRuns { get; set; } = -1;
 
     /// <summary>
+    /// 配置作业触发器 Id
+    /// </summary>
+    /// <param name="triggerId">作业触发器 Id</param>
+    public void WithIdentity(string triggerId)
+    {
+        // 空检查
+        if (string.IsNullOrWhiteSpace(triggerId))
+        {
+            throw new ArgumentNullException(nameof(triggerId));
+        }
+
+        TriggerId = triggerId;
+    }
+
+    /// <summary>
+    /// 添加作业触发器参数
+    /// </summary>
+    /// <param name="args">作业触发器构造函数参数</param>
+    public void WithArgs(params object?[]? args)
+    {
+        Args = args;
+    }
+
+    /// <summary>
     /// 构建作业触发器对象
     /// </summary>
     /// <param name="jobId">作业 Id</param>
@@ -74,23 +83,26 @@ public sealed class JobTriggerBuilder
     internal JobTrigger Build(string jobId, DateTime referenceTime)
     {
         // 检查 jobTriggerType 类型是否派生自 JobTrigger
-        if (!typeof(JobTrigger).IsAssignableFrom(JobTriggerType))
+        if (!typeof(JobTrigger).IsAssignableFrom(TriggerType))
         {
-            throw new InvalidOperationException("The <jobTriggerType> is not a valid JobTrigger type.");
+            throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
         }
 
+        var withArgs = !(Args == null || Args.Length == 0);
+
         // 反射创建作业触发器
-        var jobTrigger = (Args == null || Args.Length == 0
-            ? Activator.CreateInstance(JobTriggerType)
-            : Activator.CreateInstance(JobTriggerType, Args)) as JobTrigger;
+        var jobTrigger = (!withArgs
+            ? Activator.CreateInstance(TriggerType)
+            : Activator.CreateInstance(TriggerType, Args)) as JobTrigger;
 
         // 初始化作业触发器属性
-        jobTrigger!.JobTriggerId = JobTriggerId;
-        jobTrigger!.JobId = jobId;
+        jobTrigger!.TriggerId = string.IsNullOrWhiteSpace(TriggerId) ? $"{jobId}_trigger_{Guid.NewGuid():N}" : TriggerId;
+        jobTrigger!.TriggerType = $"{TriggerType.Assembly.GetName().Name};{TriggerType.FullName}";
+        jobTrigger!.Args = withArgs ? JsonSerializer.Serialize(Args) : default;
         jobTrigger!.Description = Description;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;
         jobTrigger!.NextRunTime = referenceTime;
-        jobTrigger!.TriggerTypeWithAssembly = TriggerTypeWithAssembly;
+        jobTrigger!.JobId = jobId;
 
         return jobTrigger!;
     }

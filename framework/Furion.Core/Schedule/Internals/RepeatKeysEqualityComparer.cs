@@ -6,25 +6,33 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Furion.Schedule;
 
 /// <summary>
-/// 调度工厂依赖接口
+/// 支持重复 Key 的字典集合比较器
 /// </summary>
-public interface ISchedulerFactory
+internal sealed class StringRepeatKeysEqualityComparer : IEqualityComparer<string>
 {
     /// <summary>
-    /// 动态添加作业
+    /// 实现相等逻辑判断
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-        where TJob : class, IJob;
+    /// <param name="x">x</param>
+    /// <param name="y">y</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool Equals(string? x, string? y)
+    {
+        return x != y;
+    }
 
     /// <summary>
-    /// 动态添加作业
+    /// 获取对象 HashCode
     /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder);
+    /// <param name="obj">对象</param>
+    /// <returns><see cref="int"/></returns>
+    public int GetHashCode([DisallowNull] string obj)
+    {
+        return obj.GetHashCode();
+    }
 }

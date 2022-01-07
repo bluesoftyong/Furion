@@ -16,30 +16,22 @@ public sealed class JobDetailBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
     /// <param name="jobType">作业类型</param>
-    internal JobDetailBuilder(string jobId, Type jobType)
+    internal JobDetailBuilder(Type jobType)
     {
-        // 空检查
-        if (string.IsNullOrWhiteSpace(jobId))
-        {
-            throw new ArgumentNullException(nameof(jobId));
-        }
-
-        JobId = jobId;
-        JobType = $"{jobType.Assembly.GetName().Name};{jobType.FullName}";
+        JobType = jobType;
     }
-
-    /// <summary>
-    /// 作业 Id
-    /// </summary>
-    public string JobId { get; }
 
     /// <summary>
     /// 作业类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public string JobType { get; }
+    public Type JobType { get; }
+
+    /// <summary>
+    /// 作业 Id
+    /// </summary>
+    public string? JobId { get; private set; }
 
     /// <summary>
     /// 作业描述信息
@@ -62,15 +54,32 @@ public sealed class JobDetailBuilder
     public bool WithExecutionLog { get; set; } = false;
 
     /// <summary>
+    /// 配置作业 Id
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    public void WithIdentity(string jobId)
+    {
+        // 空检查
+        if (string.IsNullOrWhiteSpace(jobId))
+        {
+            throw new ArgumentNullException(nameof(jobId));
+        }
+
+        JobId = jobId;
+    }
+
+    /// <summary>
     /// 构建作业信息对象
     /// </summary>
     /// <returns><see cref="JobDetail"/></returns>
     internal JobDetail Build()
     {
         // 创建作业信息对象
-        var jobDetail = new JobDetail(JobId, JobType);
+        var jobDetail = new JobDetail();
 
         // 初始化作业信息属性
+        jobDetail!.JobId = string.IsNullOrWhiteSpace(JobId) ? $"job_{Guid.NewGuid():N}" : JobId; ;
+        jobDetail!.JobType = $"{JobType.Assembly.GetName().Name};{JobType.FullName}";
         jobDetail!.Description = Description;
         jobDetail!.Status = StartMode == JobStartMode.Now ? JobStatus.Normal : JobStatus.None;
         jobDetail!.StartMode = StartMode;

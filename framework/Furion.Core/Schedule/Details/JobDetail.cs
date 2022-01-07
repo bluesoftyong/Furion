@@ -14,26 +14,15 @@ namespace Furion.Schedule;
 public sealed class JobDetail
 {
     /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    /// <param name="jobType">作业类型完整限定名（含程序集名称）</param>
-    internal JobDetail(string jobId, string jobType)
-    {
-        JobId = jobId;
-        JobType = jobType;
-    }
-
-    /// <summary>
     /// 作业 Id
     /// </summary>
-    public string JobId { get; }
+    public string? JobId { get; internal set; }
 
     /// <summary>
     /// 作业类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public string JobType { get; }
+    public string? JobType { get; internal set; }
 
     /// <summary>
     /// 作业描述信息

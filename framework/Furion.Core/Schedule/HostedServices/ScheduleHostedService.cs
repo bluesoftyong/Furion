@@ -28,6 +28,11 @@ internal sealed class ScheduleHostedService : BackgroundService
     private readonly ILogger<ScheduleHostedService> _logger;
 
     /// <summary>
+    /// 服务提供器
+    /// </summary>
+    private readonly IServiceProvider _serviceProvider;
+
+    /// <summary>
     /// 作业监视器
     /// </summary>
     private IJobMonitor? Monitor { get; }
@@ -62,20 +67,19 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
-    /// <param name="jobs">作业集合</param>
     /// <param name="storer">作业存储器</param>
     /// <param name="schedulerJobBuilders">调度作业构建器集合</param>
     /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
     /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
-        , IEnumerable<IJob> jobs
         , IJobStorer storer
         , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders
         , int timeBeforeSync
         , int minimumSyncInterval)
     {
         _logger = logger;
+        _serviceProvider = serviceProvider;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
         Storer = storer;
@@ -87,15 +91,8 @@ internal sealed class ScheduleHostedService : BackgroundService
         // 逐条对调度作业构建器进行构建
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
-            // 查询作业处理程序实例
-            var jobHandler = jobs.SingleOrDefault(j => j.GetType() == schedulerJobBuilder.JobType);
-            if (jobHandler == null) continue;
-
-            // 构建调度作业
-            var schedulerJob = schedulerJobBuilder.Build(jobHandler, referenceTime);
-
             // 将调度作业存储起来
-            Storer.AddSchedulerJob(schedulerJob);
+            Storer.AddSchedulerJob(schedulerJobBuilder.Build(referenceTime));
         }
     }
 
@@ -147,7 +144,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         foreach (var jobThatShouldRun in jobsThatShouldRun)
         {
             // 解构包装器信息
-            (var jobId, var job, var jobDetail, var jobTriggers) = jobThatShouldRun;
+            (var jobId, var jobType, var jobDetail, var jobTriggers) = jobThatShouldRun;
 
             // 查询所有符合触发的触发器
             var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(referenceTime));
@@ -183,6 +180,9 @@ internal sealed class ScheduleHostedService : BackgroundService
 
                     try
                     {
+                        // 创建作业处理程序
+                        var job = CreateJobInstance(_serviceProvider, jobType);
+
                         // 调用执行前监视器
                         if (Monitor != default)
                         {
@@ -337,5 +337,35 @@ internal sealed class ScheduleHostedService : BackgroundService
         {
             _logger.LogWarning("The scheduler synchronization storer timed out and the operation was cancelled.");
         }
+    }
+
+
+    /// <summary>
+    /// 创建作业处理程序
+    /// </summary>
+    /// <param name="serviceProvider">服务提供器</param>
+    /// <param name="jobType">作业类型</param>
+    /// <returns><see cref="IJob"/></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    private static IJob CreateJobInstance(IServiceProvider serviceProvider, Type jobType)
+    {
+        // 获取构造函数
+        var constructors = jobType.GetConstructors();
+
+        // 最多只能包含一个构造函数
+        if (constructors.Length > 1)
+        {
+            throw new InvalidOperationException("A job type can contain at most one constructor.");
+        }
+
+        // 反射创建作业执行程序
+        var job = (constructors.Length == 0
+            ? Activator.CreateInstance(jobType)
+            : ActivatorUtilities.CreateInstance(serviceProvider, jobType)) as IJob;
+
+        // 空检查
+        ArgumentNullException.ThrowIfNull(job);
+
+        return job!;
     }
 }

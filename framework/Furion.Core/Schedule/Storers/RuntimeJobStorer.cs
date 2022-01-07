@@ -34,7 +34,7 @@ internal sealed class RuntimeJobStorer : IJobStorer
     /// <param name="schedulerJob">调度作业对象</param>
     public void AddSchedulerJob(SchedulerJob schedulerJob)
     {
-        var jobId = schedulerJob.JobId;
+        var jobId = schedulerJob.JobDetail.JobId!;
 
         // 作业 Id 须唯一
         if (!_schedulerJobs.TryAdd(jobId, schedulerJob))

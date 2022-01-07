@@ -16,44 +16,50 @@ public abstract class JobTrigger
     /// <summary>
     /// 作业触发器 Id
     /// </summary>
-    public virtual string? JobTriggerId { get; internal set; }
+    public string? TriggerId { get; internal set; }
 
     /// <summary>
     /// 作业触发器类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
-    public string? TriggerTypeWithAssembly { get; internal set; }
+    public string? TriggerType { get; internal set; }
 
     /// <summary>
-    /// 作业 Id
+    /// 作业触发器参数（JSON 字符串）
     /// </summary>
-    public string? JobId { get; internal set; }
+    /// <remarks>object?[]? 类型</remarks>
+    public string? Args { get; internal set; }
 
     /// <summary>
     /// 作业触发器描述
     /// </summary>
-    public virtual string? Description { get; internal set; }
+    public string? Description { get; internal set; }
 
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public virtual DateTime LastRunTime { get; internal set; }
+    public DateTime LastRunTime { get; internal set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    public virtual DateTime NextRunTime { get; internal set; }
+    public DateTime NextRunTime { get; internal set; }
 
     /// <summary>
     /// 触发次数
     /// </summary>
-    public virtual long NumberOfRuns { get; internal set; } = 0;
+    public long NumberOfRuns { get; internal set; } = 0;
 
     /// <summary>
     /// 最大执行次数
     /// </summary>
     /// <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
-    public virtual long MaxNumberOfRuns { get; internal set; } = -1;
+    public long MaxNumberOfRuns { get; internal set; } = -1;
+
+    /// <summary>
+    /// 作业 Id
+    /// </summary>
+    public string? JobId { get; internal set; }
 
     /// <summary>
     /// 计算当前触发器增量信息
@@ -86,7 +92,7 @@ public abstract class JobTrigger
             return false;
         }
 
-        // 调用自定义处理逻辑
+        // 调用实现类方法
         return ShouldRun(currentTime);
     }
 }

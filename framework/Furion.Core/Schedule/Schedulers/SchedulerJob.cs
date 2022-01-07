@@ -16,47 +16,46 @@ public sealed class SchedulerJob
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
-    internal SchedulerJob(string jobId)
+    /// <param name="jobType">作业类型</param>
+    /// <param name="jobDetail">作业信息</param>
+    /// <param name="triggers">作业触发器</param>
+    internal SchedulerJob(Type jobType, JobDetail jobDetail, IList<JobTrigger> triggers)
     {
-        JobId = jobId;
+        JobType = jobType;
+        JobDetail = jobDetail;
+        Triggers = triggers;
     }
 
     /// <summary>
     /// 解构函数
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <param name="job">作业执行程序</param>
+    /// <param name="jobType">作业类型</param>
     /// <param name="jobDetail">作业信息对象</param>
     /// <param name="jobTriggers">作业触发器</param>
     internal void Deconstruct(out string jobId
-        , out IJob job
-        , out JobDetail? jobDetail
+        , out Type jobType
+        , out JobDetail jobDetail
         , out IList<JobTrigger> jobTriggers)
     {
-        jobId = JobId;
-        job = Job!;
+        jobId = JobDetail.JobId!;
+        jobType = JobType;
         jobDetail = JobDetail;
         jobTriggers = Triggers!;
     }
 
     /// <summary>
-    /// 作业 Id
+    /// 作业类型
     /// </summary>
-    internal string JobId { get; }
-
-    /// <summary>
-    /// 作业执行程序
-    /// </summary>
-    internal IJob? Job { get; set; }
+    internal Type JobType { get; set; }
 
     /// <summary>
     /// 作业触发器集合
     /// </summary>
-    internal IList<JobTrigger>? Triggers { get; set; }
+    internal IList<JobTrigger> Triggers { get; set; }
 
     /// <summary>
     /// 作业信息
     /// </summary>
-    internal JobDetail? JobDetail { get; set; }
+    internal JobDetail JobDetail { get; set; }
 }

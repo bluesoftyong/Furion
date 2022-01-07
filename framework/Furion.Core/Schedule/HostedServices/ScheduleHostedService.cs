@@ -164,7 +164,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                     // 创建执行前上下文
                     var jobExecutingContext = new JobExecutingContext(jobDetail, jobTrigger, properties)
                     {
-                        ExecutingTime = DateTime.UtcNow
+                        ExecutingTime = referenceTime
                     };
 
                     // 执行异常对象
@@ -230,9 +230,9 @@ internal sealed class ScheduleHostedService : BackgroundService
                                 , jobTrigger.NextRunTime
                                 , jobTrigger.NumberOfRuns
                                 , jobTrigger.NumberOfErrors
-                                , jobExecutingContext.ExecutingTime
+                                , referenceTime
                                 , executedTime
-                                , $"{Math.Round((executedTime - jobExecutingContext.ExecutingTime).TotalMilliseconds, 2)}ms"
+                                , $"{Math.Round((executedTime - referenceTime).TotalMilliseconds, 2)}ms"
                                 , executionException?.Message);
                         }
 
@@ -304,7 +304,8 @@ internal sealed class ScheduleHostedService : BackgroundService
         if (interval > 0)
         {
             // 将当前线程休眠至下一次触发前，也就是可以休眠到执行前
-            await Task.Delay(TimeSpan.FromMilliseconds(interval), stoppingToken);
+            var delay = TimeSpan.FromMilliseconds(interval);
+            await Task.Delay(delay, stoppingToken);
         }
     }
 

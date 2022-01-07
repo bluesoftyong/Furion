@@ -57,6 +57,11 @@ public sealed class JobTriggerBuilder
     public long MaxNumberOfErrors { get; set; } = -1;
 
     /// <summary>
+    /// 启动时执行一次
+    /// </summary>
+    public bool ExecuteOnStart { get; set; } = false;
+
+    /// <summary>
     /// 配置作业触发器 Id
     /// </summary>
     /// <param name="triggerId">作业触发器 Id</param>
@@ -111,6 +116,7 @@ public sealed class JobTriggerBuilder
         jobTrigger!.MaxNumberOfErrors = MaxNumberOfErrors;
         jobTrigger!.NextRunTime = referenceTime;
         jobTrigger!.JobId = jobId;
+        jobTrigger!.ExecuteOnStart = ExecuteOnStart;
 
         return jobTrigger!;
     }

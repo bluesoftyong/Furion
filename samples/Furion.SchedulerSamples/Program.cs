@@ -10,15 +10,19 @@ builder.Services.AddSchedule(builder =>
     builder.AddJob<TestCronJob>(builder =>
     {
         builder.AddCronTrigger("* * * * *")
+               .ConfigureDetail(j =>
+               {
+                   j.WithExecutionLog = true;
+               })
                .WithIdentity("cron_job");
     });
 
-    builder.AddJob<TestPeriodJob>(builder =>
-    {
-        builder.AddPeriodTrigger(10000)
-               .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
-               .WithIdentity("period_trigger");
-    });
+    //builder.AddJob<TestPeriodJob>(builder =>
+    //{
+    //    builder.AddPeriodTrigger(10000)
+    //           .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
+    //           .WithIdentity("period_trigger");
+    //});
 });
 
 builder.Services.AddControllers();

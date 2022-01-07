@@ -77,6 +77,11 @@ public abstract class JobTrigger
     public string? JobId { get; internal set; }
 
     /// <summary>
+    /// 启动时执行一次
+    /// </summary>
+    public bool ExecuteOnStart { get; internal set; } = false;
+
+    /// <summary>
     /// 计算当前触发器增量信息
     /// </summary>
     public abstract void Increment();

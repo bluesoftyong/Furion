@@ -14,6 +14,13 @@ namespace Furion.Schedule;
 public interface ISchedule
 {
     /// <summary>
+    /// 根据作业 Id 获取作业调度器
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <returns><see cref="ISchedulerJob"/></returns>
+    ISchedulerJob? GetSchedulerJob(string jobId);
+
+    /// <summary>
     /// 动态添加作业
     /// </summary>
     /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
@@ -34,4 +41,14 @@ public interface ISchedule
     /// <param name="jobId">作业唯一 Id</param>
     /// <returns><see cref="bool"/></returns>
     bool TryRemoveJob(string jobId);
+
+    /// <summary>
+    /// 启动所有作业
+    /// </summary>
+    void StartAllJobs();
+
+    /// <summary>
+    /// 暂停所有作业
+    /// </summary>
+    void PauseAllJobs();
 }

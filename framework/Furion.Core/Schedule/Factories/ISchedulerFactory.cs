@@ -19,6 +19,14 @@ internal interface ISchedulerFactory
     ICollection<SchedulerJob> SchedulerJobs { get; }
 
     /// <summary>
+    /// 根据作业 Id 获取作业调度器
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="schedulerJob">作业调度器</param>
+    /// <returns><see cref="bool"/></returns>
+    bool TryGetSchedulerJob(string jobId, out SchedulerJob? schedulerJob);
+
+    /// <summary>
     /// 添加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
@@ -31,4 +39,14 @@ internal interface ISchedulerFactory
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
     bool TryRemoveSchedulerJob(string jobId, out SchedulerJob? schedulerJob);
+
+    /// <summary>
+    /// 启动所有作业调度器
+    /// </summary>
+    void StartAllSchedulerJobs();
+
+    /// <summary>
+    /// 暂停所有作业调度器
+    /// </summary>
+    void PauseAllSchedulerJobs();
 }

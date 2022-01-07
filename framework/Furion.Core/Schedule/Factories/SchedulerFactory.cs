@@ -42,6 +42,17 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     public ICollection<SchedulerJob> SchedulerJobs => _schedulerJobs.Values;
 
     /// <summary>
+    /// 根据作业 Id 获取作业调度器
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="schedulerJob">作业调度器</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool TryGetSchedulerJob(string jobId, out SchedulerJob? schedulerJob)
+    {
+        return _schedulerJobs.TryGetValue(jobId, out schedulerJob);
+    }
+
+    /// <summary>
     /// 添加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
@@ -83,5 +94,31 @@ internal sealed class SchedulerFactory : ISchedulerFactory
         }
 
         return canRemove;
+    }
+
+    /// <summary>
+    /// 启动所有作业调度器
+    /// </summary>
+    public void StartAllSchedulerJobs()
+    {
+        foreach (var schedulerJob in _schedulerJobs.Values)
+        {
+            schedulerJob.Start();
+        }
+
+        _logger.LogInformation(LogTemplateHelpers.StartAllSchedulerJobTemplate, SchedulerJobs.Count);
+    }
+
+    /// <summary>
+    /// 暂停所有作业调度器
+    /// </summary>
+    public void PauseAllSchedulerJobs()
+    {
+        foreach (var schedulerJob in _schedulerJobs.Values)
+        {
+            schedulerJob.Pause();
+        }
+
+        _logger.LogInformation(LogTemplateHelpers.PauseAllSchedulerJobTemplate, SchedulerJobs.Count);
     }
 }

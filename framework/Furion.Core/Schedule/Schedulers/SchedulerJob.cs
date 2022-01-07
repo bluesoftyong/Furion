@@ -11,7 +11,7 @@ namespace Furion.Schedule;
 /// <summary>
 /// 作业调度器
 /// </summary>
-internal sealed class SchedulerJob
+internal sealed class SchedulerJob : ISchedulerJob
 {
     /// <summary>
     /// 构造函数
@@ -62,12 +62,34 @@ internal sealed class SchedulerJob
     /// <summary>
     /// 查看最早触发时间
     /// </summary>
-    /// <returns></returns>
-    internal DateTime? GetEarliestNextRunTime()
+    /// <returns><see cref="DateTime"/></returns>
+    public DateTime? GetEarliestNextRunTime()
     {
         if (Triggers.Count == 0) return null;
 
         // 查看最早触发记录
         return Triggers.Min(u => u.NextRunTime);
+    }
+
+    /// <summary>
+    /// 开始作业调度器
+    /// </summary>
+    public void Start()
+    {
+        if (JobDetail.Status != JobStatus.Normal)
+        {
+            JobDetail.Status = JobStatus.Normal;
+        }
+    }
+
+    /// <summary>
+    /// 暂停作业调度器
+    /// </summary>
+    public void Pause()
+    {
+        if (JobDetail.Status != JobStatus.Pause)
+        {
+            JobDetail.Status = JobStatus.Pause;
+        }
     }
 }

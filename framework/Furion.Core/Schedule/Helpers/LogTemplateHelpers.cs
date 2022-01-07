@@ -51,6 +51,16 @@ internal static class LogTemplateHelpers
     internal static readonly string RemoveSchedulerJobTemplate;
 
     /// <summary>
+    /// 开始所有作业调度器日志模板
+    /// </summary>
+    internal static readonly string StartAllSchedulerJobTemplate;
+
+    /// <summary>
+    /// 暂停所有作业调度器日志模板
+    /// </summary>
+    internal static readonly string PauseAllSchedulerJobTemplate;
+
+    /// <summary>
     /// 静态构造函数
     /// </summary>
     static LogTemplateHelpers()
@@ -89,6 +99,9 @@ internal static class LogTemplateHelpers
         JobExecutionFailedTemplate = GetTemplate(new[] { "Exception" }
         , true
         , "Error occurred executing of <{JobId}>.");
+
+        StartAllSchedulerJobTemplate = GetTemplate(new[] { "JobCount" }, true, "All jobs started.");
+        PauseAllSchedulerJobTemplate = GetTemplate(new[] { "JobCount" }, true, "All jobs paused.");
     }
 
     /// <summary>

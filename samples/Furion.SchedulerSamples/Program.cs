@@ -17,12 +17,12 @@ builder.Services.AddSchedule(builder =>
                .WithIdentity("cron_job");
     });
 
-    //builder.AddJob<TestPeriodJob>(builder =>
-    //{
-    //    builder.AddPeriodTrigger(10000)
-    //           .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
-    //           .WithIdentity("period_trigger");
-    //});
+    builder.AddJob<TestPeriodJob>(builder =>
+    {
+        builder.AddPeriodTrigger(10000)
+               .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
+               .WithIdentity("period_trigger");
+    });
 });
 
 builder.Services.AddControllers();

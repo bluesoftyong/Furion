@@ -76,4 +76,31 @@ internal sealed class InternalSchedule : ISchedule
     {
         return _schedulerFactory.TryRemoveSchedulerJob(jobId, out _);
     }
+
+    /// <summary>
+    /// 根据作业 Id 获取作业调度器
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <returns><see cref="ISchedulerJob"/></returns>
+    public ISchedulerJob? GetSchedulerJob(string jobId)
+    {
+        var isExist = _schedulerFactory.TryGetSchedulerJob(jobId, out var schedulerJob);
+        return isExist ? schedulerJob : default;
+    }
+
+    /// <summary>
+    /// 启动所有作业
+    /// </summary>
+    public void StartAllJobs()
+    {
+        _schedulerFactory.StartAllSchedulerJobs();
+    }
+
+    /// <summary>
+    /// 暂停所有作业
+    /// </summary>
+    public void PauseAllJobs()
+    {
+        _schedulerFactory.PauseAllSchedulerJobs();
+    }
 }

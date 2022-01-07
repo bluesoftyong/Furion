@@ -1391,12 +1391,12 @@
             作业描述信息
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetailBuilder.Status">
+        <member name="P:Furion.Schedule.JobDetailBuilder.StartMode">
             <summary>
-            作业状态
+            作业启动方式
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetailBuilder.Mode">
+        <member name="P:Furion.Schedule.JobDetailBuilder.ExecutionMode">
             <summary>
             作业执行方式
             </summary>
@@ -1643,22 +1643,37 @@
             <param name="referenceTime">初始引用时间</param>
             <returns><see cref="T:Furion.Schedule.SchedulerJob"/></returns>
         </member>
-        <member name="T:Furion.Schedule.JobMode">
+        <member name="T:Furion.Schedule.JobExecutionMode">
             <summary>
             作业执行方式
             </summary>
         </member>
-        <member name="F:Furion.Schedule.JobMode.Parallel">
+        <member name="F:Furion.Schedule.JobExecutionMode.Parallel">
             <summary>
             并行执行
             </summary>
             <remarks>无需等待上一次任务完成，默认值</remarks>
         </member>
-        <member name="F:Furion.Schedule.JobMode.Serial">
+        <member name="F:Furion.Schedule.JobExecutionMode.Serial">
             <summary>
             串行执行
             </summary>
             <remarks>需等待上一次任务完成</remarks>
+        </member>
+        <member name="T:Furion.Schedule.JobStartMode">
+            <summary>
+            作业启动方式
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.JobStartMode.Now">
+            <summary>
+            立即启动
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.JobStartMode.Wait">
+            <summary>
+            等待启动
+            </summary>
         </member>
         <member name="T:Furion.Schedule.JobStatus">
             <summary>
@@ -1800,7 +1815,12 @@
             作业状态
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetail.Mode">
+        <member name="P:Furion.Schedule.JobDetail.StartMode">
+            <summary>
+            作业启动方式
+            </summary>
+        </member>
+        <member name="P:Furion.Schedule.JobDetail.ExecutionMode">
             <summary>
             作业执行方式
             </summary>

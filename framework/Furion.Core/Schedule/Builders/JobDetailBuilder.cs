@@ -47,14 +47,14 @@ public sealed class JobDetailBuilder
     public string? Description { get; set; }
 
     /// <summary>
-    /// 作业状态
+    /// 作业启动方式
     /// </summary>
-    public JobStatus Status { get; set; } = JobStatus.Normal;
+    public JobStartMode StartMode { get; set; } = JobStartMode.Now;
 
     /// <summary>
     /// 作业执行方式
     /// </summary>
-    public JobMode Mode { get; set; } = JobMode.Parallel;
+    public JobExecutionMode ExecutionMode { get; set; } = JobExecutionMode.Parallel;
 
     /// <summary>
     /// 是否打印详细执行日志
@@ -72,8 +72,8 @@ public sealed class JobDetailBuilder
 
         // 初始化作业信息属性
         jobDetail!.Description = Description;
-        jobDetail!.Status = Status;
-        jobDetail!.Mode = Mode;
+        jobDetail!.StartMode = StartMode;
+        jobDetail!.ExecutionMode = ExecutionMode;
         jobDetail!.WithExecutionLog = WithExecutionLog;
 
         return jobDetail;

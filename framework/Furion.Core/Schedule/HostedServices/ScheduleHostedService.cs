@@ -126,7 +126,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// 判断是否是有效的作业
     /// </summary>
     private static readonly Func<JobDetail?, bool> IsEffectiveJob =
-        u => u == null || !(u.Status == JobStatus.None || u.Status == JobStatus.Pause || (u.Mode == JobMode.Serial && u.Status == JobStatus.Blocked));
+        u => u == null || !(u.Status == JobStatus.None || u.Status == JobStatus.Pause || (u.ExecutionMode == JobExecutionMode.Serial && u.Status == JobStatus.Blocked) || u.StartMode == JobStartMode.Wait);
 
     /// <summary>
     /// 后台调用作业处理程序

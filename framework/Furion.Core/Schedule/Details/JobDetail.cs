@@ -46,9 +46,14 @@ public sealed class JobDetail
     public JobStatus Status { get; internal set; } = JobStatus.Normal;
 
     /// <summary>
+    /// 作业启动方式
+    /// </summary>
+    public JobStartMode StartMode { get; internal set; } = JobStartMode.Now;
+
+    /// <summary>
     /// 作业执行方式
     /// </summary>
-    public JobMode Mode { get; internal set; } = JobMode.Parallel;
+    public JobExecutionMode ExecutionMode { get; internal set; } = JobExecutionMode.Parallel;
 
     /// <summary>
     /// 是否打印详细执行日志

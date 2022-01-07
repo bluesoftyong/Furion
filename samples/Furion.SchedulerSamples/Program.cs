@@ -7,21 +7,18 @@ var builder = WebApplication.CreateBuilder(args).UseFurion();
 
 builder.Services.AddSchedule(builder =>
 {
-    //builder.AddJob<TestCronJob>(builder =>
-    //{
-    //    builder.AddCronTrigger("* * * * *");
-    //});
+    builder.AddJob<TestCronJob>(builder =>
+    {
+        builder.AddCronTrigger("* * * * *")
+               .WithIdentity("cron_job");
+    });
 
     builder.AddJob<TestPeriodJob>(builder =>
     {
-        //builder.AddPeriodTrigger("period_trigger", 10000)
-        builder.AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds);
+        builder.AddPeriodTrigger(10000)
+               .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
+               .WithIdentity("period_trigger");
     });
-
-    //builder.AddJob<TestCronJob2>(builder =>
-    //{
-    //    builder.AddPeriodTrigger(3000);
-    //});
 });
 
 builder.Services.AddControllers();

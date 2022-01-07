@@ -6,64 +6,49 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Collections.Concurrent;
+
 namespace Furion.Schedule;
 
 /// <summary>
-/// 调度工厂依赖接口
+/// 作业调度作业工厂默认实现
 /// </summary>
 internal sealed class SchedulerFactory : ISchedulerFactory
 {
     /// <summary>
-    /// 作业存储器
+    /// 作业调度器字典集合
     /// </summary>
-    private readonly IJobStorer _jobStorer;
+    private readonly ConcurrentDictionary<string, SchedulerJob> _schedulerJobs;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobStorer">作业存储器</param>
-    public SchedulerFactory(IJobStorer jobStorer)
+    public SchedulerFactory()
     {
-        _jobStorer = jobStorer;
+        _schedulerJobs = new();
     }
 
     /// <summary>
-    /// 动态添加作业
+    /// 添加作业调度器
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    public void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-         where TJob : class, IJob
+    /// <param name="schedulerJob">调度作业对象</param>
+    public void AddSchedulerJob(SchedulerJob schedulerJob)
     {
-        AddJob(typeof(TJob), configureSchedulerJobBuilder);
-    }
+        var jobId = schedulerJob.JobDetail.JobId!;
 
-    /// <summary>
-    /// 动态添加作业
-    /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    public void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-    {
-        // 空检查
-        ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
-
-        // jobType 须实现 IJob 接口
-        if (!typeof(IJob).IsAssignableFrom(jobType))
+        // 作业 Id 唯一性检查
+        if (!_schedulerJobs.TryAdd(jobId, schedulerJob))
         {
-            throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
+            throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
+    }
 
-        // 创建调度作业对象
-        var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
-
-        // 调用委托
-        configureSchedulerJobBuilder(schedulerJobBuilder);
-
-        // 解析作业实例
-        var schedulerJob = schedulerJobBuilder.Build(DateTime.UtcNow);
-
-        // 存储调度作业
-        _jobStorer.AddSchedulerJob(schedulerJob);
+    /// <summary>
+    /// 获取所有作业调度器
+    /// </summary>
+    /// <returns><see cref="ICollection{T}"/></returns>
+    public ICollection<SchedulerJob> GetSchedulerJobs()
+    {
+        return _schedulerJobs.Values;
     }
 }

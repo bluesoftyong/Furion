@@ -1484,11 +1484,6 @@
             作业调度器构建器集合
             </summary>
         </member>
-        <member name="F:Furion.Schedule.ScheduleOptionsBuilder._jobStorerImplementationFactory">
-            <summary>
-            作业存储器实现工厂
-            </summary>
-        </member>
         <member name="F:Furion.Schedule.ScheduleOptionsBuilder._jobMonitor">
             <summary>
             作业监视器
@@ -1535,13 +1530,6 @@
             <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
             <returns><see cref="T:Furion.Schedule.ScheduleOptionsBuilder"/></returns>
             <exception cref="T:System.InvalidOperationException"></exception>
-        </member>
-        <member name="M:Furion.Schedule.ScheduleOptionsBuilder.ReplaceStorer(System.Func{System.IServiceProvider,Furion.Schedule.IJobStorer})">
-            <summary>
-            替换作业存储器
-            </summary>
-            <param name="implementationFactory">自定义作业存储器工厂</param>
-            <returns><see cref="T:Furion.Schedule.ScheduleOptionsBuilder"/> 实例</returns>
         </member>
         <member name="M:Furion.Schedule.ScheduleOptionsBuilder.AddMonitor``1">
             <summary>
@@ -1841,52 +1829,47 @@
         </member>
         <member name="T:Furion.Schedule.ISchedulerFactory">
             <summary>
-            调度工厂依赖接口
+            作业调度作业工厂依赖接口
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.AddJob``1(System.Action{Furion.Schedule.SchedulerJobBuilder})">
+        <member name="M:Furion.Schedule.ISchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
             <summary>
-            动态添加作业
+            添加作业调度器
             </summary>
-            <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <param name="schedulerJob">调度作业对象</param>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.AddJob(System.Type,System.Action{Furion.Schedule.SchedulerJobBuilder})">
+        <member name="M:Furion.Schedule.ISchedulerFactory.GetSchedulerJobs">
             <summary>
-            动态添加作业
+            获取所有作业调度器
             </summary>
-            <param name="jobType">作业类型</param>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.Schedule.SchedulerFactory">
             <summary>
-            调度工厂依赖接口
+            作业调度作业工厂默认实现
             </summary>
         </member>
-        <member name="F:Furion.Schedule.SchedulerFactory._jobStorer">
+        <member name="F:Furion.Schedule.SchedulerFactory._schedulerJobs">
             <summary>
-            作业存储器
+            作业调度器字典集合
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.#ctor(Furion.Schedule.IJobStorer)">
+        <member name="M:Furion.Schedule.SchedulerFactory.#ctor">
             <summary>
             构造函数
             </summary>
-            <param name="jobStorer">作业存储器</param>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.AddJob``1(System.Action{Furion.Schedule.SchedulerJobBuilder})">
+        <member name="M:Furion.Schedule.SchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
             <summary>
-            动态添加作业
+            添加作业调度器
             </summary>
-            <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <param name="schedulerJob">调度作业对象</param>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.AddJob(System.Type,System.Action{Furion.Schedule.SchedulerJobBuilder})">
+        <member name="M:Furion.Schedule.SchedulerFactory.GetSchedulerJobs">
             <summary>
-            动态添加作业
+            获取所有作业调度器
             </summary>
-            <param name="jobType">作业类型</param>
-            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.Schedule.ScheduleHostedService">
             <summary>
@@ -1918,9 +1901,9 @@
             作业执行器
             </summary>
         </member>
-        <member name="P:Furion.Schedule.ScheduleHostedService.Storer">
+        <member name="P:Furion.Schedule.ScheduleHostedService.Factory">
             <summary>
-            作业存储器
+            作业调度器工厂
             </summary>
         </member>
         <member name="P:Furion.Schedule.ScheduleHostedService.TimeBeforeSync">
@@ -1938,13 +1921,13 @@
             记录存储器最近同步时间
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.IJobStorer,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder},System.Int32,System.Int32)">
+        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder},System.Int32,System.Int32)">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
             <param name="serviceProvider">服务提供器</param>
-            <param name="storer">作业存储器</param>
+            <param name="factory">作业调度器工厂</param>
             <param name="schedulerJobBuilders">调度作业构建器集合</param>
             <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
             <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
@@ -2005,46 +1988,54 @@
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="T:Furion.Schedule.StringRepeatKeysEqualityComparer">
+        <member name="T:Furion.Schedule.InternalSchedule">
             <summary>
-            支持重复 Key 的字典集合比较器
+            Schedule 模块内部实现
             </summary>
         </member>
-        <member name="M:Furion.Schedule.StringRepeatKeysEqualityComparer.Equals(System.String,System.String)">
+        <member name="F:Furion.Schedule.InternalSchedule._schedulerFactory">
             <summary>
-            实现相等逻辑判断
-            </summary>
-            <param name="x">x</param>
-            <param name="y">y</param>
-            <returns><see cref="T:System.Boolean"/></returns>
-        </member>
-        <member name="M:Furion.Schedule.StringRepeatKeysEqualityComparer.GetHashCode(System.String)">
-            <summary>
-            获取对象 HashCode
-            </summary>
-            <param name="obj">对象</param>
-            <returns><see cref="T:System.Int32"/></returns>
-        </member>
-        <member name="T:Furion.Schedule.IScheduler">
-            <summary>
-            调度作业依赖接口
+            作业调度器工厂
             </summary>
         </member>
-        <member name="M:Furion.Schedule.IScheduler.StartAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:Furion.Schedule.InternalSchedule.#ctor(Furion.Schedule.ISchedulerFactory)">
             <summary>
-            开始作业
+            构造函数
             </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+            <param name="schedulerFactory">作业调度器工厂</param>
         </member>
-        <member name="M:Furion.Schedule.IScheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:Furion.Schedule.InternalSchedule.AddJob``1(System.Action{Furion.Schedule.SchedulerJobBuilder})">
             <summary>
-            暂停作业
+            动态添加作业
             </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
+            <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+        </member>
+        <member name="M:Furion.Schedule.InternalSchedule.AddJob(System.Type,System.Action{Furion.Schedule.SchedulerJobBuilder})">
+            <summary>
+            动态添加作业
+            </summary>
+            <param name="jobType">作业类型</param>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+        </member>
+        <member name="T:Furion.Schedule.ISchedule">
+            <summary>
+            Schedule 模块接口
+            </summary>
+        </member>
+        <member name="M:Furion.Schedule.ISchedule.AddJob``1(System.Action{Furion.Schedule.SchedulerJobBuilder})">
+            <summary>
+            动态添加作业
+            </summary>
+            <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+        </member>
+        <member name="M:Furion.Schedule.ISchedule.AddJob(System.Type,System.Action{Furion.Schedule.SchedulerJobBuilder})">
+            <summary>
+            动态添加作业
+            </summary>
+            <param name="jobType">作业类型</param>
+            <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
         </member>
         <member name="T:Furion.Schedule.IJobMonitor">
             <summary>
@@ -2065,38 +2056,6 @@
             </summary>
             <param name="context">上下文</param>
             <param name="cancellationToken">取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="T:Furion.Schedule.Scheduler">
-            <summary>
-            调度作业默认实现
-            </summary>
-        </member>
-        <member name="F:Furion.Schedule.Scheduler._jobStorer">
-            <summary>
-            作业存储器
-            </summary>
-        </member>
-        <member name="M:Furion.Schedule.Scheduler.#ctor(Furion.Schedule.IJobStorer)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="jobStorer">作业存储器</param>
-        </member>
-        <member name="M:Furion.Schedule.Scheduler.StartAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            开始作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.Schedule.Scheduler.PauseAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            暂停作业
-            </summary>
-            <param name="identity">作业唯一标识</param>
-            <param name="cancellationToken"> 取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
         <member name="T:Furion.Schedule.SchedulerJob">
@@ -2138,47 +2097,8 @@
         </member>
         <member name="T:Furion.Schedule.IJobStorer">
             <summary>
-            作业存储器
+            作业持久化依赖接口
             </summary>
-        </member>
-        <member name="M:Furion.Schedule.IJobStorer.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
-            <summary>
-            添加调度作业
-            </summary>
-            <param name="schedulerJob">调度作业对象</param>
-        </member>
-        <member name="M:Furion.Schedule.IJobStorer.GetSchedulerJobs">
-            <summary>
-            获取所有调度作业
-            </summary>
-            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
-        </member>
-        <member name="T:Furion.Schedule.RuntimeJobStorer">
-            <summary>
-            基于运行时内存作业存储实现
-            </summary>
-        </member>
-        <member name="F:Furion.Schedule.RuntimeJobStorer._schedulerJobs">
-            <summary>
-            调度作业
-            </summary>
-        </member>
-        <member name="M:Furion.Schedule.RuntimeJobStorer.#ctor">
-            <summary>
-            构造函数
-            </summary>
-        </member>
-        <member name="M:Furion.Schedule.RuntimeJobStorer.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
-            <summary>
-            添加调度作业
-            </summary>
-            <param name="schedulerJob">调度作业对象</param>
-        </member>
-        <member name="M:Furion.Schedule.RuntimeJobStorer.GetSchedulerJobs">
-            <summary>
-            获取所有调度作业
-            </summary>
-            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.Schedule.CronTrigger">
             <summary>

@@ -26,12 +26,12 @@ public sealed class JobDetailBuilder
     /// 作业类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public Type JobType { get; }
+    internal Type JobType { get; }
 
     /// <summary>
     /// 作业 Id
     /// </summary>
-    public string? JobId { get; private set; }
+    internal string? JobId { get; private set; }
 
     /// <summary>
     /// 作业描述信息
@@ -78,7 +78,7 @@ public sealed class JobDetailBuilder
         var jobDetail = new JobDetail();
 
         // 初始化作业信息属性
-        jobDetail!.JobId = string.IsNullOrWhiteSpace(JobId) ? $"job_{Guid.NewGuid():N}" : JobId; ;
+        jobDetail!.JobId = string.IsNullOrWhiteSpace(JobId) ? $"job_{Guid.NewGuid():N}" : JobId;
         jobDetail!.JobType = $"{JobType.Assembly.GetName().Name};{JobType.FullName}";
         jobDetail!.Description = Description;
         jobDetail!.Status = StartMode == JobStartMode.Now ? JobStatus.Normal : JobStatus.None;

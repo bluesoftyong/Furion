@@ -1,4 +1,5 @@
 using Furion.SchedulerSamples;
+using Furion.TimeCrontab;
 
 var builder = WebApplication.CreateBuilder(args).UseFurion();
 
@@ -14,7 +15,7 @@ builder.Services.AddSchedule(builder =>
     builder.AddJob<TestPeriodJob>(builder =>
     {
         //builder.AddPeriodTrigger("period_trigger", 10000)
-        builder.AddCronTrigger("* * * * * *", Furion.TimeCrontab.CronStringFormat.WithSeconds);
+        builder.AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds);
     });
 
     //builder.AddJob<TestCronJob2>(builder =>

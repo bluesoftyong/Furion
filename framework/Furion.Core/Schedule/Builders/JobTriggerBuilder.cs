@@ -27,17 +27,17 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 作业触发器 Id
     /// </summary>
-    public string? TriggerId { get; private set; }
+    internal string? TriggerId { get; private set; }
 
     /// <summary>
     /// 作业触发器
     /// </summary>
-    public Type TriggerType { get; }
+    internal Type TriggerType { get; }
 
     /// <summary>
     /// 作业触发器构造函数参数
     /// </summary>
-    public object?[]? Args { get; private set; }
+    internal object?[]? Args { get; private set; }
 
     /// <summary>
     /// 作业触发器描述
@@ -82,7 +82,7 @@ public sealed class JobTriggerBuilder
     /// <returns><see cref="JobTrigger"/></returns>
     internal JobTrigger Build(string jobId, DateTime referenceTime)
     {
-        // 检查 jobTriggerType 类型是否派生自 JobTrigger
+        // 检查 TriggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(TriggerType))
         {
             throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");

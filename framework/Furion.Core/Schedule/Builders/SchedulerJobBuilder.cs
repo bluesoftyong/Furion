@@ -39,7 +39,7 @@ public sealed class SchedulerJobBuilder
     /// <summary>
     /// 作业类型
     /// </summary>
-    public Type JobType { get; }
+    internal Type JobType { get; }
 
     /// <summary>
     /// 配置作业 Id

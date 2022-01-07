@@ -11,7 +11,7 @@ namespace Furion.Schedule;
 /// <summary>
 /// 作业调度器
 /// </summary>
-public sealed class SchedulerJob
+internal sealed class SchedulerJob
 {
     /// <summary>
     /// 构造函数
@@ -47,15 +47,15 @@ public sealed class SchedulerJob
     /// <summary>
     /// 作业类型
     /// </summary>
-    internal Type JobType { get; set; }
+    internal Type JobType { get; }
 
     /// <summary>
     /// 作业触发器集合
     /// </summary>
-    internal IList<JobTrigger> Triggers { get; set; }
+    internal IList<JobTrigger> Triggers { get; }
 
     /// <summary>
     /// 作业信息
     /// </summary>
-    internal JobDetail JobDetail { get; set; }
+    internal JobDetail JobDetail { get; }
 }

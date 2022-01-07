@@ -24,7 +24,7 @@ public sealed class ScheduleOptionsBuilder
     /// <summary>
     /// 作业存储器实现工厂
     /// </summary>
-    private Func<IServiceProvider, IJobStorer>? _jobStorerImplementationFactory;
+    //private Func<IServiceProvider, IJobStorer>? _jobStorerImplementationFactory;
 
     /// <summary>
     /// 作业监视器
@@ -101,16 +101,16 @@ public sealed class ScheduleOptionsBuilder
         return this;
     }
 
-    /// <summary>
-    /// 替换作业存储器
-    /// </summary>
-    /// <param name="implementationFactory">自定义作业存储器工厂</param>
-    /// <returns><see cref="ScheduleOptionsBuilder"/> 实例</returns>
-    public ScheduleOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
-    {
-        _jobStorerImplementationFactory = implementationFactory;
-        return this;
-    }
+    ///// <summary>
+    ///// 替换作业存储器
+    ///// </summary>
+    ///// <param name="implementationFactory">自定义作业存储器工厂</param>
+    ///// <returns><see cref="ScheduleOptionsBuilder"/> 实例</returns>
+    //public ScheduleOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
+    //{
+    //    _jobStorerImplementationFactory = implementationFactory;
+    //    return this;
+    //}
 
     /// <summary>
     /// 注册作业监视器
@@ -145,17 +145,11 @@ public sealed class ScheduleOptionsBuilder
     {
         var schedulerJobBuilders = _schedulerJobBuilders;
 
-        //// 注册作业
-        //foreach (var schedulerJobBuilder in schedulerJobBuilders)
+        //// 替换作业存储器
+        //if (_jobStorerImplementationFactory != default)
         //{
-        //    services.AddSingleton(typeof(IJob), schedulerJobBuilder.JobType);
+        //    services.Replace(ServiceDescriptor.Singleton(_jobStorerImplementationFactory));
         //}
-
-        // 替换作业存储器
-        if (_jobStorerImplementationFactory != default)
-        {
-            services.Replace(ServiceDescriptor.Singleton(_jobStorerImplementationFactory));
-        }
 
         // 注册作业监视器
         if (_jobMonitor != default)

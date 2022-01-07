@@ -9,19 +9,8 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业存储器
+/// 作业持久化依赖接口
 /// </summary>
 public interface IJobStorer
 {
-    /// <summary>
-    /// 添加调度作业
-    /// </summary>
-    /// <param name="schedulerJob">调度作业对象</param>
-    void AddSchedulerJob(SchedulerJob schedulerJob);
-
-    /// <summary>
-    /// 获取所有调度作业
-    /// </summary>
-    /// <returns><see cref="ICollection{T}"/></returns>
-    ICollection<SchedulerJob> GetSchedulerJobs();
 }

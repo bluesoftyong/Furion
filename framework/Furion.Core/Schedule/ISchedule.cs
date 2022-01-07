@@ -9,23 +9,22 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 调度作业依赖接口
+/// Schedule 模块接口
 /// </summary>
-public interface IScheduler
+public interface ISchedule
 {
     /// <summary>
-    /// 开始作业
+    /// 动态添加作业
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    /// <param name="cancellationToken"> 取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task StartAsync(string identity, CancellationToken cancellationToken = default);
+    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
+    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+    void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
+        where TJob : class, IJob;
 
     /// <summary>
-    /// 暂停作业
+    /// 动态添加作业
     /// </summary>
-    /// <param name="identity">作业唯一标识</param>
-    /// <param name="cancellationToken"> 取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    Task PauseAsync(string identity, CancellationToken cancellationToken = default);
+    /// <param name="jobType">作业类型</param>
+    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+    void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder);
 }

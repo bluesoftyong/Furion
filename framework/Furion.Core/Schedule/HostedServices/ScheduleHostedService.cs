@@ -43,9 +43,9 @@ internal sealed class ScheduleHostedService : BackgroundService
     private IJobExecutor? Executor { get; }
 
     /// <summary>
-    /// 作业存储器
+    /// 作业调度器工厂
     /// </summary>
-    private IJobStorer Storer { get; }
+    private ISchedulerFactory Factory { get; }
 
     /// <summary>
     /// 调度器休眠后再度被激活前多少ms完成耗时操作
@@ -67,13 +67,13 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
-    /// <param name="storer">作业存储器</param>
+    /// <param name="factory">作业调度器工厂</param>
     /// <param name="schedulerJobBuilders">调度作业构建器集合</param>
     /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
     /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
-        , IJobStorer storer
+        , ISchedulerFactory factory
         , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders
         , int timeBeforeSync
         , int minimumSyncInterval)
@@ -82,7 +82,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         _serviceProvider = serviceProvider;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
-        Storer = storer;
+        Factory = factory;
         TimeBeforeSync = timeBeforeSync;
         MinimumSyncInterval = minimumSyncInterval;
 
@@ -92,7 +92,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
             // 将调度作业存储起来
-            Storer.AddSchedulerJob(schedulerJobBuilder.Build(referenceTime));
+            factory.AddSchedulerJob(schedulerJobBuilder.Build(referenceTime));
         }
     }
 
@@ -135,7 +135,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = Storer.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
+        var jobsThatShouldRun = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -262,7 +262,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         var unspecifiedTime = new DateTime(referenceTime.Year, referenceTime.Month, referenceTime.Day, referenceTime.Hour, referenceTime.Minute, referenceTime.Second);
 
         // 查找下一次符合触发时机的所有作业触发器
-        var closestJobTriggers = Storer.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail))
+        var closestJobTriggers = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail))
                                                            .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间

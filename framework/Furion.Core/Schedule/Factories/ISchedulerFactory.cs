@@ -9,22 +9,19 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 调度工厂依赖接口
+/// 作业调度作业工厂依赖接口
 /// </summary>
-public interface ISchedulerFactory
+internal interface ISchedulerFactory
 {
     /// <summary>
-    /// 动态添加作业
+    /// 添加作业调度器
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-        where TJob : class, IJob;
+    /// <param name="schedulerJob">调度作业对象</param>
+    void AddSchedulerJob(SchedulerJob schedulerJob);
 
     /// <summary>
-    /// 动态添加作业
+    /// 获取所有作业调度器
     /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder);
+    /// <returns><see cref="ICollection{T}"/></returns>
+    ICollection<SchedulerJob> GetSchedulerJobs();
 }

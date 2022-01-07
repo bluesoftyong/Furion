@@ -50,22 +50,13 @@ internal sealed class SchedulerFactory : ISchedulerFactory
             throw new InvalidOperationException($"The job <{jobId}> has been registered. Repeated registration is prohibited.");
         }
 
-        var logTemplate = @"┏━━━━━━━━━━ Schedule Console ━━━━━━━━━━
-┣ JobId：           {JobId}
-┣ Description：     {Description}
-┣ JobType：         {JobType}
-┣ Triggers：        [{EarliestNextRunTime}] {Triggers}
-┣ StartMode：       {StartMode}
-┣ ExecutionMode：   {ExecutionMode}
-┗━━━━━━━━━━ Schedule Console ━━━━━━━━━━";
-
         // 打印添加成功日志
-        _logger.LogInformation(logTemplate
+        _logger.LogInformation(LogTemplateHelpers.AddSchedulerJobTemplate
             , jobId
             , schedulerJob.JobDetail.Description
             , schedulerJob.JobDetail.JobType
-            , schedulerJob.GetEarliestNextRunTime()
             , string.Join(';', schedulerJob.Triggers.Select(u => u.TriggerType + "/" + u.ToString()))
+            , schedulerJob.GetEarliestNextRunTime()
             , schedulerJob.JobDetail.StartMode
             , schedulerJob.JobDetail.ExecutionMode);
     }
@@ -83,7 +74,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
         // 打印移除日志
         if (canRemove)
         {
-            _logger.LogWarning("The <{JobId}> job has been removed from the schedule.", schedulerJob!.JobDetail.JobId);
+            _logger.LogWarning(LogTemplateHelpers.RemoveSchedulerJobTemplate, schedulerJob!.JobDetail.JobId);
         }
 
         return canRemove;

@@ -1901,6 +1901,61 @@
             </summary>
             <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
+        <member name="T:Furion.Schedule.LogTemplateHelpers">
+            <summary>
+            日志模板版主类
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.ScheduleRunningTemplate">
+            <summary>
+            Schedule 模块服务运行日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.ScheduleStoppingTemplate">
+            <summary>
+            Schedule 模块服务准备停止日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.ScheduleStoppedTemplate">
+            <summary>
+            Schedule 模块服务停止日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.JobExecutionTemplate">
+            <summary>
+            作业执行日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.JobExecutionFailedTemplate">
+            <summary>
+            作业执行异常日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.AddSchedulerJobTemplate">
+            <summary>
+            添加作业调度器日志模板
+            </summary>
+        </member>
+        <member name="F:Furion.Schedule.LogTemplateHelpers.RemoveSchedulerJobTemplate">
+            <summary>
+            移除作业调度器日志模板
+            </summary>
+        </member>
+        <member name="M:Furion.Schedule.LogTemplateHelpers.#cctor">
+            <summary>
+            静态构造函数
+            </summary>
+        </member>
+        <member name="M:Furion.Schedule.LogTemplateHelpers.GetTemplate(System.String[],System.Boolean,System.String,System.String)">
+            <summary>
+            获取日志模板
+            </summary>
+            <param name="items">列表项</param>
+            <param name="showProp">是否显示属性名</param>
+            <param name="description">描述</param>
+            <param name="title">标题</param>
+            <returns><see cref="T:System.String"/></returns>
+        </member>
         <member name="T:Furion.Schedule.ScheduleHostedService">
             <summary>
             调度计划后台主机服务

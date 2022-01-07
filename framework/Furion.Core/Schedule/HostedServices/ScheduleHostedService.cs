@@ -103,11 +103,11 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Schedule Hosted Service is running.");
+        _logger.LogInformation(LogTemplateHelpers.ScheduleRunningTemplate, Factory.GetSchedulerJobs().Count);
 
         // 调度器服务停止监听
         stoppingToken.Register(() =>
-             _logger.LogDebug($"Schedule Hosted Service is stopping."));
+             _logger.LogDebug(LogTemplateHelpers.ScheduleStoppingTemplate));
 
         // 监听调度器服务是否取消
         while (!stoppingToken.IsCancellationRequested)
@@ -116,7 +116,7 @@ internal sealed class ScheduleHostedService : BackgroundService
             await BackgroundProcessing(stoppingToken);
         }
 
-        _logger.LogCritical($"Schedule Hosted Service is stopped.");
+        _logger.LogCritical(LogTemplateHelpers.ScheduleStoppedTemplate);
     }
 
     /// <summary>
@@ -158,17 +158,14 @@ internal sealed class ScheduleHostedService : BackgroundService
                 // 创建新的线程执行
                 await taskFactory.StartNew(async () =>
                 {
-                    // 输出触发日志
-                    if (jobDetail!.WithExecutionLog)
-                    {
-                        _logger.LogInformation("Scheduler starts triggering job of <{JobId}>, {Trigger}.", jobId, jobTrigger.ToString());
-                    }
-
                     // 创建共享上下文数据对象
                     var properties = new Dictionary<object, object>();
 
                     // 创建执行前上下文
-                    var jobExecutingContext = new JobExecutingContext(jobDetail, jobTrigger, properties);
+                    var jobExecutingContext = new JobExecutingContext(jobDetail, jobTrigger, properties)
+                    {
+                        ExecutingTime = DateTime.UtcNow
+                    };
 
                     // 执行异常对象
                     InvalidOperationException? executionException = default;
@@ -197,7 +194,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                     catch (Exception ex)
                     {
                         // 输出异常日志
-                        _logger.LogError(ex, "Error occurred executing of <{JobId}>.", jobId);
+                        _logger.LogError(ex, LogTemplateHelpers.JobExecutionFailedTemplate, jobId, ex.Message);
 
                         // 标记异常
                         executionException = new InvalidOperationException(string.Format("Error occurred executing <{0}>.", jobId), ex);
@@ -216,10 +213,27 @@ internal sealed class ScheduleHostedService : BackgroundService
                         // 递增错误次数
                         jobTrigger.IncrementErrors();
 
+                        // 当前时间
+                        var executedTime = DateTime.UtcNow;
+
                         // 输出触发完成日志
                         if (jobDetail!.WithExecutionLog)
                         {
-                            _logger.LogInformation("Scheduler completes a job of <{JobId}> trigger.", jobId);
+                            _logger.LogInformation(LogTemplateHelpers.JobExecutionTemplate
+                                , jobId
+                                , jobDetail.Description
+                                , jobDetail.JobType
+                                , jobDetail.ExecutionMode
+                                , jobTrigger.TriggerId
+                                , jobTrigger.TriggerType
+                                , jobTrigger.Args
+                                , jobTrigger.NextRunTime
+                                , jobTrigger.NumberOfRuns
+                                , jobTrigger.NumberOfErrors
+                                , jobExecutingContext.ExecutingTime
+                                , executedTime
+                                , $"{Math.Round((executedTime - jobExecutingContext.ExecutingTime).TotalMilliseconds, 2)}ms"
+                                , executionException?.Message);
                         }
 
                         // 调用执行后监视器
@@ -228,7 +242,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                             // 创建执行后上下文
                             var jobExecutedContext = new JobExecutedContext(jobDetail, jobTrigger, properties)
                             {
-                                ExecutedTime = DateTime.UtcNow,
+                                ExecutedTime = executedTime,
                                 Exception = executionException
                             };
 
@@ -334,7 +348,6 @@ internal sealed class ScheduleHostedService : BackgroundService
             _logger.LogWarning("The scheduler synchronization storer timed out and the operation was cancelled.");
         }
     }
-
 
     /// <summary>
     /// 创建作业处理程序

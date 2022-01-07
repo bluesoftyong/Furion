@@ -118,6 +118,12 @@ public sealed class JobTriggerBuilder
         jobTrigger!.JobId = jobId;
         jobTrigger!.ExecuteOnAdded = ExecuteOnAdded;
 
+        // 处理是否加入调度计划时自执行一次
+        if (!ExecuteOnAdded)
+        {
+            jobTrigger!.NextRunTime = jobTrigger.GetNextOccurrence();
+        }
+
         return jobTrigger!;
     }
 }

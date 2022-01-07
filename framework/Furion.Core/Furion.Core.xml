@@ -2227,10 +2227,11 @@
             调度计划 <see cref="T:Furion.TimeCrontab.Crontab"/> 对象
             </summary>
         </member>
-        <member name="M:Furion.Schedule.CronTrigger.Increment">
+        <member name="M:Furion.Schedule.CronTrigger.GetNextOccurrence">
             <summary>
-            计算当前触发器增量信息
+            获取下一个触发时间
             </summary>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.Schedule.CronTrigger.ShouldRun(System.DateTime)">
             <summary>
@@ -2317,10 +2318,11 @@
             是否加入调度计划时自执行一次
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobTrigger.Increment">
+        <member name="M:Furion.Schedule.JobTrigger.GetNextOccurrence">
             <summary>
-            计算当前触发器增量信息
+            获取下一个触发时间
             </summary>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobTrigger.ShouldRun(System.DateTime)">
             <summary>
@@ -2334,6 +2336,11 @@
             将触发器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.JobTrigger.Increment">
+            <summary>
+            计算当前触发器增量信息
+            </summary>
         </member>
         <member name="M:Furion.Schedule.JobTrigger.IncrementErrors">
             <summary>
@@ -2363,10 +2370,11 @@
             间隔时间（毫秒）
             </summary>
         </member>
-        <member name="M:Furion.Schedule.PeriodTrigger.Increment">
+        <member name="M:Furion.Schedule.PeriodTrigger.GetNextOccurrence">
             <summary>
-            计算当前触发器增量信息
+            获取下一个触发时间
             </summary>
+            <returns><see cref="T:System.DateTime"/></returns>
         </member>
         <member name="M:Furion.Schedule.PeriodTrigger.ShouldRun(System.DateTime)">
             <summary>

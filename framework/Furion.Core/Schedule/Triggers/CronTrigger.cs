@@ -31,13 +31,12 @@ internal sealed class CronTrigger : JobTrigger
     private Crontab ScheduleCrontab { get; }
 
     /// <summary>
-    /// 计算当前触发器增量信息
+    /// 获取下一个触发时间
     /// </summary>
-    public override void Increment()
+    /// <returns><see cref="DateTime"/></returns>
+    public override DateTime GetNextOccurrence()
     {
-        NumberOfRuns++;
-        LastRunTime = NextRunTime;
-        NextRunTime = ScheduleCrontab.GetNextOccurrence(NextRunTime);
+        return ScheduleCrontab.GetNextOccurrence(NextRunTime);
     }
 
     /// <summary>

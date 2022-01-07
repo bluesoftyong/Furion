@@ -82,9 +82,10 @@ public abstract class JobTrigger
     public bool ExecuteOnAdded { get; internal set; } = false;
 
     /// <summary>
-    /// 计算当前触发器增量信息
+    /// 获取下一个触发时间
     /// </summary>
-    public abstract void Increment();
+    /// <returns><see cref="DateTime"/></returns>
+    public abstract DateTime GetNextOccurrence();
 
     /// <summary>
     /// 是否符合执行逻辑
@@ -98,6 +99,16 @@ public abstract class JobTrigger
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public abstract new string? ToString();
+
+    /// <summary>
+    /// 计算当前触发器增量信息
+    /// </summary>
+    internal void Increment()
+    {
+        NumberOfRuns++;
+        LastRunTime = NextRunTime;
+        NextRunTime = GetNextOccurrence();
+    }
 
     /// <summary>
     /// 递增错误次数

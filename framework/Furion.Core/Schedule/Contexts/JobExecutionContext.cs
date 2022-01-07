@@ -16,28 +16,25 @@ public abstract class JobExecutionContext
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="jobId">作业 Id</param>
+    /// <param name="jobDetail">作业信息</param>
+    /// <param name="jobTrigger">作业触发器</param>
     /// <param name="properties">共享上下文数据</param>
-    public JobExecutionContext(string jobId, IDictionary<object, object> properties)
+    internal JobExecutionContext(JobDetail jobDetail, JobTrigger jobTrigger, IDictionary<object, object> properties)
     {
-        JobId = jobId;
+        JobDetail = jobDetail;
+        JobTrigger = jobTrigger;
         Properties = properties;
     }
 
     /// <summary>
-    /// 作业 Id
-    /// </summary>
-    public string JobId { get; }
-
-    /// <summary>
     /// 作业详细信息
     /// </summary>
-    public JobDetail? JobDetail { get; internal set; }
+    public JobDetail JobDetail { get; }
 
     /// <summary>
     /// 作业触发器
     /// </summary>
-    public JobTrigger? JobTrigger { get; internal set; }
+    public JobTrigger JobTrigger { get; }
 
     /// <summary>
     /// 共享上下文数据

@@ -1454,6 +1454,12 @@
             </summary>
             <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
         </member>
+        <member name="P:Furion.Schedule.JobTriggerBuilder.MaxNumberOfErrors">
+            <summary>
+            最大出错次数
+            </summary>
+            <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
+        </member>
         <member name="M:Furion.Schedule.JobTriggerBuilder.WithIdentity(System.String)">
             <summary>
             配置作业触发器 Id
@@ -1706,11 +1712,12 @@
             作业执行后上下文
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobExecutedContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+        <member name="M:Furion.Schedule.JobExecutedContext.#ctor(Furion.Schedule.JobDetail,Furion.Schedule.JobTrigger,System.Collections.Generic.IDictionary{System.Object,System.Object})">
             <summary>
             构造函数
             </summary>
-            <param name="jobId">作业 Id</param>
+            <param name="jobDetail">作业信息</param>
+            <param name="jobTrigger">作业触发器</param>
             <param name="properties">共享上下文数据</param>
         </member>
         <member name="P:Furion.Schedule.JobExecutedContext.ExecutedTime">
@@ -1728,11 +1735,12 @@
             作业执行前上下文
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobExecutingContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+        <member name="M:Furion.Schedule.JobExecutingContext.#ctor(Furion.Schedule.JobDetail,Furion.Schedule.JobTrigger,System.Collections.Generic.IDictionary{System.Object,System.Object})">
             <summary>
             构造函数
             </summary>
-            <param name="jobId">作业 Id</param>
+            <param name="jobDetail">作业信息</param>
+            <param name="jobTrigger">作业触发器</param>
             <param name="properties">共享上下文数据</param>
         </member>
         <member name="P:Furion.Schedule.JobExecutingContext.ExecutingTime">
@@ -1745,17 +1753,13 @@
             作业执行上下文
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobExecutionContext.#ctor(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object})">
+        <member name="M:Furion.Schedule.JobExecutionContext.#ctor(Furion.Schedule.JobDetail,Furion.Schedule.JobTrigger,System.Collections.Generic.IDictionary{System.Object,System.Object})">
             <summary>
             构造函数
             </summary>
-            <param name="jobId">作业 Id</param>
+            <param name="jobDetail">作业信息</param>
+            <param name="jobTrigger">作业触发器</param>
             <param name="properties">共享上下文数据</param>
-        </member>
-        <member name="P:Furion.Schedule.JobExecutionContext.JobId">
-            <summary>
-            作业 Id
-            </summary>
         </member>
         <member name="P:Furion.Schedule.JobExecutionContext.JobDetail">
             <summary>
@@ -1842,6 +1846,14 @@
             </summary>
             <param name="schedulerJob">调度作业对象</param>
         </member>
+        <member name="M:Furion.Schedule.ISchedulerFactory.TryRemoveSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+            <summary>
+            尝试删除作业调度器
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="schedulerJob">作业调度器</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
         <member name="M:Furion.Schedule.ISchedulerFactory.GetSchedulerJobs">
             <summary>
             获取所有作业调度器
@@ -1858,16 +1870,30 @@
             作业调度器字典集合
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.#ctor">
+        <member name="F:Furion.Schedule.SchedulerFactory._logger">
+            <summary>
+            日志对象
+            </summary>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerFactory.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.SchedulerFactory})">
             <summary>
             构造函数
             </summary>
+            <param name="logger">日志对象</param>
         </member>
         <member name="M:Furion.Schedule.SchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
             <summary>
             添加作业调度器
             </summary>
             <param name="schedulerJob">调度作业对象</param>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerFactory.TryRemoveSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+            <summary>
+            尝试删除作业调度器
+            </summary>
+            <param name="jobId">作业 Id</param>
+            <param name="schedulerJob">作业调度器</param>
+            <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="M:Furion.Schedule.SchedulerFactory.GetSchedulerJobs">
             <summary>
@@ -2022,6 +2048,13 @@
             <param name="jobType">作业类型</param>
             <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
         </member>
+        <member name="M:Furion.Schedule.InternalSchedule.TryRemoveJob(System.String)">
+            <summary>
+            尝试删除作业
+            </summary>
+            <param name="jobId">作业唯一 Id</param>
+            <returns><see cref="T:System.Boolean"/></returns>
+        </member>
         <member name="T:Furion.Schedule.ISchedule">
             <summary>
             Schedule 模块接口
@@ -2040,6 +2073,13 @@
             </summary>
             <param name="jobType">作业类型</param>
             <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+        </member>
+        <member name="M:Furion.Schedule.ISchedule.TryRemoveJob(System.String)">
+            <summary>
+            尝试删除作业
+            </summary>
+            <param name="jobId">作业唯一 Id</param>
+            <returns><see cref="T:System.Boolean"/></returns>
         </member>
         <member name="T:Furion.Schedule.IJobMonitor">
             <summary>
@@ -2098,6 +2138,12 @@
             <summary>
             作业信息
             </summary>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerJob.GetEarliestNextRunTime">
+            <summary>
+            查看最早触发时间
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Furion.Schedule.IJobStorer">
             <summary>
@@ -2190,6 +2236,17 @@
             </summary>
             <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
         </member>
+        <member name="P:Furion.Schedule.JobTrigger.NumberOfErrors">
+            <summary>
+            出错次数
+            </summary>
+        </member>
+        <member name="P:Furion.Schedule.JobTrigger.MaxNumberOfErrors">
+            <summary>
+            最大出错次数
+            </summary>
+            <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
+        </member>
         <member name="P:Furion.Schedule.JobTrigger.JobId">
             <summary>
             作业 Id
@@ -2212,6 +2269,11 @@
             将触发器转换成字符串输出
             </summary>
             <returns><see cref="T:System.String"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.JobTrigger.IncrementErrors">
+            <summary>
+            递增错误次数
+            </summary>
         </member>
         <member name="M:Furion.Schedule.JobTrigger.InternalShouldRun(System.DateTime)">
             <summary>

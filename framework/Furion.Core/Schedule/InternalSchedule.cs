@@ -66,4 +66,14 @@ internal sealed class InternalSchedule : ISchedule
         // 将作业调度器添加到作业调度器工厂中
         _schedulerFactory.AddSchedulerJob(schedulerJob);
     }
+
+    /// <summary>
+    /// 尝试删除作业
+    /// </summary>
+    /// <param name="jobId">作业唯一 Id</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool TryRemoveJob(string jobId)
+    {
+        return _schedulerFactory.TryRemoveSchedulerJob(jobId, out _);
+    }
 }

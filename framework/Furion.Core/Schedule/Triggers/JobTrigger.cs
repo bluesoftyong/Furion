@@ -61,6 +61,17 @@ public abstract class JobTrigger
     public long MaxNumberOfRuns { get; internal set; } = -1;
 
     /// <summary>
+    /// 出错次数
+    /// </summary>
+    public long NumberOfErrors { get; internal set; } = 0;
+
+    /// <summary>
+    /// 最大出错次数
+    /// </summary>
+    /// <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
+    public long MaxNumberOfErrors { get; internal set; } = -1;
+
+    /// <summary>
     /// 作业 Id
     /// </summary>
     public string? JobId { get; internal set; }
@@ -84,6 +95,14 @@ public abstract class JobTrigger
     public abstract new string? ToString();
 
     /// <summary>
+    /// 递增错误次数
+    /// </summary>
+    internal void IncrementErrors()
+    {
+        NumberOfErrors++;
+    }
+
+    /// <summary>
     /// 是否符合执行逻辑（内部检查）
     /// </summary>
     /// <param name="currentTime">当前时间</param>
@@ -92,6 +111,12 @@ public abstract class JobTrigger
     {
         // 最大次数控制
         if (MaxNumberOfRuns == 0 || (MaxNumberOfRuns != -1 && NumberOfRuns >= MaxNumberOfRuns))
+        {
+            return false;
+        }
+
+        // 最大错误数控制
+        if (MaxNumberOfErrors > 0 && NumberOfErrors >= MaxNumberOfErrors)
         {
             return false;
         }

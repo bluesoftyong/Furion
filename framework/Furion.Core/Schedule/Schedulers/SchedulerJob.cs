@@ -58,4 +58,16 @@ internal sealed class SchedulerJob
     /// 作业信息
     /// </summary>
     internal JobDetail JobDetail { get; }
+
+    /// <summary>
+    /// 查看最早触发时间
+    /// </summary>
+    /// <returns></returns>
+    internal DateTime? GetEarliestNextRunTime()
+    {
+        if (Triggers.Count == 0) return null;
+
+        // 查看最早触发记录
+        return Triggers.Min(u => u.NextRunTime);
+    }
 }

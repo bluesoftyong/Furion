@@ -20,6 +20,14 @@ internal interface ISchedulerFactory
     void AddSchedulerJob(SchedulerJob schedulerJob);
 
     /// <summary>
+    /// 尝试删除作业调度器
+    /// </summary>
+    /// <param name="jobId">作业 Id</param>
+    /// <param name="schedulerJob">作业调度器</param>
+    /// <returns><see cref="bool"/></returns>
+    bool TryRemoveSchedulerJob(string jobId, out SchedulerJob? schedulerJob);
+
+    /// <summary>
     /// 获取所有作业调度器
     /// </summary>
     /// <returns><see cref="ICollection{T}"/></returns>

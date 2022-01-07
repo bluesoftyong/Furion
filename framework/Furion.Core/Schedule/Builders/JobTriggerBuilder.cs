@@ -51,6 +51,12 @@ public sealed class JobTriggerBuilder
     public long MaxNumberOfRuns { get; set; } = -1;
 
     /// <summary>
+    /// 最大出错次数
+    /// </summary>
+    /// <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
+    public long MaxNumberOfErrors { get; set; } = -1;
+
+    /// <summary>
     /// 配置作业触发器 Id
     /// </summary>
     /// <param name="triggerId">作业触发器 Id</param>
@@ -102,6 +108,7 @@ public sealed class JobTriggerBuilder
         jobTrigger!.Args = withArgs ? JsonSerializer.Serialize(Args) : default;
         jobTrigger!.Description = Description;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;
+        jobTrigger!.MaxNumberOfErrors = MaxNumberOfErrors;
         jobTrigger!.NextRunTime = referenceTime;
         jobTrigger!.JobId = jobId;
 

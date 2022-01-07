@@ -13,7 +13,7 @@ public class TestPeriodJob : IJob
 
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"<{context.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger!.NumberOfRuns} times");
+        _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.NumberOfRuns} times");
 
         await Task.CompletedTask;
     }

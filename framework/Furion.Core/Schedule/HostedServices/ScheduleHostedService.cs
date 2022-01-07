@@ -168,12 +168,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                     var properties = new Dictionary<object, object>();
 
                     // 创建执行前上下文
-                    var jobExecutingContext = new JobExecutingContext(jobId, properties)
-                    {
-                        JobTrigger = jobTrigger,
-                        JobDetail = jobDetail,
-                        ExecutingTime = DateTime.UtcNow
-                    };
+                    var jobExecutingContext = new JobExecutingContext(jobDetail, jobTrigger, properties);
 
                     // 执行异常对象
                     InvalidOperationException? executionException = default;
@@ -218,6 +213,9 @@ internal sealed class ScheduleHostedService : BackgroundService
                     }
                     finally
                     {
+                        // 递增错误次数
+                        jobTrigger.IncrementErrors();
+
                         // 输出触发完成日志
                         if (jobDetail!.WithExecutionLog)
                         {
@@ -228,10 +226,8 @@ internal sealed class ScheduleHostedService : BackgroundService
                         if (Monitor != default)
                         {
                             // 创建执行后上下文
-                            var jobExecutedContext = new JobExecutedContext(jobId, properties)
+                            var jobExecutedContext = new JobExecutedContext(jobDetail, jobTrigger, properties)
                             {
-                                JobTrigger = jobTrigger,
-                                JobDetail = jobDetail,
                                 ExecutedTime = DateTime.UtcNow,
                                 Exception = executionException
                             };

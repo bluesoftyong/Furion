@@ -76,13 +76,6 @@ public static class ScheduleServiceCollectionExtensions
     /// <returns>服务集合实例</returns>
     private static IServiceCollection AddInternalService(this IServiceCollection services)
     {
-        //// 注册作业存储器，采用工厂方式创建
-        //services.AddSingleton<IJobStorer>(_ =>
-        //{
-        //    // 创建基于运行时内存作业存储实现
-        //    return new RuntimeJobStorer();
-        //});
-
         // 注册作业调度器工厂
         services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
 

@@ -18,7 +18,7 @@ public abstract class EventExecutionContext
     /// </summary>
     /// <param name="eventSource">事件源（事件承载对象）</param>
     /// <param name="properties">共享上下文数据</param>
-    public EventExecutionContext(IEventSource eventSource, IDictionary<object, object> properties)
+    internal EventExecutionContext(IEventSource eventSource, IDictionary<object, object> properties)
     {
         Source = eventSource;
         Properties = properties;

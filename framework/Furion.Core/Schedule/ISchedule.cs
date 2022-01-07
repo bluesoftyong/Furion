@@ -27,4 +27,11 @@ public interface ISchedule
     /// <param name="jobType">作业类型</param>
     /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
     void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder);
+
+    /// <summary>
+    /// 尝试删除作业
+    /// </summary>
+    /// <param name="jobId">作业唯一 Id</param>
+    /// <returns><see cref="bool"/></returns>
+    bool TryRemoveJob(string jobId);
 }

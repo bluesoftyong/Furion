@@ -27,7 +27,7 @@ public sealed class JobDetailBuilder
         }
 
         JobId = jobId;
-        JobTypeWithAssembly = $"{jobType.Assembly.GetName().Name};{jobType.FullName}";
+        JobType = $"{jobType.Assembly.GetName().Name};{jobType.FullName}";
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public sealed class JobDetailBuilder
     /// 作业类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public string JobTypeWithAssembly { get; }
+    public string JobType { get; }
 
     /// <summary>
     /// 作业描述信息
@@ -57,7 +57,7 @@ public sealed class JobDetailBuilder
     public JobExecutionMode ExecutionMode { get; set; } = JobExecutionMode.Parallel;
 
     /// <summary>
-    /// 是否打印详细执行日志
+    /// 是否打印执行日志
     /// </summary>
     public bool WithExecutionLog { get; set; } = false;
 
@@ -68,10 +68,11 @@ public sealed class JobDetailBuilder
     internal JobDetail Build()
     {
         // 创建作业信息对象
-        var jobDetail = new JobDetail(JobId, JobTypeWithAssembly);
+        var jobDetail = new JobDetail(JobId, JobType);
 
         // 初始化作业信息属性
         jobDetail!.Description = Description;
+        jobDetail!.Status = StartMode == JobStartMode.Now ? JobStatus.Normal : JobStatus.None;
         jobDetail!.StartMode = StartMode;
         jobDetail!.ExecutionMode = ExecutionMode;
         jobDetail!.WithExecutionLog = WithExecutionLog;

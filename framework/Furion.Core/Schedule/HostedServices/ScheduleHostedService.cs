@@ -106,11 +106,11 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("SchedulerJob Hosted Service is running.");
+        _logger.LogInformation("Schedule Hosted Service is running.");
 
         // 调度器服务停止监听
         stoppingToken.Register(() =>
-             _logger.LogDebug($"SchedulerJob Hosted Service is stopping."));
+             _logger.LogDebug($"Schedule Hosted Service is stopping."));
 
         // 监听调度器服务是否取消
         while (!stoppingToken.IsCancellationRequested)
@@ -119,7 +119,7 @@ internal sealed class ScheduleHostedService : BackgroundService
             await BackgroundProcessing(stoppingToken);
         }
 
-        _logger.LogCritical($"SchedulerJob Hosted Service is stopped.");
+        _logger.LogCritical($"Schedule Hosted Service is stopped.");
     }
 
     /// <summary>

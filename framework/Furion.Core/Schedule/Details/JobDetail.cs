@@ -17,11 +17,11 @@ public sealed class JobDetail
     /// 构造函数
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <param name="jobTypeWithAssembly">作业类型完整限定名（含程序集名称）</param>
-    internal JobDetail(string jobId, string jobTypeWithAssembly)
+    /// <param name="jobType">作业类型完整限定名（含程序集名称）</param>
+    internal JobDetail(string jobId, string jobType)
     {
         JobId = jobId;
-        JobTypeWithAssembly = jobTypeWithAssembly;
+        JobType = jobType;
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public sealed class JobDetail
     /// 作业类型完整限定名（含程序集名称）
     /// </summary>
     /// <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
-    public string JobTypeWithAssembly { get; }
+    public string JobType { get; }
 
     /// <summary>
     /// 作业描述信息
@@ -56,7 +56,7 @@ public sealed class JobDetail
     public JobExecutionMode ExecutionMode { get; internal set; } = JobExecutionMode.Parallel;
 
     /// <summary>
-    /// 是否打印详细执行日志
+    /// 是否打印执行日志
     /// </summary>
     public bool WithExecutionLog { get; internal set; } = false;
 }

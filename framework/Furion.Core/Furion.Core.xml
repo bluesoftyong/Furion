@@ -1380,7 +1380,7 @@
             作业 Id
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetailBuilder.JobTypeWithAssembly">
+        <member name="P:Furion.Schedule.JobDetailBuilder.JobType">
             <summary>
             作业类型完整限定名（含程序集名称）
             </summary>
@@ -1403,7 +1403,7 @@
         </member>
         <member name="P:Furion.Schedule.JobDetailBuilder.WithExecutionLog">
             <summary>
-            是否打印详细执行日志
+            是否打印执行日志
             </summary>
         </member>
         <member name="M:Furion.Schedule.JobDetailBuilder.Build">
@@ -1682,7 +1682,7 @@
         </member>
         <member name="F:Furion.Schedule.JobStatus.None">
             <summary>
-            未开始或取消
+            未开始
             </summary>
         </member>
         <member name="F:Furion.Schedule.JobStatus.Normal">
@@ -1792,14 +1792,14 @@
             构造函数
             </summary>
             <param name="jobId">作业 Id</param>
-            <param name="jobTypeWithAssembly">作业类型完整限定名（含程序集名称）</param>
+            <param name="jobType">作业类型完整限定名（含程序集名称）</param>
         </member>
         <member name="P:Furion.Schedule.JobDetail.JobId">
             <summary>
             作业 Id
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetail.JobTypeWithAssembly">
+        <member name="P:Furion.Schedule.JobDetail.JobType">
             <summary>
             作业类型完整限定名（含程序集名称）
             </summary>
@@ -1827,7 +1827,7 @@
         </member>
         <member name="P:Furion.Schedule.JobDetail.WithExecutionLog">
             <summary>
-            是否打印详细执行日志
+            是否打印执行日志
             </summary>
         </member>
         <member name="T:Furion.Schedule.IJobExecutor">

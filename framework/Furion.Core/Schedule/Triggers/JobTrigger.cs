@@ -32,28 +32,28 @@ public abstract class JobTrigger
     /// <summary>
     /// 作业触发器描述
     /// </summary>
-    public virtual string? Description { get; set; }
+    public virtual string? Description { get; internal set; }
 
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public virtual DateTime LastRunTime { get; set; }
+    public virtual DateTime LastRunTime { get; internal set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    public virtual DateTime NextRunTime { get; set; }
+    public virtual DateTime NextRunTime { get; internal set; }
 
     /// <summary>
     /// 触发次数
     /// </summary>
-    public virtual long NumberOfRuns { get; set; } = 0;
+    public virtual long NumberOfRuns { get; internal set; } = 0;
 
     /// <summary>
     /// 最大执行次数
     /// </summary>
     /// <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
-    public virtual long MaxNumberOfRuns { get; set; } = -1;
+    public virtual long MaxNumberOfRuns { get; internal set; } = -1;
 
     /// <summary>
     /// 计算当前触发器增量信息

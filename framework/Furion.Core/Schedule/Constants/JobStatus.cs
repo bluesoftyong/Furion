@@ -14,7 +14,7 @@ namespace Furion.Schedule;
 public enum JobStatus : int
 {
     /// <summary>
-    /// 未开始或取消
+    /// 未开始
     /// </summary>
     None = 0,
 

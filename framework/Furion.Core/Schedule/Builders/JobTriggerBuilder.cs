@@ -97,7 +97,8 @@ public sealed class JobTriggerBuilder
 
         // 初始化作业触发器属性
         jobTrigger!.TriggerId = string.IsNullOrWhiteSpace(TriggerId) ? $"{jobId}_trigger_{Guid.NewGuid():N}" : TriggerId;
-        jobTrigger!.TriggerType = $"{TriggerType.Assembly.GetName().Name};{TriggerType.FullName}";
+        jobTrigger!.TriggerType = TriggerType.FullName;
+        jobTrigger!.Assembly = TriggerType.Assembly.GetName().Name;
         jobTrigger!.Args = withArgs ? JsonSerializer.Serialize(Args) : default;
         jobTrigger!.Description = Description;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;

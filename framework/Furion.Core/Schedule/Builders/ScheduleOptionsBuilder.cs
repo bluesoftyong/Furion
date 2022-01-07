@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Furion.Schedule;
 
@@ -20,11 +19,6 @@ public sealed class ScheduleOptionsBuilder
     /// 作业调度器构建器集合
     /// </summary>
     private readonly IList<SchedulerJobBuilder> _schedulerJobBuilders;
-
-    /// <summary>
-    /// 作业存储器实现工厂
-    /// </summary>
-    //private Func<IServiceProvider, IJobStorer>? _jobStorerImplementationFactory;
 
     /// <summary>
     /// 作业监视器
@@ -101,17 +95,6 @@ public sealed class ScheduleOptionsBuilder
         return this;
     }
 
-    ///// <summary>
-    ///// 替换作业存储器
-    ///// </summary>
-    ///// <param name="implementationFactory">自定义作业存储器工厂</param>
-    ///// <returns><see cref="ScheduleOptionsBuilder"/> 实例</returns>
-    //public ScheduleOptionsBuilder ReplaceStorer(Func<IServiceProvider, IJobStorer> implementationFactory)
-    //{
-    //    _jobStorerImplementationFactory = implementationFactory;
-    //    return this;
-    //}
-
     /// <summary>
     /// 注册作业监视器
     /// </summary>
@@ -144,12 +127,6 @@ public sealed class ScheduleOptionsBuilder
     internal IEnumerable<SchedulerJobBuilder> Build(IServiceCollection services)
     {
         var schedulerJobBuilders = _schedulerJobBuilders;
-
-        //// 替换作业存储器
-        //if (_jobStorerImplementationFactory != default)
-        //{
-        //    services.Replace(ServiceDescriptor.Singleton(_jobStorerImplementationFactory));
-        //}
 
         // 注册作业监视器
         if (_jobMonitor != default)

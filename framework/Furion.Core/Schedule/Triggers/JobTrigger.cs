@@ -19,10 +19,14 @@ public abstract class JobTrigger
     public string? TriggerId { get; internal set; }
 
     /// <summary>
-    /// 作业触发器类型完整限定名（含程序集名称）
+    /// 作业触发器类型完整限定名
     /// </summary>
-    /// <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
     public string? TriggerType { get; internal set; }
+
+    /// <summary>
+    /// 作业触发器类型所在程序集名称
+    /// </summary>
+    public string? Assembly { get; internal set; }
 
     /// <summary>
     /// 作业触发器参数（JSON 字符串）

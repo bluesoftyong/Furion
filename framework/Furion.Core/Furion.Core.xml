@@ -1784,9 +1784,13 @@
         </member>
         <member name="P:Furion.Schedule.JobDetail.JobType">
             <summary>
-            作业类型完整限定名（含程序集名称）
+            作业类型完整限定名
             </summary>
-            <remarks>格式：程序集名称;作业类型完整限定名，如：Furion;Furion.Jobs.MyJob</remarks>
+        </member>
+        <member name="P:Furion.Schedule.JobDetail.Assembly">
+            <summary>
+            作业类型所在程序集名称
+            </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetail.Description">
             <summary>
@@ -2146,9 +2150,13 @@
         </member>
         <member name="P:Furion.Schedule.JobTrigger.TriggerType">
             <summary>
-            作业触发器类型完整限定名（含程序集名称）
+            作业触发器类型完整限定名
             </summary>
-            <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
+        </member>
+        <member name="P:Furion.Schedule.JobTrigger.Assembly">
+            <summary>
+            作业触发器类型所在程序集名称
+            </summary>
         </member>
         <member name="P:Furion.Schedule.JobTrigger.Args">
             <summary>

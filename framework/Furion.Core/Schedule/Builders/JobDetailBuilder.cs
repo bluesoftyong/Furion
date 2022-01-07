@@ -57,7 +57,7 @@ public sealed class JobDetailBuilder
     /// 配置作业 Id
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    public void WithIdentity(string jobId)
+    internal void WithIdentity(string jobId)
     {
         // 空检查
         if (string.IsNullOrWhiteSpace(jobId))
@@ -79,7 +79,8 @@ public sealed class JobDetailBuilder
 
         // 初始化作业信息属性
         jobDetail!.JobId = string.IsNullOrWhiteSpace(JobId) ? $"job_{Guid.NewGuid():N}" : JobId;
-        jobDetail!.JobType = $"{JobType.Assembly.GetName().Name};{JobType.FullName}";
+        jobDetail!.JobType = JobType.FullName;
+        jobDetail!.Assembly = JobType.Assembly.GetName().Name;
         jobDetail!.Description = Description;
         jobDetail!.Status = StartMode == JobStartMode.Now ? JobStatus.Normal : JobStatus.None;
         jobDetail!.StartMode = StartMode;

@@ -80,8 +80,7 @@ public sealed class SchedulerJobBuilder
     /// <param name="interval">间隔时间（毫秒）</param>
     /// <param name="configureJobTriggerBuilder">作业触发器构建器委托</param>
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    public SchedulerJobBuilder AddPeriodTrigger(int interval
-        , Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
+    public SchedulerJobBuilder AddPeriodTrigger(int interval, Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
     {
         AddTrigger(typeof(PeriodTrigger)
             , new object[] { interval }
@@ -115,8 +114,7 @@ public sealed class SchedulerJobBuilder
     /// <param name="args">作业触发器构造函数参数</param>
     /// <param name="configureJobTriggerBuilder">作业触发器构建器委托</param>
     /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    public SchedulerJobBuilder AddTrigger<TJobTrigger>(object?[]? args = default
-        , Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
+    public SchedulerJobBuilder AddTrigger<TJobTrigger>(object?[]? args = default, Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
         where TJobTrigger : JobTrigger
     {
         AddTrigger(typeof(TJobTrigger)
@@ -137,7 +135,7 @@ public sealed class SchedulerJobBuilder
         , object?[]? args = default
         , Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
     {
-        // 检查 jobTriggerType 类型是否派生自 JobTrigger
+        // 检查 triggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
         {
             throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
@@ -167,9 +165,13 @@ public sealed class SchedulerJobBuilder
         var jobDetail = _jobDetailBuilder.Build();
 
         // 构建作业触发器集合
-        var jobTriggers = _jobTriggerBuilders.Select(t => t.Build(jobDetail.JobId!, referenceTime)).ToList();
+        var jobTriggers = _jobTriggerBuilders.Select(t =>
+                                                                t.Build(jobDetail.JobId!, referenceTime))
+                                                           .ToList();
 
         // 创建作业调度器对象
-        return new SchedulerJob(JobType, jobDetail, jobTriggers);
+        return new SchedulerJob(JobType
+            , jobDetail
+            , jobTriggers);
     }
 }

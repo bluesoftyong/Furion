@@ -68,9 +68,10 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 构建作业触发器对象
     /// </summary>
+    /// <param name="jobId">作业 Id</param>
     /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="JobTrigger"/></returns>
-    internal JobTrigger Build(DateTime referenceTime)
+    internal JobTrigger Build(string jobId, DateTime referenceTime)
     {
         // 检查 jobTriggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(JobTriggerType))
@@ -85,6 +86,7 @@ public sealed class JobTriggerBuilder
 
         // 初始化作业触发器属性
         jobTrigger!.JobTriggerId = JobTriggerId;
+        jobTrigger!.JobId = jobId;
         jobTrigger!.Description = Description;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;
         jobTrigger!.NextRunTime = referenceTime;

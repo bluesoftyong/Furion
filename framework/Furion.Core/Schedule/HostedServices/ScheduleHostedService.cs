@@ -173,6 +173,8 @@ internal sealed class ScheduleHostedService : BackgroundService
                     // 创建执行前上下文
                     var jobExecutingContext = new JobExecutingContext(jobId, properties)
                     {
+                        JobTrigger = jobTrigger,
+                        JobDetail = jobDetail,
                         ExecutingTime = DateTime.UtcNow
                     };
 
@@ -228,6 +230,8 @@ internal sealed class ScheduleHostedService : BackgroundService
                             // 创建执行后上下文
                             var jobExecutedContext = new JobExecutedContext(jobId, properties)
                             {
+                                JobTrigger = jobTrigger,
+                                JobDetail = jobDetail,
                                 ExecutedTime = DateTime.UtcNow,
                                 Exception = executionException
                             };

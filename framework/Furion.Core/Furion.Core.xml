@@ -1457,10 +1457,11 @@
             </summary>
             <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
         </member>
-        <member name="M:Furion.Schedule.JobTriggerBuilder.Build(System.DateTime)">
+        <member name="M:Furion.Schedule.JobTriggerBuilder.Build(System.String,System.DateTime)">
             <summary>
             构建作业触发器对象
             </summary>
+            <param name="jobId">作业 Id</param>
             <param name="referenceTime">初始引用时间</param>
             <returns><see cref="T:Furion.Schedule.JobTrigger"/></returns>
         </member>
@@ -1754,6 +1755,11 @@
         <member name="P:Furion.Schedule.JobExecutionContext.JobDetail">
             <summary>
             作业详细信息
+            </summary>
+        </member>
+        <member name="P:Furion.Schedule.JobExecutionContext.JobTrigger">
+            <summary>
+            作业触发器
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobExecutionContext.Properties">
@@ -2204,6 +2210,11 @@
             作业触发器类型完整限定名（含程序集名称）
             </summary>
             <remarks>格式：程序集名称;作业触发器类型完整限定名，如：Furion;Furion.Jobs.MyTrigger</remarks>
+        </member>
+        <member name="P:Furion.Schedule.JobTrigger.JobId">
+            <summary>
+            作业 Id
+            </summary>
         </member>
         <member name="P:Furion.Schedule.JobTrigger.Description">
             <summary>

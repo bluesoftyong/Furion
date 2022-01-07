@@ -25,6 +25,11 @@ public abstract class JobTrigger
     public string? TriggerTypeWithAssembly { get; internal set; }
 
     /// <summary>
+    /// 作业 Id
+    /// </summary>
+    public string? JobId { get; internal set; }
+
+    /// <summary>
     /// 作业触发器描述
     /// </summary>
     public virtual string? Description { get; set; }

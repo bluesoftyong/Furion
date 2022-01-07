@@ -32,7 +32,12 @@ public abstract class JobExecutionContext
     /// <summary>
     /// 作业详细信息
     /// </summary>
-    public JobDetail? JobDetail { get; }
+    public JobDetail? JobDetail { get; internal set; }
+
+    /// <summary>
+    /// 作业触发器
+    /// </summary>
+    public JobTrigger? JobTrigger { get; internal set; }
 
     /// <summary>
     /// 共享上下文数据

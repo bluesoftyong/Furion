@@ -6,7 +6,7 @@ public class TestCronJob2 : IJob
 {
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"<{context.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        Console.WriteLine($"<{context.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger!.NumberOfRuns} times");
 
         await Task.CompletedTask;
     }

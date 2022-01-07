@@ -37,6 +37,11 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     }
 
     /// <summary>
+    /// 作业调度器集合
+    /// </summary>
+    public ICollection<SchedulerJob> SchedulerJobs => _schedulerJobs.Values;
+
+    /// <summary>
     /// 添加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
@@ -78,14 +83,5 @@ internal sealed class SchedulerFactory : ISchedulerFactory
         }
 
         return canRemove;
-    }
-
-    /// <summary>
-    /// 获取所有作业调度器
-    /// </summary>
-    /// <returns><see cref="ICollection{T}"/></returns>
-    public ICollection<SchedulerJob> GetSchedulerJobs()
-    {
-        return _schedulerJobs.Values;
     }
 }

@@ -1845,6 +1845,11 @@
             作业调度作业工厂依赖接口
             </summary>
         </member>
+        <member name="P:Furion.Schedule.ISchedulerFactory.SchedulerJobs">
+            <summary>
+            作业调度器集合
+            </summary>
+        </member>
         <member name="M:Furion.Schedule.ISchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
             <summary>
             添加作业调度器
@@ -1858,12 +1863,6 @@
             <param name="jobId">作业 Id</param>
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
-        </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.GetSchedulerJobs">
-            <summary>
-            获取所有作业调度器
-            </summary>
-            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.Schedule.SchedulerFactory">
             <summary>
@@ -1886,6 +1885,11 @@
             </summary>
             <param name="logger">日志对象</param>
         </member>
+        <member name="P:Furion.Schedule.SchedulerFactory.SchedulerJobs">
+            <summary>
+            作业调度器集合
+            </summary>
+        </member>
         <member name="M:Furion.Schedule.SchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
             <summary>
             添加作业调度器
@@ -1899,12 +1903,6 @@
             <param name="jobId">作业 Id</param>
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
-        </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.GetSchedulerJobs">
-            <summary>
-            获取所有作业调度器
-            </summary>
-            <returns><see cref="T:System.Collections.Generic.ICollection`1"/></returns>
         </member>
         <member name="T:Furion.Schedule.LogTemplateHelpers">
             <summary>

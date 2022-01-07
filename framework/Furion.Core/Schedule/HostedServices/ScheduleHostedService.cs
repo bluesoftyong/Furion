@@ -103,7 +103,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation(LogTemplateHelpers.ScheduleRunningTemplate, Factory.GetSchedulerJobs().Count);
+        _logger.LogInformation(LogTemplateHelpers.ScheduleRunningTemplate, Factory.SchedulerJobs.Count);
 
         // 调度器服务停止监听
         stoppingToken.Register(() =>
@@ -135,7 +135,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         var referenceTime = DateTime.UtcNow;
 
         // 获取所有有效的作业调度器
-        var schedulerJobsThatShouldRun = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
+        var schedulerJobsThatShouldRun = Factory.SchedulerJobs.Where(u => IsEffectiveJob(u.JobDetail));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
@@ -272,7 +272,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         var unspecifiedTime = new DateTime(referenceTime.Year, referenceTime.Month, referenceTime.Day, referenceTime.Hour, referenceTime.Minute, referenceTime.Second);
 
         // 查找下一次符合触发时机的所有作业触发器
-        var closestJobTriggers = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail))
+        var closestJobTriggers = Factory.SchedulerJobs.Where(u => IsEffectiveJob(u.JobDetail))
                                                            .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间

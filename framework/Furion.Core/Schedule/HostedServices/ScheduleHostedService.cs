@@ -134,22 +134,22 @@ internal sealed class ScheduleHostedService : BackgroundService
     {
         var referenceTime = DateTime.UtcNow;
 
-        // 获取所有符合触发时机的作业
-        var jobsThatShouldRun = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
+        // 获取所有有效的作业调度器
+        var schedulerJobsThatShouldRun = Factory.GetSchedulerJobs().Where(u => IsEffectiveJob(u.JobDetail));
 
         // 创建一个任务工厂并保证作业处理程序使用当前的计划程序
         var taskFactory = new TaskFactory(TaskScheduler.Current);
 
-        // 逐条创建新线程调用
-        foreach (var jobThatShouldRun in jobsThatShouldRun)
+        // 遍历所有作业调度器
+        foreach (var schedulerJobThatShouldRun in schedulerJobsThatShouldRun)
         {
-            // 解构包装器信息
-            (var jobId, var jobType, var jobDetail, var jobTriggers) = jobThatShouldRun;
+            // 解构作业调度器信息
+            (var jobId, var jobType, var jobDetail, var jobTriggers) = schedulerJobThatShouldRun;
 
             // 查询所有符合触发的触发器
             var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(referenceTime));
 
-            // 逐一触发
+            // 逐一创建新线程并触发
             foreach (var jobTrigger in triggersThatShouldRun)
             {
                 // 计算当前触发器增量信息

@@ -73,7 +73,7 @@ public sealed class ScheduleOptionsBuilder
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
         }
 
-        // 创建作业调度器对象
+        // 创建作业调度器构建器
         var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
 
         // 外部调用

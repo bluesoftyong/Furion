@@ -149,10 +149,16 @@ internal sealed class ScheduleHostedService : BackgroundService
                     // 执行异常对象
                     InvalidOperationException? executionException = default;
 
+                    // 作业服务作用域范围
+                    IServiceScope? serviceScope = null;
+
                     try
                     {
                         // 创建作业处理程序
-                        var job = CreateJobInstance(_serviceProvider, jobType);
+                        var job = CreateJobInstance(_serviceProvider
+                            , jobType
+                            , jobDetail.WithScopeExecution
+                            , ref serviceScope);
 
                         // 调用执行前监视器
                         if (Monitor != default)
@@ -192,6 +198,9 @@ internal sealed class ScheduleHostedService : BackgroundService
                     }
                     finally
                     {
+                        // 释放作业服务作用域范围
+                        serviceScope?.Dispose();
+
                         // 当前时间
                         var executedTime = DateTime.UtcNow;
 
@@ -271,9 +280,14 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// </summary>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="jobType">作业类型</param>
+    /// <param name="withScopeExecution">是否创建新的服务作用域执行作业</param>
+    /// <param name="serviceScope">服务作用域范围</param>
     /// <returns><see cref="IJob"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    private static IJob CreateJobInstance(IServiceProvider serviceProvider, Type jobType)
+    private static IJob CreateJobInstance(IServiceProvider serviceProvider
+        , Type jobType
+        , bool withScopeExecution
+        , ref IServiceScope? serviceScope)
     {
         // 获取构造函数
         var constructors = jobType.GetConstructors();
@@ -284,10 +298,14 @@ internal sealed class ScheduleHostedService : BackgroundService
             throw new InvalidOperationException("A job type can contain at most one constructor.");
         }
 
+        // 判断是否创建新的服务作用域执行
+        serviceScope = !withScopeExecution ? null : serviceProvider.CreateScope();
+        var newServiceProvider = serviceScope?.ServiceProvider ?? serviceProvider;
+
         // 反射创建作业执行程序
         var job = (constructors.Length == 0
             ? Activator.CreateInstance(jobType)
-            : ActivatorUtilities.CreateInstance(serviceProvider, jobType)) as IJob;
+            : ActivatorUtilities.CreateInstance(newServiceProvider, jobType)) as IJob;
 
         // 空检查
         ArgumentNullException.ThrowIfNull(job);

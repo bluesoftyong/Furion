@@ -52,4 +52,9 @@ public sealed class JobDetail
     /// 是否打印执行日志
     /// </summary>
     public bool WithExecutionLog { get; internal set; } = false;
+
+    /// <summary>
+    /// 是否创建新的服务作用域执行作业
+    /// </summary>
+    public bool WithScopeExecution { get; internal set; } = false;
 }

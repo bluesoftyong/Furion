@@ -54,13 +54,13 @@ internal sealed class InternalSchedule : ISchedule
             throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
         }
 
-        // 创建调度作业对象
+        // 创建作业调度器构建器
         var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
 
-        // 调用委托
+        // 外部调用
         configureSchedulerJobBuilder(schedulerJobBuilder);
 
-        // 解析作业实例
+        // 构建作业调度器对象
         var schedulerJob = schedulerJobBuilder.Build(DateTime.UtcNow);
 
         // 将作业调度器添加到作业调度器工厂中

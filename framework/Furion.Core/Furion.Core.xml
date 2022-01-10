@@ -1363,6 +1363,16 @@
             <param name="dep4">依赖服务</param>
             <param name="dep5">依赖服务</param>
         </member>
+        <member name="T:Furion.Schedule.ScopeExecutionAttribute">
+            <summary>
+            创建新的作用域执行作业
+            </summary>
+        </member>
+        <member name="M:Furion.Schedule.ScopeExecutionAttribute.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
         <member name="T:Furion.Schedule.JobDetailBuilder">
             <summary>
             作业信息构建器
@@ -1403,6 +1413,11 @@
         <member name="P:Furion.Schedule.JobDetailBuilder.WithExecutionLog">
             <summary>
             是否打印执行日志
+            </summary>
+        </member>
+        <member name="P:Furion.Schedule.JobDetailBuilder.WithScopeExecution">
+            <summary>
+            是否创建新的服务作用域执行作业
             </summary>
         </member>
         <member name="M:Furion.Schedule.JobDetailBuilder.WithIdentity(System.String)">
@@ -1816,6 +1831,11 @@
             是否打印执行日志
             </summary>
         </member>
+        <member name="P:Furion.Schedule.JobDetail.WithScopeExecution">
+            <summary>
+            是否创建新的服务作用域执行作业
+            </summary>
+        </member>
         <member name="T:Furion.Schedule.IJobExecutor">
             <summary>
             作业执行器
@@ -2100,12 +2120,14 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.CreateJobInstance(System.IServiceProvider,System.Type)">
+        <member name="M:Furion.Schedule.ScheduleHostedService.CreateJobInstance(System.IServiceProvider,System.Type,System.Boolean,Microsoft.Extensions.DependencyInjection.IServiceScope@)">
             <summary>
             创建作业处理程序
             </summary>
             <param name="serviceProvider">服务提供器</param>
             <param name="jobType">作业类型</param>
+            <param name="withScopeExecution">是否创建新的服务作用域执行作业</param>
+            <param name="serviceScope">服务作用域范围</param>
             <returns><see cref="T:Furion.Schedule.IJob"/></returns>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>

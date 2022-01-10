@@ -20,6 +20,9 @@ public sealed class JobDetailBuilder
     internal JobDetailBuilder(Type jobType)
     {
         JobType = jobType;
+
+        // 是否创建新的服务作用域执行作业
+        WithScopeExecution = jobType.IsDefined(typeof(ScopeExecutionAttribute), false);
     }
 
     /// <summary>
@@ -54,6 +57,11 @@ public sealed class JobDetailBuilder
     public bool WithExecutionLog { get; set; } = false;
 
     /// <summary>
+    /// 是否创建新的服务作用域执行作业
+    /// </summary>
+    public bool WithScopeExecution { get; set; }
+
+    /// <summary>
     /// 配置作业 Id
     /// </summary>
     /// <param name="jobId">作业 Id</param>
@@ -86,6 +94,7 @@ public sealed class JobDetailBuilder
         jobDetail!.StartMode = StartMode;
         jobDetail!.ExecutionMode = ExecutionMode;
         jobDetail!.WithExecutionLog = WithExecutionLog;
+        jobDetail!.WithScopeExecution = WithScopeExecution;
 
         return jobDetail;
     }

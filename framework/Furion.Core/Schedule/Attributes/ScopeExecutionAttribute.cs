@@ -9,7 +9,7 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 创建新的作用域执行作业
+/// 标记作业处理程序是否采用新的服务作用域执行特性
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public sealed class ScopeExecutionAttribute : Attribute

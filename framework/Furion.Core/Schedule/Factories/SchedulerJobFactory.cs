@@ -150,7 +150,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
         using var timer = new System.Timers.Timer(delay);
         timer.Elapsed += (o, e) =>
         {
-            // 唤醒线程
+            // 唤醒后台主机服务
             _signalLampChannel.Writer.TryWrite(1);
         };
         timer!.AutoReset = false;

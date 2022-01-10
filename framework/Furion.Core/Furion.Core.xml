@@ -1365,7 +1365,7 @@
         </member>
         <member name="T:Furion.Schedule.ScopeExecutionAttribute">
             <summary>
-            创建新的作用域执行作业
+            标记作业处理程序是否采用新的服务作用域执行特性
             </summary>
         </member>
         <member name="M:Furion.Schedule.ScopeExecutionAttribute.#ctor">

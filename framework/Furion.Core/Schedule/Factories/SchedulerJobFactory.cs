@@ -8,6 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.Threading.Channels;
 
 namespace Furion.Schedule;
 
@@ -16,6 +17,12 @@ namespace Furion.Schedule;
 /// </summary>
 internal sealed class SchedulerJobFactory : ISchedulerJobFactory
 {
+    /// <summary>
+    /// 基于 Channel 实现信号灯机制
+    /// </summary>
+    /// <remarks>控制作业调度器休眠、激活</remarks>
+    private readonly Channel<int> _signalLampChannel;
+
     /// <summary>
     /// 作业调度器字典集合
     /// </summary>
@@ -32,6 +39,15 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <param name="logger">日志对象</param>
     public SchedulerJobFactory(ILogger<SchedulerJobFactory> logger)
     {
+        // 配置 Channel 通道最多容纳消息为 1 个，超过 1 个进入等待
+        var boundedChannelOptions = new BoundedChannelOptions(1)
+        {
+            FullMode = BoundedChannelFullMode.Wait
+        };
+
+        // 创建基于 Channel 信号灯通道
+        _signalLampChannel = Channel.CreateBounded<int>(boundedChannelOptions);
+
         _schedulerJobs = new();
         _logger = logger;
     }
@@ -120,5 +136,39 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
         }
 
         _logger.LogInformation(LogTemplateHelpers.PauseAllSchedulerJobTemplate, SchedulerJobs.Count);
+    }
+
+    /// <summary>
+    /// 休眠至适合时机唤醒
+    /// </summary>
+    /// <param name="delay">休眠时间（毫秒）</param>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+    /// <returns><see cref="Task"/></returns>
+    public async Task SleepAsync(double delay, CancellationToken stoppingToken)
+    {
+        // 创建 Timer 定时器，休眠结束后写入信号灯管道
+        using var timer = new System.Timers.Timer(delay);
+        timer.Elapsed += (o, e) =>
+        {
+            // 唤醒线程
+            _signalLampChannel.Writer.TryWrite(1);
+        };
+        timer!.AutoReset = false;
+        timer.Start();
+
+        // 阻塞线程读取管道消息
+        _ = await _signalLampChannel.Reader.ReadAsync(stoppingToken);
+
+        // 释放定时器
+        timer.Dispose();
+    }
+
+    /// <summary>
+    /// 让作业调度器工厂感知变化
+    /// </summary>
+    /// <remarks>主要用于动态添加作业调度器，唤醒调度激活等作用</remarks>
+    public async Task NotifyChanges(CancellationToken cancellationToken = default)
+    {
+        await _signalLampChannel.Writer.WriteAsync(1, cancellationToken);
     }
 }

@@ -39,16 +39,6 @@ public sealed class ScheduleOptionsBuilder
     }
 
     /// <summary>
-    /// 设置调度器休眠后再度被激活前多少ms完成耗时操作
-    /// </summary>
-    public int TimeBeforeSync { get; set; } = 30;
-
-    /// <summary>
-    /// 最小存储器同步间隔（秒）
-    /// </summary>
-    public int MinimumSyncInterval { get; set; } = 30;
-
-    /// <summary>
     /// 未察觉任务异常处理程序
     /// </summary>
     public EventHandler<UnobservedTaskExceptionEventArgs>? UnobservedTaskExceptionHandler { get; set; }

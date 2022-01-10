@@ -1510,16 +1510,6 @@
             构造函数
             </summary>
         </member>
-        <member name="P:Furion.Schedule.ScheduleOptionsBuilder.TimeBeforeSync">
-            <summary>
-            设置调度器休眠后再度被激活前多少ms完成耗时操作
-            </summary>
-        </member>
-        <member name="P:Furion.Schedule.ScheduleOptionsBuilder.MinimumSyncInterval">
-            <summary>
-            最小存储器同步间隔（秒）
-            </summary>
-        </member>
         <member name="P:Furion.Schedule.ScheduleOptionsBuilder.UnobservedTaskExceptionHandler">
             <summary>
             未察觉任务异常处理程序
@@ -1882,10 +1872,30 @@
             暂停所有作业调度器
             </summary>
         </member>
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.SleepAsync(System.Double,System.Threading.CancellationToken)">
+            <summary>
+            休眠至适合时机唤醒
+            </summary>
+            <param name="delay">休眠时间（毫秒）</param>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.NotifyChanges(System.Threading.CancellationToken)">
+            <summary>
+            让作业调度器工厂感知变化
+            </summary>
+            <remarks>主要用于动态添加作业调度器，唤醒调度激活等作用</remarks>
+        </member>
         <member name="T:Furion.Schedule.SchedulerJobFactory">
             <summary>
             作业调度器工厂默认实现
             </summary>
+        </member>
+        <member name="F:Furion.Schedule.SchedulerJobFactory._signalLampChannel">
+            <summary>
+            基于 Channel 实现信号灯机制
+            </summary>
+            <remarks>控制作业调度器休眠、激活</remarks>
         </member>
         <member name="F:Furion.Schedule.SchedulerJobFactory._schedulerJobs">
             <summary>
@@ -1939,6 +1949,20 @@
             <summary>
             暂停所有作业调度器
             </summary>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerJobFactory.SleepAsync(System.Double,System.Threading.CancellationToken)">
+            <summary>
+            休眠至适合时机唤醒
+            </summary>
+            <param name="delay">休眠时间（毫秒）</param>
+            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+            <returns><see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerJobFactory.NotifyChanges(System.Threading.CancellationToken)">
+            <summary>
+            让作业调度器工厂感知变化
+            </summary>
+            <remarks>主要用于动态添加作业调度器，唤醒调度激活等作用</remarks>
         </member>
         <member name="T:Furion.Schedule.LogTemplateHelpers">
             <summary>
@@ -2040,22 +2064,7 @@
             作业调度器工厂
             </summary>
         </member>
-        <member name="P:Furion.Schedule.ScheduleHostedService.TimeBeforeSync">
-            <summary>
-            调度器休眠后再度被激活前多少ms完成耗时操作
-            </summary>
-        </member>
-        <member name="P:Furion.Schedule.ScheduleHostedService.MinimumSyncInterval">
-            <summary>
-            最小存储器同步间隔（秒）
-            </summary>
-        </member>
-        <member name="P:Furion.Schedule.ScheduleHostedService.LastSyncTime">
-            <summary>
-            记录存储器最近同步时间
-            </summary>
-        </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerJobFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder},System.Int32,System.Int32)">
+        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerJobFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder})">
             <summary>
             构造函数
             </summary>
@@ -2063,8 +2072,6 @@
             <param name="serviceProvider">服务提供器</param>
             <param name="factory">作业调度器工厂</param>
             <param name="schedulerJobBuilders">调度作业构建器集合</param>
-            <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
-            <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
         </member>
         <member name="M:Furion.Schedule.ScheduleHostedService.ExecuteAsync(System.Threading.CancellationToken)">
             <summary>
@@ -2085,19 +2092,11 @@
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.WaitingClosestTrigger(System.DateTime,System.Threading.CancellationToken)">
+        <member name="M:Furion.Schedule.ScheduleHostedService.WaitingAwakenAsync(System.DateTime,System.Threading.CancellationToken)">
             <summary>
-            将当前线程休眠直至最快触发的作业之前
+            休眠线程并等待被唤醒
             </summary>
             <param name="referenceTime">当前后台服务检查时间</param>
-            <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-            <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
-        </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.SynchronizationStorer(System.TimeSpan,System.Threading.CancellationToken)">
-            <summary>
-            同步存储器作业数据
-            </summary>
-            <param name="timeout">超时时间戳</param>
             <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>

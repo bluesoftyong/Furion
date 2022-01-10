@@ -51,10 +51,7 @@ public static class ScheduleServiceCollectionExtensions
         services.AddHostedService(serviceProvider =>
         {
             // 创建调度器工厂后台服务对象
-            var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<ScheduleHostedService>(serviceProvider
-                , schedulerJobBuilders
-                , scheduleOptionsBuilder.TimeBeforeSync
-                , scheduleOptionsBuilder.MinimumSyncInterval);
+            var schedulerFactoryHostedService = ActivatorUtilities.CreateInstance<ScheduleHostedService>(serviceProvider, schedulerJobBuilders);
 
             // 订阅未察觉任务异常事件
             var unobservedTaskExceptionHandler = scheduleOptionsBuilder.UnobservedTaskExceptionHandler;

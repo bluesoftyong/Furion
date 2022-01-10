@@ -48,43 +48,22 @@ internal sealed class ScheduleHostedService : BackgroundService
     private ISchedulerJobFactory Factory { get; }
 
     /// <summary>
-    /// 调度器休眠后再度被激活前多少ms完成耗时操作
-    /// </summary>
-    private int TimeBeforeSync { get; }
-
-    /// <summary>
-    /// 最小存储器同步间隔（秒）
-    /// </summary>
-    private int MinimumSyncInterval { get; }
-
-    /// <summary>
-    /// 记录存储器最近同步时间
-    /// </summary>
-    private DateTime? LastSyncTime { get; set; }
-
-    /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="factory">作业调度器工厂</param>
     /// <param name="schedulerJobBuilders">调度作业构建器集合</param>
-    /// <param name="timeBeforeSync">调度器休眠后再度被激活前多少ms完成耗时操作</param>
-    /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
         , ISchedulerJobFactory factory
-        , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders
-        , int timeBeforeSync
-        , int minimumSyncInterval)
+        , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
         Monitor = serviceProvider.GetService<IJobMonitor>();
         Executor = serviceProvider.GetService<IJobExecutor>();
         Factory = factory;
-        TimeBeforeSync = timeBeforeSync;
-        MinimumSyncInterval = minimumSyncInterval;
 
         var referenceTime = DateTime.UtcNow;
 
@@ -253,17 +232,17 @@ internal sealed class ScheduleHostedService : BackgroundService
             }
         }
 
-        // 将当前线程休眠直至最快触发的作业之前
-        await WaitingClosestTrigger(referenceTime, stoppingToken);
+        // 休眠线程并等待被唤醒
+        await WaitingAwakenAsync(referenceTime, stoppingToken);
     }
 
     /// <summary>
-    /// 将当前线程休眠直至最快触发的作业之前
+    /// 休眠线程并等待被唤醒
     /// </summary>
     /// <param name="referenceTime">当前后台服务检查时间</param>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    private async Task WaitingClosestTrigger(DateTime referenceTime, CancellationToken stoppingToken)
+    private async Task WaitingAwakenAsync(DateTime referenceTime, CancellationToken stoppingToken)
     {
         /*
          * 为了避免程序在未知情况下存在不必要的耗时操作从而导致时间出现偏差
@@ -276,78 +255,15 @@ internal sealed class ScheduleHostedService : BackgroundService
                                                            .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间
-        var closestNextRunTime = closestJobTriggers.Any()
+        var earliestTriggerTime = closestJobTriggers.Any()
             ? closestJobTriggers.Min(t => t.NextRunTime)
-            : referenceTime.AddSeconds(MinimumSyncInterval);    // 避免无运行作业导致调度器处于永久休眠状态
+            : DateTime.MaxValue;    // 如果没有感知到需要执行的作业，则一直休眠
 
-        // 计算出总的休眠时间，在这段时间内可以做耗时操作
-        var interval = (closestNextRunTime - referenceTime).TotalMilliseconds;
+        // 计算出总的休眠时间
+        var interval = (earliestTriggerTime - referenceTime).TotalMilliseconds;
 
-        /*
-         * 在最早触发器触发之前同步存储器作业数据，并设定超时时间 = interval - TimeBeforeSync;
-         * 如果在未超时时间内完成同步，则更新内存中的包装器
-         * 否则取消同步，等待调度器工厂被再次激活，进入下一轮同步
-         */
-        var syncTimeout = interval - TimeBeforeSync;
-        if (syncTimeout > 0
-            // 最低频率同步
-            && (LastSyncTime == null || (referenceTime - LastSyncTime.Value).TotalSeconds >= MinimumSyncInterval))
-        {
-            // 存储最近同步时间
-            LastSyncTime = referenceTime;
-
-            // 同步存储器作业数据
-            _ = SynchronizationStorer(TimeSpan.FromMilliseconds(syncTimeout), stoppingToken);
-        }
-
-        // 避免刚好触发的情况
-        if (interval > 0)
-        {
-            // 将当前线程休眠至下一次触发前，也就是可以休眠到执行前
-            var delay = TimeSpan.FromMilliseconds(interval);
-            await Task.Delay(delay, stoppingToken);
-        }
-    }
-
-    /// <summary>
-    /// 同步存储器作业数据
-    /// </summary>
-    /// <param name="timeout">超时时间戳</param>
-    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
-    /// <returns><see cref="Task"/> 实例</returns>
-    private async Task SynchronizationStorer(TimeSpan timeout, CancellationToken stoppingToken)
-    {
-        // 创建超时关联任务取消 Token
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken
-              , new CancellationTokenSource(timeout).Token);
-        var cancellationToken = cts.Token;
-
-        // 创建同步任务
-        var syncTask = Task.Run(async () =>
-        {
-            // 开始同步
-            _logger.LogInformation("The scheduler starts synchronizing the storer......");
-
-            Console.WriteLine("模拟数据库操作.");
-            await Task.Delay(10);
-
-            // 同步成功
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("The scheduler sync storer completed.");
-            }
-        }, cancellationToken);
-
-        // 判断是否超时
-        if (await Task.WhenAny(syncTask, Task.Delay(timeout, cancellationToken)) == syncTask)
-        {
-            cts.Cancel();
-            await syncTask;
-        }
-        else
-        {
-            _logger.LogWarning("The scheduler synchronization storer timed out and the operation was cancelled.");
-        }
+        // 将当前线程休眠至下一次触发前或感知到作业调度器工厂变化时
+        await Factory.SleepAsync(interval, stoppingToken);
     }
 
     /// <summary>

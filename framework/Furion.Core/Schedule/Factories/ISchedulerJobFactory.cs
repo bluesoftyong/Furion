@@ -49,4 +49,18 @@ internal interface ISchedulerJobFactory
     /// 暂停所有作业调度器
     /// </summary>
     void PauseAll();
+
+    /// <summary>
+    /// 休眠至适合时机唤醒
+    /// </summary>
+    /// <param name="delay">休眠时间（毫秒）</param>
+    /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
+    /// <returns><see cref="Task"/></returns>
+    Task SleepAsync(double delay, CancellationToken stoppingToken);
+
+    /// <summary>
+    /// 让作业调度器工厂感知变化
+    /// </summary>
+    /// <remarks>主要用于动态添加作业调度器，唤醒调度激活等作用</remarks>
+    Task NotifyChanges(CancellationToken cancellationToken = default);
 }

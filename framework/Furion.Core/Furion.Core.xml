@@ -1840,17 +1840,17 @@
             <param name="cancellationToken">取消任务 Token</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> 实例</returns>
         </member>
-        <member name="T:Furion.Schedule.ISchedulerFactory">
+        <member name="T:Furion.Schedule.ISchedulerJobFactory">
             <summary>
-            作业调度作业工厂依赖接口
+            作业调度器工厂依赖接口
             </summary>
         </member>
-        <member name="P:Furion.Schedule.ISchedulerFactory.SchedulerJobs">
+        <member name="P:Furion.Schedule.ISchedulerJobFactory.SchedulerJobs">
             <summary>
             作业调度器集合
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.TryGetSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.TryGet(System.String,Furion.Schedule.SchedulerJob@)">
             <summary>
             根据作业 Id 获取作业调度器
             </summary>
@@ -1858,13 +1858,13 @@
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.Append(Furion.Schedule.SchedulerJob)">
             <summary>
-            添加作业调度器
+            向工厂中追加作业调度器
             </summary>
             <param name="schedulerJob">调度作业对象</param>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.TryRemoveSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.TryRemove(System.String,Furion.Schedule.SchedulerJob@)">
             <summary>
             尝试删除作业调度器
             </summary>
@@ -1872,43 +1872,43 @@
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.StartAllSchedulerJobs">
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.StartAll">
             <summary>
             启动所有作业调度器
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerFactory.PauseAllSchedulerJobs">
+        <member name="M:Furion.Schedule.ISchedulerJobFactory.PauseAll">
             <summary>
             暂停所有作业调度器
             </summary>
         </member>
-        <member name="T:Furion.Schedule.SchedulerFactory">
+        <member name="T:Furion.Schedule.SchedulerJobFactory">
             <summary>
-            作业调度作业工厂默认实现
+            作业调度器工厂默认实现
             </summary>
         </member>
-        <member name="F:Furion.Schedule.SchedulerFactory._schedulerJobs">
+        <member name="F:Furion.Schedule.SchedulerJobFactory._schedulerJobs">
             <summary>
             作业调度器字典集合
             </summary>
         </member>
-        <member name="F:Furion.Schedule.SchedulerFactory._logger">
+        <member name="F:Furion.Schedule.SchedulerJobFactory._logger">
             <summary>
             日志对象
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.SchedulerFactory})">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.SchedulerJobFactory})">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
         </member>
-        <member name="P:Furion.Schedule.SchedulerFactory.SchedulerJobs">
+        <member name="P:Furion.Schedule.SchedulerJobFactory.SchedulerJobs">
             <summary>
             作业调度器集合
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.TryGetSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.TryGet(System.String,Furion.Schedule.SchedulerJob@)">
             <summary>
             根据作业 Id 获取作业调度器
             </summary>
@@ -1916,13 +1916,13 @@
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.AddSchedulerJob(Furion.Schedule.SchedulerJob)">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.Append(Furion.Schedule.SchedulerJob)">
             <summary>
-            添加作业调度器
+            向工厂中追加作业调度器
             </summary>
             <param name="schedulerJob">调度作业对象</param>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.TryRemoveSchedulerJob(System.String,Furion.Schedule.SchedulerJob@)">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.TryRemove(System.String,Furion.Schedule.SchedulerJob@)">
             <summary>
             尝试删除作业调度器
             </summary>
@@ -1930,12 +1930,12 @@
             <param name="schedulerJob">作业调度器</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.StartAllSchedulerJobs">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.StartAll">
             <summary>
             启动所有作业调度器
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerFactory.PauseAllSchedulerJobs">
+        <member name="M:Furion.Schedule.SchedulerJobFactory.PauseAll">
             <summary>
             暂停所有作业调度器
             </summary>
@@ -2055,7 +2055,7 @@
             记录存储器最近同步时间
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder},System.Int32,System.Int32)">
+        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerJobFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder},System.Int32,System.Int32)">
             <summary>
             构造函数
             </summary>
@@ -2133,7 +2133,7 @@
             作业调度器工厂
             </summary>
         </member>
-        <member name="M:Furion.Schedule.InternalSchedule.#ctor(Furion.Schedule.ISchedulerFactory)">
+        <member name="M:Furion.Schedule.InternalSchedule.#ctor(Furion.Schedule.ISchedulerJobFactory)">
             <summary>
             构造函数
             </summary>
@@ -2160,7 +2160,7 @@
             <param name="jobId">作业唯一 Id</param>
             <returns><see cref="T:System.Boolean"/></returns>
         </member>
-        <member name="M:Furion.Schedule.InternalSchedule.GetSchedulerJob(System.String)">
+        <member name="M:Furion.Schedule.InternalSchedule.GetJob(System.String)">
             <summary>
             根据作业 Id 获取作业调度器
             </summary>
@@ -2182,7 +2182,7 @@
             Schedule 模块接口
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ISchedule.GetSchedulerJob(System.String)">
+        <member name="M:Furion.Schedule.ISchedule.GetJob(System.String)">
             <summary>
             根据作业 Id 获取作业调度器
             </summary>

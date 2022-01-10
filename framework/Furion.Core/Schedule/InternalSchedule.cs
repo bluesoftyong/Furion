@@ -16,13 +16,13 @@ internal sealed class InternalSchedule : ISchedule
     /// <summary>
     /// 作业调度器工厂
     /// </summary>
-    private readonly ISchedulerFactory _schedulerFactory;
+    private readonly ISchedulerJobFactory _schedulerFactory;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="schedulerFactory">作业调度器工厂</param>
-    public InternalSchedule(ISchedulerFactory schedulerFactory)
+    public InternalSchedule(ISchedulerJobFactory schedulerFactory)
     {
         _schedulerFactory = schedulerFactory;
     }
@@ -64,7 +64,7 @@ internal sealed class InternalSchedule : ISchedule
         var schedulerJob = schedulerJobBuilder.Build(DateTime.UtcNow);
 
         // 将作业调度器添加到作业调度器工厂中
-        _schedulerFactory.AddSchedulerJob(schedulerJob);
+        _schedulerFactory.Append(schedulerJob);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ internal sealed class InternalSchedule : ISchedule
     /// <returns><see cref="bool"/></returns>
     public bool TryRemoveJob(string jobId)
     {
-        return _schedulerFactory.TryRemoveSchedulerJob(jobId, out _);
+        return _schedulerFactory.TryRemove(jobId, out _);
     }
 
     /// <summary>
@@ -82,9 +82,9 @@ internal sealed class InternalSchedule : ISchedule
     /// </summary>
     /// <param name="jobId">作业 Id</param>
     /// <returns><see cref="ISchedulerJob"/></returns>
-    public ISchedulerJob? GetSchedulerJob(string jobId)
+    public ISchedulerJob? GetJob(string jobId)
     {
-        var isExist = _schedulerFactory.TryGetSchedulerJob(jobId, out var schedulerJob);
+        var isExist = _schedulerFactory.TryGet(jobId, out var schedulerJob);
         return isExist ? schedulerJob : default;
     }
 
@@ -93,7 +93,7 @@ internal sealed class InternalSchedule : ISchedule
     /// </summary>
     public void StartAllJobs()
     {
-        _schedulerFactory.StartAllSchedulerJobs();
+        _schedulerFactory.StartAll();
     }
 
     /// <summary>
@@ -101,6 +101,6 @@ internal sealed class InternalSchedule : ISchedule
     /// </summary>
     public void PauseAllJobs()
     {
-        _schedulerFactory.PauseAllSchedulerJobs();
+        _schedulerFactory.PauseAll();
     }
 }

@@ -18,7 +18,7 @@ public interface ISchedule
     /// </summary>
     /// <param name="jobId">作业 Id</param>
     /// <returns><see cref="ISchedulerJob"/></returns>
-    ISchedulerJob? GetSchedulerJob(string jobId);
+    ISchedulerJob? GetJob(string jobId);
 
     /// <summary>
     /// 动态添加作业

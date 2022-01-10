@@ -12,9 +12,9 @@ using System.Collections.Concurrent;
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业调度作业工厂默认实现
+/// 作业调度器工厂默认实现
 /// </summary>
-internal sealed class SchedulerFactory : ISchedulerFactory
+internal sealed class SchedulerJobFactory : ISchedulerJobFactory
 {
     /// <summary>
     /// 作业调度器字典集合
@@ -24,13 +24,13 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     /// <summary>
     /// 日志对象
     /// </summary>
-    private readonly ILogger<SchedulerFactory> _logger;
+    private readonly ILogger<SchedulerJobFactory> _logger;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    public SchedulerFactory(ILogger<SchedulerFactory> logger)
+    public SchedulerJobFactory(ILogger<SchedulerJobFactory> logger)
     {
         _schedulerJobs = new();
         _logger = logger;
@@ -47,16 +47,16 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    public bool TryGetSchedulerJob(string jobId, out SchedulerJob? schedulerJob)
+    public bool TryGet(string jobId, out SchedulerJob? schedulerJob)
     {
         return _schedulerJobs.TryGetValue(jobId, out schedulerJob);
     }
 
     /// <summary>
-    /// 添加作业调度器
+    /// 向工厂中追加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
-    public void AddSchedulerJob(SchedulerJob schedulerJob)
+    public void Append(SchedulerJob schedulerJob)
     {
         var jobId = schedulerJob.JobDetail.JobId!;
 
@@ -83,7 +83,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    public bool TryRemoveSchedulerJob(string jobId, out SchedulerJob? schedulerJob)
+    public bool TryRemove(string jobId, out SchedulerJob? schedulerJob)
     {
         var canRemove = _schedulerJobs.TryRemove(jobId, out schedulerJob);
 
@@ -99,7 +99,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     /// <summary>
     /// 启动所有作业调度器
     /// </summary>
-    public void StartAllSchedulerJobs()
+    public void StartAll()
     {
         foreach (var schedulerJob in _schedulerJobs.Values)
         {
@@ -112,7 +112,7 @@ internal sealed class SchedulerFactory : ISchedulerFactory
     /// <summary>
     /// 暂停所有作业调度器
     /// </summary>
-    public void PauseAllSchedulerJobs()
+    public void PauseAll()
     {
         foreach (var schedulerJob in _schedulerJobs.Values)
         {

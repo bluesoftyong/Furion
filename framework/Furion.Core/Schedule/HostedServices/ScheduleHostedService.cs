@@ -45,7 +45,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <summary>
     /// 作业调度器工厂
     /// </summary>
-    private ISchedulerFactory Factory { get; }
+    private ISchedulerJobFactory Factory { get; }
 
     /// <summary>
     /// 调度器休眠后再度被激活前多少ms完成耗时操作
@@ -73,7 +73,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <param name="minimumSyncInterval">最小存储器同步间隔（秒）</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
-        , ISchedulerFactory factory
+        , ISchedulerJobFactory factory
         , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders
         , int timeBeforeSync
         , int minimumSyncInterval)
@@ -92,7 +92,7 @@ internal sealed class ScheduleHostedService : BackgroundService
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
             // 将调度作业存储起来
-            factory.AddSchedulerJob(schedulerJobBuilder.Build(referenceTime));
+            factory.Append(schedulerJobBuilder.Build(referenceTime));
         }
     }
 

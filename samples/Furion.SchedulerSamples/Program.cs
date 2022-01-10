@@ -20,7 +20,7 @@ builder.Services.AddSchedule(builder =>
 
     builder.AddJob<TestPeriodJob>(builder =>
     {
-        builder.AddPeriodTrigger(10000)
+        builder.AddPeriodTrigger(5000)
                //.AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
                .WithIdentity("period_trigger");
     });

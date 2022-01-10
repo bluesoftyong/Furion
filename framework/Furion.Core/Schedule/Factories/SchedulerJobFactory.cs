@@ -20,7 +20,9 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <summary>
     /// 基于 Channel 实现信号灯机制
     /// </summary>
-    /// <remarks>控制作业调度器休眠、激活</remarks>
+    /// <remarks>
+    /// <para>控制作业调度器休眠、激活</para>
+    /// </remarks>
     private readonly Channel<int> _signalLampChannel;
 
     /// <summary>

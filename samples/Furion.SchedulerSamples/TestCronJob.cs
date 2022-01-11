@@ -1,4 +1,6 @@
 ﻿using Furion.Schedule;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace Furion.SchedulerSamples;
 
@@ -13,6 +15,8 @@ public class TestCronJob : IJob
 
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken cancellationToken)
     {
+        Trace.WriteLine(JsonSerializer.Serialize(context.JobDetail));
+        Trace.WriteLine(JsonSerializer.Serialize(context.JobTrigger));
         _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.NumberOfRuns} times");
 
         await Task.CompletedTask;

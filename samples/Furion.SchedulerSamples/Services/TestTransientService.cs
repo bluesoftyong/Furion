@@ -1,4 +1,6 @@
-﻿namespace Furion.SchedulerSamples;
+﻿using System.Diagnostics;
+
+namespace Furion.SchedulerSamples;
 
 public interface ITestTransientService
 {
@@ -9,11 +11,11 @@ public class TestTransientService : ITestTransientService, IDisposable
 {
     public void Test()
     {
-        Console.WriteLine("call TestTransientService");
+        Trace.WriteLine("call TestTransientService");
     }
 
     public void Dispose()
     {
-        Console.WriteLine("call TestTransientService.Dispose()");
+        Trace.WriteLine("call TestTransientService.Dispose()");
     }
 }

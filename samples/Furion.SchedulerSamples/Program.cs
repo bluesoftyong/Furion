@@ -22,7 +22,7 @@ builder.Services.AddSchedule(builder =>
     builder.AddJob<TestPeriodJob>(builder =>
     {
         builder.AddPeriodTrigger(5000)
-               .AddCronTrigger("* * * * * *", CronStringFormat.WithSeconds)
+               .AddCronTrigger("*/17 * * * * *", CronStringFormat.WithSeconds)
                .WithIdentity("period_trigger");
     });
 });

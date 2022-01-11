@@ -1433,29 +1433,6 @@
             是否创建新的服务作用域执行作业
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobDetailBuilder.Create``1">
-            <summary>
-            创建作业信息构建器
-            </summary>
-            <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
-            <returns><see cref="T:Furion.Schedule.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.Schedule.JobDetailBuilder.Create(System.String,System.String)">
-            <summary>
-            创建作业信息构建器
-            </summary>
-            <param name="assembly">程序集全名</param>
-            <param name="jobType">作业类型完整名称</param>
-            <returns><see cref="T:Furion.Schedule.JobDetailBuilder"/></returns>
-        </member>
-        <member name="M:Furion.Schedule.JobDetailBuilder.Create(System.Type)">
-            <summary>
-            创建作业信息构建器
-            </summary>
-            <param name="jobType">作业类型</param>
-            <returns><see cref="T:Furion.Schedule.JobDetailBuilder"/></returns>
-            <exception cref="T:System.InvalidOperationException"></exception>
-        </member>
         <member name="M:Furion.Schedule.JobDetailBuilder.WithIdentity(System.String)">
             <summary>
             配置作业 Id
@@ -1579,31 +1556,42 @@
             是否加入调度计划时自执行一次
             </summary>
         </member>
-        <member name="M:Furion.Schedule.JobTriggerBuilder.Create``1(System.Object[])">
+        <member name="M:Furion.Schedule.JobTriggerBuilder.SetTriggerType``1">
             <summary>
-            创建作业触发器构建器
+            设置作业触发器类型
             </summary>
             <typeparam name="TJobTrigger"><see cref="T:Furion.Schedule.JobTrigger"/> 派生类</typeparam>
-            <param name="args">作业触发器构造函数参数</param>
             <returns><see cref="T:Furion.Schedule.JobTriggerBuilder"/></returns>
         </member>
-        <member name="M:Furion.Schedule.JobTriggerBuilder.Create(System.String,System.String,System.Object[])">
+        <member name="M:Furion.Schedule.JobTriggerBuilder.SetTriggerType(System.String,System.String)">
             <summary>
-            创建作业触发器构建器
+            设置作业触发器类型
             </summary>
             <param name="assembly">程序集全名</param>
             <param name="triggerType">作业类型完整名称</param>
-            <param name="args">作业触发器构造函数参数</param>
             <returns><see cref="T:Furion.Schedule.JobDetailBuilder"/></returns>
         </member>
-        <member name="M:Furion.Schedule.JobTriggerBuilder.Create(System.Type,System.Object[])">
+        <member name="M:Furion.Schedule.JobTriggerBuilder.SetTriggerType(System.Type)">
             <summary>
-            创建作业触发器构建器
+            设置作业触发器类型
             </summary>
             <param name="triggerType">作业触发器类型</param>
-            <param name="args">作业触发器构造函数参数</param>
             <returns><see cref="T:Furion.Schedule.JobTriggerBuilder"/></returns>
             <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Furion.Schedule.JobTriggerBuilder.WithArgs(System.Object[])">
+            <summary>
+            设置作业触发器构造函数参数
+            </summary>
+            <param name="args">作业触发器构造函数参数</param>
+            <returns><see cref="T:Furion.Schedule.JobTriggerBuilder"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.JobTriggerBuilder.WithArgs(System.String)">
+            <summary>
+            设置作业触发器构造函数参数
+            </summary>
+            <param name="args">作业触发器构造函数参数</param>
+            <returns><see cref="T:Furion.Schedule.JobTriggerBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobTriggerBuilder.WithIdentity(System.String)">
             <summary>

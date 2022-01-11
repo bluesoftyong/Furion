@@ -18,7 +18,7 @@ public sealed class JobDetailBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    private JobDetailBuilder()
+    internal JobDetailBuilder()
     {
     }
 
@@ -71,39 +71,6 @@ public sealed class JobDetailBuilder
     /// 是否创建新的服务作用域执行作业
     /// </summary>
     public bool WithScopeExecution { get; set; } = false;
-
-    /// <summary>
-    /// 创建作业信息构建器
-    /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <returns><see cref="JobDetailBuilder"/></returns>
-    public static JobDetailBuilder Create<TJob>()
-        where TJob : class, IJob
-    {
-        return new JobDetailBuilder().SetJobType<TJob>();
-    }
-
-    /// <summary>
-    /// 创建作业信息构建器
-    /// </summary>
-    /// <param name="assembly">程序集全名</param>
-    /// <param name="jobType">作业类型完整名称</param>
-    /// <returns><see cref="JobDetailBuilder"/></returns>
-    public static JobDetailBuilder Create(string assembly, string jobType)
-    {
-        return new JobDetailBuilder().SetJobType(assembly, jobType);
-    }
-
-    /// <summary>
-    /// 创建作业信息构建器
-    /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <returns><see cref="JobDetailBuilder"/></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static JobDetailBuilder Create(Type jobType)
-    {
-        return new JobDetailBuilder().SetJobType(jobType);
-    }
 
     /// <summary>
     /// 配置作业 Id

@@ -19,7 +19,7 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    private JobTriggerBuilder()
+    internal JobTriggerBuilder()
     {
     }
 
@@ -102,25 +102,23 @@ public sealed class JobTriggerBuilder
     public bool ExecuteOnAdded { get; set; } = false;
 
     /// <summary>
-    /// 创建作业触发器构建器
+    /// 设置作业触发器类型
     /// </summary>
     /// <typeparam name="TJobTrigger"><see cref="JobTrigger"/> 派生类</typeparam>
-    /// <param name="args">作业触发器构造函数参数</param>
     /// <returns><see cref="JobTriggerBuilder"/></returns>
-    public static JobTriggerBuilder Create<TJobTrigger>(params object?[]? args)
+    public JobTriggerBuilder SetTriggerType<TJobTrigger>()
         where TJobTrigger : JobTrigger
     {
-        return Create(typeof(TJobTrigger), args);
+        return SetTriggerType(typeof(TJobTrigger));
     }
 
     /// <summary>
-    /// 创建作业触发器构建器
+    /// 设置作业触发器类型
     /// </summary>
     /// <param name="assembly">程序集全名</param>
     /// <param name="triggerType">作业类型完整名称</param>
-    /// <param name="args">作业触发器构造函数参数</param>
     /// <returns><see cref="JobDetailBuilder"/></returns>
-    public static JobTriggerBuilder Create(string assembly, string triggerType, params object?[]? args)
+    public JobTriggerBuilder SetTriggerType(string assembly, string triggerType)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(assembly);
@@ -130,17 +128,16 @@ public sealed class JobTriggerBuilder
         var csharpTriggerType = Assembly.Load(assembly).GetType(triggerType);
         ArgumentNullException.ThrowIfNull(csharpTriggerType);
 
-        return Create(csharpTriggerType);
+        return SetTriggerType(csharpTriggerType);
     }
 
     /// <summary>
-    /// 创建作业触发器构建器
+    /// 设置作业触发器类型
     /// </summary>
     /// <param name="triggerType">作业触发器类型</param>
-    /// <param name="args">作业触发器构造函数参数</param>
     /// <returns><see cref="JobTriggerBuilder"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static JobTriggerBuilder Create(Type triggerType, params object?[]? args)
+    public JobTriggerBuilder SetTriggerType(Type triggerType)
     {
         // 检查 triggerType 类型是否派生自 JobTrigger
         if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
@@ -148,17 +145,37 @@ public sealed class JobTriggerBuilder
             throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
         }
 
-        // 创建作业触发器构建器
-        var jobTriggerBuilder = new JobTriggerBuilder()
-        {
-            AssemblyName = triggerType.Assembly.GetName().Name,
-            TriggerType = triggerType.FullName,
-            Args = args == null || args.Length == 0 ? null : JsonSerializer.Serialize(args),
-            CSharpTriggerType = triggerType,
-            CSharpArgs = args
-        };
+        AssemblyName = triggerType.Assembly.GetName().Name;
+        TriggerType = triggerType.FullName;
+        CSharpTriggerType = triggerType;
 
-        return jobTriggerBuilder;
+        return this;
+    }
+
+    /// <summary>
+    /// 设置作业触发器构造函数参数
+    /// </summary>
+    /// <param name="args">作业触发器构造函数参数</param>
+    /// <returns><see cref="JobTriggerBuilder"/></returns>
+    public JobTriggerBuilder WithArgs(object?[]? args)
+    {
+        Args = args == null || args.Length == 0 ? null : JsonSerializer.Serialize(args);
+        CSharpArgs = args;
+
+        return this;
+    }
+
+    /// <summary>
+    /// 设置作业触发器构造函数参数
+    /// </summary>
+    /// <param name="args">作业触发器构造函数参数</param>
+    /// <returns><see cref="JobTriggerBuilder"/></returns>
+    public JobTriggerBuilder WithArgs(string args)
+    {
+        CSharpArgs = string.IsNullOrWhiteSpace(args) ? null : JsonSerializer.Deserialize<object?[]?>(args);
+        Args = args;
+
+        return this;
     }
 
     /// <summary>

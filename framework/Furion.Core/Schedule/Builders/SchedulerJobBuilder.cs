@@ -33,7 +33,7 @@ public sealed class SchedulerJobBuilder
     {
         JobType = jobType;
         _jobTriggerBuilders = new List<JobTriggerBuilder>();
-        _jobDetailBuilder = JobDetailBuilder.Create(jobType);
+        _jobDetailBuilder = new JobDetailBuilder().SetJobType(jobType);
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ public sealed class SchedulerJobBuilder
         }
 
         // 创建作业触发器构建器
-        var jobTriggerBuilder = JobTriggerBuilder.Create(triggerType, args);
+        var jobTriggerBuilder = new JobTriggerBuilder().SetTriggerType(triggerType).WithArgs(args);
 
         // 外部配置
         configureJobTriggerBuilder?.Invoke(jobTriggerBuilder);

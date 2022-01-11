@@ -26,7 +26,7 @@ public abstract class JobTrigger
     /// <summary>
     /// 作业触发器类型所在程序集名称
     /// </summary>
-    public string? Assembly { get; internal set; }
+    public string? AssemblyName { get; internal set; }
 
     /// <summary>
     /// 作业触发器参数（JSON 字符串）
@@ -42,12 +42,12 @@ public abstract class JobTrigger
     /// <summary>
     /// 最近运行时间
     /// </summary>
-    public DateTime LastRunTime { get; internal set; }
+    public DateTime? LastRunTime { get; internal set; }
 
     /// <summary>
     /// 下一次运行时间
     /// </summary>
-    public DateTime NextRunTime { get; internal set; }
+    public DateTime? NextRunTime { get; internal set; }
 
     /// <summary>
     /// 触发次数
@@ -85,7 +85,7 @@ public abstract class JobTrigger
     /// 获取下一个触发时间
     /// </summary>
     /// <returns><see cref="DateTime"/></returns>
-    public abstract DateTime GetNextOccurrence();
+    public abstract DateTime? GetNextOccurrence();
 
     /// <summary>
     /// 是否符合执行逻辑

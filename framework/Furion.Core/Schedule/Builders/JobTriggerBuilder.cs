@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Reflection;
 using System.Text.Json;
 
 namespace Furion.Schedule;
@@ -18,31 +19,60 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="triggerType">作业触发器类型</param>
-    internal JobTriggerBuilder(Type triggerType)
+    private JobTriggerBuilder()
     {
-        TriggerType = triggerType;
     }
 
     /// <summary>
     /// 作业触发器 Id
     /// </summary>
-    internal string? TriggerId { get; private set; }
+    public string? TriggerId { get; set; }
 
     /// <summary>
-    /// 作业触发器
+    /// 作业触发器类型完整限定名
     /// </summary>
-    internal Type TriggerType { get; }
+    public string? TriggerType { get; private set; }
 
     /// <summary>
-    /// 作业触发器构造函数参数
+    /// 作业触发器 C# 类型
     /// </summary>
-    internal object?[]? Args { get; private set; }
+    internal Type? CSharpTriggerType { get; private set; }
+
+    /// <summary>
+    /// 作业触发器类型所在程序集名称
+    /// </summary>
+    public string? AssemblyName { get; private set; }
+
+    /// <summary>
+    /// 作业触发器参数（JSON 字符串）
+    /// </summary>
+    /// <remarks>object?[]? 类型</remarks>
+    public string? Args { get; private set; }
+
+    /// <summary>
+    /// 作业触发器参数（C# 类型）
+    /// </summary>
+    internal object?[]? CSharpArgs { get; private set; }
 
     /// <summary>
     /// 作业触发器描述
     /// </summary>
     public string? Description { get; set; }
+
+    /// <summary>
+    /// 最近运行时间
+    /// </summary>
+    public DateTime? LastRunTime { get; set; }
+
+    /// <summary>
+    /// 下一次运行时间
+    /// </summary>
+    public DateTime? NextRunTime { get; set; }
+
+    /// <summary>
+    /// 触发次数
+    /// </summary>
+    public long NumberOfRuns { get; set; } = 0;
 
     /// <summary>
     /// 最大执行次数
@@ -51,15 +81,85 @@ public sealed class JobTriggerBuilder
     public long MaxNumberOfRuns { get; set; } = -1;
 
     /// <summary>
+    /// 出错次数
+    /// </summary>
+    public long NumberOfErrors { get; set; } = 0;
+
+    /// <summary>
     /// 最大出错次数
     /// </summary>
     /// <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
     public long MaxNumberOfErrors { get; set; } = -1;
 
     /// <summary>
+    /// 作业 Id
+    /// </summary>
+    internal string? JobId { get; private set; }
+
+    /// <summary>
     /// 是否加入调度计划时自执行一次
     /// </summary>
     public bool ExecuteOnAdded { get; set; } = false;
+
+    /// <summary>
+    /// 创建作业触发器构建器
+    /// </summary>
+    /// <typeparam name="TJobTrigger"><see cref="JobTrigger"/> 派生类</typeparam>
+    /// <param name="args">作业触发器构造函数参数</param>
+    /// <returns><see cref="JobTriggerBuilder"/></returns>
+    public static JobTriggerBuilder Create<TJobTrigger>(params object?[]? args)
+        where TJobTrigger : JobTrigger
+    {
+        return Create(typeof(TJobTrigger), args);
+    }
+
+    /// <summary>
+    /// 创建作业触发器构建器
+    /// </summary>
+    /// <param name="assembly">程序集全名</param>
+    /// <param name="triggerType">作业类型完整名称</param>
+    /// <param name="args">作业触发器构造函数参数</param>
+    /// <returns><see cref="JobDetailBuilder"/></returns>
+    public static JobTriggerBuilder Create(string assembly, string triggerType, params object?[]? args)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(triggerType);
+
+        // 加载 GAC 全局缓存中的程序集
+        var csharpTriggerType = Assembly.Load(assembly).GetType(triggerType);
+        ArgumentNullException.ThrowIfNull(csharpTriggerType);
+
+        return Create(csharpTriggerType);
+    }
+
+    /// <summary>
+    /// 创建作业触发器构建器
+    /// </summary>
+    /// <param name="triggerType">作业触发器类型</param>
+    /// <param name="args">作业触发器构造函数参数</param>
+    /// <returns><see cref="JobTriggerBuilder"/></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static JobTriggerBuilder Create(Type triggerType, params object?[]? args)
+    {
+        // 检查 triggerType 类型是否派生自 JobTrigger
+        if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
+        {
+            throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
+        }
+
+        // 创建作业触发器构建器
+        var jobTriggerBuilder = new JobTriggerBuilder()
+        {
+            AssemblyName = triggerType.Assembly.GetName().Name,
+            TriggerType = triggerType.FullName,
+            Args = args == null || args.Length == 0 ? null : JsonSerializer.Serialize(args),
+            CSharpTriggerType = triggerType,
+            CSharpArgs = args
+        };
+
+        return jobTriggerBuilder;
+    }
 
     /// <summary>
     /// 配置作业触发器 Id
@@ -77,49 +177,38 @@ public sealed class JobTriggerBuilder
     }
 
     /// <summary>
-    /// 添加作业触发器参数
-    /// </summary>
-    /// <param name="args">作业触发器构造函数参数</param>
-    public void WithArgs(params object?[]? args)
-    {
-        Args = args;
-    }
-
-    /// <summary>
     /// 构建作业触发器对象
     /// </summary>
     /// <param name="jobId">作业 Id</param>
     /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="JobTrigger"/></returns>
-    internal JobTrigger Build(string jobId, DateTime referenceTime)
+    internal JobTrigger Build(string jobId, DateTime? referenceTime)
     {
-        // 检查 TriggerType 类型是否派生自 JobTrigger
-        if (!typeof(JobTrigger).IsAssignableFrom(TriggerType))
-        {
-            throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
-        }
-
-        var withArgs = !(Args == null || Args.Length == 0);
+        var withArgs = !(CSharpArgs == null || CSharpArgs.Length == 0);
 
         // 反射创建作业触发器
         var jobTrigger = (!withArgs
-            ? Activator.CreateInstance(TriggerType)
-            : Activator.CreateInstance(TriggerType, Args)) as JobTrigger;
+            ? Activator.CreateInstance(CSharpTriggerType!)
+            : Activator.CreateInstance(CSharpTriggerType!, CSharpArgs)) as JobTrigger;
 
         // 初始化作业触发器属性
-        jobTrigger!.TriggerId = string.IsNullOrWhiteSpace(TriggerId) ? $"{jobId}_trigger_{Guid.NewGuid():N}" : TriggerId;
-        jobTrigger!.TriggerType = TriggerType.FullName;
-        jobTrigger!.Assembly = TriggerType.Assembly.GetName().Name;
-        jobTrigger!.Args = withArgs ? JsonSerializer.Serialize(Args) : default;
+        jobTrigger!.TriggerId = string.IsNullOrWhiteSpace(TriggerId) ? $"trigger_{Guid.NewGuid():N}" : TriggerId;
+        jobTrigger!.TriggerType = TriggerType;
+        jobTrigger!.AssemblyName = AssemblyName;
+        jobTrigger!.Args = Args;
         jobTrigger!.Description = Description;
+        jobTrigger!.LastRunTime = LastRunTime;
+        jobTrigger!.NextRunTime = NextRunTime ?? referenceTime;
+        jobTrigger!.NumberOfRuns = NumberOfRuns;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;
+        jobTrigger!.NumberOfErrors = NumberOfErrors;
         jobTrigger!.MaxNumberOfErrors = MaxNumberOfErrors;
-        jobTrigger!.NextRunTime = referenceTime;
         jobTrigger!.JobId = jobId;
         jobTrigger!.ExecuteOnAdded = ExecuteOnAdded;
 
-        // 处理是否加入调度计划时自执行一次
-        if (!ExecuteOnAdded)
+        // 处理是否加入调度计划时自执行一次（只有运行次数为 0 才有效）
+        // 这里处理的是 false 逻辑
+        if (!(ExecuteOnAdded && NumberOfRuns == 0))
         {
             jobTrigger!.NextRunTime = jobTrigger.GetNextOccurrence();
         }

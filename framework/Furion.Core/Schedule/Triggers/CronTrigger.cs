@@ -34,9 +34,9 @@ internal sealed class CronTrigger : JobTrigger
     /// 获取下一个触发时间
     /// </summary>
     /// <returns><see cref="DateTime"/></returns>
-    public override DateTime GetNextOccurrence()
+    public override DateTime? GetNextOccurrence()
     {
-        return ScheduleCrontab.GetNextOccurrence(NextRunTime);
+        return NextRunTime == null ? null : ScheduleCrontab.GetNextOccurrence(NextRunTime.Value);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ internal sealed class CronTrigger : JobTrigger
     /// <returns><see cref="bool"/> 实例</returns>
     public override bool ShouldRun(DateTime currentTime)
     {
-        return NextRunTime < currentTime && LastRunTime != NextRunTime;
+        return NextRunTime != null && NextRunTime.Value < currentTime && LastRunTime != NextRunTime;
     }
 
     /// <summary>

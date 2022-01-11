@@ -33,13 +33,18 @@ public sealed class SchedulerJobBuilder
     {
         JobType = jobType;
         _jobTriggerBuilders = new List<JobTriggerBuilder>();
-        _jobDetailBuilder = new(jobType);
+        _jobDetailBuilder = JobDetailBuilder.Create(jobType);
     }
 
     /// <summary>
     /// 作业类型
     /// </summary>
-    internal Type JobType { get; }
+    private Type JobType { get; }
+
+    /// <summary>
+    /// 开始时间
+    /// </summary>
+    private DateTime? StartTime { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 配置作业 Id
@@ -142,8 +147,7 @@ public sealed class SchedulerJobBuilder
         }
 
         // 创建作业触发器构建器
-        var jobTriggerBuilder = new JobTriggerBuilder(triggerType);
-        jobTriggerBuilder.WithArgs(args);
+        var jobTriggerBuilder = JobTriggerBuilder.Create(triggerType, args);
 
         // 外部配置
         configureJobTriggerBuilder?.Invoke(jobTriggerBuilder);
@@ -155,17 +159,27 @@ public sealed class SchedulerJobBuilder
     }
 
     /// <summary>
+    /// 设置起始时间
+    /// </summary>
+    /// <param name="startTime">起始时间</param>
+    /// <returns></returns>
+    public SchedulerJobBuilder StartAt(DateTime? startTime)
+    {
+        StartTime = startTime;
+        return this;
+    }
+
+    /// <summary>
     /// 构建作业调度器对象
     /// </summary>
-    /// <param name="referenceTime">初始引用时间</param>
     /// <returns><see cref="SchedulerJob"/></returns>
-    internal SchedulerJob Build(DateTime referenceTime)
+    internal SchedulerJob Build()
     {
         // 构建作业信息对象
         var jobDetail = _jobDetailBuilder.Build();
 
         // 构建作业触发器集合
-        var jobTriggers = _jobTriggerBuilders.Select(t => t.Build(jobDetail.JobId!, referenceTime))
+        var jobTriggers = _jobTriggerBuilders.Select(t => t.Build(jobDetail.JobId!, StartTime))
                                                            .ToList();
 
         // 创建作业调度器对象

@@ -11,7 +11,7 @@ namespace Furion.Schedule;
 /// <summary>
 /// 作业信息
 /// </summary>
-public sealed class JobDetail
+public class JobDetail
 {
     /// <summary>
     /// 作业 Id
@@ -26,7 +26,7 @@ public sealed class JobDetail
     /// <summary>
     /// 作业类型所在程序集名称
     /// </summary>
-    public string? Assembly { get; internal set; }
+    public string? AssemblyName { get; internal set; }
 
     /// <summary>
     /// 作业描述信息

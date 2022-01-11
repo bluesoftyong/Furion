@@ -31,9 +31,9 @@ internal sealed class PeriodTrigger : JobTrigger
     /// 获取下一个触发时间
     /// </summary>
     /// <returns><see cref="DateTime"/></returns>
-    public override DateTime GetNextOccurrence()
+    public override DateTime? GetNextOccurrence()
     {
-        return NextRunTime.AddMilliseconds(Interval);
+        return NextRunTime?.AddMilliseconds(Interval);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ internal sealed class PeriodTrigger : JobTrigger
     /// <returns><see cref="bool"/> 实例</returns>
     public override bool ShouldRun(DateTime currentTime)
     {
-        return NextRunTime < currentTime && LastRunTime != NextRunTime;
+        return NextRunTime != null && NextRunTime.Value < currentTime && LastRunTime != NextRunTime;
     }
 
     /// <summary>

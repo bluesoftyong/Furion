@@ -65,13 +65,11 @@ internal sealed class ScheduleHostedService : BackgroundService
         Executor = serviceProvider.GetService<IJobExecutor>();
         Factory = factory;
 
-        var referenceTime = DateTime.UtcNow;
-
         // 逐条对调度作业构建器进行构建
         foreach (var schedulerJobBuilder in schedulerJobBuilders)
         {
             // 将调度作业存储起来
-            factory.Append(schedulerJobBuilder.Build(referenceTime));
+            factory.Append(schedulerJobBuilder.Build());
         }
     }
 
@@ -261,11 +259,11 @@ internal sealed class ScheduleHostedService : BackgroundService
 
         // 查找下一次符合触发时机的所有作业触发器
         var closestJobTriggers = Factory.SchedulerJobs.Where(u => IsEffectiveJob(u.JobDetail))
-                                                           .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime >= unspecifiedTime));
+                                                           .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime != null && t.NextRunTime >= unspecifiedTime));
 
         // 获取最早执行的作业触发器时间
         var earliestTriggerTime = closestJobTriggers.Any()
-            ? closestJobTriggers.Min(t => t.NextRunTime)
+            ? closestJobTriggers.Min(t => t.NextRunTime)!.Value
             : DateTime.MaxValue;    // 如果没有感知到需要执行的作业，则一直休眠
 
         // 计算出总的休眠时间

@@ -61,7 +61,7 @@ internal sealed class InternalSchedule : ISchedule
         configureSchedulerJobBuilder(schedulerJobBuilder);
 
         // 构建作业调度器对象
-        var schedulerJob = schedulerJobBuilder.Build(DateTime.UtcNow);
+        var schedulerJob = schedulerJobBuilder.Build();
 
         // 将作业调度器添加到作业调度器工厂中
         _schedulerFactory.Append(schedulerJob);

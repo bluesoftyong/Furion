@@ -10,19 +10,19 @@ builder.Services.AddTransient<ITestTransientService, TestTransientService>();
 
 builder.Services.AddSchedule(options =>
 {
-    options.AddJob(JobBuilder.Create<TestCronJob>()
-                                            .WithIdentity("cron_job")
-                                            .SetWithExecutionLog(true)
-                                            .BindTriggers(
-                                                TriggerBuilder.CreateCron("* * * * *")
-                                            ));
+    //options.AddJob(JobBuilder.Create<TestCronJob>()
+    //                                        .WithIdentity("cron_job")
+    //                                        .SetWithExecutionLog(true)
+    //                                        .BindTriggers(
+    //                                            TriggerBuilder.CreateCron("* * * * *")
+    //                                        ));
 
-    options.AddJob(JobBuilder.Create<TestPeriodJob>()
-                                             .WithIdentity("period_trigger")
-                                             .BindTriggers(
-                                                TriggerBuilder.CreatePeriod(5000),
-                                                TriggerBuilder.CreateCron("*/17 * * * * *", CronStringFormat.WithSeconds)
-                                              ));
+    //options.AddJob(JobBuilder.Create<TestPeriodJob>()
+    //                                         .WithIdentity("period_trigger")
+    //                                         .BindTriggers(
+    //                                            TriggerBuilder.CreatePeriod(5000),
+    //                                            TriggerBuilder.CreateCron("*/17 * * * * *", CronStringFormat.WithSeconds)
+    //                                          ));
 });
 
 builder.Services.AddControllers();

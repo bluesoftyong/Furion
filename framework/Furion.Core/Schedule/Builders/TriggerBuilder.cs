@@ -115,7 +115,7 @@ public sealed class TriggerBuilder
     /// <returns><see cref="TriggerBuilder"/></returns>
     public static TriggerBuilder CreateCron(string schedule, CronStringFormat format = CronStringFormat.Default)
     {
-        return Create(typeof(CronTrigger)).WithArgs(new object[] { schedule, format });
+        return Create(typeof(CronTrigger)).WithArgs(new object[] { schedule, (int)format });
     }
 
     /// <summary>
@@ -159,6 +159,12 @@ public sealed class TriggerBuilder
         if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
         {
             throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
+        }
+
+        // 最多只能包含一个构造函数
+        if (triggerType.GetConstructors().Length > 1)
+        {
+            throw new InvalidOperationException("The <TriggerType> can contain at most one constructor.");
         }
 
         // 创建触发器构建器
@@ -209,7 +215,16 @@ public sealed class TriggerBuilder
     /// <returns><see cref="TriggerBuilder"/></returns>
     public TriggerBuilder WithArgs(string? args)
     {
-        RuntimeArgs = string.IsNullOrWhiteSpace(args?.Trim()) ? null : JsonSerializer.Deserialize<object?[]?>(args);
+        RuntimeArgs = string.IsNullOrWhiteSpace(args?.Trim())
+            ? null
+            : JsonSerializer.Deserialize<object?[]?>(args, new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    // 处理 JSON 反序列化后类型丢失问题
+                    new JobTriggerConstructorParameterTypesConverter()
+                }
+            });
         Args = args;
 
         return this;

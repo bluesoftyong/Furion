@@ -80,4 +80,13 @@ internal sealed class InternalSchedule : ISchedule
     {
         _schedulerFactory.PauseAll();
     }
+
+    /// <summary>
+    /// 让作业调度器工厂感知变化
+    /// </summary>
+    /// <remarks>主要用于动态添加作业调度器，唤醒调度激活等作用</remarks>
+    public Task NotifyChanges(CancellationToken cancellationToken = default)
+    {
+        return _schedulerFactory.NotifyChanges(cancellationToken);
+    }
 }

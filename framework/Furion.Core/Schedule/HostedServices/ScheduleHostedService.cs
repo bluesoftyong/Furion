@@ -265,8 +265,8 @@ internal sealed class ScheduleHostedService : BackgroundService
             ? closestJobTriggers.Min(t => t.NextRunTime)!.Value
             : DateTime.MaxValue;    // 如果没有感知到需要执行的作业，则一直休眠
 
-        // 计算出总的休眠时间
-        var interval = (earliestTriggerTime - referenceTime).TotalMilliseconds;
+        // 计算出总的休眠时间，这里采用 Math.Min 解决 Timer 最大值不能超过 int.MaxValue 的问题
+        var interval = Math.Min(int.MaxValue, (earliestTriggerTime - referenceTime).TotalMilliseconds);
 
         // 将当前线程休眠至下一次触发前或感知到作业调度器工厂变化时
         await Factory.SleepAsync(interval, stoppingToken);

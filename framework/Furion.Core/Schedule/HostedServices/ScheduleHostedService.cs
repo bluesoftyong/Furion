@@ -53,11 +53,11 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="factory">作业调度器工厂</param>
-    /// <param name="schedulerJobBuilders">调度作业构建器集合</param>
+    /// <param name="schedulerJobs">作业调度器集合</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
         , ISchedulerJobFactory factory
-        , IEnumerable<SchedulerJobBuilder> schedulerJobBuilders)
+        , IEnumerable<SchedulerJob> schedulerJobs)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
@@ -65,11 +65,10 @@ internal sealed class ScheduleHostedService : BackgroundService
         Executor = serviceProvider.GetService<IJobExecutor>();
         Factory = factory;
 
-        // 逐条对调度作业构建器进行构建
-        foreach (var schedulerJobBuilder in schedulerJobBuilders)
+        // 逐条将作业调度器载入作业调度器工厂中
+        foreach (var schedulerJob in schedulerJobs)
         {
-            // 将调度作业存储起来
-            factory.Append(schedulerJobBuilder.Build());
+            factory.Append(schedulerJob);
         }
     }
 

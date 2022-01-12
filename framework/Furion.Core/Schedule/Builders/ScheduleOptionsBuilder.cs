@@ -67,12 +67,6 @@ public sealed class ScheduleOptionsBuilder
         // 空检查
         ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
 
-        // jobType 须实现 IJob 接口
-        if (!typeof(IJob).IsAssignableFrom(jobType))
-        {
-            throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
-        }
-
         // 创建作业调度器构建器
         var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
 
@@ -110,14 +104,12 @@ public sealed class ScheduleOptionsBuilder
     }
 
     /// <summary>
-    /// 构建调度作业配置选项
+    /// 构建 Schedule 配置选项
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <returns>作业调度器构建器集合</returns>
-    internal IEnumerable<SchedulerJobBuilder> Build(IServiceCollection services)
+    /// <returns>作业调度器集合</returns>
+    internal IEnumerable<SchedulerJob> Build(IServiceCollection services)
     {
-        var schedulerJobBuilders = _schedulerJobBuilders;
-
         // 注册作业监视器
         if (_jobMonitor != default)
         {
@@ -130,6 +122,7 @@ public sealed class ScheduleOptionsBuilder
             services.AddSingleton(typeof(IJobExecutor), _jobExecutor);
         }
 
-        return schedulerJobBuilders;
+        // 构建作业调度器
+        return _schedulerJobBuilders.Select(s => s.Build());
     }
 }

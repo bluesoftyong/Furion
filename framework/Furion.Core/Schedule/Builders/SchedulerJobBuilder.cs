@@ -31,15 +31,9 @@ public sealed class SchedulerJobBuilder
     /// <param name="jobType">作业类型</param>
     internal SchedulerJobBuilder(Type jobType)
     {
-        JobType = jobType;
         _jobTriggerBuilders = new List<JobTriggerBuilder>();
         _jobDetailBuilder = new JobDetailBuilder().SetJobType(jobType);
     }
-
-    /// <summary>
-    /// 作业类型
-    /// </summary>
-    private Type JobType { get; }
 
     /// <summary>
     /// 开始时间
@@ -52,12 +46,6 @@ public sealed class SchedulerJobBuilder
     /// <param name="jobId">作业 Id</param>
     public SchedulerJobBuilder WithIdentity(string jobId)
     {
-        // 空检查
-        if (string.IsNullOrWhiteSpace(jobId))
-        {
-            throw new ArgumentNullException(nameof(jobId));
-        }
-
         _jobDetailBuilder.WithIdentity(jobId);
 
         return this;
@@ -140,14 +128,9 @@ public sealed class SchedulerJobBuilder
         , object?[]? args = default
         , Action<JobTriggerBuilder>? configureJobTriggerBuilder = default)
     {
-        // 检查 triggerType 类型是否派生自 JobTrigger
-        if (!typeof(JobTrigger).IsAssignableFrom(triggerType))
-        {
-            throw new InvalidOperationException("The <triggerType> is not a valid JobTrigger type.");
-        }
-
         // 创建作业触发器构建器
-        var jobTriggerBuilder = new JobTriggerBuilder().SetTriggerType(triggerType).WithArgs(args);
+        var jobTriggerBuilder = new JobTriggerBuilder().SetTriggerType(triggerType)
+                                                                      .WithArgs(args);
 
         // 外部配置
         configureJobTriggerBuilder?.Invoke(jobTriggerBuilder);
@@ -172,9 +155,12 @@ public sealed class SchedulerJobBuilder
     /// <summary>
     /// 构建作业调度器对象
     /// </summary>
-    /// <returns><see cref="SchedulerJob"/></returns>
+    /// <returns><see cref="SchedulerJobBuilder"/></returns>
     internal SchedulerJob Build()
     {
+        // 获取运行时作业类型
+        var jobType = _jobDetailBuilder.RuntimeJobType;
+
         // 构建作业信息对象
         var jobDetail = _jobDetailBuilder.Build();
 
@@ -183,7 +169,7 @@ public sealed class SchedulerJobBuilder
                                                            .ToList();
 
         // 创建作业调度器对象
-        return new SchedulerJob(JobType
+        return new SchedulerJob(jobType!
             , jobDetail
             , jobTriggers);
     }

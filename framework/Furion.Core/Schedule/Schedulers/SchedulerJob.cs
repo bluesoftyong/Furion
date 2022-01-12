@@ -47,17 +47,17 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// <summary>
     /// 作业类型
     /// </summary>
-    internal Type JobType { get; }
+    internal Type JobType { get; set; }
 
     /// <summary>
     /// 作业触发器集合
     /// </summary>
-    internal IList<JobTrigger> Triggers { get; }
+    internal IList<JobTrigger> Triggers { get; set; }
 
     /// <summary>
     /// 作业信息
     /// </summary>
-    internal JobDetail JobDetail { get; }
+    internal JobDetail JobDetail { get; set; }
 
     /// <summary>
     /// 查看最早触发时间

@@ -1670,10 +1670,10 @@
         </member>
         <member name="M:Furion.Schedule.ScheduleOptionsBuilder.Build(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
-            构建调度作业配置选项
+            构建 Schedule 配置选项
             </summary>
             <param name="services">服务集合对象</param>
-            <returns>作业调度器构建器集合</returns>
+            <returns>作业调度器集合</returns>
         </member>
         <member name="T:Furion.Schedule.SchedulerJobBuilder">
             <summary>
@@ -1695,11 +1695,6 @@
             构造函数
             </summary>
             <param name="jobType">作业类型</param>
-        </member>
-        <member name="P:Furion.Schedule.SchedulerJobBuilder.JobType">
-            <summary>
-            作业类型
-            </summary>
         </member>
         <member name="P:Furion.Schedule.SchedulerJobBuilder.StartTime">
             <summary>
@@ -1765,7 +1760,7 @@
             <summary>
             构建作业调度器对象
             </summary>
-            <returns><see cref="T:Furion.Schedule.SchedulerJob"/></returns>
+            <returns><see cref="T:Furion.Schedule.SchedulerJobBuilder"/></returns>
         </member>
         <member name="T:Furion.Schedule.JobExecutionMode">
             <summary>
@@ -2204,14 +2199,14 @@
             作业调度器工厂
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerJobFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJobBuilder})">
+        <member name="M:Furion.Schedule.ScheduleHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{Furion.Schedule.ScheduleHostedService},System.IServiceProvider,Furion.Schedule.ISchedulerJobFactory,System.Collections.Generic.IEnumerable{Furion.Schedule.SchedulerJob})">
             <summary>
             构造函数
             </summary>
             <param name="logger">日志对象</param>
             <param name="serviceProvider">服务提供器</param>
             <param name="factory">作业调度器工厂</param>
-            <param name="schedulerJobBuilders">调度作业构建器集合</param>
+            <param name="schedulerJobs">作业调度器集合</param>
         </member>
         <member name="M:Furion.Schedule.ScheduleHostedService.ExecuteAsync(System.Threading.CancellationToken)">
             <summary>

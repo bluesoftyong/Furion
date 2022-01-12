@@ -48,12 +48,6 @@ internal sealed class InternalSchedule : ISchedule
         // 空检查
         ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
 
-        // jobType 须实现 IJob 接口
-        if (!typeof(IJob).IsAssignableFrom(jobType))
-        {
-            throw new InvalidOperationException("The <jobType> does not implement <IJob> interface.");
-        }
-
         // 创建作业调度器构建器
         var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
 

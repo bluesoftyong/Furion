@@ -33,9 +33,9 @@ public sealed class JobDetailBuilder
     public string? JobType { get; private set; }
 
     /// <summary>
-    /// 作业类型（C# 类型）
+    /// 运行时作业类型
     /// </summary>
-    internal Type? CSharpJobType { get; private set; }
+    internal Type? RuntimeJobType { get; private set; }
 
     /// <summary>
     /// 作业类型所在程序集名称
@@ -111,10 +111,10 @@ public sealed class JobDetailBuilder
         ArgumentNullException.ThrowIfNull(jobType);
 
         // 加载 GAC 全局缓存中的程序集
-        var csharpJobType = Assembly.Load(assembly).GetType(jobType);
-        ArgumentNullException.ThrowIfNull(csharpJobType);
+        var runtimeJobType = Assembly.Load(assembly).GetType(jobType);
+        ArgumentNullException.ThrowIfNull(runtimeJobType);
 
-        return SetJobType(csharpJobType);
+        return SetJobType(runtimeJobType);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public sealed class JobDetailBuilder
         WithScopeExecution = jobType.IsDefined(typeof(ScopeExecutionAttribute), false);
         AssemblyName = jobType.Assembly.GetName().Name;
         JobType = jobType.FullName;
-        CSharpJobType = jobType;
+        RuntimeJobType = jobType;
 
         return this;
     }

@@ -26,7 +26,7 @@ public sealed class JobTriggerBuilder
     /// <summary>
     /// 作业触发器 Id
     /// </summary>
-    public string? TriggerId { get; set; }
+    public string? TriggerId { get; private set; }
 
     /// <summary>
     /// 作业触发器类型完整限定名
@@ -34,9 +34,9 @@ public sealed class JobTriggerBuilder
     public string? TriggerType { get; private set; }
 
     /// <summary>
-    /// 作业触发器 C# 类型
+    /// 运行时作业触发器类型
     /// </summary>
-    internal Type? CSharpTriggerType { get; private set; }
+    internal Type? RuntimeTriggerType { get; private set; }
 
     /// <summary>
     /// 作业触发器类型所在程序集名称
@@ -50,9 +50,9 @@ public sealed class JobTriggerBuilder
     public string? Args { get; private set; }
 
     /// <summary>
-    /// 作业触发器参数（C# 类型）
+    /// 运行时作业触发器参数
     /// </summary>
-    internal object?[]? CSharpArgs { get; private set; }
+    internal object?[]? RuntimeArgs { get; private set; }
 
     /// <summary>
     /// 作业触发器描述
@@ -125,10 +125,10 @@ public sealed class JobTriggerBuilder
         ArgumentNullException.ThrowIfNull(triggerType);
 
         // 加载 GAC 全局缓存中的程序集
-        var csharpTriggerType = Assembly.Load(assembly).GetType(triggerType);
-        ArgumentNullException.ThrowIfNull(csharpTriggerType);
+        var runtimeTriggerType = Assembly.Load(assembly).GetType(triggerType);
+        ArgumentNullException.ThrowIfNull(runtimeTriggerType);
 
-        return SetTriggerType(csharpTriggerType);
+        return SetTriggerType(runtimeTriggerType);
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ public sealed class JobTriggerBuilder
         // 设置作业触发器类型关联的属性初始值
         AssemblyName = triggerType.Assembly.GetName().Name;
         TriggerType = triggerType.FullName;
-        CSharpTriggerType = triggerType;
+        RuntimeTriggerType = triggerType;
 
         return this;
     }
@@ -161,7 +161,7 @@ public sealed class JobTriggerBuilder
     public JobTriggerBuilder WithArgs(object?[]? args)
     {
         Args = args == null || args.Length == 0 ? null : JsonSerializer.Serialize(args);
-        CSharpArgs = args;
+        RuntimeArgs = args;
 
         return this;
     }
@@ -173,7 +173,7 @@ public sealed class JobTriggerBuilder
     /// <returns><see cref="JobTriggerBuilder"/></returns>
     public JobTriggerBuilder WithArgs(string args)
     {
-        CSharpArgs = string.IsNullOrWhiteSpace(args) ? null : JsonSerializer.Deserialize<object?[]?>(args);
+        RuntimeArgs = string.IsNullOrWhiteSpace(args?.Trim()) ? null : JsonSerializer.Deserialize<object?[]?>(args);
         Args = args;
 
         return this;
@@ -198,16 +198,17 @@ public sealed class JobTriggerBuilder
     /// 构建作业触发器对象
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <param name="referenceTime">初始引用时间</param>
+    /// <param name="baseTime">起始时间</param>
     /// <returns><see cref="JobTrigger"/></returns>
-    internal JobTrigger Build(string jobId, DateTime? referenceTime)
+    internal JobTrigger Build(string jobId, DateTime? baseTime)
     {
-        var withArgs = !(CSharpArgs == null || CSharpArgs.Length == 0);
+        // 判断是否带构造函数参数
+        var withArgs = !(RuntimeArgs == null || RuntimeArgs.Length == 0);
 
-        // 反射创建作业触发器
+        // 反射创建作业触发器对象
         var jobTrigger = (!withArgs
-            ? Activator.CreateInstance(CSharpTriggerType!)
-            : Activator.CreateInstance(CSharpTriggerType!, CSharpArgs)) as JobTrigger;
+            ? Activator.CreateInstance(RuntimeTriggerType!)
+            : Activator.CreateInstance(RuntimeTriggerType!, RuntimeArgs)) as JobTrigger;
 
         // 初始化作业触发器属性
         jobTrigger!.TriggerId = string.IsNullOrWhiteSpace(TriggerId) ? $"trigger_{Guid.NewGuid():N}" : TriggerId;
@@ -216,7 +217,7 @@ public sealed class JobTriggerBuilder
         jobTrigger!.Args = Args;
         jobTrigger!.Description = Description;
         jobTrigger!.LastRunTime = LastRunTime;
-        jobTrigger!.NextRunTime = NextRunTime ?? referenceTime;
+        jobTrigger!.NextRunTime = NextRunTime ?? baseTime;
         jobTrigger!.NumberOfRuns = NumberOfRuns;
         jobTrigger!.MaxNumberOfRuns = MaxNumberOfRuns;
         jobTrigger!.NumberOfErrors = NumberOfErrors;
@@ -224,8 +225,7 @@ public sealed class JobTriggerBuilder
         jobTrigger!.JobId = jobId;
         jobTrigger!.ExecuteOnAdded = ExecuteOnAdded;
 
-        // 处理是否加入调度计划时自执行一次（只有运行次数为 0 才有效）
-        // 这里处理的是 false 逻辑
+        // 处理是否加入调度计划时自执行一次（只有触发次数为 0 才有效）
         if (!(ExecuteOnAdded && NumberOfRuns == 0))
         {
             jobTrigger!.NextRunTime = jobTrigger.GetNextOccurrence();

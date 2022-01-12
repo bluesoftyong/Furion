@@ -1393,9 +1393,9 @@
             作业类型完整限定名
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetailBuilder.CSharpJobType">
+        <member name="P:Furion.Schedule.JobDetailBuilder.RuntimeJobType">
             <summary>
-            作业类型（C# 类型）
+            运行时作业类型
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetailBuilder.AssemblyName">
@@ -1488,9 +1488,9 @@
             作业触发器类型完整限定名
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobTriggerBuilder.CSharpTriggerType">
+        <member name="P:Furion.Schedule.JobTriggerBuilder.RuntimeTriggerType">
             <summary>
-            作业触发器 C# 类型
+            运行时作业触发器类型
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobTriggerBuilder.AssemblyName">
@@ -1504,9 +1504,9 @@
             </summary>
             <remarks>object?[]? 类型</remarks>
         </member>
-        <member name="P:Furion.Schedule.JobTriggerBuilder.CSharpArgs">
+        <member name="P:Furion.Schedule.JobTriggerBuilder.RuntimeArgs">
             <summary>
-            作业触发器参数（C# 类型）
+            运行时作业触发器参数
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobTriggerBuilder.Description">
@@ -1604,7 +1604,7 @@
             构建作业触发器对象
             </summary>
             <param name="jobId">作业 Id</param>
-            <param name="referenceTime">初始引用时间</param>
+            <param name="baseTime">起始时间</param>
             <returns><see cref="T:Furion.Schedule.JobTrigger"/></returns>
         </member>
         <member name="T:Furion.Schedule.ScheduleOptionsBuilder">

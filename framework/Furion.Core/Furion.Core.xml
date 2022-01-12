@@ -2489,7 +2489,7 @@
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="currentTime">当前时间</param>
+            <param name="baseTime">起始时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="M:Furion.Schedule.CronTrigger.ToString">
@@ -2580,7 +2580,7 @@
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="currentTime">当前时间</param>
+            <param name="baseTime">起始时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="M:Furion.Schedule.JobTrigger.ToString">
@@ -2603,7 +2603,7 @@
             <summary>
             是否符合执行逻辑（内部检查）
             </summary>
-            <param name="currentTime">当前时间</param>
+            <param name="baseTime">起始时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="T:Furion.Schedule.PeriodTrigger">
@@ -2632,7 +2632,7 @@
             <summary>
             是否符合执行逻辑
             </summary>
-            <param name="currentTime">当前时间</param>
+            <param name="baseTime">起始时间</param>
             <returns><see cref="T:System.Boolean"/> 实例</returns>
         </member>
         <member name="M:Furion.Schedule.PeriodTrigger.ToString">

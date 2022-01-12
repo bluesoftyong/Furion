@@ -145,6 +145,7 @@ public sealed class JobTriggerBuilder
             throw new InvalidOperationException("The <TriggerType> is not a valid JobTrigger type.");
         }
 
+        // 设置作业触发器类型关联的属性初始值
         AssemblyName = triggerType.Assembly.GetName().Name;
         TriggerType = triggerType.FullName;
         CSharpTriggerType = triggerType;

@@ -43,11 +43,11 @@ internal sealed class CronTrigger : JobTrigger
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="currentTime">当前时间</param>
+    /// <param name="baseTime">起始时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public override bool ShouldRun(DateTime currentTime)
+    public override bool ShouldRun(DateTime baseTime)
     {
-        return NextRunTime != null && NextRunTime.Value < currentTime && LastRunTime != NextRunTime;
+        return NextRunTime != null && NextRunTime.Value < baseTime && LastRunTime != NextRunTime;
     }
 
     /// <summary>

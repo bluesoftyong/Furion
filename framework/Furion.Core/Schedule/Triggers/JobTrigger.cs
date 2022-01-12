@@ -90,9 +90,9 @@ public abstract class JobTrigger
     /// <summary>
     /// 是否符合执行逻辑
     /// </summary>
-    /// <param name="currentTime">当前时间</param>
+    /// <param name="baseTime">起始时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    public abstract bool ShouldRun(DateTime currentTime);
+    public abstract bool ShouldRun(DateTime baseTime);
 
     /// <summary>
     /// 将触发器转换成字符串输出
@@ -121,9 +121,9 @@ public abstract class JobTrigger
     /// <summary>
     /// 是否符合执行逻辑（内部检查）
     /// </summary>
-    /// <param name="currentTime">当前时间</param>
+    /// <param name="baseTime">起始时间</param>
     /// <returns><see cref="bool"/> 实例</returns>
-    internal bool InternalShouldRun(DateTime currentTime)
+    internal bool InternalShouldRun(DateTime baseTime)
     {
         // 最大次数控制
         if (MaxNumberOfRuns == 0 || (MaxNumberOfRuns != -1 && NumberOfRuns >= MaxNumberOfRuns))
@@ -138,6 +138,6 @@ public abstract class JobTrigger
         }
 
         // 调用实现类方法
-        return ShouldRun(currentTime);
+        return ShouldRun(baseTime);
     }
 }

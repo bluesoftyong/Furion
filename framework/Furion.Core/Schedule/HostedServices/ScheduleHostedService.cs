@@ -57,7 +57,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
         , ISchedulerJobFactory factory
-        , IEnumerable<SchedulerJob> schedulerJobs)
+        , IList<SchedulerJob> schedulerJobs)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
@@ -99,7 +99,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// 判断是否是有效的作业
     /// </summary>
     private static readonly Func<JobDetail?, bool> IsEffectiveJob =
-        u => u == null || !(u.Status == JobStatus.None || u.Status == JobStatus.Pause || (u.ExecutionMode == JobExecutionMode.Serial && u.Status == JobStatus.Blocked) || u.StartMode == JobStartMode.Wait);
+        u => u == null || !(u.Status == JobStatus.None || u.Status == JobStatus.Pause || (u.LockMode == JobLockMode.Serial && u.Status == JobStatus.Blocked) || u.StartMode == JobStartMode.Wait);
 
     /// <summary>
     /// 后台调用作业处理程序
@@ -208,7 +208,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                                 , jobId
                                 , jobDetail.Description
                                 , jobDetail.JobType
-                                , jobDetail.ExecutionMode
+                                , jobDetail.LockMode
                                 , jobTrigger.TriggerId
                                 , jobTrigger.TriggerType
                                 , jobTrigger.Args

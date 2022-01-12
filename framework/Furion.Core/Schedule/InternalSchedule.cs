@@ -30,29 +30,12 @@ internal sealed class InternalSchedule : ISchedule
     /// <summary>
     /// 动态添加作业
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    public void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-         where TJob : class, IJob
-    {
-        AddJob(typeof(TJob), configureSchedulerJobBuilder);
-    }
-
-    /// <summary>
-    /// 动态添加作业
-    /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    public void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
+    /// <param name="schedulerJobBuilder">作业调度器构建器</param>
+    /// <returns><see cref="bool"/></returns>
+    public void AddJob(SchedulerJobBuilder schedulerJobBuilder)
     {
         // 空检查
-        ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
-
-        // 创建作业调度器构建器
-        var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
-
-        // 外部调用
-        configureSchedulerJobBuilder(schedulerJobBuilder);
+        ArgumentNullException.ThrowIfNull(schedulerJobBuilder);
 
         // 构建作业调度器对象
         var schedulerJob = schedulerJobBuilder.Build();
@@ -62,11 +45,11 @@ internal sealed class InternalSchedule : ISchedule
     }
 
     /// <summary>
-    /// 尝试删除作业
+    /// 删除作业
     /// </summary>
     /// <param name="jobId">作业唯一 Id</param>
     /// <returns><see cref="bool"/></returns>
-    public bool TryRemoveJob(string jobId)
+    public bool RemoveJob(string jobId)
     {
         return _schedulerFactory.TryRemove(jobId, out _);
     }

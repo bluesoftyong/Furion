@@ -23,24 +23,16 @@ public interface ISchedule
     /// <summary>
     /// 动态添加作业
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-        where TJob : class, IJob;
+    /// <param name="schedulerJobBuilder">作业调度器构建器</param>
+    /// <returns><see cref="bool"/></returns>
+    void AddJob(SchedulerJobBuilder schedulerJobBuilder);
 
     /// <summary>
-    /// 动态添加作业
-    /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    void AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder);
-
-    /// <summary>
-    /// 尝试删除作业
+    /// 删除作业
     /// </summary>
     /// <param name="jobId">作业唯一 Id</param>
     /// <returns><see cref="bool"/></returns>
-    bool TryRemoveJob(string jobId);
+    bool RemoveJob(string jobId);
 
     /// <summary>
     /// 启动所有作业

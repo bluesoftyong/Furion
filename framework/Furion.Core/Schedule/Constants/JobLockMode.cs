@@ -9,9 +9,9 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业执行方式
+/// 作业锁方式
 /// </summary>
-public enum JobExecutionMode : int
+public enum JobLockMode : int
 {
     /// <summary>
     /// 并行执行

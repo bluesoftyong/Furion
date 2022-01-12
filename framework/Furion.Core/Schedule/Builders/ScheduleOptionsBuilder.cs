@@ -46,32 +46,13 @@ public sealed class ScheduleOptionsBuilder
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
-    /// <returns><see cref="ScheduleOptionsBuilder"/></returns>
-    public ScheduleOptionsBuilder AddJob<TJob>(Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
-        where TJob : class, IJob
-    {
-        return AddJob(typeof(TJob), configureSchedulerJobBuilder);
-    }
-
-    /// <summary>
-    /// 注册作业
-    /// </summary>
-    /// <param name="jobType">作业类型</param>
-    /// <param name="configureSchedulerJobBuilder">调度作业构建器委托</param>
+    /// <param name="schedulerJobBuilder">作业调度器构建器</param>
     /// <returns><see cref="ScheduleOptionsBuilder"/></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public ScheduleOptionsBuilder AddJob(Type jobType, Action<SchedulerJobBuilder> configureSchedulerJobBuilder)
+    public ScheduleOptionsBuilder AddJob(SchedulerJobBuilder schedulerJobBuilder)
     {
         // 空检查
-        ArgumentNullException.ThrowIfNull(configureSchedulerJobBuilder);
-
-        // 创建作业调度器构建器
-        var schedulerJobBuilder = new SchedulerJobBuilder(jobType);
-
-        // 外部调用
-        configureSchedulerJobBuilder(schedulerJobBuilder);
+        ArgumentNullException.ThrowIfNull(schedulerJobBuilder);
 
         // 添加到作业调度器构建器集合中
         _schedulerJobBuilders.Add(schedulerJobBuilder);
@@ -108,7 +89,7 @@ public sealed class ScheduleOptionsBuilder
     /// </summary>
     /// <param name="services">服务集合对象</param>
     /// <returns>作业调度器集合</returns>
-    internal IEnumerable<SchedulerJob> Build(IServiceCollection services)
+    internal IList<SchedulerJob> Build(IServiceCollection services)
     {
         // 注册作业监视器
         if (_jobMonitor != default)
@@ -123,6 +104,6 @@ public sealed class ScheduleOptionsBuilder
         }
 
         // 构建作业调度器
-        return _schedulerJobBuilders.Select(s => s.Build());
+        return _schedulerJobBuilders.Select(s => s.Build()).ToList();
     }
 }

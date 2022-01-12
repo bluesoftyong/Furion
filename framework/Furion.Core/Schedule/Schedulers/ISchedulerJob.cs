@@ -22,8 +22,29 @@ public interface ISchedulerJob
     /// <summary>
     /// 更新作业信息
     /// </summary>
-    /// <param name="configureJobDetailBuilder">作业信息构建器委托</param>
-    void UpdateDetail(Action<JobDetailBuilder> configureJobDetailBuilder);
+    /// <param name="configureJobBuilder">作业信息构建器委托</param>
+    void UpdateDetail(Action<JobBuilder> configureJobBuilder);
+
+    /// <summary>
+    /// 更新作业触发器
+    /// </summary>
+    /// <param name="triggerId">作业触发器 Id</param>
+    /// <param name="configureTriggerBuilder">作业触发器构建器委托</param>
+    /// <returns><see cref="bool"/></returns>
+    bool UpdateTrigger(string triggerId, Action<TriggerBuilder> configureTriggerBuilder);
+
+    /// <summary>
+    /// 添加作业调度器
+    /// </summary>
+    /// <param name="triggerBuilder">作业触发器构建器</param>
+    void AddTrigger(TriggerBuilder triggerBuilder);
+
+    /// <summary>
+    /// 删除作业触发器
+    /// </summary>
+    /// <param name="triggerId">作业触发器 Id</param>
+    /// <returns><see cref="bool"/></returns>
+    bool RemoveTrigger(string triggerId);
 
     /// <summary>
     /// 开始作业调度器

@@ -44,9 +44,9 @@ public class JobDetail
     public JobStartMode StartMode { get; internal set; } = JobStartMode.Run;
 
     /// <summary>
-    /// 作业执行方式
+    /// 作业锁方式
     /// </summary>
-    public JobExecutionMode ExecutionMode { get; internal set; } = JobExecutionMode.Parallel;
+    public JobLockMode LockMode { get; internal set; } = JobLockMode.Parallel;
 
     /// <summary>
     /// 是否打印执行日志

@@ -6,6 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using Furion.Schedule.Extensions;
+
 namespace Furion.Schedule;
 
 /// <summary>
@@ -79,26 +81,88 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// <summary>
     /// 更新作业信息
     /// </summary>
-    /// <param name="configureJobDetailBuilder">作业信息构建器委托</param>
-    public void UpdateDetail(Action<JobDetailBuilder> configureJobDetailBuilder)
+    /// <param name="configureJobBuilder">作业信息构建器委托</param>
+    public void UpdateDetail(Action<JobBuilder> configureJobBuilder)
     {
         // 空检查
-        ArgumentNullException.ThrowIfNull(configureJobDetailBuilder);
+        ArgumentNullException.ThrowIfNull(configureJobBuilder);
 
-        var jobDetailBuilder = new JobDetailBuilder();
-        jobDetailBuilder.LoadTo(JobDetail);
+        // 将 JobDetail 转换成 JobBuilder
+        var jobBuilder = JobDetail.ToBuilder();
 
         // 外部调用
-        configureJobDetailBuilder(jobDetailBuilder);
+        configureJobBuilder(jobBuilder);
 
-        // 替换内存中的 JobDetail
-        JobDetail = jobDetailBuilder.Build();
+        // 构建新的 JobDetail
+        var (newJobDetail, jobType) = jobBuilder.Build();
 
-        // 更新运行时作业类型
-        if (JobType != jobDetailBuilder.RuntimeJobType)
+        // 替换旧 JobDetail
+        JobDetail = newJobDetail;
+        JobType = jobType;
+    }
+
+    /// <summary>
+    /// 更新作业触发器
+    /// </summary>
+    /// <param name="triggerId">作业触发器 Id</param>
+    /// <param name="configureTriggerBuilder">作业触发器构建器委托</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool UpdateTrigger(string triggerId, Action<TriggerBuilder> configureTriggerBuilder)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(configureTriggerBuilder);
+
+        // 根据作业触发器 Id 查找触发器
+        var jobTrigger = Triggers.SingleOrDefault(u => u.TriggerId == triggerId);
+        if (jobTrigger == null)
         {
-            JobType = jobDetailBuilder.RuntimeJobType!;
+            return false;
         }
+
+        // 将 JobTrigger 转换成 TriggerBuilder
+        var triggerBuilder = jobTrigger.ToBuilder();
+
+        // 外部调用
+        configureTriggerBuilder(triggerBuilder);
+
+        // 构建新的 JobTrigger
+        var newJobTrigger = triggerBuilder.Build(JobDetail.JobId!, null);
+
+        // 替换旧 JobTrigger
+        var isRemove = Triggers.Remove(jobTrigger);
+        if (isRemove)
+        {
+            Triggers.Add(newJobTrigger);
+        }
+
+        return isRemove;
+    }
+
+    /// <summary>
+    /// 添加作业调度器
+    /// </summary>
+    /// <param name="triggerBuilder">作业触发器构建器</param>
+    public void AddTrigger(TriggerBuilder triggerBuilder)
+    {
+        var jobTrigger = triggerBuilder.Build(JobDetail.JobId!, DateTime.UtcNow);
+        Triggers.Add(jobTrigger);
+    }
+
+    /// <summary>
+    /// 删除作业触发器
+    /// </summary>
+    /// <param name="triggerId">作业触发器 Id</param>
+    /// <returns><see cref="bool"/></returns>
+    public bool RemoveTrigger(string triggerId)
+    {
+        // 根据作业触发器 Id 查找触发器
+        var jobTrigger = Triggers.SingleOrDefault(u => u.TriggerId == triggerId);
+        if (jobTrigger == null)
+        {
+            return false;
+        }
+
+        return Triggers.Remove(jobTrigger);
     }
 
     /// <summary>

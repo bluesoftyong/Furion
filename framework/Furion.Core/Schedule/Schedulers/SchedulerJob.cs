@@ -93,7 +93,12 @@ internal sealed class SchedulerJob : ISchedulerJob
 
         // 替换内存中的 JobDetail
         JobDetail = jobDetailBuilder.Build();
-        JobType = jobDetailBuilder.RuntimeJobType!;
+
+        // 更新运行时作业类型
+        if (JobType != jobDetailBuilder.RuntimeJobType)
+        {
+            JobType = jobDetailBuilder.RuntimeJobType!;
+        }
     }
 
     /// <summary>

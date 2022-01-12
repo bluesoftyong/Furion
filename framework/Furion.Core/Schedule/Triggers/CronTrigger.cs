@@ -13,6 +13,7 @@ namespace Furion.Schedule;
 /// <summary>
 /// Cron 表达式触发器
 /// </summary>
+/// <remarks>Cron 表达式解析使用：https://gitee.com/dotnetchina/TimeCrontab</remarks>
 internal sealed class CronTrigger : JobTrigger
 {
     /// <summary>

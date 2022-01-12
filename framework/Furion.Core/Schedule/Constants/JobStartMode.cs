@@ -16,7 +16,7 @@ public enum JobStartMode : int
     /// <summary>
     /// 立即启动
     /// </summary>
-    Now = 0,
+    Run = 0,
 
     /// <summary>
     /// 等待启动

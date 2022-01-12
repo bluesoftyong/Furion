@@ -25,7 +25,7 @@ public sealed class JobDetailBuilder
     /// <summary>
     /// 作业 Id
     /// </summary>
-    public string? JobId { get; set; }
+    public string? JobId { get; private set; }
 
     /// <summary>
     /// 作业类型完整限定名
@@ -33,7 +33,7 @@ public sealed class JobDetailBuilder
     public string? JobType { get; private set; }
 
     /// <summary>
-    /// 作业类型完整限定名
+    /// 作业类型（C# 类型）
     /// </summary>
     internal Type? CSharpJobType { get; private set; }
 
@@ -55,7 +55,7 @@ public sealed class JobDetailBuilder
     /// <summary>
     /// 作业启动方式
     /// </summary>
-    public JobStartMode StartMode { get; set; } = JobStartMode.Now;
+    public JobStartMode StartMode { get; set; } = JobStartMode.Run;
 
     /// <summary>
     /// 作业执行方式
@@ -131,7 +131,7 @@ public sealed class JobDetailBuilder
             throw new InvalidOperationException("The <jobType> does not implement IJob interface.");
         }
 
-        // 是否创建新的服务作用域执行作业
+        // 设置作业类型关联的属性初始值
         WithScopeExecution = jobType.IsDefined(typeof(ScopeExecutionAttribute), false);
         AssemblyName = jobType.Assembly.GetName().Name;
         JobType = jobType.FullName;
@@ -154,7 +154,7 @@ public sealed class JobDetailBuilder
         jobDetail!.JobType = JobType;
         jobDetail!.AssemblyName = AssemblyName;
         jobDetail!.Description = Description;
-        jobDetail!.Status = StartMode != JobStartMode.Now ? JobStatus.None : Status;    // 只要不是立即启动，那么状态都会是 None
+        jobDetail!.Status = StartMode == JobStartMode.Wait ? JobStatus.None : Status;    // 只要启动模式为 Wait（等待启动），那么作业状态都会是 None
         jobDetail!.StartMode = StartMode;
         jobDetail!.ExecutionMode = ExecutionMode;
         jobDetail!.WithExecutionLog = WithExecutionLog;

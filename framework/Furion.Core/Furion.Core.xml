@@ -1395,7 +1395,7 @@
         </member>
         <member name="P:Furion.Schedule.JobDetailBuilder.CSharpJobType">
             <summary>
-            作业类型完整限定名
+            作业类型（C# 类型）
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetailBuilder.AssemblyName">
@@ -1789,7 +1789,7 @@
             作业启动方式
             </summary>
         </member>
-        <member name="F:Furion.Schedule.JobStartMode.Now">
+        <member name="F:Furion.Schedule.JobStartMode.Run">
             <summary>
             立即启动
             </summary>
@@ -2465,6 +2465,7 @@
             <summary>
             Cron 表达式触发器
             </summary>
+            <remarks>Cron 表达式解析使用：https://gitee.com/dotnetchina/TimeCrontab</remarks>
         </member>
         <member name="M:Furion.Schedule.CronTrigger.#ctor(System.String,Furion.TimeCrontab.CronStringFormat)">
             <summary>

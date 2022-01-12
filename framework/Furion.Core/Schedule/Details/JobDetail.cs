@@ -41,7 +41,7 @@ public class JobDetail
     /// <summary>
     /// 作业启动方式
     /// </summary>
-    public JobStartMode StartMode { get; internal set; } = JobStartMode.Now;
+    public JobStartMode StartMode { get; internal set; } = JobStartMode.Run;
 
     /// <summary>
     /// 作业执行方式

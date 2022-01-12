@@ -63,12 +63,37 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// 查看最早触发时间
     /// </summary>
     /// <returns><see cref="DateTime"/></returns>
-    public DateTime? GetEarliestNextRunTime()
+    public DateTime? GetNextOccurrence()
     {
-        if (Triggers.Count == 0) return null;
+        // 查看所有有效的作业触发器
+        var effectiveTriggers = Triggers.Where(u => u.NextRunTime != null);
+        if (!effectiveTriggers.Any())
+        {
+            return null;
+        }
 
-        // 查看最早触发记录
-        return Triggers.Min(u => u.NextRunTime);
+        // 获取最早触发器的作业触发器时间
+        return effectiveTriggers.Min(u => u.NextRunTime);
+    }
+
+    /// <summary>
+    /// 更新作业信息
+    /// </summary>
+    /// <param name="configureJobDetailBuilder">作业信息构建器委托</param>
+    public void UpdateDetail(Action<JobDetailBuilder> configureJobDetailBuilder)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(configureJobDetailBuilder);
+
+        var jobDetailBuilder = new JobDetailBuilder();
+        jobDetailBuilder.LoadTo(JobDetail);
+
+        // 外部调用
+        configureJobDetailBuilder(jobDetailBuilder);
+
+        // 替换内存中的 JobDetail
+        JobDetail = jobDetailBuilder.Build();
+        JobType = jobDetailBuilder.RuntimeJobType!;
     }
 
     /// <summary>

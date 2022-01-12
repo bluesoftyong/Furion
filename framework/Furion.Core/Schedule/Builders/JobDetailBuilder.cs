@@ -141,6 +141,22 @@ public sealed class JobDetailBuilder
     }
 
     /// <summary>
+    /// 将 JobDetail 信息转换成 JobDetailBuilder
+    /// </summary>
+    /// <param name="jobDetail"><see cref="JobDetail"/></param>
+    internal void LoadTo(JobDetail jobDetail)
+    {
+        WithIdentity(jobDetail.JobId!);
+        SetJobType(jobDetail.AssemblyName!, jobDetail.JobType!);
+        Description = jobDetail.Description;
+        Status = jobDetail.Status;
+        StartMode = jobDetail.StartMode;
+        ExecutionMode = jobDetail.ExecutionMode;
+        WithExecutionLog = jobDetail.WithExecutionLog;
+        WithScopeExecution = jobDetail.WithScopeExecution;
+    }
+
+    /// <summary>
     /// 构建作业信息对象
     /// </summary>
     /// <returns><see cref="JobDetail"/></returns>

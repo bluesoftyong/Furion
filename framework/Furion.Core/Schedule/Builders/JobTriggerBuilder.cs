@@ -171,7 +171,7 @@ public sealed class JobTriggerBuilder
     /// </summary>
     /// <param name="args">作业触发器构造函数参数</param>
     /// <returns><see cref="JobTriggerBuilder"/></returns>
-    public JobTriggerBuilder WithArgs(string args)
+    public JobTriggerBuilder WithArgs(string? args)
     {
         RuntimeArgs = string.IsNullOrWhiteSpace(args?.Trim()) ? null : JsonSerializer.Deserialize<object?[]?>(args);
         Args = args;
@@ -192,6 +192,26 @@ public sealed class JobTriggerBuilder
         }
 
         TriggerId = triggerId;
+    }
+
+    /// <summary>
+    /// 将 JobTrigger 信息转换成 JobDetailBuilder
+    /// </summary>
+    /// <param name="jobTrigger"><see cref="JobTrigger"/></param>
+    internal void LoadTo(JobTrigger jobTrigger)
+    {
+        WithIdentity(jobTrigger.TriggerId!);
+        SetTriggerType(jobTrigger.AssemblyName!, jobTrigger.TriggerType!);
+        WithArgs(jobTrigger.Args);
+        Description = jobTrigger.Description;
+        LastRunTime = jobTrigger.LastRunTime;
+        NextRunTime = jobTrigger.NextRunTime;
+        NumberOfRuns = jobTrigger.NumberOfRuns;
+        MaxNumberOfRuns = jobTrigger.MaxNumberOfRuns;
+        NumberOfErrors = jobTrigger.NumberOfErrors;
+        MaxNumberOfErrors = jobTrigger.MaxNumberOfErrors;
+        JobId = jobTrigger.JobId;
+        ExecuteOnAdded = jobTrigger.ExecuteOnAdded;
     }
 
     /// <summary>

@@ -14,10 +14,16 @@ namespace Furion.Schedule;
 public interface ISchedulerJob
 {
     /// <summary>
-    /// 查看最早触发时间
+    /// 查找下一次触发时间（最早）
     /// </summary>
     /// <returns><see cref="DateTime"/></returns>
-    DateTime? GetEarliestNextRunTime();
+    DateTime? GetNextOccurrence();
+
+    /// <summary>
+    /// 更新作业信息
+    /// </summary>
+    /// <param name="configureJobDetailBuilder">作业信息构建器委托</param>
+    void UpdateDetail(Action<JobDetailBuilder> configureJobDetailBuilder);
 
     /// <summary>
     /// 开始作业调度器

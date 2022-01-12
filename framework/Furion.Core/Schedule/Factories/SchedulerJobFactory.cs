@@ -90,7 +90,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
             , schedulerJob.JobDetail.Description
             , schedulerJob.JobDetail.JobType
             , string.Join(';', schedulerJob.Triggers.Select(u => u.TriggerType + "/" + u.ToString()))
-            , schedulerJob.GetEarliestNextRunTime()
+            , schedulerJob.GetNextOccurrence()
             , schedulerJob.JobDetail.StartMode
             , schedulerJob.JobDetail.ExecutionMode);
     }

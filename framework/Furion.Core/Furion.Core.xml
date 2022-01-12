@@ -1462,6 +1462,12 @@
             <returns><see cref="T:Furion.Schedule.JobDetailBuilder"/></returns>
             <exception cref="T:System.InvalidOperationException"></exception>
         </member>
+        <member name="M:Furion.Schedule.JobDetailBuilder.LoadTo(Furion.Schedule.JobDetail)">
+            <summary>
+            将 JobDetail 信息转换成 JobDetailBuilder
+            </summary>
+            <param name="jobDetail"><see cref="T:Furion.Schedule.JobDetail"/></param>
+        </member>
         <member name="M:Furion.Schedule.JobDetailBuilder.Build">
             <summary>
             构建作业信息对象
@@ -1598,6 +1604,12 @@
             配置作业触发器 Id
             </summary>
             <param name="triggerId">作业触发器 Id</param>
+        </member>
+        <member name="M:Furion.Schedule.JobTriggerBuilder.LoadTo(Furion.Schedule.JobTrigger)">
+            <summary>
+            将 JobTrigger 信息转换成 JobDetailBuilder
+            </summary>
+            <param name="jobTrigger"><see cref="T:Furion.Schedule.JobTrigger"/></param>
         </member>
         <member name="M:Furion.Schedule.JobTriggerBuilder.Build(System.String,System.Nullable{System.DateTime})">
             <summary>
@@ -2382,11 +2394,17 @@
             作业调度器依赖接口
             </summary>
         </member>
-        <member name="M:Furion.Schedule.ISchedulerJob.GetEarliestNextRunTime">
+        <member name="M:Furion.Schedule.ISchedulerJob.GetNextOccurrence">
             <summary>
-            查看最早触发时间
+            查找下一次触发时间（最早）
             </summary>
             <returns><see cref="T:System.DateTime"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.ISchedulerJob.UpdateDetail(System.Action{Furion.Schedule.JobDetailBuilder})">
+            <summary>
+            更新作业信息
+            </summary>
+            <param name="configureJobDetailBuilder">作业信息构建器委托</param>
         </member>
         <member name="M:Furion.Schedule.ISchedulerJob.Start">
             <summary>
@@ -2435,11 +2453,17 @@
             作业信息
             </summary>
         </member>
-        <member name="M:Furion.Schedule.SchedulerJob.GetEarliestNextRunTime">
+        <member name="M:Furion.Schedule.SchedulerJob.GetNextOccurrence">
             <summary>
             查看最早触发时间
             </summary>
             <returns><see cref="T:System.DateTime"/></returns>
+        </member>
+        <member name="M:Furion.Schedule.SchedulerJob.UpdateDetail(System.Action{Furion.Schedule.JobDetailBuilder})">
+            <summary>
+            更新作业信息
+            </summary>
+            <param name="configureJobDetailBuilder">作业信息构建器委托</param>
         </member>
         <member name="M:Furion.Schedule.SchedulerJob.Start">
             <summary>

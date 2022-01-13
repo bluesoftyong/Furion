@@ -79,7 +79,7 @@ public sealed class SchedulerJobBuilder
 
         // 构建作业触发器集合
         var jobTriggers = TriggerBuilders.Select(t => t.Build(jobDetail.JobId!, StartTime))
-                                                           .ToList();
+                                                       .ToList();
 
         // 创建作业调度器对象
         return new SchedulerJob(jobType!

@@ -9,46 +9,50 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 周期（间隔）触发器
+/// 周期（间隔）作业触发器
 /// </summary>
 internal sealed class PeriodTrigger : JobTrigger
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="interval">间隔时间（毫秒）</param>
+    /// <param name="interval">间隔（毫秒）</param>
     public PeriodTrigger(int interval)
     {
         Interval = interval;
     }
 
     /// <summary>
-    /// 间隔时间（毫秒）
+    /// 间隔（毫秒）
     /// </summary>
     private int Interval { get; }
 
     /// <summary>
-    /// 获取下一个触发时间
+    /// 计算下一个触发时间
     /// </summary>
-    /// <returns><see cref="DateTime"/></returns>
-    public override DateTime? GetNextOccurrence()
+    /// <param name="startAt">起始时间</param>
+    /// <returns><see cref="DateTime"/>?</returns>
+    public override DateTime? GetNextOccurrence(DateTime? startAt)
     {
-        return NextRunTime?.AddMilliseconds(Interval);
+        return startAt?.AddMilliseconds(Interval);
     }
 
     /// <summary>
-    /// 是否符合执行逻辑
+    /// 执行条件检查
     /// </summary>
-    /// <param name="baseTime">起始时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    public override bool ShouldRun(DateTime baseTime)
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public override bool ShouldRun(DateTime checkTime)
     {
-        return NextRunTime != null && NextRunTime.Value < baseTime && LastRunTime != NextRunTime;
+        return NextRunTime != null
+            && NextRunTime.Value < checkTime
+            && LastRunTime != NextRunTime;
     }
 
     /// <summary>
-    /// 将触发器转换成字符串输出
+    /// 作业触发器转字符串输出
     /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return $"{Interval}ms";

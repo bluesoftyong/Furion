@@ -37,7 +37,8 @@ public interface ISchedulerJob
     /// 添加作业调度器
     /// </summary>
     /// <param name="triggerBuilder">作业触发器构建器</param>
-    void AddTrigger(TriggerBuilder triggerBuilder);
+    /// <param name="startAt">启动时间</param>
+    void AddTrigger(TriggerBuilder triggerBuilder, DateTime? startAt);
 
     /// <summary>
     /// 删除作业触发器

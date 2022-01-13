@@ -76,14 +76,14 @@ internal static class LogTemplateHelpers
             , "Triggers"
             , "NextOccurrence"
             , "StartMode"
-            , "ExecutionMode"}, true, "A job is successfully added to the schedule.");
+            , "LockMode"}, true, "A job is successfully added to the schedule.");
         RemoveSchedulerJobTemplate = GetTemplate(new[] { "The <{JobId}> job has been removed from the schedule." });
 
         JobExecutionTemplate = GetTemplate(new[] {
             "JobId"
             , "Description"
             , "JobType"
-            , "ExecutionMode"
+            , "LockMode"
             , "TriggerId"
             , "TriggerType"
             , "Args"

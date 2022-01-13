@@ -46,7 +46,6 @@ internal static class ScheduleExtensions
                          .SetNumberOfRuns(jobTrigger.NumberOfRuns)
                          .SetMaxNumberOfRuns(jobTrigger.MaxNumberOfRuns)
                          .SetNumberOfErrors(jobTrigger.NumberOfErrors)
-                         .SetMaxNumberOfErrors(jobTrigger.MaxNumberOfErrors)
-                         .SetExecuteOnAdded(jobTrigger.ExecuteOnAdded);
+                         .SetMaxNumberOfErrors(jobTrigger.MaxNumberOfErrors);
     }
 }

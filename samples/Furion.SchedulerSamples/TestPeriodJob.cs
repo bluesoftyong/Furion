@@ -29,7 +29,7 @@ public class TestPeriodJob : IJob
         _service.Test();
         _service2.Test();
 
-        _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.NumberOfRuns} times");
+        _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.TriggerId} {context.JobTrigger.NumberOfRuns} times");
 
         await Task.CompletedTask;
     }

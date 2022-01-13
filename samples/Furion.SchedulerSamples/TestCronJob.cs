@@ -17,7 +17,7 @@ public class TestCronJob : IJob
     {
         Trace.WriteLine(JsonSerializer.Serialize(context.JobDetail));
         Trace.WriteLine(JsonSerializer.Serialize(context.JobTrigger));
-        _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.NumberOfRuns} times");
+        _logger.LogInformation($"<{context.JobDetail.JobId}> {DateTime.Now:yyyy-MM-dd HH:mm:ss} {context.JobTrigger.TriggerId} {context.JobTrigger.NumberOfRuns} times");
 
         await Task.CompletedTask;
     }

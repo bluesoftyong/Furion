@@ -142,9 +142,10 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// 添加作业调度器
     /// </summary>
     /// <param name="triggerBuilder">作业触发器构建器</param>
-    public void AddTrigger(TriggerBuilder triggerBuilder)
+    /// <param name="startAt">启动时间</param>
+    public void AddTrigger(TriggerBuilder triggerBuilder, DateTime? startAt)
     {
-        var jobTrigger = triggerBuilder.Build(JobDetail.JobId!, DateTime.UtcNow);
+        var jobTrigger = triggerBuilder.Build(JobDetail.JobId!, startAt);
         Triggers.Add(jobTrigger);
     }
 

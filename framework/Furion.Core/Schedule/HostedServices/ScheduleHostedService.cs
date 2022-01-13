@@ -108,7 +108,8 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <returns><see cref="Task"/> 实例</returns>
     private async Task BackgroundProcessing(CancellationToken stoppingToken)
     {
-        var referenceTime = DateTime.UtcNow;
+        // 受检时间
+        var checkTime = DateTime.UtcNow;
 
         // 获取所有有效的作业调度器
         var schedulerJobsThatShouldRun = Factory.SchedulerJobs.Where(u => IsEffectiveJob(u.JobDetail));
@@ -123,7 +124,7 @@ internal sealed class ScheduleHostedService : BackgroundService
             (var jobId, var jobType, var jobDetail, var jobTriggers) = schedulerJobThatShouldRun;
 
             // 查询所有符合触发的触发器
-            var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(referenceTime));
+            var triggersThatShouldRun = jobTriggers.Where(t => t.InternalShouldRun(checkTime));
 
             // 逐一创建新线程并触发
             foreach (var jobTrigger in triggersThatShouldRun)
@@ -140,7 +141,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                     // 创建执行前上下文
                     var jobExecutingContext = new JobExecutingContext(jobDetail, jobTrigger, properties)
                     {
-                        ExecutingTime = referenceTime
+                        ExecutingTime = checkTime
                     };
 
                     // 执行异常对象
@@ -215,9 +216,9 @@ internal sealed class ScheduleHostedService : BackgroundService
                                 , jobTrigger.NextRunTime
                                 , jobTrigger.NumberOfRuns
                                 , jobTrigger.NumberOfErrors
-                                , referenceTime
+                                , checkTime
                                 , executedTime
-                                , $"{Math.Round((executedTime - referenceTime).TotalMilliseconds, 2)}ms"
+                                , $"{Math.Round((executedTime - checkTime).TotalMilliseconds, 2)}ms"
                                 , executionException?.Message);
                         }
 
@@ -239,26 +240,26 @@ internal sealed class ScheduleHostedService : BackgroundService
         }
 
         // 休眠线程并等待被唤醒
-        await WaitingAwakenAsync(referenceTime, stoppingToken);
+        await WaitingAwakenAsync(checkTime, stoppingToken);
     }
 
     /// <summary>
     /// 休眠线程并等待被唤醒
     /// </summary>
-    /// <param name="referenceTime">当前后台服务检查时间</param>
+    /// <param name="checkTime">受检时间</param>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    private async Task WaitingAwakenAsync(DateTime referenceTime, CancellationToken stoppingToken)
+    private async Task WaitingAwakenAsync(DateTime checkTime, CancellationToken stoppingToken)
     {
         /*
          * 为了避免程序在未知情况下存在不必要的耗时操作从而导致时间出现偏差
          * 所以这里采用 DateTimeKind.Unspecified 转换当前时间并忽略毫秒部分
          */
-        var unspecifiedTime = new DateTime(referenceTime.Year, referenceTime.Month, referenceTime.Day, referenceTime.Hour, referenceTime.Minute, referenceTime.Second);
+        var unspecifiedCheckTime = new DateTime(checkTime.Year, checkTime.Month, checkTime.Day, checkTime.Hour, checkTime.Minute, checkTime.Second);
 
         // 查找下一次符合触发时机的所有作业触发器
         var closestJobTriggers = Factory.SchedulerJobs.Where(u => IsEffectiveJob(u.JobDetail))
-                                                           .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime != null && t.NextRunTime >= unspecifiedTime));
+                                                           .SelectMany(u => u.Triggers!.Where(t => t.NextRunTime != null && t.NextRunTime >= unspecifiedCheckTime));
 
         // 获取最早执行的作业触发器时间
         var earliestTriggerTime = closestJobTriggers.Any()
@@ -266,7 +267,7 @@ internal sealed class ScheduleHostedService : BackgroundService
             : DateTime.MaxValue;    // 如果没有感知到需要执行的作业，则一直休眠
 
         // 计算出总的休眠时间，这里采用 Math.Min 解决 Timer 最大值不能超过 int.MaxValue 的问题
-        var interval = Math.Min(int.MaxValue, (earliestTriggerTime - referenceTime).TotalMilliseconds);
+        var interval = Math.Min(int.MaxValue, (earliestTriggerTime - checkTime).TotalMilliseconds);
 
         // 将当前线程休眠至下一次触发前或感知到作业调度器工厂变化时
         await Factory.SleepAsync(interval, stoppingToken);

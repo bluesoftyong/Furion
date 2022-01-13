@@ -11,48 +11,51 @@ using Furion.TimeCrontab;
 namespace Furion.Schedule;
 
 /// <summary>
-/// Cron 表达式触发器
+/// Cron 作业触发器
 /// </summary>
-/// <remarks>Cron 表达式解析使用：https://gitee.com/dotnetchina/TimeCrontab</remarks>
 internal sealed class CronTrigger : JobTrigger
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="schedule">调度计划（Cron 表达式）</param>
-    /// <param name="format">Cron 表达式格式化类型，默认 <see cref="CronStringFormat.Default"/></param>
-    public CronTrigger(string schedule, int format = 0)
+    /// <param name="schedule">Cron 表达式</param>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    public CronTrigger(string schedule, int format)
     {
         ScheduleCrontab = Crontab.Parse(schedule, (CronStringFormat)format);
     }
 
     /// <summary>
-    /// 调度计划 <see cref="Crontab"/> 对象
+    /// <see cref="Crontab"/> 对象
     /// </summary>
     private Crontab ScheduleCrontab { get; }
 
     /// <summary>
-    /// 获取下一个触发时间
+    /// 计算下一个触发时间
     /// </summary>
-    /// <returns><see cref="DateTime"/></returns>
-    public override DateTime? GetNextOccurrence()
+    /// <param name="startAt">起始时间</param>
+    /// <returns><see cref="DateTime"/>?</returns>
+    public override DateTime? GetNextOccurrence(DateTime? startAt)
     {
-        return NextRunTime == null ? null : ScheduleCrontab.GetNextOccurrence(NextRunTime.Value);
+        return startAt == null ? null : ScheduleCrontab.GetNextOccurrence(startAt.Value);
     }
 
     /// <summary>
-    /// 是否符合执行逻辑
+    /// 执行条件检查
     /// </summary>
-    /// <param name="baseTime">起始时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    public override bool ShouldRun(DateTime baseTime)
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public override bool ShouldRun(DateTime checkTime)
     {
-        return NextRunTime != null && NextRunTime.Value < baseTime && LastRunTime != NextRunTime;
+        return NextRunTime != null
+            && NextRunTime.Value < checkTime
+            && LastRunTime != NextRunTime;
     }
 
     /// <summary>
-    /// 将触发器转换成字符串输出
+    /// 作业触发器转字符串输出
     /// </summary>
+    /// <returns><see cref="string"/></returns>
     public override string ToString()
     {
         return ScheduleCrontab.ToString();

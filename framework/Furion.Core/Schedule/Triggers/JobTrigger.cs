@@ -19,23 +19,25 @@ public abstract class JobTrigger
     public string? TriggerId { get; internal set; }
 
     /// <summary>
-    /// 作业触发器类型完整限定名
+    /// 作业触发器类型
     /// </summary>
+    /// <remarks>存储的是类型的 FullName</remarks>
     public string? TriggerType { get; internal set; }
 
     /// <summary>
-    /// 作业触发器类型所在程序集名称
+    /// 作业触发器类型所在程序集
     /// </summary>
+    /// <remarks>存储的是程序集 Name</remarks>
     public string? AssemblyName { get; internal set; }
 
     /// <summary>
-    /// 作业触发器参数（JSON 字符串）
+    /// 作业触发器参数
     /// </summary>
-    /// <remarks>object?[]? 类型</remarks>
+    /// <remarks>运行时将反序列化为 object?[]? 类型并作为构造函数参数</remarks>
     public string? Args { get; internal set; }
 
     /// <summary>
-    /// 作业触发器描述
+    /// 描述信息
     /// </summary>
     public string? Description { get; internal set; }
 
@@ -52,24 +54,31 @@ public abstract class JobTrigger
     /// <summary>
     /// 触发次数
     /// </summary>
-    public long NumberOfRuns { get; internal set; } = 0;
+    public long NumberOfRuns { get; internal set; }
 
     /// <summary>
-    /// 最大执行次数
+    /// 最大触发次数
     /// </summary>
-    /// <remarks>不限制：-1；0：不执行；> 0：大于 0 次</remarks>
-    public long MaxNumberOfRuns { get; internal set; } = -1;
+    /// <remarks>
+    /// <para>-1：不限制</para>
+    /// <para>0：不执行</para>
+    /// <para>>0：N 次</para>
+    /// </remarks>
+    public long MaxNumberOfRuns { get; internal set; }
 
     /// <summary>
     /// 出错次数
     /// </summary>
-    public long NumberOfErrors { get; internal set; } = 0;
+    public long NumberOfErrors { get; internal set; }
 
     /// <summary>
     /// 最大出错次数
     /// </summary>
-    /// <remarks>小于或等于0：不限制；> 0：大于 0 次</remarks>
-    public long MaxNumberOfErrors { get; internal set; } = -1;
+    /// <remarks>
+    /// <para>lt/eq 0：不限制</para>
+    /// <para>>0：N 次</para>
+    /// </remarks>
+    public long MaxNumberOfErrors { get; internal set; }
 
     /// <summary>
     /// 作业 Id
@@ -77,41 +86,37 @@ public abstract class JobTrigger
     public string? JobId { get; internal set; }
 
     /// <summary>
-    /// 是否加入调度计划时自执行一次
+    /// 计算下一个触发时间
     /// </summary>
-    public bool ExecuteOnAdded { get; internal set; } = false;
+    /// <param name="startAt">起始时间</param>
+    /// <returns><see cref="DateTime"/>?</returns>
+    public abstract DateTime? GetNextOccurrence(DateTime? startAt);
 
     /// <summary>
-    /// 获取下一个触发时间
+    /// 执行条件检查
     /// </summary>
-    /// <returns><see cref="DateTime"/></returns>
-    public abstract DateTime? GetNextOccurrence();
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public abstract bool ShouldRun(DateTime checkTime);
 
     /// <summary>
-    /// 是否符合执行逻辑
-    /// </summary>
-    /// <param name="baseTime">起始时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    public abstract bool ShouldRun(DateTime baseTime);
-
-    /// <summary>
-    /// 将触发器转换成字符串输出
+    /// 作业触发器转字符串输出
     /// </summary>
     /// <returns><see cref="string"/></returns>
     public abstract new string? ToString();
 
     /// <summary>
-    /// 计算当前触发器增量信息
+    /// 记录运行信息和计算下一个触发时间
     /// </summary>
     internal void Increment()
     {
         NumberOfRuns++;
         LastRunTime = NextRunTime;
-        NextRunTime = GetNextOccurrence();
+        NextRunTime = GetNextOccurrence(NextRunTime);
     }
 
     /// <summary>
-    /// 递增错误次数
+    /// 记录错误次数
     /// </summary>
     internal void IncrementErrors()
     {
@@ -119,25 +124,25 @@ public abstract class JobTrigger
     }
 
     /// <summary>
-    /// 是否符合执行逻辑（内部检查）
+    /// 执行条件检查（内部检查）
     /// </summary>
-    /// <param name="baseTime">起始时间</param>
-    /// <returns><see cref="bool"/> 实例</returns>
-    internal bool InternalShouldRun(DateTime baseTime)
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    internal bool InternalShouldRun(DateTime checkTime)
     {
-        // 最大次数控制
+        // 最大次数判断
         if (MaxNumberOfRuns == 0 || (MaxNumberOfRuns != -1 && NumberOfRuns >= MaxNumberOfRuns))
         {
             return false;
         }
 
-        // 最大错误数控制
+        // 最大错误数判断
         if (MaxNumberOfErrors > 0 && NumberOfErrors >= MaxNumberOfErrors)
         {
             return false;
         }
 
-        // 调用实现类方法
-        return ShouldRun(baseTime);
+        // 调用派生类 ShouldRun 方法
+        return ShouldRun(checkTime);
     }
 }

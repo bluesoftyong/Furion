@@ -231,7 +231,7 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 构建 JobDetail 及 JobType
+    /// 构建 <see cref="JobDetail"/> 及 JobType
     /// </summary>
     /// <returns>(<see cref="JobDetail"/>, <see cref="Type"/>)</returns>
     internal (JobDetail JobDetail, Type JobType) Build()

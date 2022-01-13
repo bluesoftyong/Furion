@@ -19,7 +19,7 @@ namespace Furion.SchedulerSamples.Controllers
             _schedule.AddJob(JobBuilder.Create<TestPeriodJob>()
                                              .WithIdentity("test_job")
                                              .BindTriggers(
-                                                TriggerBuilder.CreatePeriod(2000).WithIdentity("test_trg"))
+                                                TriggerBuilder.Period(2000).WithIdentity("test_trg"))
                                              );
 
             _schedule.NotifyChanges();

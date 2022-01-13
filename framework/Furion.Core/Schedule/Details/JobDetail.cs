@@ -56,7 +56,8 @@ public class JobDetail
     public bool PrintExecutionLog { get; internal set; }
 
     /// <summary>
-    /// 是否带独立作用域
+    /// 是否带独立服务作用域
     /// </summary>
-    public bool WithScopeExecution { get; internal set; }
+    /// <remarks>设置为 true，<see cref="IJob"/> 实现类将创建新的服务作用域解析构造函数服务</remarks>
+    public bool SandboxScope { get; internal set; }
 }

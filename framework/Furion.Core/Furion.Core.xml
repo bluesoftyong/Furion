@@ -1363,12 +1363,13 @@
             <param name="dep4">依赖服务</param>
             <param name="dep5">依赖服务</param>
         </member>
-        <member name="T:Furion.Schedule.ScopeExecutionAttribute">
+        <member name="T:Furion.Schedule.SandboxScopeAttribute">
             <summary>
-            作业独立作用域标记特性
+            是否带独立服务作用域特性
             </summary>
+            <remarks><see cref="T:Furion.Schedule.IJob"/> 实现类贴了该特性后，将创建新的服务作用域解析构造函数服务</remarks>
         </member>
-        <member name="M:Furion.Schedule.ScopeExecutionAttribute.#ctor">
+        <member name="M:Furion.Schedule.SandboxScopeAttribute.#ctor">
             <summary>
             构造函数
             </summary>
@@ -1425,10 +1426,11 @@
             是否打印执行日志
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobBuilder.WithScopeExecution">
+        <member name="P:Furion.Schedule.JobBuilder.SandboxScope">
             <summary>
-            是否带独立作用域
+            是否带独立服务作用域
             </summary>
+            <remarks>设置为 true，<see cref="T:Furion.Schedule.IJob"/> 实现类将创建新的服务作用域解析构造函数服务</remarks>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.RuntimeJobType">
             <summary>
@@ -1500,11 +1502,11 @@
             <param name="printExecutionLog">是否打印执行日志</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
-        <member name="M:Furion.Schedule.JobBuilder.SetWithScopeExecution(System.Boolean)">
+        <member name="M:Furion.Schedule.JobBuilder.SetSandboxScope(System.Boolean)">
             <summary>
-            设置是否带独立作用域
+            是否带独立服务作用域
             </summary>
-            <param name="withScopeExecution">是否带独立作用域</param>
+            <param name="sandboxScope">是否带独立服务作用域</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.BindTriggers(Furion.Schedule.TriggerBuilder[])">
@@ -2011,10 +2013,11 @@
             是否打印执行日志
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetail.WithScopeExecution">
+        <member name="P:Furion.Schedule.JobDetail.SandboxScope">
             <summary>
-            是否带独立作用域
+            是否带独立服务作用域
             </summary>
+            <remarks>设置为 true，<see cref="T:Furion.Schedule.IJob"/> 实现类将创建新的服务作用域解析构造函数服务</remarks>
         </member>
         <member name="T:Furion.Schedule.IJobExecutor">
             <summary>

@@ -9,15 +9,16 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业独立作用域标记特性
+/// 是否带独立服务作用域特性
 /// </summary>
+/// <remarks><see cref="IJob"/> 实现类贴了该特性后，将创建新的服务作用域解析构造函数服务</remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public sealed class ScopeExecutionAttribute : Attribute
+public sealed class SandboxScopeAttribute : Attribute
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    public ScopeExecutionAttribute()
+    public SandboxScopeAttribute()
     {
     }
 }

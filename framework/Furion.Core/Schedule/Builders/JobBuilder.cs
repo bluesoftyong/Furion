@@ -65,9 +65,10 @@ public sealed class JobBuilder
     private bool PrintExecutionLog { get; set; } = false;
 
     /// <summary>
-    /// 是否带独立作用域
+    /// 是否带独立服务作用域
     /// </summary>
-    private bool WithScopeExecution { get; set; } = false;
+    /// <remarks>设置为 true，<see cref="IJob"/> 实现类将创建新的服务作用域解析构造函数服务</remarks>
+    private bool SandboxScope { get; set; } = false;
 
     /// <summary>
     /// 运行时作业类型
@@ -120,7 +121,7 @@ public sealed class JobBuilder
         // 创建作业信息构建器
         var jobBuilder = new JobBuilder
         {
-            WithScopeExecution = jobType.IsDefined(typeof(ScopeExecutionAttribute), false),
+            SandboxScope = jobType.IsDefined(typeof(SandboxScopeAttribute), false),
             AssemblyName = jobType.Assembly.GetName().Name,
             JobType = jobType.FullName,
             RuntimeJobType = jobType
@@ -209,13 +210,13 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 设置是否带独立作用域
+    /// 是否带独立服务作用域
     /// </summary>
-    /// <param name="withScopeExecution">是否带独立作用域</param>
+    /// <param name="sandboxScope">是否带独立服务作用域</param>
     /// <returns><see cref="JobBuilder"/></returns>
-    public JobBuilder SetWithScopeExecution(bool withScopeExecution)
+    public JobBuilder SetSandboxScope(bool sandboxScope)
     {
-        WithScopeExecution = withScopeExecution;
+        SandboxScope = sandboxScope;
 
         return this;
     }
@@ -249,7 +250,7 @@ public sealed class JobBuilder
         jobDetail!.StartMode = StartMode;
         jobDetail!.LockMode = LockMode;
         jobDetail!.PrintExecutionLog = PrintExecutionLog;
-        jobDetail!.WithScopeExecution = WithScopeExecution;
+        jobDetail!.SandboxScope = SandboxScope;
 
         return (jobDetail!, RuntimeJobType!);
     }

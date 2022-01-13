@@ -2,7 +2,7 @@
 
 namespace Furion.SchedulerSamples;
 
-[ScopeExecution]
+[SandboxScope]
 public class TestPeriodJob : IJob
 {
     private readonly ILogger<TestPeriodJob> _logger;

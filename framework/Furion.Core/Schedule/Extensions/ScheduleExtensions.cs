@@ -27,7 +27,7 @@ internal static class ScheduleExtensions
                          .SetStartMode(jobDetail.StartMode)
                          .SetLockMode(jobDetail.LockMode)
                          .SetPrintExecutionLog(jobDetail.PrintExecutionLog)
-                         .SetWithScopeExecution(jobDetail.WithScopeExecution);
+                         .SetSandboxScope(jobDetail.SandboxScope);
     }
 
     /// <summary>

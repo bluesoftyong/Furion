@@ -155,7 +155,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                         // 创建作业处理程序
                         var job = CreateJobInstance(_serviceProvider
                             , jobType
-                            , jobDetail.WithScopeExecution
+                            , jobDetail.SandboxScope
                             , ref serviceScope);
 
                         // 调用执行前监视器

@@ -9,15 +9,16 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业调度器构建器
+/// 作业调度程序构建器
 /// </summary>
-public sealed class SchedulerJobBuilder
+public sealed class SchedulerBuilder
 {
     /// <summary>
     /// 构造函数
     /// </summary>
-    private SchedulerJobBuilder()
+    private SchedulerBuilder()
     {
+        TriggerBuilders = new();
     }
 
     /// <summary>
@@ -28,7 +29,7 @@ public sealed class SchedulerJobBuilder
     /// <summary>
     /// 作业触发器构建器集合
     /// </summary>
-    private List<TriggerBuilder> TriggerBuilders { get; set; } = new();
+    private List<TriggerBuilder> TriggerBuilders { get; }
 
     /// <summary>
     /// 开始时间
@@ -36,43 +37,43 @@ public sealed class SchedulerJobBuilder
     private DateTime? StartTime { get; set; } = DateTime.UtcNow;
 
     /// <summary>
-    /// 创建作业调度器构建器
+    /// 创建作业调度程序构建器
     /// </summary>
     /// <param name="jobBuilder">作业信息构建器</param>
     /// <param name="triggerBuilders">作业触发器构建器</param>
-    /// <returns></returns>
-    public static SchedulerJobBuilder Create(JobBuilder jobBuilder, params TriggerBuilder[] triggerBuilders)
+    /// <returns><see cref="SchedulerBuilder"/></returns>
+    public static SchedulerBuilder Create(JobBuilder jobBuilder, params TriggerBuilder[] triggerBuilders)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(jobBuilder);
         ArgumentNullException.ThrowIfNull(triggerBuilders);
 
-        // 创建作业调度器构建器
-        var schedulerJobBuilder = new SchedulerJobBuilder()
+        // 创建作业调度程序构建器
+        var schedulerBuilder = new SchedulerBuilder()
         {
             JobBuilder = jobBuilder,
         };
-        schedulerJobBuilder.TriggerBuilders.AddRange(triggerBuilders);
+        schedulerBuilder.TriggerBuilders.AddRange(triggerBuilders);
 
-        return schedulerJobBuilder;
+        return schedulerBuilder;
     }
 
     /// <summary>
     /// 设置起始时间
     /// </summary>
     /// <param name="startTime">起始时间</param>
-    /// <returns></returns>
-    public SchedulerJobBuilder StartAt(DateTime? startTime)
+    /// <returns><see cref="SchedulerBuilder"/></returns>
+    public SchedulerBuilder StartAt(DateTime? startTime)
     {
         StartTime = startTime;
         return this;
     }
 
     /// <summary>
-    /// 构建作业调度器对象
+    /// 构建 <see cref="Scheduler"/>
     /// </summary>
-    /// <returns><see cref="SchedulerJobBuilder"/></returns>
-    internal SchedulerJob Build()
+    /// <returns><see cref="Scheduler"/></returns>
+    internal Scheduler Build()
     {
         // 构建作业信息对象
         var (jobDetail, jobType) = JobBuilder!.Build();
@@ -81,8 +82,8 @@ public sealed class SchedulerJobBuilder
         var jobTriggers = TriggerBuilders.Select(t => t.Build(jobDetail.JobId!, StartTime))
                                                        .ToList();
 
-        // 创建作业调度器对象
-        return new SchedulerJob(jobType!
+        // 创建作业调度程序对象
+        return new Scheduler(jobType!
             , jobDetail
             , jobTriggers);
     }

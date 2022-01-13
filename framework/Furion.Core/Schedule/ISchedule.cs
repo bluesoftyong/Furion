@@ -17,15 +17,15 @@ public interface ISchedule
     /// 根据作业 Id 获取作业调度器
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <returns><see cref="ISchedulerJob"/></returns>
-    ISchedulerJob? GetJob(string jobId);
+    /// <returns><see cref="IScheduler"/></returns>
+    IScheduler? GetScheduler(string jobId);
 
     /// <summary>
     /// 动态添加作业
     /// </summary>
     /// <param name="schedulerJobBuilder">作业调度器构建器</param>
     /// <returns><see cref="bool"/></returns>
-    void AddJob(SchedulerJobBuilder schedulerJobBuilder);
+    void AddJob(SchedulerBuilder schedulerJobBuilder);
 
     /// <summary>
     /// 删除作业

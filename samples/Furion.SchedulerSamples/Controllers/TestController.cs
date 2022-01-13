@@ -34,7 +34,7 @@ namespace Furion.SchedulerSamples.Controllers
         [HttpPost]
         public void UpdateTrigger()
         {
-            _schedule.GetJob("test_job")
+            _schedule.GetScheduler("test_job")
                      ?.UpdateTrigger("test_trg", t =>
                      {
                          t.SetNumberOfRuns(10000);

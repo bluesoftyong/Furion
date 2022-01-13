@@ -16,13 +16,13 @@ internal sealed class InternalSchedule : ISchedule
     /// <summary>
     /// 作业调度器工厂
     /// </summary>
-    private readonly ISchedulerJobFactory _schedulerFactory;
+    private readonly ISchedulerFactory _schedulerFactory;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="schedulerFactory">作业调度器工厂</param>
-    public InternalSchedule(ISchedulerJobFactory schedulerFactory)
+    public InternalSchedule(ISchedulerFactory schedulerFactory)
     {
         _schedulerFactory = schedulerFactory;
     }
@@ -32,7 +32,7 @@ internal sealed class InternalSchedule : ISchedule
     /// </summary>
     /// <param name="schedulerJobBuilder">作业调度器构建器</param>
     /// <returns><see cref="bool"/></returns>
-    public void AddJob(SchedulerJobBuilder schedulerJobBuilder)
+    public void AddJob(SchedulerBuilder schedulerJobBuilder)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(schedulerJobBuilder);
@@ -58,8 +58,8 @@ internal sealed class InternalSchedule : ISchedule
     /// 根据作业 Id 获取作业调度器
     /// </summary>
     /// <param name="jobId">作业 Id</param>
-    /// <returns><see cref="ISchedulerJob"/></returns>
-    public ISchedulerJob? GetJob(string jobId)
+    /// <returns><see cref="IScheduler"/></returns>
+    public IScheduler? GetScheduler(string jobId)
     {
         var isExist = _schedulerFactory.TryGet(jobId, out var schedulerJob);
         return isExist ? schedulerJob : default;

@@ -9,9 +9,9 @@
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业调度器依赖接口
+/// 作业调度程序依赖接口
 /// </summary>
-public interface ISchedulerJob
+public interface IScheduler
 {
     /// <summary>
     /// 查找下一次触发时间（最早）
@@ -48,12 +48,12 @@ public interface ISchedulerJob
     bool RemoveTrigger(string triggerId);
 
     /// <summary>
-    /// 开始作业调度器
+    /// 启动
     /// </summary>
     void Start();
 
     /// <summary>
-    /// 暂停作业调度器
+    /// 暂停
     /// </summary>
     void Pause();
 }

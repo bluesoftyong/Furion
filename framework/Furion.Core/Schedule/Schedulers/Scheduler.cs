@@ -11,9 +11,9 @@ using Furion.Schedule.Extensions;
 namespace Furion.Schedule;
 
 /// <summary>
-/// 作业调度器
+/// 作业调度程序
 /// </summary>
-internal sealed class SchedulerJob : ISchedulerJob
+internal sealed class Scheduler : IScheduler
 {
     /// <summary>
     /// 构造函数
@@ -21,7 +21,7 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// <param name="jobType">作业类型</param>
     /// <param name="jobDetail">作业信息</param>
     /// <param name="triggers">作业触发器</param>
-    internal SchedulerJob(Type jobType, JobDetail jobDetail, IList<JobTrigger> triggers)
+    internal Scheduler(Type jobType, JobDetail jobDetail, IList<JobTrigger> triggers)
     {
         JobType = jobType;
         JobDetail = jobDetail;
@@ -33,7 +33,7 @@ internal sealed class SchedulerJob : ISchedulerJob
     /// </summary>
     /// <param name="jobId">作业 Id</param>
     /// <param name="jobType">作业类型</param>
-    /// <param name="jobDetail">作业信息对象</param>
+    /// <param name="jobDetail">作业信息</param>
     /// <param name="jobTriggers">作业触发器</param>
     internal void Deconstruct(out string jobId
         , out Type jobType
@@ -167,7 +167,7 @@ internal sealed class SchedulerJob : ISchedulerJob
     }
 
     /// <summary>
-    /// 开始作业调度器
+    /// 启动
     /// </summary>
     public void Start()
     {
@@ -178,7 +178,7 @@ internal sealed class SchedulerJob : ISchedulerJob
     }
 
     /// <summary>
-    /// 暂停作业调度器
+    /// 暂停
     /// </summary>
     public void Pause()
     {

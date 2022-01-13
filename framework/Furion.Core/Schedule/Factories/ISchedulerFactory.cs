@@ -11,12 +11,12 @@ namespace Furion.Schedule;
 /// <summary>
 /// 作业调度器工厂依赖接口
 /// </summary>
-internal interface ISchedulerJobFactory
+internal interface ISchedulerFactory
 {
     /// <summary>
     /// 作业调度器集合
     /// </summary>
-    ICollection<SchedulerJob> SchedulerJobs { get; }
+    ICollection<Scheduler> SchedulerJobs { get; }
 
     /// <summary>
     /// 根据作业 Id 获取作业调度器
@@ -24,13 +24,13 @@ internal interface ISchedulerJobFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    bool TryGet(string jobId, out SchedulerJob? schedulerJob);
+    bool TryGet(string jobId, out Scheduler? schedulerJob);
 
     /// <summary>
     /// 向工厂中追加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
-    void Append(SchedulerJob schedulerJob);
+    void Append(Scheduler schedulerJob);
 
     /// <summary>
     /// 尝试删除作业调度器
@@ -38,7 +38,7 @@ internal interface ISchedulerJobFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    bool TryRemove(string jobId, out SchedulerJob? schedulerJob);
+    bool TryRemove(string jobId, out Scheduler? schedulerJob);
 
     /// <summary>
     /// 启动所有作业调度器

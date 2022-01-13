@@ -16,9 +16,9 @@ namespace Furion.Schedule;
 public sealed class ScheduleOptionsBuilder
 {
     /// <summary>
-    /// 作业调度器构建器集合
+    /// 作业调度程序构建器集合
     /// </summary>
-    private readonly IList<SchedulerJobBuilder> _schedulerJobBuilders;
+    private readonly IList<SchedulerBuilder> _schedulerBuilders;
 
     /// <summary>
     /// 作业监视器
@@ -35,7 +35,7 @@ public sealed class ScheduleOptionsBuilder
     /// </summary>
     public ScheduleOptionsBuilder()
     {
-        _schedulerJobBuilders = new List<SchedulerJobBuilder>();
+        _schedulerBuilders = new List<SchedulerBuilder>();
     }
 
     /// <summary>
@@ -46,16 +46,15 @@ public sealed class ScheduleOptionsBuilder
     /// <summary>
     /// 注册作业
     /// </summary>
-    /// <param name="schedulerJobBuilder">作业调度器构建器</param>
+    /// <param name="schedulerBuilder">作业调度程序构建器</param>
     /// <returns><see cref="ScheduleOptionsBuilder"/></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public ScheduleOptionsBuilder AddJob(SchedulerJobBuilder schedulerJobBuilder)
+    public ScheduleOptionsBuilder AddJob(SchedulerBuilder schedulerBuilder)
     {
         // 空检查
-        ArgumentNullException.ThrowIfNull(schedulerJobBuilder);
+        ArgumentNullException.ThrowIfNull(schedulerBuilder);
 
         // 添加到作业调度器构建器集合中
-        _schedulerJobBuilders.Add(schedulerJobBuilder);
+        _schedulerBuilders.Add(schedulerBuilder);
 
         return this;
     }
@@ -64,7 +63,7 @@ public sealed class ScheduleOptionsBuilder
     /// 注册作业监视器
     /// </summary>
     /// <typeparam name="TJobMonitor">实现自 <see cref="IJobMonitor"/></typeparam>
-    /// <returns><see cref="ScheduleOptionsBuilder"/> 实例</returns>
+    /// <returns><see cref="ScheduleOptionsBuilder"/></returns>
     public ScheduleOptionsBuilder AddMonitor<TJobMonitor>()
         where TJobMonitor : class, IJobMonitor
     {
@@ -76,7 +75,7 @@ public sealed class ScheduleOptionsBuilder
     /// 注册作业执行器
     /// </summary>
     /// <typeparam name="TJobExecutor">实现自 <see cref="IJobExecutor"/></typeparam>
-    /// <returns><see cref="ScheduleOptionsBuilder"/> 实例</returns>
+    /// <returns><see cref="ScheduleOptionsBuilder"/></returns>
     public ScheduleOptionsBuilder AddExecutor<TJobExecutor>()
         where TJobExecutor : class, IJobExecutor
     {
@@ -85,11 +84,11 @@ public sealed class ScheduleOptionsBuilder
     }
 
     /// <summary>
-    /// 构建 Schedule 配置选项
+    /// 构建 <see cref="Scheduler"/> 集合
     /// </summary>
     /// <param name="services">服务集合对象</param>
-    /// <returns>作业调度器集合</returns>
-    internal IList<SchedulerJob> Build(IServiceCollection services)
+    /// <returns>IList{<see cref="Scheduler"/>}</returns>
+    internal IList<Scheduler> Build(IServiceCollection services)
     {
         // 注册作业监视器
         if (_jobMonitor != default)
@@ -104,6 +103,6 @@ public sealed class ScheduleOptionsBuilder
         }
 
         // 构建作业调度器
-        return _schedulerJobBuilders.Select(s => s.Build()).ToList();
+        return _schedulerBuilders.Select(s => s.Build()).ToList();
     }
 }

@@ -45,7 +45,7 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <summary>
     /// 作业调度器工厂
     /// </summary>
-    private ISchedulerJobFactory Factory { get; }
+    private ISchedulerFactory Factory { get; }
 
     /// <summary>
     /// 构造函数
@@ -56,8 +56,8 @@ internal sealed class ScheduleHostedService : BackgroundService
     /// <param name="schedulerJobs">作业调度器集合</param>
     public ScheduleHostedService(ILogger<ScheduleHostedService> logger
         , IServiceProvider serviceProvider
-        , ISchedulerJobFactory factory
-        , IList<SchedulerJob> schedulerJobs)
+        , ISchedulerFactory factory
+        , IList<Scheduler> schedulerJobs)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;

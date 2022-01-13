@@ -224,10 +224,10 @@ public sealed class JobBuilder
     /// 绑定作业触发器构建器集合
     /// </summary>
     /// <param name="triggerBuilders">作业触发器构建器集合</param>
-    /// <returns></returns>
-    public SchedulerJobBuilder BindTriggers(params TriggerBuilder[] triggerBuilders)
+    /// <returns><see cref="SchedulerBuilder"/></returns>
+    public SchedulerBuilder BindTriggers(params TriggerBuilder[] triggerBuilders)
     {
-        return SchedulerJobBuilder.Create(this, triggerBuilders);
+        return SchedulerBuilder.Create(this, triggerBuilders);
     }
 
     /// <summary>

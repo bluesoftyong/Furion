@@ -74,7 +74,7 @@ public static class ScheduleServiceCollectionExtensions
     private static IServiceCollection AddInternalService(this IServiceCollection services)
     {
         // 注册作业调度器工厂
-        services.AddSingleton<ISchedulerJobFactory, SchedulerJobFactory>();
+        services.AddSingleton<ISchedulerFactory, SchedulerFactory>();
 
         // 注册 Schedule 模块接口
         services.AddSingleton<ISchedule, InternalSchedule>();

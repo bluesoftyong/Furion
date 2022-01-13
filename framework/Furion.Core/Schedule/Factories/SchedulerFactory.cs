@@ -15,7 +15,7 @@ namespace Furion.Schedule;
 /// <summary>
 /// 作业调度器工厂默认实现
 /// </summary>
-internal sealed class SchedulerJobFactory : ISchedulerJobFactory
+internal sealed class SchedulerFactory : ISchedulerFactory
 {
     /// <summary>
     /// 基于 Channel 实现信号灯机制
@@ -28,18 +28,18 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <summary>
     /// 作业调度器字典集合
     /// </summary>
-    private readonly ConcurrentDictionary<string, SchedulerJob> _schedulerJobs;
+    private readonly ConcurrentDictionary<string, Scheduler> _schedulerJobs;
 
     /// <summary>
     /// 日志对象
     /// </summary>
-    private readonly ILogger<SchedulerJobFactory> _logger;
+    private readonly ILogger<SchedulerFactory> _logger;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="logger">日志对象</param>
-    public SchedulerJobFactory(ILogger<SchedulerJobFactory> logger)
+    public SchedulerFactory(ILogger<SchedulerFactory> logger)
     {
         // 配置 Channel 通道最多容纳消息为 1 个，超过 1 个进入等待
         var boundedChannelOptions = new BoundedChannelOptions(1)
@@ -57,7 +57,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <summary>
     /// 作业调度器集合
     /// </summary>
-    public ICollection<SchedulerJob> SchedulerJobs => _schedulerJobs.Values;
+    public ICollection<Scheduler> SchedulerJobs => _schedulerJobs.Values;
 
     /// <summary>
     /// 根据作业 Id 获取作业调度器
@@ -65,7 +65,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    public bool TryGet(string jobId, out SchedulerJob? schedulerJob)
+    public bool TryGet(string jobId, out Scheduler? schedulerJob)
     {
         return _schedulerJobs.TryGetValue(jobId, out schedulerJob);
     }
@@ -74,7 +74,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// 向工厂中追加作业调度器
     /// </summary>
     /// <param name="schedulerJob">调度作业对象</param>
-    public void Append(SchedulerJob schedulerJob)
+    public void Append(Scheduler schedulerJob)
     {
         var jobId = schedulerJob.JobDetail.JobId!;
 
@@ -101,7 +101,7 @@ internal sealed class SchedulerJobFactory : ISchedulerJobFactory
     /// <param name="jobId">作业 Id</param>
     /// <param name="schedulerJob">作业调度器</param>
     /// <returns><see cref="bool"/></returns>
-    public bool TryRemove(string jobId, out SchedulerJob? schedulerJob)
+    public bool TryRemove(string jobId, out Scheduler? schedulerJob)
     {
         var canRemove = _schedulerJobs.TryRemove(jobId, out schedulerJob);
 

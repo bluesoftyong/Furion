@@ -19,42 +19,44 @@ public class JobDetail
     public string? JobId { get; internal set; }
 
     /// <summary>
-    /// 作业类型完整限定名
+    /// 作业类型
     /// </summary>
+    /// <remarks>存储的是类型的 FullName</remarks>
     public string? JobType { get; internal set; }
 
     /// <summary>
-    /// 作业类型所在程序集名称
+    /// 作业类型所在程序集
     /// </summary>
+    /// <remarks>存储的是程序集 Name</remarks>
     public string? AssemblyName { get; internal set; }
 
     /// <summary>
-    /// 作业描述信息
+    /// 描述信息
     /// </summary>
     public string? Description { get; internal set; }
 
     /// <summary>
-    /// 作业状态
+    /// 运行状态
     /// </summary>
-    public JobStatus Status { get; internal set; } = JobStatus.Normal;
+    public JobStatus Status { get; internal set; }
 
     /// <summary>
-    /// 作业启动方式
+    /// 启动方式
     /// </summary>
-    public JobStartMode StartMode { get; internal set; } = JobStartMode.Run;
+    public JobStartMode StartMode { get; internal set; }
 
     /// <summary>
-    /// 作业锁方式
+    /// 执行锁方式
     /// </summary>
-    public JobLockMode LockMode { get; internal set; } = JobLockMode.Parallel;
+    public JobLockMode LockMode { get; internal set; }
 
     /// <summary>
     /// 是否打印执行日志
     /// </summary>
-    public bool WithExecutionLog { get; internal set; } = false;
+    public bool PrintExecutionLog { get; internal set; }
 
     /// <summary>
-    /// 是否创建新的服务作用域执行作业
+    /// 是否带独立作用域
     /// </summary>
-    public bool WithScopeExecution { get; internal set; } = false;
+    public bool WithScopeExecution { get; internal set; }
 }

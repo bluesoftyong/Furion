@@ -202,7 +202,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                         var executedTime = DateTime.UtcNow;
 
                         // 输出触发完成日志
-                        if (jobDetail!.WithExecutionLog)
+                        if (jobDetail!.PrintExecutionLog)
                         {
                             _logger.LogInformation(LogTemplateHelpers.JobExecutionTemplate
                                 , jobId

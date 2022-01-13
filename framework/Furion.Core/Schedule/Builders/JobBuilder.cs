@@ -28,42 +28,44 @@ public sealed class JobBuilder
     private string? JobId { get; set; }
 
     /// <summary>
-    /// 作业类型完整限定名
+    /// 作业类型
     /// </summary>
+    /// <remarks>存储的是类型的 FullName</remarks>
     private string? JobType { get; set; }
 
     /// <summary>
-    /// 作业类型所在程序集名称
+    /// 作业类型所在程序集
     /// </summary>
+    /// <remarks>存储的是程序集 Name</remarks>
     private string? AssemblyName { get; set; }
 
     /// <summary>
-    /// 作业描述信息
+    /// 描述信息
     /// </summary>
     private string? Description { get; set; }
 
     /// <summary>
-    /// 作业状态
+    /// 运行状态
     /// </summary>
     private JobStatus Status { get; set; } = JobStatus.Normal;
 
     /// <summary>
-    /// 作业启动方式
+    /// 启动方式
     /// </summary>
     private JobStartMode StartMode { get; set; } = JobStartMode.Run;
 
     /// <summary>
-    /// 作业锁方式
+    /// 执行锁方式
     /// </summary>
     private JobLockMode LockMode { get; set; } = JobLockMode.Parallel;
 
     /// <summary>
     /// 是否打印执行日志
     /// </summary>
-    private bool WithExecutionLog { get; set; } = false;
+    private bool PrintExecutionLog { get; set; } = false;
 
     /// <summary>
-    /// 是否创建新的服务作用域执行作业
+    /// 是否带独立作用域
     /// </summary>
     private bool WithScopeExecution { get; set; } = false;
 
@@ -73,10 +75,10 @@ public sealed class JobBuilder
     private Type? RuntimeJobType { get; set; }
 
     /// <summary>
-    /// 创建特定类型作业信息构建器
+    /// 创建作业信息构建器
     /// </summary>
     /// <typeparam name="TJob"><see cref="IJob"/> 实现类</typeparam>
-    /// <returns><see cref="TriggerBuilder"/></returns>
+    /// <returns><see cref="JobBuilder"/></returns>
     public static JobBuilder Create<TJob>()
         where TJob : class, IJob
     {
@@ -84,18 +86,18 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 创建特定类型作业信息构建器
+    /// 创建作业信息构建器
     /// </summary>
-    /// <param name="assemblyName">程序集全名</param>
-    /// <param name="jobType">作业类型完整名称</param>
-    /// <returns><see cref="TriggerBuilder"/></returns>
+    /// <param name="assemblyName">作业类型所在程序集 Name</param>
+    /// <param name="jobType">作业类型 FullName</param>
+    /// <returns><see cref="JobBuilder"/></returns>
     public static JobBuilder Create(string assemblyName, string jobType)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(assemblyName);
         ArgumentNullException.ThrowIfNull(jobType);
 
-        // 加载 GAC 全局缓存中的程序集
+        // 加载 GAC 全局应用程序缓存中的程序集及类型
         var runtimeJobType = Assembly.Load(assemblyName).GetType(jobType);
         ArgumentNullException.ThrowIfNull(runtimeJobType);
 
@@ -103,10 +105,10 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 创建特定类型作业信息构建器
+    /// 创建作业信息构建器
     /// </summary>
-    /// <param name="jobType"><see cref="JobTrigger"/> 派生类</param>
-    /// <returns><see cref="TriggerBuilder"/></returns>
+    /// <param name="jobType"><see cref="IJob"/> 实现类</param>
+    /// <returns><see cref="JobBuilder"/></returns>
     public static JobBuilder Create(Type jobType)
     {
         // 检查 jobType 类型是否实现 IJob 接口
@@ -128,9 +130,11 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 配置作业 Id
+    /// 设置作业 Id
     /// </summary>
     /// <param name="jobId">作业 Id</param>
+    /// <returns><see cref="JobBuilder"/></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public JobBuilder WithIdentity(string jobId)
     {
         // 空检查
@@ -145,7 +149,7 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 设置作业描述信息
+    /// 设置描述信息
     /// </summary>
     /// <param name="description">描述信息</param>
     /// <returns><see cref="JobBuilder"/></returns>
@@ -157,9 +161,9 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 设置作业状态
+    /// 设置运行状态
     /// </summary>
-    /// <param name="status">作业状态</param>
+    /// <param name="status">运行状态</param>
     /// <returns><see cref="JobBuilder"/></returns>
     public JobBuilder SetStatus(JobStatus status)
     {
@@ -169,9 +173,9 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 设置作业启动方式
+    /// 设置启动方式
     /// </summary>
-    /// <param name="startMode">作业启动方式</param>
+    /// <param name="startMode">启动方式</param>
     /// <returns><see cref="JobBuilder"/></returns>
     public JobBuilder SetStartMode(JobStartMode startMode)
     {
@@ -181,9 +185,9 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 设置作业锁方式
+    /// 设置执行锁方式
     /// </summary>
-    /// <param name="lockMode">作业锁方式</param>
+    /// <param name="lockMode">执行锁方式</param>
     /// <returns><see cref="JobBuilder"/></returns>
     public JobBuilder SetLockMode(JobLockMode lockMode)
     {
@@ -195,19 +199,19 @@ public sealed class JobBuilder
     /// <summary>
     /// 设置是否打印执行日志
     /// </summary>
-    /// <param name="withExecutionLog">是否打印执行日志</param>
+    /// <param name="printExecutionLog">是否打印执行日志</param>
     /// <returns><see cref="JobBuilder"/></returns>
-    public JobBuilder SetWithExecutionLog(bool withExecutionLog)
+    public JobBuilder SetPrintExecutionLog(bool printExecutionLog)
     {
-        WithExecutionLog = withExecutionLog;
+        PrintExecutionLog = printExecutionLog;
 
         return this;
     }
 
     /// <summary>
-    /// 设置是否创建新的服务作用域执行作业
+    /// 设置是否带独立作用域
     /// </summary>
-    /// <param name="withScopeExecution">是否创建新的服务作用域执行作业</param>
+    /// <param name="withScopeExecution">是否带独立作用域</param>
     /// <returns><see cref="JobBuilder"/></returns>
     public JobBuilder SetWithScopeExecution(bool withScopeExecution)
     {
@@ -217,19 +221,19 @@ public sealed class JobBuilder
     }
 
     /// <summary>
-    /// 绑定作业触发器构建器
+    /// 绑定作业触发器构建器集合
     /// </summary>
     /// <param name="triggerBuilders">作业触发器构建器集合</param>
-    /// <returns><see cref="SchedulerJobBuilder"/></returns>
+    /// <returns></returns>
     public SchedulerJobBuilder BindTriggers(params TriggerBuilder[] triggerBuilders)
     {
         return SchedulerJobBuilder.Create(this, triggerBuilders);
     }
 
     /// <summary>
-    /// 构建作业信息对象
+    /// 构建 JobDetail 及 JobType
     /// </summary>
-    /// <returns><see cref="Tuple{T1, T2}"/></returns>
+    /// <returns>(<see cref="JobDetail"/>, <see cref="Type"/>)</returns>
     internal (JobDetail JobDetail, Type JobType) Build()
     {
         // 创建作业信息对象
@@ -240,10 +244,11 @@ public sealed class JobBuilder
         jobDetail!.JobType = JobType;
         jobDetail!.AssemblyName = AssemblyName;
         jobDetail!.Description = Description;
-        jobDetail!.Status = StartMode == JobStartMode.Wait ? JobStatus.None : Status;    // 只要启动模式为 Wait（等待启动），那么作业状态都会是 None
+        // 只要启动方式为 JobStatus.Wait（等待启动），那么作业状态设置为 JobStatus.None
+        jobDetail!.Status = StartMode == JobStartMode.Wait ? JobStatus.None : Status;
         jobDetail!.StartMode = StartMode;
         jobDetail!.LockMode = LockMode;
-        jobDetail!.WithExecutionLog = WithExecutionLog;
+        jobDetail!.PrintExecutionLog = PrintExecutionLog;
         jobDetail!.WithScopeExecution = WithScopeExecution;
 
         return (jobDetail!, RuntimeJobType!);

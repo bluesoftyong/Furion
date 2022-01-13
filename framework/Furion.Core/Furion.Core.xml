@@ -1365,7 +1365,7 @@
         </member>
         <member name="T:Furion.Schedule.ScopeExecutionAttribute">
             <summary>
-            标记作业处理程序是否采用新的服务作用域执行特性
+            作业独立作用域标记特性
             </summary>
         </member>
         <member name="M:Furion.Schedule.ScopeExecutionAttribute.#ctor">
@@ -1390,42 +1390,44 @@
         </member>
         <member name="P:Furion.Schedule.JobBuilder.JobType">
             <summary>
-            作业类型完整限定名
+            作业类型
             </summary>
+            <remarks>存储的是类型的 FullName</remarks>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.AssemblyName">
             <summary>
-            作业类型所在程序集名称
+            作业类型所在程序集
             </summary>
+            <remarks>存储的是程序集 Name</remarks>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.Description">
             <summary>
-            作业描述信息
+            描述信息
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.Status">
             <summary>
-            作业状态
+            运行状态
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.StartMode">
             <summary>
-            作业启动方式
+            启动方式
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.LockMode">
             <summary>
-            作业锁方式
+            执行锁方式
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobBuilder.WithExecutionLog">
+        <member name="P:Furion.Schedule.JobBuilder.PrintExecutionLog">
             <summary>
             是否打印执行日志
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.WithScopeExecution">
             <summary>
-            是否创建新的服务作用域执行作业
+            是否带独立作用域
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobBuilder.RuntimeJobType">
@@ -1435,86 +1437,88 @@
         </member>
         <member name="M:Furion.Schedule.JobBuilder.Create``1">
             <summary>
-            创建特定类型作业信息构建器
+            创建作业信息构建器
             </summary>
             <typeparam name="TJob"><see cref="T:Furion.Schedule.IJob"/> 实现类</typeparam>
-            <returns><see cref="T:Furion.Schedule.TriggerBuilder"/></returns>
+            <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.Create(System.String,System.String)">
             <summary>
-            创建特定类型作业信息构建器
+            创建作业信息构建器
             </summary>
-            <param name="assemblyName">程序集全名</param>
-            <param name="jobType">作业类型完整名称</param>
-            <returns><see cref="T:Furion.Schedule.TriggerBuilder"/></returns>
+            <param name="assemblyName">作业类型所在程序集 Name</param>
+            <param name="jobType">作业类型 FullName</param>
+            <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.Create(System.Type)">
             <summary>
-            创建特定类型作业信息构建器
+            创建作业信息构建器
             </summary>
-            <param name="jobType"><see cref="T:Furion.Schedule.JobTrigger"/> 派生类</param>
-            <returns><see cref="T:Furion.Schedule.TriggerBuilder"/></returns>
+            <param name="jobType"><see cref="T:Furion.Schedule.IJob"/> 实现类</param>
+            <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.WithIdentity(System.String)">
             <summary>
-            配置作业 Id
+            设置作业 Id
             </summary>
             <param name="jobId">作业 Id</param>
+            <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.SetDescription(System.String)">
             <summary>
-            设置作业描述信息
+            设置描述信息
             </summary>
             <param name="description">描述信息</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.SetStatus(Furion.Schedule.JobStatus)">
             <summary>
-            设置作业状态
+            设置运行状态
             </summary>
-            <param name="status">作业状态</param>
+            <param name="status">运行状态</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.SetStartMode(Furion.Schedule.JobStartMode)">
             <summary>
-            设置作业启动方式
+            设置启动方式
             </summary>
-            <param name="startMode">作业启动方式</param>
+            <param name="startMode">启动方式</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.SetLockMode(Furion.Schedule.JobLockMode)">
             <summary>
-            设置作业锁方式
+            设置执行锁方式
             </summary>
-            <param name="lockMode">作业锁方式</param>
+            <param name="lockMode">执行锁方式</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
-        <member name="M:Furion.Schedule.JobBuilder.SetWithExecutionLog(System.Boolean)">
+        <member name="M:Furion.Schedule.JobBuilder.SetPrintExecutionLog(System.Boolean)">
             <summary>
             设置是否打印执行日志
             </summary>
-            <param name="withExecutionLog">是否打印执行日志</param>
+            <param name="printExecutionLog">是否打印执行日志</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.SetWithScopeExecution(System.Boolean)">
             <summary>
-            设置是否创建新的服务作用域执行作业
+            设置是否带独立作用域
             </summary>
-            <param name="withScopeExecution">是否创建新的服务作用域执行作业</param>
+            <param name="withScopeExecution">是否带独立作用域</param>
             <returns><see cref="T:Furion.Schedule.JobBuilder"/></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.BindTriggers(Furion.Schedule.TriggerBuilder[])">
             <summary>
-            绑定作业触发器构建器
+            绑定作业触发器构建器集合
             </summary>
             <param name="triggerBuilders">作业触发器构建器集合</param>
-            <returns><see cref="T:Furion.Schedule.SchedulerJobBuilder"/></returns>
+            <returns></returns>
         </member>
         <member name="M:Furion.Schedule.JobBuilder.Build">
             <summary>
-            构建作业信息对象
+            构建 JobDetail 及 JobType
             </summary>
-            <returns><see cref="T:System.Tuple`2"/></returns>
+            <returns>(<see cref="T:Furion.Schedule.JobDetail"/>, <see cref="T:System.Type"/>)</returns>
         </member>
         <member name="T:Furion.Schedule.ScheduleOptionsBuilder">
             <summary>
@@ -1974,42 +1978,44 @@
         </member>
         <member name="P:Furion.Schedule.JobDetail.JobType">
             <summary>
-            作业类型完整限定名
+            作业类型
             </summary>
+            <remarks>存储的是类型的 FullName</remarks>
         </member>
         <member name="P:Furion.Schedule.JobDetail.AssemblyName">
             <summary>
-            作业类型所在程序集名称
+            作业类型所在程序集
             </summary>
+            <remarks>存储的是程序集 Name</remarks>
         </member>
         <member name="P:Furion.Schedule.JobDetail.Description">
             <summary>
-            作业描述信息
+            描述信息
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetail.Status">
             <summary>
-            作业状态
+            运行状态
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetail.StartMode">
             <summary>
-            作业启动方式
+            启动方式
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetail.LockMode">
             <summary>
-            作业锁方式
+            执行锁方式
             </summary>
         </member>
-        <member name="P:Furion.Schedule.JobDetail.WithExecutionLog">
+        <member name="P:Furion.Schedule.JobDetail.PrintExecutionLog">
             <summary>
             是否打印执行日志
             </summary>
         </member>
         <member name="P:Furion.Schedule.JobDetail.WithScopeExecution">
             <summary>
-            是否创建新的服务作用域执行作业
+            是否带独立作用域
             </summary>
         </member>
         <member name="T:Furion.Schedule.IJobExecutor">

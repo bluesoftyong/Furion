@@ -47,12 +47,6 @@ public abstract class JobTriggerBase : JobTrigger
     }
 
     /// <summary>
-    /// 作业触发器转字符串输出
-    /// </summary>
-    /// <returns><see cref="string"/></returns>
-    public abstract new string ToString();
-
-    /// <summary>
     /// 记录运行信息和计算下一个触发时间及休眠时间
     /// </summary>
     internal void Increment()

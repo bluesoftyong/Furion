@@ -49,21 +49,17 @@ public sealed class JobBuilder : JobDetail
     }
 
     /// <summary>
-    /// 创建作业信息构建器
+    /// 创建新的作业构建器
     /// </summary>
     /// <param name="assemblyName">作业类型所在程序集 Name</param>
     /// <param name="jobTypeFullName">作业类型 FullName</param>
     /// <returns><see cref="JobBuilder"/></returns>
     public static JobBuilder Create(string assemblyName, string jobTypeFullName)
     {
-        // 空检查
-        if (!string.IsNullOrWhiteSpace(assemblyName)) throw new ArgumentNullException(nameof(assemblyName));
-        if (!string.IsNullOrWhiteSpace(jobTypeFullName)) throw new ArgumentNullException(nameof(jobTypeFullName));
+        // 初始化作业信息构建器类型
+        var builder = new JobBuilder().SetJobType(assemblyName, jobTypeFullName);
 
-        // 加载 GAC 全局应用程序缓存中的程序集及类型
-        var jobType = Assembly.Load(assemblyName).GetType(jobTypeFullName);
-
-        return Create(jobType);
+        return builder;
     }
 
     /// <summary>
@@ -73,21 +69,20 @@ public sealed class JobBuilder : JobDetail
     /// <returns><see cref="JobBuilder"/></returns>
     public static JobBuilder Create(Type jobType)
     {
-        // 检查 jobType 类型是否实现 IJob 接口
-        if (!typeof(IJob).IsAssignableFrom(jobType))
-        {
-            throw new InvalidOperationException("The <jobType> does not implement IJob interface.");
-        }
-
         // 初始化作业信息构建器类型
-        var builder = new JobBuilder
-        {
-            AssemblyName = jobType.Assembly.GetName().Name,
-            JobType = jobType.FullName,
-            RuntimeJobType = jobType
-        };
+        var builder = new JobBuilder().SetJobType(jobType);
 
         return builder;
+    }
+
+    /// <summary>
+    /// 将 <see cref="JobDetail"/> 转换成 <see cref="JobBuilder"/>
+    /// </summary>
+    /// <param name="jobDetail"></param>
+    /// <returns></returns>
+    public static JobBuilder From(JobDetail jobDetail)
+    {
+        return (JobBuilder)jobDetail;
     }
 
     /// <summary>
@@ -105,6 +100,44 @@ public sealed class JobBuilder : JobDetail
         }
 
         JobId = jobId;
+
+        return this;
+    }
+
+    /// <summary>
+    /// 设置作业类型
+    /// </summary>
+    /// <param name="assemblyName">作业类型所在程序集 Name</param>
+    /// <param name="jobTypeFullName">作业类型 FullName</param>
+    /// <returns><see cref="JobBuilder"/></returns>
+    public JobBuilder SetJobType(string assemblyName, string jobTypeFullName)
+    {
+        // 空检查
+        if (!string.IsNullOrWhiteSpace(assemblyName)) throw new ArgumentNullException(nameof(assemblyName));
+        if (!string.IsNullOrWhiteSpace(jobTypeFullName)) throw new ArgumentNullException(nameof(jobTypeFullName));
+
+        // 加载 GAC 全局应用程序缓存中的程序集及类型
+        var jobType = Assembly.Load(assemblyName).GetType(jobTypeFullName);
+
+        return SetJobType(jobType);
+    }
+
+    /// <summary>
+    /// 设置作业类型
+    /// </summary>
+    /// <param name="jobType">作业类型</param>
+    /// <returns><see cref="JobBuilder"/></returns>
+    public JobBuilder SetJobType(Type jobType)
+    {
+        // 检查 jobType 类型是否实现 IJob 接口
+        if (!typeof(IJob).IsAssignableFrom(jobType))
+        {
+            throw new InvalidOperationException("The <jobType> does not implement IJob interface.");
+        }
+
+        AssemblyName = jobType.Assembly.GetName().Name;
+        JobType = jobType.FullName;
+        RuntimeJobType = jobType;
 
         return this;
     }
@@ -151,6 +184,12 @@ public sealed class JobBuilder : JobDetail
     /// <returns></returns>
     internal JobDetail Build()
     {
+        // 空检查
+        if (string.IsNullOrWhiteSpace(JobId))
+        {
+            throw new ArgumentNullException(nameof(JobId));
+        }
+
         return this;
     }
 }

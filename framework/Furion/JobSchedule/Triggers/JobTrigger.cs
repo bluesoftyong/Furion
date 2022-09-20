@@ -26,7 +26,7 @@ namespace Furion.JobSchedule;
 /// 作业触发器基类
 /// </summary>
 [SuppressSniffer]
-public abstract class JobTrigger
+public class JobTrigger
 {
     /// <summary>
     /// 作业 Id
@@ -101,7 +101,7 @@ public abstract class JobTrigger
     /// </summary>
     /// <remarks>
     /// <para>0：不限制</para>
-    /// <para>>n：N 次</para>
+    /// <para>n：N 次</para>
     /// </remarks>
     public long MaxNumberOfRuns { get; internal set; }
 
@@ -115,7 +115,7 @@ public abstract class JobTrigger
     /// </summary>
     /// <remarks>
     /// <para>0：不限制</para>
-    /// <para>>n：N 次</para>
+    /// <para>n：N 次</para>
     /// </remarks>
     public long MaxNumberOfErrors { get; internal set; }
 
@@ -136,109 +136,7 @@ public abstract class JobTrigger
     internal Type RuntimeTriggerType { get; set; }
 
     /// <summary>
-    /// 计算下一个触发时间
+    /// 作业触发器运行时参数
     /// </summary>
-    /// <param name="startAt">起始时间</param>
-    /// <returns><see cref="DateTime"/>?</returns>
-    public abstract DateTime GetNextOccurrence(DateTime startAt);
-
-    /// <summary>
-    /// 执行条件检查
-    /// </summary>
-    /// <param name="checkTime">受检时间</param>
-    /// <returns><see cref="bool"/></returns>
-    public virtual bool ShouldRun(DateTime checkTime)
-    {
-        return NextRunTime.Value < checkTime
-            && LastRunTime != NextRunTime;
-    }
-
-    /// <summary>
-    /// 作业触发器转字符串输出
-    /// </summary>
-    /// <returns><see cref="string"/></returns>
-    public abstract new string ToString();
-
-    /// <summary>
-    /// 记录运行信息和计算下一个触发时间及休眠时间
-    /// </summary>
-    internal void Increment()
-    {
-        NumberOfRuns++;
-        LastRunTime = NextRunTime;
-
-        if (NextRunTime != null)
-        {
-            var startAt = NextRunTime.Value;
-            NextRunTime = GetNextOccurrence(startAt);
-            SleepMilliseconds = (NextRunTime.Value - startAt).TotalMilliseconds;
-        }
-        else
-        {
-            SleepMilliseconds = null;
-        }
-    }
-
-    /// <summary>
-    /// 记录错误次数
-    /// </summary>
-    internal void IncrementErrors()
-    {
-        NumberOfErrors++;
-
-        // 如果错误次数大于最大错误数，则表示该触发器是奔溃状态
-        if (MaxNumberOfErrors > 0 && NumberOfErrors >= MaxNumberOfErrors)
-        {
-            Status = JobTriggerStatus.Panic;
-        }
-        // 否则是就绪（错误状态）
-        else
-        {
-            Status = JobTriggerStatus.ErrorToReady;
-        }
-    }
-
-    /// <summary>
-    /// 执行条件检查（内部检查）
-    /// </summary>
-    /// <param name="checkTime">受检时间</param>
-    /// <returns><see cref="bool"/></returns>
-    internal bool InternalShouldRun(DateTime checkTime)
-    {
-        // 状态检查
-        if (Status != JobTriggerStatus.Ready
-            && Status != JobTriggerStatus.ErrorToReady
-            && Status != JobTriggerStatus.Blocked)  // 本该执行但是没有执行
-        {
-            return false;
-        }
-
-        // 开始时间和结束时间检查
-        if ((StartTime != null && StartTime.Value > checkTime)
-            || (EndTime != null && EndTime.Value < checkTime))
-        {
-            return false;
-        }
-
-        // 下一次运行时间空判断
-        if (NextRunTime == null || SleepMilliseconds == null || SleepMilliseconds < 0)
-        {
-            return false;
-        }
-
-        // 最大次数判断
-        if (MaxNumberOfRuns == 0 || (MaxNumberOfRuns != -1 && NumberOfRuns >= MaxNumberOfRuns))
-        {
-            return false;
-        }
-
-        // 最大错误数判断
-        if (MaxNumberOfErrors > 0 && NumberOfErrors >= MaxNumberOfErrors)
-        {
-            return false;
-        }
-
-        // 调用派生类 ShouldRun 方法
-        return ShouldRun(checkTime);
-    }
+    internal object[] RuntimeTriggerArgs { get; set; }
 }

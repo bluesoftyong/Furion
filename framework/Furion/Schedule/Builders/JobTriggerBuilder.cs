@@ -168,7 +168,7 @@ public sealed class JobTriggerBuilder : JobTrigger
     public JobTriggerBuilder SetTriggerType(Type triggerType)
     {
         // 检查 triggerType 类型是否派生自 JobTriggerBase
-        if (!typeof(JobTriggerBase).IsAssignableFrom(triggerType))
+        if (!typeof(JobTriggerBase).IsAssignableFrom(triggerType) || triggerType.IsInterface)
         {
             throw new InvalidOperationException("The <TriggerType> is not a valid JobTriggerBase type.");
         }
@@ -332,11 +332,6 @@ public sealed class JobTriggerBuilder : JobTrigger
         if (string.IsNullOrWhiteSpace(jobId))
         {
             throw new ArgumentNullException(nameof(jobId));
-        }
-
-        if (string.IsNullOrWhiteSpace(TriggerId))
-        {
-            throw new ArgumentNullException(nameof(TriggerId));
         }
 
         JobId = jobId;

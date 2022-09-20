@@ -1,4 +1,5 @@
 ﻿using Furion.Application;
+using Furion.Schedule;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,15 @@ public sealed class Startup : AppStartup
         services.AddMonitorLogging();
 
         services.AddFromConvertBinding();
+
+        services.AddSchedule(options =>
+        {
+            options.AddJob(JobSchedulerBuilder.Create(
+                JobBuilder.Create<TestJob>().SetJobId("job1"),
+                JobTriggerBuilder.Cron("* * * * *")
+                , JobTriggerBuilder.Period(1000)
+            ));
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

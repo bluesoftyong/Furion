@@ -130,7 +130,7 @@ public sealed class JobBuilder : JobDetail
     public JobBuilder SetJobType(Type jobType)
     {
         // 检查 jobType 类型是否实现 IJob 接口
-        if (!typeof(IJob).IsAssignableFrom(jobType))
+        if (!typeof(IJob).IsAssignableFrom(jobType) || jobType.IsInterface)
         {
             throw new InvalidOperationException("The <jobType> does not implement IJob interface.");
         }

@@ -62,6 +62,7 @@ public sealed class JobSchedulerBuilder : JobScheduler
         // 创建作业调度计划构建器
         var jobSchedulerBuilder = new JobSchedulerBuilder()
         {
+            JobId = jobBuilder.JobId,
             JobBuilder = jobBuilder,
         };
         jobSchedulerBuilder.JobTriggerBuilders.AddRange(triggerBuilders);
@@ -94,21 +95,28 @@ public sealed class JobSchedulerBuilder : JobScheduler
 
         // 构建作业触发器
         var jobTriggers = new ConcurrentDictionary<string, JobTriggerBase>();
-        JobTriggerBuilders.ForEach(builder =>
+
+        // 遍历作业触发器集合
+        for (var i = 0; i < JobTriggerBuilders.Count; i++)
         {
+            var builder = JobTriggerBuilders[i];
+
+            // 配置默认 TriggerId
+            if (string.IsNullOrWhiteSpace(builder.TriggerId))
+            {
+                builder.TriggerId = $"{jobDetail.JobId}_trigger{i + 1}";
+            }
+
             var jobTrigger = builder.Build(jobDetail.JobId);
             var succeed = jobTriggers.TryAdd(jobTrigger.TriggerId, jobTrigger);
 
+            // 作业触发器 Id 唯一检查
             if (!succeed) throw new InvalidOperationException($"The TriggerId of <{jobTrigger.TriggerId}> already exists.");
-        });
+        }
 
-        // 创建作业调度计划实例
-        var jobScheduler = new JobScheduler()
-        {
-            JobId = jobDetail.JobId,
-            JobDetail = jobDetail,
-            JobTriggers = jobTriggers
-        };
+        JobId = jobDetail.JobId;
+        JobDetail = jobDetail;
+        JobTriggers = jobTriggers;
 
         return this;
     }

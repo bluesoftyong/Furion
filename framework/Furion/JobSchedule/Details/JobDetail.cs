@@ -34,13 +34,13 @@ public class JobDetail
     public string JobId { get; internal set; }
 
     /// <summary>
-    /// 作业类型
+    /// 作业处理程序类型
     /// </summary>
     /// <remarks>存储的是类型的 FullName</remarks>
     public string JobType { get; internal set; }
 
     /// <summary>
-    /// 作业类型所在程序集
+    /// 作业处理程序类型所在程序集
     /// </summary>
     /// <remarks>存储的是程序集 Name</remarks>
     public string AssemblyName { get; internal set; }
@@ -56,7 +56,7 @@ public class JobDetail
     public bool LogEnabled { get; internal set; } = true;
 
     /// <summary>
-    /// 并行执行
+    /// 是否采用并发执行
     /// </summary>
     /// <remarks>如果设置为 false，那么使用串行执行</remarks>
     public bool Concurrent { get; internal set; } = true;
@@ -66,4 +66,9 @@ public class JobDetail
     /// </summary>
     /// <remarks>当 <see cref="Concurrent"/> 为 false 时有效，也就是串行执行</remarks>
     public bool Blocked { get; internal set; } = false;
+
+    /// <summary>
+    /// 作业处理程序运行时类型
+    /// </summary>
+    internal Type RuntimeJobType { get; set; }
 }

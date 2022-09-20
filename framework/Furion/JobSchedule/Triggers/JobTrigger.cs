@@ -131,6 +131,11 @@ public abstract class JobTrigger
     public int RetryTimeout { get; internal set; } = 1000;
 
     /// <summary>
+    /// 作业触发器运行时类型
+    /// </summary>
+    internal Type RuntimeTriggerType { get; set; }
+
+    /// <summary>
     /// 计算下一个触发时间
     /// </summary>
     /// <param name="startAt">起始时间</param>

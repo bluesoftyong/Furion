@@ -62,6 +62,21 @@ public abstract class JobTrigger
     public string Description { get; internal set; }
 
     /// <summary>
+    /// 作业触发器状态
+    /// </summary>
+    public JobTriggerStatus Status { get; internal set; } = JobTriggerStatus.Ready;
+
+    /// <summary>
+    /// 起始时间
+    /// </summary>
+    public DateTime? StartTime { get; internal set; }
+
+    /// <summary>
+    /// 结束时间
+    /// </summary>
+    public DateTime? EndTime { get; internal set; }
+
+    /// <summary>
     /// 最近运行时间
     /// </summary>
     public DateTime? LastRunTime { get; internal set; }
@@ -165,6 +180,17 @@ public abstract class JobTrigger
     internal void IncrementErrors()
     {
         NumberOfErrors++;
+
+        // 如果错误次数大于最大错误数，则表示该触发器是奔溃状态
+        if (MaxNumberOfErrors > 0 && NumberOfErrors >= MaxNumberOfErrors)
+        {
+            Status = JobTriggerStatus.Panic;
+        }
+        // 否则是就绪（错误状态）
+        else
+        {
+            Status = JobTriggerStatus.ErrorToReady;
+        }
     }
 
     /// <summary>
@@ -174,6 +200,21 @@ public abstract class JobTrigger
     /// <returns><see cref="bool"/></returns>
     internal bool InternalShouldRun(DateTime checkTime)
     {
+        // 状态检查
+        if (Status != JobTriggerStatus.Ready
+            && Status != JobTriggerStatus.ErrorToReady
+            && Status != JobTriggerStatus.Blocked)  // 本该执行但是没有执行
+        {
+            return false;
+        }
+
+        // 开始时间和结束时间检查
+        if ((StartTime != null && StartTime.Value > checkTime)
+            || (EndTime != null && EndTime.Value < checkTime))
+        {
+            return false;
+        }
+
         // 下一次运行时间空判断
         if (NextRunTime == null || SleepMilliseconds == null || SleepMilliseconds < 0)
         {

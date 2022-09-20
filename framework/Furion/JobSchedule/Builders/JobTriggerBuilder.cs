@@ -33,6 +33,13 @@ namespace Furion.JobSchedule;
 public sealed class JobTriggerBuilder : JobTrigger
 {
     /// <summary>
+    /// 构造函数
+    /// </summary>
+    private JobTriggerBuilder()
+    {
+    }
+
+    /// <summary>
     /// 创建新的作业周期（间隔）触发器构建器
     /// </summary>
     /// <param name="interval">间隔（毫秒）</param>
@@ -73,9 +80,9 @@ public sealed class JobTriggerBuilder : JobTrigger
     public static JobTriggerBuilder Create(string assemblyName, string triggerTypeFullName)
     {
         // 创建作业触发器构建器
-        var triggerBuilder = new JobTriggerBuilder().SetTriggerType(assemblyName, triggerTypeFullName);
+        var jobTriggerBuilder = new JobTriggerBuilder().SetTriggerType(assemblyName, triggerTypeFullName);
 
-        return triggerBuilder;
+        return jobTriggerBuilder;
     }
 
     /// <summary>
@@ -86,9 +93,9 @@ public sealed class JobTriggerBuilder : JobTrigger
     public static JobTriggerBuilder Create(Type triggerType)
     {
         // 创建作业触发器构建器
-        var triggerBuilder = new JobTriggerBuilder().SetTriggerType(triggerType);
+        var jobTriggerBuilder = new JobTriggerBuilder().SetTriggerType(triggerType);
 
-        return triggerBuilder;
+        return jobTriggerBuilder;
     }
 
     /// <summary>
@@ -96,9 +103,9 @@ public sealed class JobTriggerBuilder : JobTrigger
     /// </summary>
     /// <param name="jobTrigger"></param>
     /// <returns></returns>
-    public static JobTriggerBase From(JobTrigger jobTrigger)
+    public static JobTriggerBuilder From(JobTrigger jobTrigger)
     {
-        return (JobTriggerBase)jobTrigger;
+        return (JobTriggerBuilder)jobTrigger;
     }
 
     /// <summary>
@@ -317,7 +324,8 @@ public sealed class JobTriggerBuilder : JobTrigger
     /// <summary>
     /// 构建 <see cref="JobTriggerBase"/> 对象
     /// </summary>
-    /// <returns></returns>
+    /// <param name="jobId">作业 Id</param>
+    /// <returns><see cref="JobTriggerBase"/></returns>
     internal JobTriggerBase Build(string jobId)
     {
         // 空检查

@@ -181,7 +181,7 @@ public sealed class JobBuilder : JobDetail
     /// <summary>
     /// 构建 <see cref="JobDetail"/> 对象
     /// </summary>
-    /// <returns></returns>
+    /// <returns><see cref="JobDetail"/></returns>
     internal JobDetail Build()
     {
         // 空检查

@@ -20,55 +20,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
-/// 作业信息
+/// 周期（间隔）作业触发器
 /// </summary>
-[SuppressSniffer]
-public class JobDetail
+internal sealed class PeriodTrigger : JobTriggerBase
 {
     /// <summary>
-    /// 作业 Id
+    /// 构造函数
     /// </summary>
-    public string JobId { get; internal set; }
+    /// <param name="interval">间隔（毫秒）</param>
+    public PeriodTrigger(int interval)
+    {
+        Interval = interval;
+    }
 
     /// <summary>
-    /// 作业处理程序类型
+    /// 间隔（毫秒）
     /// </summary>
-    /// <remarks>存储的是类型的 FullName</remarks>
-    public string JobType { get; internal set; }
+    private int Interval { get; }
 
     /// <summary>
-    /// 作业处理程序类型所在程序集
+    /// 计算下一个触发时间
     /// </summary>
-    /// <remarks>存储的是程序集 Name</remarks>
-    public string AssemblyName { get; internal set; }
+    /// <param name="startAt">起始时间</param>
+    /// <returns><see cref="DateTime"/>?</returns>
+    public override DateTime GetNextOccurrence(DateTime startAt)
+    {
+        return startAt.AddMilliseconds(Interval);
+    }
 
     /// <summary>
-    /// 描述信息
+    /// 执行条件检查
     /// </summary>
-    public string Description { get; internal set; }
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public override bool ShouldRun(DateTime checkTime) => true;
 
     /// <summary>
-    /// 是否启用日志记录
+    /// 作业触发器转字符串输出
     /// </summary>
-    public bool LogEnabled { get; internal set; } = true;
-
-    /// <summary>
-    /// 是否采用并发执行
-    /// </summary>
-    /// <remarks>如果设置为 false，那么使用串行执行</remarks>
-    public bool Concurrent { get; internal set; } = true;
-
-    /// <summary>
-    /// 标记其他触发器正在执行
-    /// </summary>
-    /// <remarks>当 <see cref="Concurrent"/> 为 false 时有效，也就是串行执行</remarks>
-    public bool Blocked { get; internal set; } = false;
-
-    /// <summary>
-    /// 作业处理程序运行时类型
-    /// </summary>
-    internal Type RuntimeJobType { get; set; }
+    /// <returns><see cref="string"/></returns>
+    public override string ToString()
+    {
+        return $"{Description} {Interval}ms";
+    }
 }

@@ -20,27 +20,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Concurrent;
+using Furion.TimeCrontab;
 
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
-/// 作业调度计划
+/// Cron 表达式作业触发器
 /// </summary>
-public class JobScheduler
+internal sealed class CronTrigger : JobTriggerBase
 {
     /// <summary>
-    /// 作业 Id
+    /// 构造函数
     /// </summary>
-    internal string JobId { get; set; }
+    /// <param name="schedule">Cron 表达式</param>
+    /// <param name="format">Cron 表达式格式化类型</param>
+    public CronTrigger(string schedule, int format)
+    {
+        Crontab = Crontab.Parse(schedule, (CronStringFormat)format);
+    }
 
     /// <summary>
-    /// 作业信息
+    /// <see cref="Crontab"/> 对象
     /// </summary>
-    internal JobDetail JobDetail { get; set; }
+    private Crontab Crontab { get; }
 
     /// <summary>
-    /// 作业触发器集合
+    /// 计算下一个触发时间
     /// </summary>
-    internal ConcurrentDictionary<string, JobTriggerBase> JobTriggers { get; set; } = new();
+    /// <param name="startAt">起始时间</param>
+    /// <returns><see cref="DateTime"/>?</returns>
+    public override DateTime GetNextOccurrence(DateTime startAt)
+    {
+        return Crontab.GetNextOccurrence(startAt);
+    }
+
+    /// <summary>
+    /// 执行条件检查
+    /// </summary>
+    /// <param name="checkTime">受检时间</param>
+    /// <returns><see cref="bool"/></returns>
+    public override bool ShouldRun(DateTime checkTime) => true;
+
+    /// <summary>
+    /// 作业触发器转字符串输出
+    /// </summary>
+    /// <returns><see cref="string"/></returns>
+    public override string ToString()
+    {
+        return $"{Description} {Crontab}";
+    }
 }

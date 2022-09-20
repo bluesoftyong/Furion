@@ -20,53 +20,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Furion.TimeCrontab;
-
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
-/// Cron 表达式作业触发器
+/// 作业信息
 /// </summary>
-internal sealed class CronTrigger : JobTriggerBase
+[SuppressSniffer]
+public class JobDetail
 {
     /// <summary>
-    /// 构造函数
+    /// 作业 Id
     /// </summary>
-    /// <param name="schedule">Cron 表达式</param>
-    /// <param name="format">Cron 表达式格式化类型</param>
-    public CronTrigger(string schedule, int format)
-    {
-        Crontab = Crontab.Parse(schedule, (CronStringFormat)format);
-    }
+    public string JobId { get; internal set; }
 
     /// <summary>
-    /// <see cref="Crontab"/> 对象
+    /// 作业处理程序类型
     /// </summary>
-    private Crontab Crontab { get; }
+    /// <remarks>存储的是类型的 FullName</remarks>
+    public string JobType { get; internal set; }
 
     /// <summary>
-    /// 计算下一个触发时间
+    /// 作业处理程序类型所在程序集
     /// </summary>
-    /// <param name="startAt">起始时间</param>
-    /// <returns><see cref="DateTime"/>?</returns>
-    public override DateTime GetNextOccurrence(DateTime startAt)
-    {
-        return Crontab.GetNextOccurrence(startAt);
-    }
+    /// <remarks>存储的是程序集 Name</remarks>
+    public string AssemblyName { get; internal set; }
 
     /// <summary>
-    /// 执行条件检查
+    /// 描述信息
     /// </summary>
-    /// <param name="checkTime">受检时间</param>
-    /// <returns><see cref="bool"/></returns>
-    public override bool ShouldRun(DateTime checkTime) => true;
+    public string Description { get; internal set; }
 
     /// <summary>
-    /// 作业触发器转字符串输出
+    /// 是否启用日志记录
     /// </summary>
-    /// <returns><see cref="string"/></returns>
-    public override string ToString()
-    {
-        return $"{Description} {Crontab}";
-    }
+    public bool LogEnabled { get; internal set; } = true;
+
+    /// <summary>
+    /// 是否采用并发执行
+    /// </summary>
+    /// <remarks>如果设置为 false，那么使用串行执行</remarks>
+    public bool Concurrent { get; internal set; } = true;
+
+    /// <summary>
+    /// 标记其他触发器正在执行
+    /// </summary>
+    /// <remarks>当 <see cref="Concurrent"/> 为 false 时有效，也就是串行执行</remarks>
+    public bool Blocked { get; internal set; } = false;
+
+    /// <summary>
+    /// 作业处理程序运行时类型
+    /// </summary>
+    internal Type RuntimeJobType { get; set; }
 }

@@ -20,50 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Furion.JobSchedule;
+using System.Collections.Concurrent;
+
+namespace Furion.Schedule;
 
 /// <summary>
-/// 周期（间隔）作业触发器
+/// 作业调度计划
 /// </summary>
-internal sealed class PeriodTrigger : JobTriggerBase
+public class JobScheduler
 {
     /// <summary>
-    /// 构造函数
+    /// 作业 Id
     /// </summary>
-    /// <param name="interval">间隔（毫秒）</param>
-    public PeriodTrigger(int interval)
-    {
-        Interval = interval;
-    }
+    internal string JobId { get; set; }
 
     /// <summary>
-    /// 间隔（毫秒）
+    /// 作业信息
     /// </summary>
-    private int Interval { get; }
+    internal JobDetail JobDetail { get; set; }
 
     /// <summary>
-    /// 计算下一个触发时间
+    /// 作业触发器集合
     /// </summary>
-    /// <param name="startAt">起始时间</param>
-    /// <returns><see cref="DateTime"/>?</returns>
-    public override DateTime GetNextOccurrence(DateTime startAt)
-    {
-        return startAt.AddMilliseconds(Interval);
-    }
-
-    /// <summary>
-    /// 执行条件检查
-    /// </summary>
-    /// <param name="checkTime">受检时间</param>
-    /// <returns><see cref="bool"/></returns>
-    public override bool ShouldRun(DateTime checkTime) => true;
-
-    /// <summary>
-    /// 作业触发器转字符串输出
-    /// </summary>
-    /// <returns><see cref="string"/></returns>
-    public override string ToString()
-    {
-        return $"{Description} {Interval}ms";
-    }
+    internal ConcurrentDictionary<string, JobTriggerBase> JobTriggers { get; set; } = new();
 }

@@ -22,7 +22,7 @@
 
 using System.Reflection;
 
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
 /// 作业信息构建器

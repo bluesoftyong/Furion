@@ -24,7 +24,7 @@ using Furion.TimeCrontab;
 using System.Reflection;
 using System.Text.Json;
 
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
 /// 作业触发器构建器

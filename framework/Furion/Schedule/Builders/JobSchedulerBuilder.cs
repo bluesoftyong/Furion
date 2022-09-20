@@ -22,7 +22,7 @@
 
 using System.Collections.Concurrent;
 
-namespace Furion.JobSchedule;
+namespace Furion.Schedule;
 
 /// <summary>
 /// 作业调度计划构建器

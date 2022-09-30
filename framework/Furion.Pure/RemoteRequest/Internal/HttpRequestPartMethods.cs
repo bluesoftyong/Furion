@@ -476,10 +476,11 @@ public sealed partial class HttpRequestPart
         if (clientFactory == null) throw new InvalidOperationException("Please add `services.AddRemoteRequest()` in Startup.cs.");
 
         // 创建 HttpClient 对象，这里支持自定义
+        var clientName = ClientName ?? string.Empty;
         using var httpClient = ClientProvider?.Invoke() ?? (
-                                            string.IsNullOrWhiteSpace(ClientName)
-                                             ? clientFactory.CreateClient()
-                                             : clientFactory.CreateClient(ClientName));
+                                string.IsNullOrWhiteSpace(clientName)
+                                 ? clientFactory.CreateClient()
+                                 : clientFactory.CreateClient(clientName));
 
         // 只有大于 0 才设置超时时间
         if (Timeout > 0)

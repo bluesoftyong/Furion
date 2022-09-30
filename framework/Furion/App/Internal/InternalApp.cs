@@ -75,6 +75,9 @@ internal static class InternalApp
 
                 // 加载配置
                 AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
+
+                // 加载自定义配置
+                InjectOptions.WebAppConfigurationConfigure?.Invoke(hostContext, configurationBuilder);
             });
         }
         // 自动装载配置
@@ -97,6 +100,9 @@ internal static class InternalApp
 
             // 初始化应用服务
             services.AddApp();
+
+            // 加载自定义配置
+            InjectOptions.WebServicesConfigure?.Invoke(hostContext, services);
         });
     }
 
@@ -127,6 +133,9 @@ internal static class InternalApp
 
             // 自动注册 BackgroundService
             if (autoRegisterBackgroundService) services.AddAppHostedService();
+
+            // 加载自定义配置
+            InjectOptions.ServicesConfigure?.Invoke(hostContext, services);
         });
     }
 
@@ -143,6 +152,9 @@ internal static class InternalApp
 
             // 加载配置
             AddJsonFiles(configurationBuilder, hostContext.HostingEnvironment);
+
+            // 加载自定义配置
+            InjectOptions.AppConfigurationConfigure?.Invoke(hostContext, configurationBuilder);
         });
     }
 
@@ -171,8 +183,10 @@ internal static class InternalApp
             ?? Array.Empty<string>()).Select(u => Path.Combine(executeDirectory, u));
 
         // 扫描执行目录及自定义配置目录下的 *.json 文件
-        var jsonFiles = new[] { executeDirectory }.Concat(configurationScanDirectories)
-                           .SelectMany(u =>
+        var jsonFiles = new[] { executeDirectory }
+                            .Concat(configurationScanDirectories)
+                            .Concat(InjectOptions.InternalConfigurationScanDirectories)
+                            .SelectMany(u =>
                                 Directory.GetFiles(u, "*.json", SearchOption.TopDirectoryOnly));
 
         // 如果没有配置文件，中止执行
@@ -182,9 +196,9 @@ internal static class InternalApp
         var envName = hostEnvironment?.EnvironmentName ?? Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Unknown";
 
         // 读取忽略的配置文件
-        var ignoreConfigurationFiles = configuration.GetSection("IgnoreConfigurationFiles")
+        var ignoreConfigurationFiles = (configuration.GetSection("IgnoreConfigurationFiles")
                 .Get<string[]>()
-            ?? Array.Empty<string>();
+            ?? Array.Empty<string>()).Concat(InjectOptions.InternalIgnoreConfigurationFiles);
 
         // 处理控制台应用程序
         var _excludeJsonPrefixs = hostEnvironment == default ? excludeJsonPrefixs.Where(u => !u.Equals("appsettings")) : excludeJsonPrefixs;

@@ -32,7 +32,7 @@ function Home() {
       {/* <Remark /> */}
       <WhoUse />
       {/* <Contributor /> */}
-      <Links />
+      <Links /> <Bifa />
     </Layout>
   );
 }
@@ -84,7 +84,7 @@ function Banner() {
           <div className="furion-get-start-btn">
             <Link className="furion-get-start" to={useBaseUrl("docs/serverun")}>
               入门指南
-              <span className="furion-version">v4.4.6</span>
+              <span className="furion-version">v4.5.2</span>
             </Link>
             <Link
               className="furion-try-demo"
@@ -171,7 +171,7 @@ function Gitee() {
             className={"furion-log-jiao" + (isDarkTheme ? " dark" : "")}
           ></div>
           <div className="furion-log-number">
-            <div style={{ color: "#3fbbfe" }}>3800 +</div>
+            <div style={{ color: "#3fbbfe" }}>3900 +</div>
             <span className={isDarkTheme ? " dark" : ""}>Forks</span>
           </div>
         </div>
@@ -183,7 +183,7 @@ function Gitee() {
             className={"furion-log-jiao" + (isDarkTheme ? " dark" : "")}
           ></div>
           <div className="furion-log-number">
-            <div style={{ color: "#1fd898" }}>3,400,096</div>
+            <div style={{ color: "#1fd898" }}>3,435,868</div>
             <span className={isDarkTheme ? " dark" : ""}>Downloads</span>
           </div>
         </div>
@@ -530,6 +530,32 @@ function SystemWindow(systemWindowProps) {
       {children}
     </div>
   );
+}
+
+function Bifa() {
+  return (
+    <div className="furion-bifa">
+      <div className="furion-wzi-title">
+        <b>Furion</b>
+        历经两年打磨
+      </div>
+      <Wzi>网友笔伐过</Wzi>
+      <Wzi>用户捧杀过</Wzi>
+      <Wzi>
+        内心<span>反复放弃</span>过
+      </Wzi>
+      <Wzi>
+        最终<span>化茧成蝶</span>
+      </Wzi>
+      <Wzi>
+        为<span>祖国信创</span>添砖加瓦
+      </Wzi>
+    </div>
+  );
+}
+
+function Wzi(props) {
+  return <div className="furion-wzi">{props.children}</div>;
 }
 
 export default Home;

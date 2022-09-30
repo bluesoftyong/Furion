@@ -1,4 +1,5 @@
 ﻿using Furion.Application.Persons;
+using Furion.Logging.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Furion.Application;
@@ -103,5 +104,28 @@ public class TestLoggerServices : IDynamicApiController
     public string 只输出返回值30个长度()
     {
         return "让 .NET 开发更简单，更通用，更流行。";
+    }
+
+    public void 测试日志多线程ID打印()
+    {
+        _logger.LogInformation("我是 Web 主线程");
+
+        new Thread(() =>
+        {
+            _logger.LogInformation("我是其他线程");
+        }).Start();
+    }
+
+    public void 测试字符串拓展日志()
+    {
+        "This is log".LogInformation<TestLoggerServices>();
+    }
+
+    public void 测试作用域()
+    {
+        _logger.ScopeContext(new Dictionary<object, object>
+       {
+           {"name","Furion" }
+       }).LogInformation("测试啊");
     }
 }

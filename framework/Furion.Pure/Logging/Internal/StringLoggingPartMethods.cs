@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace Furion.Logging;
 
@@ -29,6 +30,11 @@ namespace Furion.Logging;
 /// </summary>
 public sealed partial class StringLoggingPart
 {
+    /// <summary>
+    /// 缓存日志组件
+    /// </summary>
+    private static readonly ConcurrentDictionary<string, ILogger> _loggers = new();
+
     /// <summary>
     /// Information
     /// </summary>
@@ -91,18 +97,32 @@ public sealed partial class StringLoggingPart
 
         ILoggerFactory loggerFactory;
         var hasException = false;
-        try
-        {
-            loggerFactory = App.GetService<ILoggerFactory>(LoggerScoped ?? App.RootServices);
-        }
-        catch
+
+        // 解决启动时打印日志问题
+        if (App.RootServices == null)
         {
             hasException = true;
             loggerFactory = CreateDisposeLoggerFactory();
         }
+        else
+        {
+            try
+            {
+                loggerFactory = App.GetService<ILoggerFactory>(LoggerScoped ?? App.RootServices);
+            }
+            catch
+            {
+                hasException = true;
+                loggerFactory = CreateDisposeLoggerFactory();
+            }
+        }
 
         // 创建日志实例
-        var logger = loggerFactory.CreateLogger(categoryName);
+        if (!_loggers.TryGetValue(categoryName, out var logger))
+        {
+            logger = loggerFactory.CreateLogger(categoryName);
+            _loggers.TryAdd(categoryName, logger);
+        }
 
         // 如果没有异常且事件 Id 为空
         if (Exception == null && EventId == null)
@@ -141,7 +161,7 @@ public sealed partial class StringLoggingPart
     {
         return LoggerFactory.Create(builder =>
         {
-            builder.AddConsole();
+            builder.AddConsoleFormatter();
         });
     }
 }

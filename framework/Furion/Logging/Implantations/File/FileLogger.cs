@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using Microsoft.Extensions.Logging;
-using System.Text;
 
 namespace Furion.Logging;
 
@@ -43,9 +42,9 @@ public sealed class FileLogger : ILogger
     private readonly FileLoggerProvider _fileLoggerProvider;
 
     /// <summary>
-    /// 异常分隔符
+    /// 日志配置选项
     /// </summary>
-    private const string EXCEPTION_SEPARATOR = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+    private readonly FileLoggerOptions _options;
 
     /// <summary>
     /// 构造函数
@@ -56,6 +55,7 @@ public sealed class FileLogger : ILogger
     {
         _logName = logName;
         _fileLoggerProvider = fileLoggerProvider;
+        _options = fileLoggerProvider.LoggerOptions;
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public sealed class FileLogger : ILogger
     /// <returns><see cref="bool"/></returns>
     public bool IsEnabled(LogLevel logLevel)
     {
-        return logLevel >= _fileLoggerProvider.MinimumLevel;
+        return logLevel >= _options.MinimumLevel;
     }
 
     /// <summary>
@@ -115,72 +115,22 @@ public sealed class FileLogger : ILogger
 
         // 获取格式化后的消息
         var message = formatter(state, exception);
-        var logMsg = new LogMessage(_logName, logLevel, eventId, message, exception, Context);
+
+        var logDateTime = _options.UseUtcTimestamp ? DateTime.UtcNow : DateTime.Now;
+        var logMsg = new LogMessage(_logName, logLevel, eventId, message, exception, Context, state, logDateTime, Environment.CurrentManagedThreadId);
 
         // 是否自定义了日志筛选器，如果是则检查是否条件
-        if (_fileLoggerProvider.LoggerOptions.WriteFilter?.Invoke(logMsg) == false) return;
-
-        // 是否自定义了自定义日志格式化程序，如果是则使用
-        if (_fileLoggerProvider.MessageFormat != null)
-        {
-            // 设置日志消息模板
-            logMsg.Message = _fileLoggerProvider.MessageFormat(logMsg);
-
-            // 写入日志队列
-            _fileLoggerProvider.WriteToQueue(logMsg);
-
-            return;
-        }
-
-        // 创建默认日志格式化模板
-        var formatString = new StringBuilder();
-
-        if (!string.IsNullOrEmpty(message))
-        {
-            var timeStamp = _fileLoggerProvider.UseUtcTimestamp ? DateTime.UtcNow : DateTime.Now;
-
-            formatString.Append('[');
-            formatString.Append(Penetrates.GetLogLevelString(logLevel));
-            formatString.Append(']');
-            formatString.Append(" [");
-            formatString.Append(_logName);
-            formatString.Append(']');
-            formatString.Append(" ");
-            formatString.Append(timeStamp.ToString("o"));
-            formatString.Append(" [");
-            formatString.Append(eventId);
-            formatString.Append("] ");
-            formatString.AppendLine();
-
-            // 对日志内容进行缩进对齐处理
-            formatString.Append(PadLeftAlign(message));
-        }
-
-        // 如果包含异常信息，则创建新一行写入
-        if (exception != null)
-        {
-            var exceptionMessage = $"{Environment.NewLine}{EXCEPTION_SEPARATOR}{Environment.NewLine}{exception}{Environment.NewLine}{EXCEPTION_SEPARATOR}";
-
-            formatString.Append(PadLeftAlign(exceptionMessage));
-        }
+        if (_options.WriteFilter?.Invoke(logMsg) == false) return;
 
         // 设置日志消息模板
-        logMsg.Message = formatString.ToString();
+        logMsg.Message = _options.MessageFormat != null
+            ? _options.MessageFormat(logMsg)
+            : Penetrates.OutputStandardMessage(logMsg, _options.DateFormat);
+
+        // 空检查
+        if (logMsg.Message is null) return;
 
         // 写入日志队列
         _fileLoggerProvider.WriteToQueue(logMsg);
-    }
-
-    /// <summary>
-    /// 将日志内容进行对齐
-    /// </summary>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    private static string PadLeftAlign(string message)
-    {
-        var newMessage = string.Join(Environment.NewLine, message.Split(Environment.NewLine)
-                    .Select(line => string.Empty.PadLeft(6, ' ') + line));
-
-        return newMessage;
     }
 }

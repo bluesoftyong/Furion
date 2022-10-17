@@ -22,6 +22,8 @@
 
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Furion.Logging;
 
@@ -78,6 +80,21 @@ public sealed class LoggingMonitorSettings
     public JsonBehavior JsonBehavior { get; set; } = JsonBehavior.None;
 
     /// <summary>
+    /// 配置序列化忽略的属性名称
+    /// </summary>
+    public string[] IgnorePropertyNames { get; set; }
+
+    /// <summary>
+    /// 配置序列化忽略的属性类型
+    /// </summary>
+    public Type[] IgnorePropertyTypes { get; set; }
+
+    /// <summary>
+    /// 自定义日志筛选器
+    /// </summary>
+    public Func<ActionExecutingContext, bool> WriteFilter { get; set; }
+
+    /// <summary>
     /// 是否 Mvc Filter 方式注册
     /// </summary>
     /// <remarks>解决过去 Mvc Filter 全局注册的问题</remarks>
@@ -95,6 +112,11 @@ public sealed class LoggingMonitorSettings
     internal static Action<ILogger, LogContext, ActionExecutedContext> Configure { get; private set; }
 
     /// <summary>
+    /// 自定义日志筛选器
+    /// </summary>
+    internal static Func<ActionExecutingContext, bool> InternalWriteFilter { get; set; }
+
+    /// <summary>
     /// 配置日志更多功能
     /// </summary>
     /// <param name="configure"></param>
@@ -102,4 +124,13 @@ public sealed class LoggingMonitorSettings
     {
         Configure = configure;
     }
+
+    /// <summary>
+    /// 配置 Json 写入选项
+    /// </summary>
+    public JsonWriterOptions JsonWriterOptions { get; set; } = new JsonWriterOptions
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        SkipValidation = true
+    };
 }

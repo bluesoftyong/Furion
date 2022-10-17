@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 
 namespace Furion.Logging;
 
@@ -30,11 +29,6 @@ namespace Furion.Logging;
 /// </summary>
 public sealed partial class StringLoggingPart
 {
-    /// <summary>
-    /// 缓存日志组件
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, ILogger> _loggers = new();
-
     /// <summary>
     /// Information
     /// </summary>
@@ -91,38 +85,9 @@ public sealed partial class StringLoggingPart
     {
         if (Message == null) return;
 
-        // 解析日志分类名
-        var categoryName = !string.IsNullOrWhiteSpace(CategoryName)
-            ? CategoryName : typeof(System.Logging.StringLogging).FullName;
-
-        ILoggerFactory loggerFactory;
-        var hasException = false;
-
-        // 解决启动时打印日志问题
-        if (App.RootServices == null)
-        {
-            hasException = true;
-            loggerFactory = CreateDisposeLoggerFactory();
-        }
-        else
-        {
-            try
-            {
-                loggerFactory = App.GetService<ILoggerFactory>(LoggerScoped ?? App.RootServices);
-            }
-            catch
-            {
-                hasException = true;
-                loggerFactory = CreateDisposeLoggerFactory();
-            }
-        }
-
-        // 创建日志实例
-        if (!_loggers.TryGetValue(categoryName, out var logger))
-        {
-            logger = loggerFactory.CreateLogger(categoryName);
-            _loggers.TryAdd(categoryName, logger);
-        }
+        // 获取日志实例
+        var (logger, loggerFactory, hasException) = GetLogger();
+        using var scope = logger.ScopeContext(LogContext);
 
         // 如果没有异常且事件 Id 为空
         if (Exception == null && EventId == null)
@@ -151,6 +116,44 @@ public sealed partial class StringLoggingPart
         {
             loggerFactory?.Dispose();
         }
+    }
+
+    /// <summary>
+    /// 获取日志实例
+    /// </summary>
+    /// <returns></returns>
+    internal (ILogger, ILoggerFactory, bool) GetLogger()
+    {
+        // 解析日志分类名
+        var categoryType = CategoryType ?? typeof(System.Logging.StringLogging);
+
+        ILoggerFactory loggerFactory = null;
+        ILogger logger = null;
+        var hasException = false;
+
+        // 解决启动时打印日志问题
+        if (App.RootServices == null)
+        {
+            hasException = true;
+            loggerFactory = CreateDisposeLoggerFactory();
+        }
+        else
+        {
+            try
+            {
+                logger = App.GetRequiredService(typeof(ILogger<>).MakeGenericType(categoryType)) as ILogger;
+            }
+            catch
+            {
+                hasException = true;
+                loggerFactory = CreateDisposeLoggerFactory();
+            }
+        }
+
+        // 创建日志实例
+        logger ??= loggerFactory.CreateLogger(categoryType.FullName);
+
+        return (logger, loggerFactory, hasException);
     }
 
     /// <summary>

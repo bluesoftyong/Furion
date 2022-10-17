@@ -74,6 +74,21 @@ public static class HttpContextExtensions
     }
 
     /// <summary>
+    /// 设置响应头 Tokens
+    /// </summary>
+    /// <param name="httpContext"></param>
+    /// <param name="accessToken"></param>
+    /// <param name="refreshToken"></param>
+    public static void SetTokensOfResponseHeaders(this HttpContext httpContext, string accessToken, string refreshToken = null)
+    {
+        httpContext.Response.Headers["access-token"] = accessToken;
+        if (!string.IsNullOrWhiteSpace(refreshToken))
+        {
+            httpContext.Response.Headers["x-access-token"] = refreshToken;
+        }
+    }
+
+    /// <summary>
     /// 获取本机 IPv4地址
     /// </summary>
     /// <param name="context"></param>
@@ -139,5 +154,20 @@ public static class HttpContextExtensions
     public static string GetRefererUrlAddress(this HttpRequest request, string refererHeaderKey = "Referer")
     {
         return request.Headers[refererHeaderKey].ToString();
+    }
+
+    /// <summary>
+    /// 读取 Body 内容
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public static async Task<string> ReadBodyContentAsync(this HttpRequest request)
+    {
+        request.EnableBuffering();
+
+        using var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
+        var body = await reader.ReadToEndAsync();
+        request.Body.Position = 0;
+        return body;
     }
 }

@@ -30,7 +30,7 @@ namespace Furion.Logging;
 /// </summary>
 /// <remarks>https://docs.microsoft.com/zh-cn/dotnet/core/extensions/custom-logging-provider</remarks>
 [SuppressSniffer, ProviderAlias("File")]
-public sealed class FileLoggerProvider : ILoggerProvider
+public sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScope
 {
     /// <summary>
     /// 存储多日志分类日志记录器
@@ -43,9 +43,14 @@ public sealed class FileLoggerProvider : ILoggerProvider
     private readonly BlockingCollection<LogMessage> _logMessageQueue = new(1024);
 
     /// <summary>
+    /// 日志作用域提供器
+    /// </summary>
+    private IExternalScopeProvider _scopeProvider;
+
+    /// <summary>
     /// 记录日志所有滚动文件名
     /// </summary>
-    /// <remarks>只有 <see cref="MaxRollingFiles"/> 和 <see cref="FileSizeLimitBytes"/> 大于 0 有效</remarks>
+    /// <remarks>只有 MaxRollingFiles 和 FileSizeLimitBytes 大于 0 有效</remarks>
     internal readonly ConcurrentDictionary<string, FileInfo> _rollingFileNames = new();
 
     /// <summary>
@@ -108,21 +113,16 @@ public sealed class FileLoggerProvider : ILoggerProvider
     internal FileLoggerOptions LoggerOptions { get; private set; }
 
     /// <summary>
-    /// 追加到已存在日志文件或覆盖它们
+    /// 日志作用域提供器
     /// </summary>
-    internal bool Append => LoggerOptions.Append;
-
-    /// <summary>
-    /// 控制每一个日志文件最大存储大小，默认无限制，单位是 B，也就是 1024 才等于 1KB
-    /// </summary>
-    /// <remarks>如果指定了该值，那么日志文件大小超出了该配置就会创建的日志文件，新创建的日志文件命名规则：文件名+[递增序号].log</remarks>
-    internal long FileSizeLimitBytes => LoggerOptions.FileSizeLimitBytes;
-
-    /// <summary>
-    /// 控制最大创建的日志文件数量，默认无限制，配合 <see cref="FileSizeLimitBytes"/> 使用
-    /// </summary>
-    /// <remarks>如果指定了该值，那么超出该值将从最初日志文件中从头写入覆盖</remarks>
-    internal int MaxRollingFiles => LoggerOptions.MaxRollingFiles;
+    internal IExternalScopeProvider ScopeProvider
+    {
+        get
+        {
+            _scopeProvider ??= new LoggerExternalScopeProvider();
+            return _scopeProvider;
+        }
+    }
 
     /// <summary>
     /// 创建文件日志记录器
@@ -132,6 +132,15 @@ public sealed class FileLoggerProvider : ILoggerProvider
     public ILogger CreateLogger(string categoryName)
     {
         return _fileLoggers.GetOrAdd(categoryName, name => new FileLogger(name, this));
+    }
+
+    /// <summary>
+    /// 设置作用域提供器
+    /// </summary>
+    /// <param name="scopeProvider"></param>
+    public void SetScopeProvider(IExternalScopeProvider scopeProvider)
+    {
+        _scopeProvider = scopeProvider;
     }
 
     /// <summary>
@@ -187,23 +196,6 @@ public sealed class FileLoggerProvider : ILoggerProvider
         foreach (var logMsg in _logMessageQueue.GetConsumingEnumerable())
         {
             _fileLoggingWriter.Write(logMsg, _logMessageQueue.Count == 0);
-
-            // 清空日志上下文
-            ClearScopeContext(logMsg.LogName);
-        }
-    }
-
-    /// <summary>
-    /// 清空日志上下文
-    /// </summary>
-    /// <param name="categoryName"></param>
-    private void ClearScopeContext(string categoryName)
-    {
-        var isExist = _fileLoggers.TryGetValue(categoryName, out var fileLogger);
-        if (isExist)
-        {
-            fileLogger.Context?.Properties?.Clear();
-            fileLogger.Context = null;
         }
     }
 }

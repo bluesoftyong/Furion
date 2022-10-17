@@ -218,7 +218,8 @@ public static class App
     public static TOptions GetOptions<TOptions>(IServiceProvider serviceProvider = default)
         where TOptions : class, new()
     {
-        return GetService<IOptions<TOptions>>(serviceProvider ?? RootServices)?.Value;
+        return Penetrates.GetOptionsOnStarting<TOptions>()
+            ?? GetService<IOptions<TOptions>>(serviceProvider ?? RootServices)?.Value;
     }
 
     /// <summary>
@@ -230,7 +231,8 @@ public static class App
     public static TOptions GetOptionsMonitor<TOptions>(IServiceProvider serviceProvider = default)
         where TOptions : class, new()
     {
-        return GetService<IOptionsMonitor<TOptions>>(serviceProvider ?? RootServices)?.CurrentValue;
+        return Penetrates.GetOptionsOnStarting<TOptions>()
+            ?? GetService<IOptionsMonitor<TOptions>>(serviceProvider ?? RootServices)?.CurrentValue;
     }
 
     /// <summary>
@@ -243,7 +245,8 @@ public static class App
         where TOptions : class, new()
     {
         // 这里不能从根服务解析，因为是 Scoped 作用域
-        return GetService<IOptionsSnapshot<TOptions>>(serviceProvider)?.Value;
+        return Penetrates.GetOptionsOnStarting<TOptions>()
+            ?? GetService<IOptionsSnapshot<TOptions>>(serviceProvider)?.Value;
     }
 
     /// <summary>
@@ -380,7 +383,7 @@ public static class App
                 Console.WriteLine(TP.Wrapper("Deploy Console"
                     , "Single file deploy error."
                     , "##Exception## Single file deployment configuration error."
-                    , "##Documentation## https://dotnetchina.gitee.io/furion/docs/singlefile"));
+                    , "##Documentation## https://furion.baiqian.ltd/docs/singlefile"));
                 Console.ResetColor();
             }
 

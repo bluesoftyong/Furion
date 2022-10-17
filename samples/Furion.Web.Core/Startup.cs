@@ -25,7 +25,7 @@ public sealed class Startup : AppStartup
                 .AddAppLocalization()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.Converters.AddDateFormatString();
+                    options.JsonSerializerOptions.Converters.AddDateTimeTypeConverters();
                 })
                 .AddInjectWithUnifyResult();
 
@@ -33,7 +33,10 @@ public sealed class Startup : AppStartup
 
         services.AddRemoteRequest();
 
-        services.AddEventBus();
+        services.AddEventBus(options =>
+        {
+            options.AddFallbackPolicy<EventFallbackPolicy>();
+        });
 
         // 添加实时通讯
         services.AddSignalR();

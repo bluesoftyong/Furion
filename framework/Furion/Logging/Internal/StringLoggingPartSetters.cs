@@ -77,17 +77,7 @@ public sealed partial class StringLoggingPart
     /// <typeparam name="TClass"></typeparam>
     public StringLoggingPart SetCategory<TClass>()
     {
-        CategoryName = typeof(TClass).FullName;
-        return this;
-    }
-
-    /// <summary>
-    /// 设置日志分类名
-    /// </summary>
-    /// <param name="categoryName"></param>
-    public StringLoggingPart SetCategory(string categoryName)
-    {
-        if (!string.IsNullOrWhiteSpace(categoryName)) CategoryName = categoryName;
+        CategoryType = typeof(TClass);
         return this;
     }
 
@@ -108,6 +98,47 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart SetLoggerScoped(IServiceProvider serviceProvider)
     {
         if (serviceProvider != null) LoggerScoped = serviceProvider;
+        return this;
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
+    /// <returns></returns>
+    public StringLoggingPart ScopeContext(IDictionary<object, object> properties)
+    {
+        if (properties == null) return this;
+        LogContext = new LogContext { Properties = properties };
+
+        return this;
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    public StringLoggingPart ScopeContext(Action<LogContext> configure)
+    {
+        var logContext = new LogContext();
+        configure?.Invoke(logContext);
+
+        LogContext = logContext;
+
+        return this;
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public StringLoggingPart ScopeContext(LogContext context)
+    {
+        if (context == null) return this;
+        LogContext = context;
+
         return this;
     }
 }

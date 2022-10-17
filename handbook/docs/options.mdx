@@ -100,6 +100,12 @@ namespace Furion.Web.Core
   - `App.GetOptionsMonitor<TOptions>()`
   - `App.GetOptionsSnapshot<TOptions>()`
 
+:::warning 特别注意
+
+禁止在主机启动时通过 `App.GetOptions<TOptions>` 获取选项，如需获取配置选项理应通过 `App.GetConfig<TOptions>("配置节点", true)`。
+
+:::
+
 <Tabs
   defaultValue="App.GetOptions<TOptions>(path)"
   values={[
@@ -225,7 +231,7 @@ namespace Furion.Web.Entry.Controllers
 
 ### 4.2.3.5 如何选择读取方式
 
-- 如果选项需要在多个地方使用，则无论任何时候都不推荐使用 `App.GetOptions<TOptions>(path)`
+- 如果选项需要在多个地方使用，则无论任何时候都不推荐使用 `App.GetOptions<TOptions>()`
 - 在可依赖注入类中，依赖注入 `IOptions[Snapshot|Monitor]<TOptions>` 读取
 - 在静态类/非依赖注入类中，选择 `App.GetOptions[Snapshot|Monitor]<TOptions>()` 读取
 

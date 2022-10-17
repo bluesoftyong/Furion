@@ -59,11 +59,6 @@ public sealed class FileLogger : ILogger
     }
 
     /// <summary>
-    /// 日志上下文
-    /// </summary>
-    public LogContext Context { get; internal set; }
-
-    /// <summary>
     /// 开始逻辑操作范围
     /// </summary>
     /// <typeparam name="TState">标识符类型参数</typeparam>
@@ -71,14 +66,7 @@ public sealed class FileLogger : ILogger
     /// <returns><see cref="IDisposable"/></returns>
     public IDisposable BeginScope<TState>(TState state)
     {
-        // 设置日志上下文
-        if (state is LogContext context)
-        {
-            if (Context == null) Context = new LogContext().SetRange(context.Properties);
-            else Context.SetRange(context.Properties);
-        }
-
-        return default;
+        return _fileLoggerProvider.ScopeProvider.Push(state);
     }
 
     /// <summary>
@@ -117,9 +105,12 @@ public sealed class FileLogger : ILogger
         var message = formatter(state, exception);
 
         var logDateTime = _options.UseUtcTimestamp ? DateTime.UtcNow : DateTime.Now;
-        var logMsg = new LogMessage(_logName, logLevel, eventId, message, exception, Context, state, logDateTime, Environment.CurrentManagedThreadId);
+        var logMsg = new LogMessage(_logName, logLevel, eventId, message, exception, null, state, logDateTime, Environment.CurrentManagedThreadId, _options.UseUtcTimestamp);
 
-        // 是否自定义了日志筛选器，如果是则检查是否条件
+        // 设置日志上下文
+        logMsg = Penetrates.SetLogContext(_fileLoggerProvider.ScopeProvider, logMsg, _options.IncludeScopes);
+
+        // 判断是否自定义了日志筛选器，如果是则检查是否符合条件
         if (_options.WriteFilter?.Invoke(logMsg) == false) return;
 
         // 设置日志消息模板

@@ -25,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.Logging;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -36,12 +37,6 @@ namespace Furion.EventBus;
 internal sealed class EventBusHostedService : BackgroundService
 {
     /// <summary>
-    /// 日志 LogName
-    /// </summary>
-    /// <remarks>方便对日志进行过滤写入不同的存储介质中</remarks>
-    private const string LOG_CATEGORY_NAME = "System.Logging.EventBusService";
-
-    /// <summary>
     /// 避免由 CLR 的终结器捕获该异常从而终止应用程序，让所有未觉察异常被觉察
     /// </summary>
     internal event EventHandler<UnobservedTaskExceptionEventArgs> UnobservedTaskException;
@@ -50,6 +45,11 @@ internal sealed class EventBusHostedService : BackgroundService
     /// 日志对象
     /// </summary>
     private readonly ILogger _logger;
+
+    /// <summary>
+    /// 服务提供器
+    /// </summary>
+    private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// 事件源存储器
@@ -89,14 +89,14 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="loggerFactory">日志工厂</param>
+    /// <param name="logger">日志对象</param>
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="eventSourceStorer">事件源存储器</param>
     /// <param name="eventSubscribers">事件订阅者集合</param>
     /// <param name="useUtcTimestamp">是否使用 Utc 时间</param>
     /// <param name="fuzzyMatch">是否启用模糊匹配事件消息</param>
     /// <param name="logEnabled">是否启用日志记录</param>
-    public EventBusHostedService(ILoggerFactory loggerFactory
+    public EventBusHostedService(ILogger<EventBusService> logger
         , IServiceProvider serviceProvider
         , IEventSourceStorer eventSourceStorer
         , IEnumerable<IEventSubscriber> eventSubscribers
@@ -104,7 +104,8 @@ internal sealed class EventBusHostedService : BackgroundService
         , bool fuzzyMatch
         , bool logEnabled)
     {
-        _logger = loggerFactory.CreateLogger(LOG_CATEGORY_NAME);
+        _logger = logger;
+        _serviceProvider = serviceProvider;
         _eventSourceStorer = eventSourceStorer;
         Monitor = serviceProvider.GetService<IEventHandlerMonitor>();
         Executor = serviceProvider.GetService<IEventHandlerExecutor>();
@@ -154,7 +155,7 @@ internal sealed class EventBusHostedService : BackgroundService
     /// </summary>
     /// <param name="stoppingToken">后台主机服务停止时取消任务 Token</param>
     /// <returns><see cref="Task"/> 实例</returns>
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Log(LogLevel.Information, "EventBus Hosted Service is running.");
 
@@ -215,11 +216,11 @@ internal sealed class EventBusHostedService : BackgroundService
         // 创建共享上下文数据对象
         var properties = new Dictionary<object, object>();
 
-        // 逐条创建新线程调用
-        foreach (var eventHandlerThatShouldRun in eventHandlersThatShouldRun)
+        // 通过并行方式提高吞吐量
+        Parallel.ForEach(eventHandlersThatShouldRun, (eventHandlerThatShouldRun) =>
         {
             // 创建新的线程执行
-            await taskFactory.StartNew(async () =>
+            taskFactory.StartNew(async () =>
             {
                 // 获取特性信息，可能为 null
                 var eventSubscribeAttribute = eventHandlerThatShouldRun.Attribute;
@@ -250,11 +251,17 @@ internal sealed class EventBusHostedService : BackgroundService
                     // 判断是否自定义了执行器
                     if (Executor == default)
                     {
-                        // 运行重试
+                        // 判断是否自定义了重试失败回调服务
+                        var fallbackPolicyService = eventSubscribeAttribute?.FallbackPolicy == null
+                            ? null
+                            : _serviceProvider.GetService(eventSubscribeAttribute.FallbackPolicy) as IEventFallbackPolicy;
+
+                        // 执行重试
                         await Retry.InvokeAsync(async () =>
                         {
                             await eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext);
-                        }, eventSubscribeAttribute?.NumRetries ?? 0, eventSubscribeAttribute?.RetryTimeout ?? 1000, exceptionTypes: eventSubscribeAttribute?.ExceptionTypes);
+                        }, eventSubscribeAttribute?.NumRetries ?? 0, eventSubscribeAttribute?.RetryTimeout ?? 1000, exceptionTypes: eventSubscribeAttribute?.ExceptionTypes
+                            , fallbackPolicy: fallbackPolicyService == null ? null : async (ex) => await fallbackPolicyService.CallbackAsync(eventHandlerExecutingContext, ex));
                     }
                     else
                     {
@@ -294,7 +301,7 @@ internal sealed class EventBusHostedService : BackgroundService
                     }
                 }
             }, stoppingToken);
-        }
+        });
     }
 
     /// <summary>

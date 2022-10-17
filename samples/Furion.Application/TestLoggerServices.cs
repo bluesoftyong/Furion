@@ -1,4 +1,5 @@
 ﻿using Furion.Application.Persons;
+using Furion.Logging;
 using Furion.Logging.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +20,8 @@ public class TestLoggerServices : IDynamicApiController
 
     public void 测试日志()
     {
-        _logger.ScopeContext(ctx => ctx.Set("Name", "Furion")).LogInformation("我是一个日志 {id}", 20);
+        using var scope = _logger.ScopeContext(ctx => ctx.Set("Name", "Furion"));
+        _logger.LogInformation("我是一个日志 {id}", 20);
     }
 
     public void 测试配置日志()
@@ -123,9 +125,60 @@ public class TestLoggerServices : IDynamicApiController
 
     public void 测试作用域()
     {
-        _logger.ScopeContext(new Dictionary<object, object>
-       {
+        using var scope = _logger.ScopeContext(new Dictionary<object, object>
+        {
            {"name","Furion" }
-       }).LogInformation("测试啊");
+        });
+
+        _logger.LogInformation("测试啊");
+    }
+
+    public void 测试日志上下文()
+    {
+        "设置日志上下文".ScopeContext(ctx => ctx.Set("name", "Furion")).LogWarning();
+        var (logger, scoped) = Log.ScopeContext(ctx => ctx.Set("name", "Furion"));
+        logger.LogInformation("dddd");
+        scoped?.Dispose();
+    }
+
+    public void 测试批量日志插入()
+    {
+        for (int i = 0; i < 10000; i++)
+        {
+            using var scope = _logger.ScopeContext(ctx => ctx.Set("LoggingConst.Color", ConsoleColor.Green));
+            _logger.LogInformation($"这是绿色 {i}", i);
+        }
+    }
+
+    [LoggingMonitor]
+    public IActionResult 测试附件类型监听()
+    {
+        var bytes = File.ReadAllBytes("image.png");
+        return new FileContentResult(bytes, "image/png")
+        {
+            FileDownloadName = "image.png"
+        };
+    }
+
+    [LoggingMonitor(JsonBehavior = JsonBehavior.OnlyJson)]
+    public object 测试指定忽略指定序列化类型(int id)
+    {
+        return new
+        {
+            Id = 10,
+            Bytes = File.ReadAllBytes("image.png")
+        };
+    }
+
+    [LoggingMonitor(JsonBehavior = JsonBehavior.OnlyJson
+        //, IgnorePropertyNames = new[] { "Bytes" }
+        , IgnorePropertyTypes = new[] { typeof(byte[]) })]
+    public object 测试指定忽略指定序列化类型2(int id)
+    {
+        return new
+        {
+            Id = 10,
+            Bytes = File.ReadAllBytes("image.png")
+        };
     }
 }

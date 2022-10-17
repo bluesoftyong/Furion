@@ -57,6 +57,15 @@ public class TestEventBus : IDynamicApiController
     {
         await _eventBusFactory.Unsubscribe(eventId);
     }
+
+    // 发布 ToDo:Create 消息
+    public void 测试高频事件()
+    {
+        Parallel.For(0, 10000, (i) =>
+        {
+            _eventPublisher.PublishAsync("ToDo:Create");
+        });
+    }
 }
 
 // 实现 IEventSubscriber 接口
@@ -90,10 +99,25 @@ public class ToDoEventSubscriber : IEventSubscriber, ISingleton
         await Task.CompletedTask;
     }
 
-    [EventSubscribe("test:error", NumRetries = 3)]  // 重试三次
+    [EventSubscribe("test:error", NumRetries = 3, FallbackPolicy = typeof(EventFallbackPolicy))]  // 重试三次
     public async Task 测试异常重试(EventHandlerExecutingContext context)
     {
         Console.WriteLine("我执行啦~~");
         throw new NotImplementedException();
+    }
+}
+
+public class EventFallbackPolicy : IEventFallbackPolicy
+{
+    private readonly ILogger<EventFallbackPolicy> _logger;
+    public EventFallbackPolicy(ILogger<EventFallbackPolicy> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task CallbackAsync(EventHandlerExecutingContext context, Exception ex)
+    {
+        _logger.LogError(ex, "重试了多次最终还是失败了");
+        await Task.CompletedTask;
     }
 }

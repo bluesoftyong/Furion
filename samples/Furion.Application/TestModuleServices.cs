@@ -104,11 +104,43 @@ public class TestModuleServices : IDynamicApiController
     }
 
 
-    public async Task 测试高频远程请求()
+    public void 测试高频远程请求()
     {
-        for (var i = 0; i < 5000; i++)
+        Parallel.For(0, 5000, (i) =>
         {
-            _ = await "https://www.baidu.com".GetAsStringAsync();
-        }
+            "https://www.baidu.com".GetAsStringAsync();
+        });
+    }
+
+    /// <summary>
+    /// 测试文件流上传
+    /// </summary>
+    /// <returns></returns>
+    public async Task<string> TestSingleFileSteamProxyString()
+    {
+        var fileStream = new FileStream("image.png", FileMode.Open);
+
+        var result = await "https://localhost:44316/api/test-module/upload-file".SetContentType("multipart/form-data")
+                            .SetFiles(HttpFile.Create("file", fileStream, "image.png")).PostAsync();
+
+        var fileName = await result.Content.ReadAsStringAsync();
+
+        await fileStream.DisposeAsync();
+
+        return fileName;
+    }
+
+    /// <summary>
+    /// 测试单文件流上传
+    /// </summary>
+    /// <returns></returns>
+    public async Task<string> TestSingleFileStreamProxy()
+    {
+        var fileStream = new FileStream("image.png", FileMode.Open);
+        var result = await _http.TestSingleFileProxyAsync(HttpFile.Create("file", fileStream, "image.png"));
+        var fileName = await result.Content.ReadAsStringAsync();
+
+        await fileStream.DisposeAsync();
+        return fileName;
     }
 }

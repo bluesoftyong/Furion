@@ -24,10 +24,126 @@ import Tag from "@site/src/components/Tag.js";
 
 :::
 
-## v4.5.2（当前版本）
+## v4.6.5（当前版本）
 
 :::important 版本细节
 
+- `v4.6.5` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5VPD1](https://gitee.com/dotnetchina/Furion/issues/I5VPD1) <sup>2022.10.14</sup>
+- `v4.6.4` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5VIAQ](https://gitee.com/dotnetchina/Furion/issues/I5VIAQ) <sup>2022.10.13</sup>
+- `v4.6.3` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5V99T](https://gitee.com/dotnetchina/Furion/issues/I5V99T) <sup>2022.10.12</sup>
+- `v4.6.2` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5V6UE](https://gitee.com/dotnetchina/Furion/issues/I5V6UE) <sup>2022.10.12</sup>
+- `v4.6.1` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5UYQW](https://gitee.com/dotnetchina/Furion/issues/I5UYQW) <sup>2022.10.11</sup>
+- `v4.6.0` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5UQZ7](https://gitee.com/dotnetchina/Furion/issues/I5UQZ7) <sup>2022.10.10</sup>
+
+:::
+
+- **新特性**
+
+  - &nbsp;<Tag>新增</Tag> `LoggingMonitor` 支持 `FileResult` 类型监听 <sup>4.6.0</sup> [bf9c0b1](https://gitee.com/dotnetchina/Furion/commit/bf9c0b1d7c695e800b3fdcca1ba578dd26e88d19)
+  - &nbsp;<Tag>新增</Tag> `LogMessage` 结构 `UseUtcTimestamp` 字段，解释日志记录时间格式是 `UTC` 还是 `LOCAL` 时间 <sup>4.6.1</sup> [aab0371](https://gitee.com/dotnetchina/Furion/commit/aab0371d6473117e1e602eef1b9841c48d184e84)
+  - &nbsp;<Tag>新增</Tag> 事件总线模块重试失败后支持回调 <sup>4.6.1</sup> [#I5UVMV](https://gitee.com/dotnetchina/Furion/issues/I5UVMV)
+  - &nbsp;<Tag>新增</Tag> `LoggingMonitor` 支持序列化忽略指定属性名或属性类型 <sup>4.6.1</sup> [81c6343](https://gitee.com/dotnetchina/Furion/commit/81c6343a2ddb3751e72de7c5943048c903c638b4)
+  - &nbsp;<Tag>新增</Tag> **`long` 序列化丢精度的 `JsonConvert` 内置转换器，`.AddLongTypeConverters()`** <sup>4.6.5</sup> [#I5VJHC](https://gitee.com/dotnetchina/Furion/issues/I5VJHC) [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+  - &nbsp;<Tag>新增</Tag> `app.EnableBuffering()` 拓展，解决 `Request.Body` 不能重复读问题 <sup>4.6.5</sup> [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+
+- **突破性变化**
+
+  - &nbsp;<Tag>新增</Tag> **适配 `.NET 6.0.10` 和 `.NET 7 RC2`** <sup>4.6.2</sup> [6bb2fad](https://gitee.com/dotnetchina/Furion/commit/6bb2fadd6600edcebc1539faedba98d4db0e189e)
+  - &nbsp;<Tag>新增</Tag> 内置 `Microsoft.AspNetCore.Mvc.NewtonsoftJson` 拓展，原因是太多人使用了 <sup>4.6.5</sup> [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+  - &nbsp;<Tag>移除</Tag> ~~`"some log".SetCategory(name)` 拓展方法~~ <sup>4.6.0</sup> [ec4838c](https://gitee.com/dotnetchina/Furion/commit/ec4838c218ed9c96ba92d7a80fd11539da59ca22)
+  - &nbsp;<Tag>移除</Tag> ~~`DateOnlyJsonConverter` 和 `DateOnlyOffsetJsonConverter` 处理~~ <sup>4.6.5</sup> [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+  - &nbsp;<Tag>调整</Tag> **事件总线触发处理程序的逻辑，由过去的 `foreach` 改为 `Parallel.ForEach`，吞吐量提升近 4 倍** <sup>4.6.4</sup> [7384c9c](https://gitee.com/dotnetchina/Furion/commit/7384c9c3efb94883421379828565e61870f1640c)
+  - &nbsp;<Tag>调整</Tag> **~~`.AddDateFormatString()`~~ 名称为 `.AddDateTimeTypeConverters()`** <sup>4.6.5</sup> [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+  - &nbsp;<Tag>调整</Tag> **重构日志模块设置上下文数据功能** <sup>4.6.0</sup> [1c198ee](https://gitee.com/dotnetchina/Furion/commit/1c198ee2701e0ca76bca1057df6fce6789344c35)
+
+<details style={{ marginLeft: 50 }}>
+  <summary>查看更改</summary>
+  <div>
+
+由于过去版本设置日志上下文有多线程异常和堆内存溢出风险，所以重新设计了日志上下文的写法。
+
+由：
+
+```cs showLineNumbers {1}
+_logger.ScopeContext(ctx => ctx.Set("Name", "Furion").Set("UserId", 10))
+       .LogInformation("我是一个日志 {id}", 20);
+```
+
+改为：
+
+```cs showLineNumbers {1,7}
+using (var scope = _logger.ScopeContext(ctx => ctx.Set("Name", "Furion").Set("UserId", 10)))
+{
+  _logger.LogInformation("我是一个日志 {id}", 20);
+}
+
+// 也可以简写
+using var scope = _logger.ScopeContext(ctx => ctx.Set("Name", "Furion").Set("UserId", 10));
+_logger.LogInformation("我是一个日志 {id}", 20);
+```
+
+  </div>
+</details>
+
+- - &nbsp;<Tag>移除</Tag> ~~**远程请求 `.SetTimeout` 和 `[Timeout]` 配置方法，采用全局统一配置**~~ <sup>4.6.4</sup> [7384c9c](https://gitee.com/dotnetchina/Furion/commit/7384c9c3efb94883421379828565e61870f1640c)
+
+<details style={{ marginLeft: 50 }}>
+  <summary>查看更改</summary>
+  <div>
+
+默认情况下，`HttpClient` 请求超时时间为 `100秒`，可根据实际情况进行设置：
+
+```cs showLineNumbers {4,10}
+// 配置默认 HttpClient
+options.AddHttpClient(string.Empty, c =>
+{
+    c.Timeout = TimeSpan.FromMinutes(2);
+});
+
+// 配置特定客户端
+options.AddHttpClient("github", c =>
+{
+    c.Timeout = TimeSpan.FromMinutes(2);
+});
+```
+
+  </div>
+</details>
+
+- **问题修复**
+
+  - &nbsp;<Tag>修复</Tag> `4.5.9+` 版本新增的 `IncludeScopes` 配置导致日志上下文失效 <sup>4.6.0</sup> [4a76841](https://gitee.com/dotnetchina/Furion/commit/4a768415bb2effe47f1a6e12de0773d3bbd6f75c)
+  - &nbsp;<Tag>修复</Tag> 多个 `sql` 共用 `DbParameters` 出现冲突问题 <sup>4.6.0</sup> [#I5UO2H](https://gitee.com/dotnetchina/Furion/issues/I5UO2H)
+  - &nbsp;<Tag>修复</Tag> 高频率写入日志导致堆内存溢出的异常问题 <sup>4.6.0</sup> [#I5UJRS](https://gitee.com/dotnetchina/Furion/issues/I5UJRS)
+  - &nbsp;<Tag>修复</Tag> 框架内部所有使用 `.CreateLogger` 创建的日志对象无法应用上下文问题 <sup>4.6.0</sup> [ec4838c](https://gitee.com/dotnetchina/Furion/commit/ec4838c218ed9c96ba92d7a80fd11539da59ca22)
+  - &nbsp;<Tag>修复</Tag> 修复远程请求不能在 `Worker Serivce` 中进行构造函数注入，原因是注册为 `Scope` 范围作用域 <sup>4.6.3</sup> [974f835](https://gitee.com/dotnetchina/Furion/commit/974f835ccdcf84bc84dd6f7044589ae2a2e7a57b)
+  - &nbsp;<Tag>修复</Tag> **个别服务器的 `SQL Server` 不支持 `TLS 1.2` 协议问题** <sup>4.6.3</sup> [974f835](https://gitee.com/dotnetchina/Furion/commit/974f835ccdcf84bc84dd6f7044589ae2a2e7a57b)
+  - &nbsp;<Tag>修复</Tag> `.ToDictionary()` 拓展不支持 `JObject` 类型问题 <sup>4.6.5</sup> [#I5VJHC](https://gitee.com/dotnetchina/Furion/issues/I5VJHC) [a11bf8d](https://github.com/MonkSoul/Furion/commit/a11bf8d8b6bb90b41b8394d8bca35aa3539239e6)
+  - &nbsp;<Tag>修复</Tag> `LoggingMonitor` 处理 `long` 类型丢精度问题 <sup>4.6.5</sup> [#I5VJHC](https://gitee.com/dotnetchina/Furion/issues/I5VJHC) [aded58d](https://gitee.com/dotnetchina/Furion/commit/aded58d0bc587d1a1844382c66ec1ab3de96be7c)
+
+- **其他更改**
+
+  - &nbsp;<Tag>调整</Tag> `LoggingMonitor` 返回值类型是 `泛型` 时获取 `FullName` 带程序集签名问题 <sup>4.6.2</sup> [f0aaec6](https://gitee.com/dotnetchina/Furion/commit/f0aaec6a5ae358bab7f4b6ed58848de8a7f32f5e)
+  - &nbsp;<Tag>调整</Tag> 优化远程请求性能，添加复用池的机制，避免频繁销毁创建 <sup>4.6.4</sup> [7384c9c](https://gitee.com/dotnetchina/Furion/commit/7384c9c3efb94883421379828565e61870f1640c)
+
+- **文档**
+
+  - &nbsp;<Tag>新增</Tag> 远程请求设置客户端生命周期配置文档和新超时配置文档
+  - &nbsp;<Tag>新增</Tag> `JSON` 序列化处理 `long` 类型说明文档
+  - &nbsp;<Tag>更新</Tag> 日志记录文档、事件总线文档、数据库入门文档、`JSON` 序列化文档、远程请求文档
+
+---
+
+## v4.5.9（已发布）
+
+:::important 版本细节
+
+- `v4.5.9` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5ULWN](https://gitee.com/dotnetchina/Furion/issues/I5ULWN) <sup>2022.10.09</sup>
+- `v4.5.8` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5UGNS](https://gitee.com/dotnetchina/Furion/issues/I5UGNS) <sup>2022.10.08</sup>
+- `v4.5.7` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5U8Q9](https://gitee.com/dotnetchina/Furion/issues/I5U8Q9) <sup>2022.10.06</sup>
+- `v4.5.6` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5U4SG](https://gitee.com/dotnetchina/Furion/issues/I5U4SG) <sup>2022.10.03</sup>
+- `v4.5.5` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5U413](https://gitee.com/dotnetchina/Furion/issues/I5U413) <sup>2022.10.02</sup>
+- `v4.5.4` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5U3MK](https://gitee.com/dotnetchina/Furion/issues/I5U3MK) <sup>2022.10.01</sup>
 - `v4.5.2` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5TXON](https://gitee.com/dotnetchina/Furion/issues/I5TXON) <sup>2022.09.30</sup>
 - `v4.5.1` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5TLI6](https://gitee.com/dotnetchina/Furion/issues/I5TLI6) <sup>2022.09.28</sup>
 - `v4.5.0` 版本细节：[https://gitee.com/dotnetchina/Furion/issues/I5TD4X](https://gitee.com/dotnetchina/Furion/issues/I5TD4X) <sup>2022.09.27</sup>
@@ -44,10 +160,35 @@ import Tag from "@site/src/components/Tag.js";
   - &nbsp;<Tag>新增</Tag> **日志输出 `JSON` 格式化配置** <sup>4.5.2</sup> [#I5TWC1](https://gitee.com/dotnetchina/Furion/issues/I5TWC1) [#I5OUT1](https://gitee.com/dotnetchina/Furion/issues/I5OUT1)
   - &nbsp;<Tag>新增</Tag> 数据库日志写入独立日志模板配置、独立日期格式配置 <sup>4.5.2</sup> [#I5TWC1](https://gitee.com/dotnetchina/Furion/issues/I5TWC1)
   - &nbsp;<Tag>新增</Tag> `LogMessage` 结构类 `LogDateTime`，`ThreadId`，`State` 属性 <sup>4.5.2</sup> [#I5TWC1](https://gitee.com/dotnetchina/Furion/issues/I5TWC1)
+  - &nbsp;<Tag>新增</Tag> `LoggingMonitor` 可配置 `JsonWriterOptions` 属性 <sup>4.5.4</sup> [#I5U375](https://gitee.com/dotnetchina/Furion/issues/I5U375)
+  - &nbsp;<Tag>新增</Tag> `Log.ScopeContext` 和 `"some log".ScopeContext` 拓展 <sup>4.5.4</sup> [8129693](https://gitee.com/dotnetchina/Furion/commit/812969357a60d0b73becf105e6b77b46113b3800)
+  - &nbsp;<Tag>新增</Tag> 新增 `HttpContext.SetTokensOfResponseHeaders` 拓展 <sup>4.5.7</sup> [3775e65](https://gitee.com/dotnetchina/Furion/commit/3775e659ca13615bc7f65b050fb8540daeed9433)
+  - &nbsp;<Tag>新增</Tag> 新增远程请求支持 `Stream` 文件格式上传 <sup>4.5.8</sup> [#I5UF3I](https://gitee.com/dotnetchina/Furion/issues/I5UF3I)
+  - &nbsp;<Tag>新增</Tag> 日志模块可配置是否启用上下文功能 `IncludeScopes` 属性 <sup>4.5.9</sup> [#I5UJRS](https://gitee.com/dotnetchina/Furion/issues/I5UJRS)
+  - &nbsp;<Tag>新增</Tag> `LoggingMonitor` 日志筛选 `WriteFilter` 配置 <sup>4.5.9</sup> [6f06f12](https://gitee.com/dotnetchina/Furion/commit/6f06f12b2c115bd181f4832daa7537efe5cb3fe8)
 
 - **突破性变化**
 
+  - &nbsp;<Tag>调整</Tag> **😊 `Furion` 框架文档地址为 [https://furion.baiqian.ltd](https://furion.baiqian.ltd)** <sup>4.5.4</sup> [2e3d80e](https://gitee.com/dotnetchina/Furion/commit/2e3d80ec0be830c33923ef9953ff504528120f06)
   - &nbsp;<Tag>调整</Tag> `LoggingMonitor` 底层逻辑，移除原来的 `.ScopeContext` 存储监听信息设计 <sup>4.5.2</sup> [#I5TWC1](https://gitee.com/dotnetchina/Furion/issues/I5TWC1)
+  - &nbsp;<Tag>移除</Tag> ~~**主机未启动时构建服务的操作权限，此操作会导致内存激增，受影响方法： `App.GetOptions` 系列和 `App.GetService` 和 `Scoped.Create`**~~ <sup>4.5.4</sup> [#I5U0A4](https://gitee.com/dotnetchina/Furion/issues/I5U0A4) [8129693](https://gitee.com/dotnetchina/Furion/commit/812969357a60d0b73becf105e6b77b46113b3800)
+
+<details style={{ marginLeft: 50 }}>
+  <summary>查看更改</summary>
+  <div>
+
+近期发现许多开发者在主机还未启动时解析服务，这是非常不正确的行为，会导致启动时内存激增甚至溢出，常见的错误有：
+
+- 在启动的时候通过 `Scoped.Create` 创建作用域
+- **在启动的时候通过 `App.GetOptions` 获取选项对象**
+- 在启动的时候通过 `App.GetService<T>` 解析服务
+
+正确的做法是，启动的时候禁止使用 `Scoped.Create` 和 `App.GetService<T>`。
+
+**如需启动时获取配置应该通过：`App.GetConfig<TOptions>("配置节点", true)` 替代 `App.GetOptions<TOptions>()`**。
+
+  </div>
+</details>
 
 - **问题修复**
 
@@ -55,17 +196,25 @@ import Tag from "@site/src/components/Tag.js";
   - &nbsp;<Tag>修复</Tag> 控制台日志设置了 `.ScopeContext` 无效问题 <sup>4.5.2</sup> [7fb3036](https://gitee.com/dotnetchina/Furion/commit/7fb30368f9640360017fc7f357df13eeb5031c2b)
   - &nbsp;<Tag>修复</Tag> `LoggingMonitor` 同时配置了局部和全局日志监听触发两次问题 <sup>4.5.2</sup> [a1a97e8](https://gitee.com/dotnetchina/Furion/commit/a1a97e817c43db4c20ba6e3aae03cea96d545a4b)
   - &nbsp;<Tag>修复</Tag> `v4.4.8+` 版本更新导致远程请求在个别情况下出现并发问题 <sup>4.5.2</sup> [#I5TWL3](https://gitee.com/dotnetchina/Furion/issues/I5TWL3)
+  - &nbsp;<Tag>修复</Tag> `LoggingMonitor` 配置了 `ReturnValueThreshold` 之后 `Json` 被截断引发有效性检测异常 <sup>4.5.4</sup> [#I5U375](https://gitee.com/dotnetchina/Furion/issues/I5U375)
+  - &nbsp;<Tag>修复</Tag> `LoggingMonitor` 不支持 `DataTable`，`DataSet`，`Tuple` 等类型问题 <sup>4.5.5</sup> [#I5U3VO](https://gitee.com/dotnetchina/Furion/issues/I5U3VO)
+  - &nbsp;<Tag>修复</Tag> **自 `v4.5.2+` 版本升级后出现启动时使用 `App.GetOptons<TOptions>` 异常问题** <sup>4.5.6</sup> [#I5U4OC](https://gitee.com/dotnetchina/Furion/issues/I5U4OC) [f9a6587](https://gitee.com/dotnetchina/Furion/commit/f9a6587e3f7893db88c905cf77c3c4ebed39b73c)
+  - &nbsp;<Tag>修复</Tag> `app.UseInject(action)` 导致死循环 <sup>4.5.7</sup> [!608](https://gitee.com/dotnetchina/Furion/pulls/608)
+  - &nbsp;<Tag>修复</Tag> `LoggingMonitor` 报空引用异常问题 <sup>4.5.8</sup> [#I5UGCA](https://gitee.com/dotnetchina/Furion/issues/I5UGCA) [!610](https://gitee.com/dotnetchina/Furion/pulls/610)
+  - &nbsp;<Tag>修复</Tag> 并发情况下设置日志上下文出现偶然性空引用问题 <sup>4.5.9</sup> [#I5UJRS](https://gitee.com/dotnetchina/Furion/issues/I5UJRS)
 
 - **其他更改**
 
   - &nbsp;<Tag>调整</Tag> 文件日志默认模板，默认对日志时间进行格式化并显示星期几 <sup>4.5.1</sup> [#I5TKL5](https://gitee.com/dotnetchina/Furion/issues/I5TKL5)
   - &nbsp;<Tag>调整</Tag> 脚手架代码，默认启用 `services.AddConsoleFormatter()` <sup>4.5.1</sup> [#I5TLI6](https://gitee.com/dotnetchina/Furion/issues/I5TLI6)
   - &nbsp;<Tag>调整</Tag> `Serve.Run()` 代码，默认启用 `services.AddConsoleFormatter()` <sup>4.5.1</sup> [#I5TLI6](https://gitee.com/dotnetchina/Furion/issues/I5TLI6)
+  - &nbsp;<Tag>调整</Tag> 减少 `MiniProfile` 不必要的监听，只在 `Swagger` 页面请求才监听 <sup>4.5.7</sup> [697ef51](https://gitee.com/dotnetchina/Furion/commit/697ef51f4869a4d533a6debd2a17cb9f0c1000c3)
+  - &nbsp;<Tag>调整</Tag> 日志模块所有日志时间默认为 `24小时制`，过去是 `12小时制` <sup>4.5.9</sup> [!612](https://gitee.com/dotnetchina/Furion/pulls/612)
 
 - **文档**
 
   - &nbsp;<Tag>新增</Tag> 选项监听出现触发多次的解决方案 [#I5T9PR](https://gitee.com/dotnetchina/Furion/issues/I5T9PR)
-  - &nbsp;<Tag>更新</Tag> 日志记录文档、动态 WebAPI 文档
+  - &nbsp;<Tag>更新</Tag> 日志记录文档、动态 WebAPI 文档、选项文档、`HttpContext` 文档、远程请求文档
 
 - **本期亮点**
 
@@ -252,6 +401,115 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
   </div>
 </details>
 
+- 3. **支持远程请求上传文件 `Stream` 流**
+
+<details style={{ marginLeft: 50 }}>
+  <summary>查看更改</summary>
+  <div>
+
+1. 单文件上传
+
+- 字符串方式
+
+```cs showLineNumbers {1,5,9}
+var fileStream = new FileStream("image.png", FileMode.Open);
+
+var result = await "https://localhost:44316/api/test-module/upload-file"
+                    .SetContentType("multipart/form-data")
+                    .SetFiles(HttpFile.Create("file", fileStream, "image.png")).PostAsync();
+
+var fileName = await result.Content.ReadAsStringAsync();
+
+await fileStream.DisposeAsync();
+```
+
+- 代理方式
+
+```cs showLineNumbers {1,3,6}
+var fileStream = new FileStream("image.png", FileMode.Open);
+
+var result = await _http.TestSingleFileProxyAsync(HttpFile.Create("file", fileStream, "image.png"));
+var fileName = await result.Content.ReadAsStringAsync();
+
+await fileStream.DisposeAsync();
+```
+
+2. 多文件上传
+
+- 字符串方式
+
+```cs showLineNumbers {1,5,8}
+var fileStream = new FileStream("image.png", FileMode.Open);
+
+var result = await "https://localhost:44316/api/test-module/upload-muliti-file"
+                    .SetContentType("multipart/form-data")
+                    .SetFiles(HttpFile.CreateMultiple("files", (fileStream, "image1.png"), (fileStream, "image2.png"))).PostAsync();
+var fileName = await result.Content.ReadAsStringAsync();
+
+await fileStream.DisposeAsync();
+```
+
+- 代理方式
+
+```cs showLineNumbers {1,3,6}
+var fileStream = new FileStream("image.png", FileMode.Open);
+
+var result = await _http.TestMultiFileProxyAsync(HttpFile.CreateMultiple("files", (fileStream, "image1.png"), (fileStream, "image2.png")));
+var fileName = await result.Content.ReadAsStringAsync();
+
+await fileStream.DisposeAsync();
+```
+
+3. 还支持 `Bytes` 和 `Stream` 混合
+
+```cs showLineNumbers {1-2,4-10,14,18}
+var fileStream = new FileStream("image.png", FileMode.Open);
+var bytes = File.ReadAllBytes("image.png");
+
+var httpFile = new HttpFile
+{
+    Name = name,
+    Bytes = bytes,
+    FileStream = fileStream,
+    FileName = fileName
+};
+
+var result = await "https://localhost:44316/api/test-module/upload-file"
+                    .SetContentType("multipart/form-data")
+                    .SetFiles(httpFile).PostAsync();
+
+var fileName = await result.Content.ReadAsStringAsync();
+
+await fileStream.DisposeAsync();
+```
+
+  </div>
+</details>
+
+- 4. **`LoggingMonitor` 全局过滤**
+
+<details style={{ marginLeft: 50 }}>
+  <summary>查看更改</summary>
+  <div>
+
+```cs showLineNumbers showLineNumbers {1,3,10}
+services.AddMonitorLogging(options =>
+{
+    options.WriteFilter = (context) =>
+    {
+        // 获取控制器/操作描述器
+        var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+
+        // 你的逻辑....，不需要拦截返回 false，否则 true
+
+        return true;
+    };
+});
+```
+
+  </div>
+</details>
+
 ---
 
 ## v4.4.9（已发布）
@@ -290,7 +548,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
   - &nbsp;<Tag>调整</Tag> 框架适配 **`.NET 6.0.9` 和 `.NET 7.0 RC1`** [be5b40](https://gitee.com/dotnetchina/Furion/commit/be5b4098bae2153f8d49cf9797e454afde0d0aab) [1eee77b](https://gitee.com/dotnetchina/Furion/commit/1eee77bff0954336dcc5402a09a3195667bb80f2)
   - &nbsp;<Tag>调整</Tag> 远程请求 `.SetBodyBytes` 为 `.SetFiles` [#I5PMS5](https://gitee.com/dotnetchina/Furion/issues/I5PMS5) [#I5PIYI](https://gitee.com/dotnetchina/Furion/issues/I5PIYI)
   - &nbsp;<Tag>调整</Tag> `FS.InitialContentTypeProvider()` 名称为 `FS.GetFileExtensionContentTypeProvider()` [5fafc84](https://gitee.com/dotnetchina/Furion/commit/5fafc8477a4d213d16db92cf030f409c758fab95)
-  - &nbsp;<Tag>移除</Tag> 远程请求 `[BodyBytes]` 设计，采用 `HttpFile` 方式 [#I5PMS5](https://gitee.com/dotnetchina/Furion/issues/I5PMS5) [#I5PIYI](https://gitee.com/dotnetchina/Furion/issues/I5PIYI)
+  - &nbsp;<Tag>移除</Tag> ~~远程请求 `[BodyBytes]` 设计，采用 `HttpFile` 方式~~ [#I5PMS5](https://gitee.com/dotnetchina/Furion/issues/I5PMS5) [#I5PIYI](https://gitee.com/dotnetchina/Furion/issues/I5PIYI)
 
 <details style={{ marginLeft: 50 }}>
   <summary>查看更改</summary>
@@ -657,8 +915,8 @@ public interface IUnitOfWork
 - **突破性变化**
 
   - &nbsp;<Tag>新增</Tag> `Furion.Xunit` 拓展包，正式实现 `Xunit` 单元测试完整支持 `Furion` [063a034e](https://gitee.com/dotnetchina/Furion/commit/063a034edd089e88d501af4c09251611476fd238)
-  - &nbsp;<Tag>移除</Tag> `Furion.Extras.DatabaseAccessor.SqlSugar` 拓展插件中的 `[SqlSugarUnitOfWork]` 工作单元特性，将使用通用工作单元替换，**[查看最新实现文档](./tran.mdx#92631-自动管理)**
-  - &nbsp;<Tag>移除</Tag> `Inject.Create()` 方法，再也不需要了，框架提供了无敌强大的 `Serve.Run()` 静默启动方式 [200848e](https://gitee.com/dotnetchina/Furion/commit/200848eda8c2e419c0b5be83f7768a257f3c88bd)
+  - &nbsp;<Tag>移除</Tag> ~~`Furion.Extras.DatabaseAccessor.SqlSugar` 拓展插件中的 `[SqlSugarUnitOfWork]` 工作单元特性，将使用通用工作单元替换**~~ [查看最新实现文档](./tran.mdx#92631-自动管理)**
+  - &nbsp;<Tag>移除</Tag> ~~`Inject.Create()` 方法，再也不需要了，框架提供了无敌强大的 `Serve.Run()` 静默启动方式~~ [200848e](https://gitee.com/dotnetchina/Furion/commit/200848eda8c2e419c0b5be83f7768a257f3c88bd)
   - &nbsp;<Tag>调整</Tag> `Serve.Run` 的 `ConfigureConfiguration` 方法参数，由 `configuration => {}` 改为 `(environment, configuration) => {}` [83c97bb](https://gitee.com/dotnetchina/Furion/commit/83c97bb5a19d6fc4e51cfe05f635675d26067d45)
 
 <details style={{ marginLeft: 50 }}>
@@ -952,7 +1210,7 @@ _logger.ScopeContext(new LogContext {
 
   - &nbsp;<Tag>优化</Tag> **日志模块，内置写入控制台、文件、数据库功能，再也无需引入第三方日志了！[日志源码](https://gitee.com/dotnetchina/Furion/tree/v4/framework/Furion/Logging)**
   - &nbsp;<Tag>调整</Tag> **`TP.Wrapper` 规范化日志模板算法，由过去的 `[属性]` 改为 `##属性##`，解决 `JSON` 内容冲突问题 [394ecec](https://gitee.com/dotnetchina/Furion/commit/394ecec28629aee9945480155d502418d0b7a8f8)**
-  - &nbsp;<Tag>移除</Tag> **未来 `Furion.Extras.Logging.Serilog` 拓展将不再继续维护，因为 `Furion` 有强大的日志组件了！**
+  - &nbsp;<Tag>移除</Tag> ~~**未来 `Furion.Extras.Logging.Serilog` 拓展将不再继续维护，因为 `Furion` 有强大的日志组件了！**~~
 
 - **问题修复**
 
@@ -1627,8 +1885,8 @@ Console.WriteLine(template);
 
 - **文档**
 
-  - &nbsp;<Tag>新增</Tag> `GlobalUsings` 文档 [文档地址](https://dotnetchina.gitee.io/furion/blog/global-usings)
-  - &nbsp;<Tag>新增</Tag> 请求大小/上传大小限制文档 [文档地址](https://dotnetchina.gitee.io/furion/docs/file-provider/#317-%E8%AF%B7%E6%B1%82%E5%A4%A7%E5%B0%8F%E6%8E%A7%E5%88%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F%E6%8E%A7%E5%88%B6)
+  - &nbsp;<Tag>新增</Tag> `GlobalUsings` 文档 [文档地址](https://furion.baiqian.ltd/blog/global-usings)
+  - &nbsp;<Tag>新增</Tag> 请求大小/上传大小限制文档 [文档地址](https://furion.baiqian.ltd/docs/file-provider/#317-%E8%AF%B7%E6%B1%82%E5%A4%A7%E5%B0%8F%E6%8E%A7%E5%88%B6%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F%E6%8E%A7%E5%88%B6)
   - &nbsp;<Tag>更新</Tag> 规范化文档，`Worker Service` 文档，动态 API 文档
 
 - **本期亮点**
@@ -1952,12 +2210,12 @@ app.UseVirtualPath(app =>
 
 - **其他更改**
 
-  - &nbsp;<Tag>移除</Tag> `ToPagedList` 泛型约束 [d0244d](https://gitee.com/dotnetchina/Furion/commit/d0244dc33a0e5236158cdcdff21d086e00a42ee7)
+  - &nbsp;<Tag>移除</Tag> ~~`ToPagedList` 泛型约束~~ [d0244d](https://gitee.com/dotnetchina/Furion/commit/d0244dc33a0e5236158cdcdff21d086e00a42ee7)
 
 - **文档**
 
-  - &nbsp;<Tag>文档</Tag> 查看 **[.NET6 一分钟入门](https://dotnetchina.gitee.io/furion/docs/get-start-net6)**
-  - &nbsp;<Tag>文档</Tag> 查看 **[Furion v2 升级 v3](https://dotnetchina.gitee.io/furion/docs/net5-to-net6)**
+  - &nbsp;<Tag>文档</Tag> 查看 **[.NET6 一分钟入门](https://furion.baiqian.ltd/docs/get-start-net6)**
+  - &nbsp;<Tag>文档</Tag> 查看 **[Furion v2 升级 v3](https://furion.baiqian.ltd/docs/net5-to-net6)**
 
 - **特别鸣谢**
 
@@ -1995,7 +2253,7 @@ app.UseVirtualPath(app =>
 - **其他更改**
 
   - &nbsp;<Tag>更新</Tag> `InjectionAttribute` 代码 [!435](https://gitee.com/dotnetchina/Furion/pulls/435)
-  - &nbsp;<Tag>移除</Tag> `ToPagedList` 泛型约束 [d0244d](https://gitee.com/dotnetchina/Furion/commit/d0244dc33a0e5236158cdcdff21d086e00a42ee7)
+  - &nbsp;<Tag>移除</Tag> ~~`ToPagedList` 泛型约束~~ [d0244d](https://gitee.com/dotnetchina/Furion/commit/d0244dc33a0e5236158cdcdff21d086e00a42ee7)
 
 - **文档**
 
@@ -2050,8 +2308,7 @@ app.UseVirtualPath(app =>
 
 - **突破性变化**
 
-  - &nbsp;<Tag>移除</Tag> `Scoped` 所有带返回值方法 [656da87](https://gitee.com/dotnetchina/Furion/commit/656da87a667c2da7d82425cdcd47146e99602d65)
-  - &nbsp;<Tag>调整</Tag> **在 `ConfigureService` 中调用 `App.GetOptions<>()` 获取配置逻辑** [afa4ac3](https://gitee.com/dotnetchina/Furion/commit/afa4ac347152ccac37bd1d0f9af1e8ffb665a662)
+  - &nbsp;<Tag>移除</Tag> ~~`Scoped` 所有带返回值方法~~ [656da87](https://gitee.com/dotnetchina/Furion/commit/656da87a667c2da7d82425cdcd47146e99602d65) - &nbsp;<Tag>调整</Tag> **在 `ConfigureService` 中调用 `App.GetOptions<>()` 获取配置逻辑** [afa4ac3](https://gitee.com/dotnetchina/Furion/commit/afa4ac347152ccac37bd1d0f9af1e8ffb665a662)
 
 > 在过去，很多开发者总是喜欢在 `Startup.cs` 配置服务的 `ConfigureService` 方法中解析服务，这样导致内存存在溢出风险，GC 无法回收。
 > 正确的方式是尽可能的避免 `ConfigureService` 中解析服务。**如果需要在【启动时】获取 `配置选项`，请使用 `App.GetConfig<TOptions>(路径, true)` 代替 `App.GetOptions<TOption>`**。
@@ -2088,8 +2345,8 @@ app.UseVirtualPath(app =>
 - **突破性变化**
 
   - &nbsp;<Tag>新增</Tag> `Oops.Retry()` 重试策略功能至新类：`Retry.Invoke()` [6a7bbd0](https://gitee.com/dotnetchina/Furion/commit/6a7bbd0b30a653b9a42d340a63520485aa6bbfa4)
-  - &nbsp;<Tag>移除</Tag> `IHttpContextAccessor.SigninToSwagger()` 拓展，请使用 `IHttpContextAccessor.HttpContext.SigninToSwagger()`，退出也一样
-  - &nbsp;<Tag>移除</Tag> 全局处理 `Request Body` 重复读处理 `Request.EnableBuffering()` [d92c24b](https://gitee.com/dotnetchina/Furion/commit/d92c24bdb43bfb01643007ebb6a4ee42a5c738e9)
+  - &nbsp;<Tag>移除</Tag> ~~`IHttpContextAccessor.SigninToSwagger()` 拓展~~，请使用 `IHttpContextAccessor.HttpContext.SigninToSwagger()`，退出也一样
+  - &nbsp;<Tag>移除</Tag> ~~全局处理 `Request Body` 重复读处理 `Request.EnableBuffering()`~~ [d92c24b](https://gitee.com/dotnetchina/Furion/commit/d92c24bdb43bfb01643007ebb6a4ee42a5c738e9)
 
 - **问题修复**
 
@@ -2281,8 +2538,8 @@ namespace Furion.UnifyResult
 - **突破性变化**
 
   - &nbsp;<Tag>升级</Tag> **框架依赖 `SDK` 为 `.NET 5.0.8` 版本**
-  - &nbsp;<Tag>移除</Tag> `Db.GetNewDbContext()` 静态方法 [#I400BK](https://gitee.com/dotnetchina/Furion/issues/I400BK)
-  - &nbsp;<Tag>移除</Tag> 数据库模块时态表拓展支持 [#I405HI](https://gitee.com/dotnetchina/Furion/issues/I405HI)
+  - &nbsp;<Tag>移除</Tag> ~~`Db.GetNewDbContext()` 静态方法~~ [#I400BK](https://gitee.com/dotnetchina/Furion/issues/I400BK)
+  - &nbsp;<Tag>移除</Tag> ~~数据库模块时态表拓展支持~~ [#I405HI](https://gitee.com/dotnetchina/Furion/issues/I405HI)
   - &nbsp;<Tag>调整</Tag> `IJsonSerializerProvider` 接口参数，新增 `inherit` 参数 [#I3ZQU5](https://gitee.com/dotnetchina/Furion/issues/I3ZQU5)
   - &nbsp;<Tag>调整</Tag> `AppSettings` 配置的 `LogEntityFrameworkCoreSqlExecuteCommand` 名称为 `OutputOriginalSqlExecuteLog` [#I40VVE](https://gitee.com/dotnetchina/Furion/issues/I40VVE)
 
@@ -3289,7 +3546,7 @@ namespace Furion.UnifyResult
 - **文档变化**
 
   - &nbsp;<Tag>新增</Tag> 视图引擎模板文档 [#I27ZVA](https://gitee.com/dotnetchina/Furion/issues/I27ZVA)
-  - &nbsp;<Tag>新增</Tag> `EFCore` 时态查询文档 [#I28AJ](https://gitee.com/dotnetchina/Furion/issues/I28AJ6), [DOC](https://dotnetchina.gitee.io/furion/docs/dbcontext-hight-query/#91111-%E6%97%B6%E6%80%81%E6%9F%A5%E8%AF%A2)
+  - &nbsp;<Tag>新增</Tag> `EFCore` 时态查询文档 [#I28AJ](https://gitee.com/dotnetchina/Furion/issues/I28AJ6), [DOC](https://furion.baiqian.ltd/docs/dbcontext-hight-query/#91111-%E6%97%B6%E6%80%81%E6%9F%A5%E8%AF%A2)
   - &nbsp;<Tag>更新</Tag> 仓储文档书写纰漏 bug [#PR90](https://gitee.com/dotnetchina/Furion/pulls/90)
   - &nbsp;<Tag>更新</Tag> 选项文档错误 bug [#PR86](https://gitee.com/dotnetchina/Furion/pulls/86)
   - &nbsp;<Tag>更新</Tag> `实体数据监听器` 文档书写错误 bug [#PR83](https://gitee.com/dotnetchina/Furion/pulls/83/files)
@@ -3345,7 +3602,7 @@ namespace Furion.UnifyResult
 
 - **文档变化**
 
-  - &nbsp;<Tag>新增</Tag> [实体数据监听器](https://dotnetchina.gitee.io/furion/docs/dbcontext-entitytrigger) 文档
+  - &nbsp;<Tag>新增</Tag> [实体数据监听器](https://furion.baiqian.ltd/docs/dbcontext-entitytrigger) 文档
   - &nbsp;<Tag>更新</Tag> 一分钟入门、应用启动、官方脚手架、数据库操作指南、对象映射、规范化文档、异常处理、鉴权授权文档
 
 ---

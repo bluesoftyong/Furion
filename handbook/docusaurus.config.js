@@ -1,14 +1,14 @@
 module.exports = {
   title: "Furion",
   tagline: "让 .NET 开发更简单，更通用，更流行。",
-  url: "https://dotnetchina.gitee.io",
-  baseUrl: "/furion/",
+  url: "https://furion.baiqian.ltd",
+  baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "Baiqian Co.,Ltd",
   projectName: "Furion",
-  scripts: ["/furion/script/baidutongji.js"],
+  scripts: [],
   themeConfig: {
     docs: {
       sidebar: {
@@ -117,7 +117,7 @@ module.exports = {
           href: "https://gitee.com/dotnetchina",
         },
         {
-          label: "案例✨",
+          label: "案例",
           position: "right",
           to: "docs/case",
           activeBasePath: "docs/case",
@@ -128,6 +128,12 @@ module.exports = {
           to: "docs/donate",
           activeBasePath: "docs/donate",
         },
+        // {
+        //   label: "耻辱柱",
+        //   position: "right",
+        //   to: "docs/pillar-of-humiliation",
+        //   activeBasePath: "docs/pillar-of-humiliation",
+        // },
       ],
     },
     footer: {
@@ -138,7 +144,7 @@ module.exports = {
           items: [
             {
               label: "入门",
-              to: "docs/get-start",
+              to: "docs/serverun",
             },
             {
               label: "指南",

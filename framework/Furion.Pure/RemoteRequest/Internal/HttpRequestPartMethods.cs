@@ -477,17 +477,12 @@ public sealed partial class HttpRequestPart
 
         // 创建 HttpClient 对象，这里支持自定义
         var clientName = ClientName ?? string.Empty;
-        using var httpClient = ClientProvider?.Invoke() ?? (
-                                string.IsNullOrWhiteSpace(clientName)
-                                 ? clientFactory.CreateClient()
-                                 : clientFactory.CreateClient(clientName));
-
-        // 只有大于 0 才设置超时时间
-        if (Timeout > 0)
-        {
-            // 设置请求超时时间
-            httpClient.Timeout = TimeSpan.FromSeconds(Timeout);
-        }
+        // 这里不需要 using 释放：https://learn.microsoft.com/zh-cn/aspnet/core/fundamentals/http-requests?view=aspnetcore-6.0#httpclient-and-lifetime-management
+        // 默认生存期为两分钟，两分钟后会自动释放
+        var httpClient = ClientProvider?.Invoke() ?? (
+                               string.IsNullOrWhiteSpace(clientName)
+                                ? clientFactory.CreateClient()
+                                : clientFactory.CreateClient(clientName));
 
         // 判断命名客户端是否配置了 BaseAddress，且必须以 / 结尾
         var httpClientOriginalString = httpClient.BaseAddress?.OriginalString;
@@ -627,19 +622,35 @@ public sealed partial class HttpRequestPart
                 var boundary = "---------------" + DateTime.Now.Ticks.ToString("x");
                 var multipartFormDataContent = new MultipartFormDataContent(boundary);
 
-                // 添加 Bytes 类型
+                // 遍历所有上传文件
                 foreach (var httpFile in Files)
                 {
                     // 获取文件 Content-Type 类型
                     FS.TryGetContentType(httpFile.FileName, out var contentType);
 
-                    var byteArrayContent = new ByteArrayContent(httpFile.Bytes);
-                    byteArrayContent.Headers.TryAddWithoutValidation("Content-Type", contentType ?? "application/octet-stream");
+                    // 处理 Bytes 文件
+                    if (httpFile.Bytes != null)
+                    {
+                        var byteArrayContent = new ByteArrayContent(httpFile.Bytes);
+                        byteArrayContent.Headers.TryAddWithoutValidation("Content-Type", contentType ?? "application/octet-stream");
 
-                    if (string.IsNullOrWhiteSpace(httpFile.FileName))
-                        multipartFormDataContent.Add(byteArrayContent, $"\"{httpFile.Name}\"");
-                    else
-                        multipartFormDataContent.Add(byteArrayContent, $"\"{httpFile.Name}\"", $"\"{httpFile.FileName}\"");
+                        if (string.IsNullOrWhiteSpace(httpFile.FileName))
+                            multipartFormDataContent.Add(byteArrayContent, $"\"{httpFile.Name}\"");
+                        else
+                            multipartFormDataContent.Add(byteArrayContent, $"\"{httpFile.Name}\"", $"\"{httpFile.FileName}\"");
+                    }
+
+                    // 处理 Stream 文件
+                    if (httpFile.FileStream != null)
+                    {
+                        var streamContent = new StreamContent(httpFile.FileStream, (int)httpFile.FileStream.Length);
+                        streamContent.Headers.TryAddWithoutValidation("Content-Type", contentType ?? "application/octet-stream");
+
+                        if (string.IsNullOrWhiteSpace(httpFile.FileName))
+                            multipartFormDataContent.Add(streamContent, $"\"{httpFile.Name}\"");
+                        else
+                            multipartFormDataContent.Add(streamContent, $"\"{httpFile.Name}\"", $"\"{httpFile.FileName}\"");
+                    }
                 }
 
                 // 处理其他类型

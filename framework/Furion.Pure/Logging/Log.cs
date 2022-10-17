@@ -42,19 +42,10 @@ public static class Log
     /// <summary>
     /// 创建日志记录器
     /// </summary>
-    /// <param name="categoryName"></param>
-    /// <param name="provider"></param>
     /// <returns></returns>
-    public static ILogger CreateLogger(string categoryName, ILoggerProvider provider = default)
+    public static ILogger CreateLogger<T>()
     {
-        var loggerFactory = App.GetRequiredService<ILoggerFactory>(App.RootServices);
-
-        if (provider != null)
-        {
-            loggerFactory.AddProvider(provider);
-        }
-
-        return loggerFactory.CreateLogger(categoryName);
+        return App.GetRequiredService<ILogger<T>>();
     }
 
     /// <summary>
@@ -68,10 +59,40 @@ public static class Log
         return LoggerFactory.Create(builder =>
         {
             // 添加默认控制台输出
-            builder.AddConsole();
+            builder.AddConsoleFormatter();
 
             configure?.Invoke(builder);
         });
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
+    /// <returns></returns>
+    public static (ILogger logger, IDisposable scope) ScopeContext(IDictionary<object, object> properties)
+    {
+        return GetLogger(StringLoggingPart.Default().ScopeContext(properties));
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    public static (ILogger logger, IDisposable scope) ScopeContext(Action<LogContext> configure)
+    {
+        return GetLogger(StringLoggingPart.Default().ScopeContext(configure));
+    }
+
+    /// <summary>
+    /// 配置日志上下文
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static (ILogger logger, IDisposable scope) ScopeContext(LogContext context)
+    {
+        return GetLogger(StringLoggingPart.Default().ScopeContext(context));
     }
 
     /// <summary>
@@ -624,5 +645,27 @@ public static class Log
     public static void Critical<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
         StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogCritical();
+    }
+
+    /// <summary>
+    /// 获取日志实例
+    /// </summary>
+    /// <param name="loggingPart"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    private static (ILogger, IDisposable) GetLogger(StringLoggingPart loggingPart)
+    {
+        // 获取日志实例
+        var (logger, loggerFactory, hasException) = loggingPart.GetLogger();
+        var scope = logger.ScopeContext(loggingPart.LogContext);
+        if (hasException)
+        {
+            scope?.Dispose();
+            loggerFactory?.Dispose();
+
+            throw new InvalidOperationException("Unable to set log context data.");
+        }
+
+        return (logger, scope);
     }
 }

@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2020-2022 百小僧, Baiqian Co.,Ltd and Contributors
 //
@@ -27,19 +27,20 @@ using Furion.Templates;
 using Furion.UnifyResult;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Logging;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace System;
 
@@ -59,12 +60,6 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
     /// 排序属性
     /// </summary>
     public int Order => FilterOrder;
-
-    /// <summary>
-    /// 日志 LogName
-    /// </summary>
-    /// <remarks>方便对日志进行过滤写入不同的存储介质中</remarks>
-    internal const string LOG_CATEGORY_NAME = "System.Logging.LoggingMonitor";
 
     /// <summary>
     /// 构造函数
@@ -104,6 +99,16 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
     /// 配置 Json 输出行为
     /// </summary>
     public object JsonBehavior { get; set; } = null;
+
+    /// <summary>
+    /// 配置序列化忽略的属性名称
+    /// </summary>
+    public string[] IgnorePropertyNames { get; set; }
+
+    /// <summary>
+    /// 配置序列化忽略的属性类型
+    /// </summary>
+    public Type[] IgnorePropertyTypes { get; set; }
 
     /// <summary>
     /// 配置信息
@@ -174,13 +179,16 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
             }
         }
 
+        // 判断是否自定义了日志筛选器，如果是则检查是否符合条件
+        if (LoggingMonitorSettings.InternalWriteFilter?.Invoke(context) == false)
+        {
+            _ = await next();
+            return;
+        }
+
         // 创建 json 写入器
         using var stream = new MemoryStream();
-        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions
-        {
-            // 解决中文乱码问题
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
+        using var writer = new Utf8JsonWriter(stream, Settings.JsonWriterOptions);
         writer.WriteStartObject();
 
         // 获取全局 LoggingMonitorMethod 配置
@@ -265,7 +273,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
             if (validationMetadata != null)
             {
                 // 创建全局验证友好异常
-                var error = TrySerializeObject(validationMetadata.ValidationResult, out _);
+                var error = TrySerializeObject(validationMetadata.ValidationResult, monitorMethod, out _);
                 exception = new AppFriendlyException(error, validationMetadata.OriginErrorCode)
                 {
                     ErrorCode = validationMetadata.ErrorCode,
@@ -297,10 +305,10 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         monitorItems.AddRange(GenerateAuthorizationTemplate(writer, user, authorization));
 
         // 添加请求参数信息日志模板
-        monitorItems.AddRange(GenerateParameterTemplate(writer, parameterValues, actionMethod, httpRequest.Headers["Content-Type"]));
+        monitorItems.AddRange(GenerateParameterTemplate(writer, parameterValues, actionMethod, httpRequest.Headers["Content-Type"], monitorMethod));
 
         // 判断是否启用返回值打印
-        if (CheckIsSetWithReturnValue(WithReturnValue, monitorMethod))
+        if (CheckIsSetWithReturnValue(monitorMethod))
         {
             // 添加返回值信息日志模板
             monitorItems.AddRange(GenerateReturnInfomationTemplate(writer, resultContext, actionMethod, monitorMethod));
@@ -313,8 +321,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         var monitorMessage = TP.Wrapper(Title, displayName, monitorItems.ToArray());
 
         // 创建日志记录器
-        var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-            .CreateLogger(LOG_CATEGORY_NAME);
+        var logger = httpContext.RequestServices.GetRequiredService<ILogger<LoggingMonitor>>();
 
         // 调用外部配置
         LoggingMonitorSettings.Configure?.Invoke(logger, logContext, resultContext);
@@ -327,7 +334,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         logContext.Set("loggingMonitor", jsonString);
 
         // 设置日志上下文
-        logger.ScopeContext(logContext);
+        using var scope = logger.ScopeContext(logContext);
 
         // 获取最终写入日志消息格式
         var finalMessage = GetJsonBehavior(JsonBehavior, monitorMethod) == Furion.Logging.JsonBehavior.OnlyJson ? jsonString : monitorMessage;
@@ -391,8 +398,9 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
     /// <param name="parameterValues"></param>
     /// <param name="method"></param>
     /// <param name="contentType"></param>
+    /// <param name="monitorMethod"></param>
     /// <returns></returns>
-    private List<string> GenerateParameterTemplate(Utf8JsonWriter writer, IDictionary<string, object> parameterValues, MethodInfo method, StringValues contentType)
+    private List<string> GenerateParameterTemplate(Utf8JsonWriter writer, IDictionary<string, object> parameterValues, MethodInfo method, StringValues contentType, LoggingMonitorMethod monitorMethod)
     {
         var templates = new List<string>();
         writer.WritePropertyName("parameters");
@@ -421,7 +429,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
             var parameterType = parameter.ParameterType;
             writer.WriteStartObject();
             writer.WriteString("name", name);
-            writer.WriteString("type", parameterType.FullName);
+            writer.WriteString("type", HandleGenericType(parameterType));
 
             object rawValue = default;
 
@@ -486,7 +494,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
                 rawValue = value;
 
                 if (value == null) writer.WriteNullValue();
-                if (value is string str) writer.WriteStringValue(str);
+                else if (value is string str) writer.WriteStringValue(str);
                 else if (double.TryParse(value.ToString(), out var r)) writer.WriteNumberValue(r);
                 else writer.WriteStringValue(value.ToString());
             }
@@ -494,7 +502,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
             else
             {
                 writer.WritePropertyName("value");
-                rawValue = TrySerializeObject(value, out var succeed);
+                rawValue = TrySerializeObject(value, monitorMethod, out var succeed);
 
                 if (succeed) writer.WriteRawValue(rawValue?.ToString());
                 else writer.WriteNullValue();
@@ -522,37 +530,65 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         var templates = new List<string>();
 
         object returnValue = null;
+        Type finalReturnType;
 
         // 解析返回值
-        if (UnifyContext.CheckVaildResult(resultContext.Result, out var data)) returnValue = data;
+        if (UnifyContext.CheckVaildResult(resultContext.Result, out var data))
+        {
+            returnValue = data;
+            finalReturnType = data?.GetType();
+        }
+        // 处理文件类型
+        else if (resultContext.Result is FileResult fresult)
+        {
+            returnValue = new {
+                FileName = fresult.FileDownloadName,
+                fresult.ContentType,
+                Length = fresult is FileContentResult cresult ? (object)cresult.FileContents.Length : null
+            };
+            finalReturnType = fresult?.GetType();
+        }
+        else finalReturnType = resultContext.Result?.GetType();
 
         var succeed = true;
         // 获取最终呈现值（字符串类型）
         var displayValue = method.ReturnType == typeof(void)
             ? string.Empty
-            : TrySerializeObject(returnValue, out succeed);
+            : TrySerializeObject(returnValue, monitorMethod, out succeed);
+        var originValue = displayValue;
 
         // 获取返回值阈值
-        var threshold = GetReturnValueThreshold(ReturnValueThreshold, monitorMethod);
+        var threshold = GetReturnValueThreshold(monitorMethod);
         if (threshold > 0)
         {
-            displayValue = displayValue[..(displayValue.Length > threshold ? threshold : displayValue.Length)];
+            displayValue = displayValue.Length <= threshold ? displayValue : displayValue[..threshold];
         }
+
+        var returnTypeName = HandleGenericType(method.ReturnType);
+        var finalReturnTypeName = HandleGenericType(finalReturnType);
 
         templates.AddRange(new[]
         {
             $"━━━━━━━━━━━━━━━  返回信息 ━━━━━━━━━━━━━━━"
-            , $"##原始类型## {method.ReturnType.FullName}"
-            , $"##最终类型## {returnValue?.GetType()?.FullName}"
+            , $"##原始类型## {returnTypeName}"
+            , $"##最终类型## {finalReturnTypeName}"
             , $"##最终返回值## {displayValue}"
         });
 
         writer.WritePropertyName("returnInformation");
         writer.WriteStartObject();
-        writer.WriteString("type", returnValue?.GetType()?.FullName);
-        writer.WriteString("actType", method.ReturnType.FullName);
+        writer.WriteString("type", finalReturnTypeName);
+        writer.WriteString("actType", returnTypeName);
         writer.WritePropertyName("value");
-        if (succeed && method.ReturnType != typeof(void)) writer.WriteRawValue(displayValue);
+        if (succeed && method.ReturnType != typeof(void) && returnValue != null)
+        {
+            // 解决返回值被截断后 json 验证失败异常问题
+            if (threshold > 0 && originValue != displayValue)
+            {
+                writer.WriteStringValue(displayValue);
+            }
+            else writer.WriteRawValue(displayValue);
+        }
         else writer.WriteNullValue();
         writer.WriteEndObject();
 
@@ -583,17 +619,18 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         // 处理不是验证异常情况
         if (!isValidationException)
         {
+            var exceptionTypeName = HandleGenericType(exception.GetType());
             templates.AddRange(new[]
             {
                 $"━━━━━━━━━━━━━━━  异常信息 ━━━━━━━━━━━━━━━"
-                , $"##类型## {exception.GetType().FullName}"
+                , $"##类型## {exceptionTypeName}"
                 , $"##消息## {exception.Message}"
                 , $"##错误堆栈## {exception.StackTrace}"
             });
 
             writer.WritePropertyName("exception");
             writer.WriteStartObject();
-            writer.WriteString("type", exception.GetType().FullName);
+            writer.WriteString("type", exceptionTypeName);
             writer.WriteString("message", exception.Message);
             writer.WriteString("stackTrace", exception.StackTrace.ToString());
             writer.WriteEndObject();
@@ -630,21 +667,24 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
     /// 序列化对象
     /// </summary>
     /// <param name="obj"></param>
+    /// <param name="monitorMethod"></param>
     /// <param name="succeed"></param>
     /// <returns></returns>
-    private static string TrySerializeObject(object obj, out bool succeed)
+    private string TrySerializeObject(object obj, LoggingMonitorMethod monitorMethod, out bool succeed)
     {
-        var jsonSerializerOptions = new JsonSerializerOptions()
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip
-        };
-
         try
         {
-            var result = JsonSerializer.Serialize(obj, jsonSerializerOptions);
+            // 序列化默认配置
+            var jsonSerializerSettings = new JsonSerializerSettings()
+            {
+                ContractResolver = new IgnorePropertiesContractResolver(GetIgnorePropertyNames(monitorMethod), GetIgnorePropertyTypes(monitorMethod)),
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            };
+            // 解决 long 精度问题
+            jsonSerializerSettings.Converters.AddLongTypeConverters();
+
+            var result = Newtonsoft.Json.JsonConvert.SerializeObject(obj, jsonSerializerSettings);
+
             succeed = true;
             return result;
         }
@@ -658,27 +698,25 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
     /// <summary>
     /// 检查是否开启启用返回值
     /// </summary>
-    /// <param name="withReturnValue"></param>
     /// <param name="monitorMethod"></param>
     /// <returns></returns>
-    private bool CheckIsSetWithReturnValue(object withReturnValue, LoggingMonitorMethod monitorMethod)
+    private bool CheckIsSetWithReturnValue(LoggingMonitorMethod monitorMethod)
     {
-        return withReturnValue == null
+        return WithReturnValue == null
             ? (monitorMethod?.WithReturnValue ?? Settings.WithReturnValue)
-            : Convert.ToBoolean(withReturnValue);
+            : Convert.ToBoolean(WithReturnValue);
     }
 
     /// <summary>
     /// 获取返回值阈值
     /// </summary>
-    /// <param name="returnValueThreshold"></param>
     /// <param name="monitorMethod"></param>
     /// <returns></returns>
-    private int GetReturnValueThreshold(object returnValueThreshold, LoggingMonitorMethod monitorMethod)
+    private int GetReturnValueThreshold(LoggingMonitorMethod monitorMethod)
     {
-        return returnValueThreshold == null
+        return ReturnValueThreshold == null
             ? (monitorMethod?.ReturnValueThreshold ?? Settings.ReturnValueThreshold)
-            : Convert.ToInt32(returnValueThreshold);
+            : Convert.ToInt32(ReturnValueThreshold);
     }
 
     /// <summary>
@@ -692,5 +730,58 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IOr
         return jsonBehavior == null
             ? (monitorMethod?.JsonBehavior ?? Settings.JsonBehavior)
             : (JsonBehavior)jsonBehavior;
+    }
+
+    /// <summary>
+    /// 获取忽略序列化属性名称集合
+    /// </summary>
+    /// <param name="monitorMethod"></param>
+    /// <returns></returns>
+    private string[] GetIgnorePropertyNames(LoggingMonitorMethod monitorMethod)
+    {
+        IEnumerable<string> ignorePropertyNamesList = IgnorePropertyNames ?? Array.Empty<string>();
+
+        return ignorePropertyNamesList.Concat(monitorMethod?.IgnorePropertyNames ?? Array.Empty<string>())
+                                      .Concat(Settings.IgnorePropertyNames ?? Array.Empty<string>())
+                                      .ToArray();
+    }
+
+    /// <summary>
+    /// 获取忽略序列化属性类型集合
+    /// </summary>
+    /// <param name="monitorMethod"></param>
+    /// <returns></returns>
+    private Type[] GetIgnorePropertyTypes(LoggingMonitorMethod monitorMethod)
+    {
+        IEnumerable<Type> ignorePropertyTypesList = IgnorePropertyTypes ?? Array.Empty<Type>();
+
+        return ignorePropertyTypesList.Concat(monitorMethod?.IgnorePropertyTypes ?? Array.Empty<Type>())
+                                      .Concat(Settings.IgnorePropertyTypes ?? Array.Empty<Type>())
+                                      .ToArray();
+    }
+
+    /// <summary>
+    /// 处理泛型类型转字符串打印问题
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    private static string HandleGenericType(Type type)
+    {
+        if (type == null) return string.Empty;
+
+        var typeName = type.FullName;
+
+        // 处理泛型类型问题
+        if (type.IsConstructedGenericType)
+        {
+            var prefix = type.GetGenericArguments()
+                .Select(genericArg => HandleGenericType(genericArg))
+                .Aggregate((previous, current) => previous + current);
+
+            // 通过 _ 拼接多个泛型
+            typeName = typeName.Split('`').First() + "_" + prefix;
+        }
+
+        return typeName;
     }
 }

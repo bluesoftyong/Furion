@@ -84,7 +84,7 @@ function Banner() {
           <div className="furion-get-start-btn">
             <Link className="furion-get-start" to={useBaseUrl("docs/serverun")}>
               入门指南
-              <span className="furion-version">v4.5.2</span>
+              <span className="furion-version">v4.6.5</span>
             </Link>
             <Link
               className="furion-try-demo"
@@ -171,7 +171,7 @@ function Gitee() {
             className={"furion-log-jiao" + (isDarkTheme ? " dark" : "")}
           ></div>
           <div className="furion-log-number">
-            <div style={{ color: "#3fbbfe" }}>3900 +</div>
+            <div style={{ color: "#3fbbfe" }}>4000 +</div>
             <span className={isDarkTheme ? " dark" : ""}>Forks</span>
           </div>
         </div>
@@ -183,7 +183,7 @@ function Gitee() {
             className={"furion-log-jiao" + (isDarkTheme ? " dark" : "")}
           ></div>
           <div className="furion-log-number">
-            <div style={{ color: "#1fd898" }}>3,435,868</div>
+            <div style={{ color: "#1fd898" }}>3,804,761</div>
             <span className={isDarkTheme ? " dark" : ""}>Downloads</span>
           </div>
         </div>
@@ -373,8 +373,8 @@ function WhoUse() {
           <div></div>
           <h1>他们都在用</h1>
           <p>
-            Furion 已在全球超过 300万
-            个项目中使用。从小型企业到企业的解决方案及知名企业。他们在简单软件和复杂管理系统的开发方面都信任我们。
+            Furion
+            已在全球超过377万个项目中使用。从小型企业到企业的解决方案及知名企业。他们在简单软件和复杂管理系统的开发方面都信任我们。
           </p>
           <a
             className="furion-get-start"

@@ -4,6 +4,8 @@ title: 18. 日志记录
 sidebar_label: 18. 日志记录
 ---
 
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
 ## 18.1 关于日志
 
 通常日志指的是**系统日志**和**程序日志**。
@@ -332,7 +334,7 @@ services.AddConsoleFormatter(options =>
 ```cs showLineNumbers {1,3}
 services.AddConsoleFormatter(options =>
 {
-    options.DateFormat = "yyyy-MM-dd hh:mm:ss(zzz) dddd";
+    options.DateFormat = "yyyy-MM-dd HH:mm:ss(zzz) dddd";
 });
 ```
 
@@ -612,7 +614,7 @@ services.AddFileLogging("template-obj.log", options =>
 ```cs showLineNumbers {1,3}
 services.AddFileLogging("application.log", options =>
 {
-    options.DateFormat = "yyyy-MM-dd hh:mm:ss(zzz) dddd";
+    options.DateFormat = "yyyy-MM-dd HH:mm:ss(zzz) dddd";
 });
 ```
 
@@ -1160,6 +1162,71 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
 }
 ```
 
+### 18.6.5 全局过滤 `WriteFilter`
+
+:::important 版本说明
+
+以下内容仅限 `Furion 4.5.9 +` 版本使用。
+
+:::
+
+在 `Furion 4.5.9+` 版本新增了 `WriteFilter` 过滤功能，可根据自定义逻辑自定义过滤拦截：
+
+```cs showLineNumbers showLineNumbers {1,3,10}
+services.AddMonitorLogging(options =>
+{
+    options.WriteFilter = (context) =>
+    {
+        // 获取控制器/操作描述器
+        var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+
+        // 你的逻辑....，不需要拦截返回 false，否则 true
+
+        return true;
+    };
+});
+```
+
+### 18.6.6 输出 `JSON` 支持忽略属性名或属性类型
+
+:::important 版本说明
+
+以下内容仅限 `Furion 4.6.1 +` 版本使用。
+
+:::
+
+有时接口的返回值包含不能被序列化的类型或者想忽略某些属性名不被序列化，这时候就需要用到这个。
+
+- **局部配置**
+
+```cs showLineNumbers {3,4,10}
+// 忽略名称和属性，支持单一配置或局部配置
+[LoggingMonitor(JsonBehavior = JsonBehavior.OnlyJson
+    , IgnorePropertyNames = new[] { "Bytes" }
+    , IgnorePropertyTypes = new[] { typeof(byte[]) })]
+public object 测试指定忽略指定序列化类型(int id)
+{
+    return new
+    {
+        Id = 10,
+        Bytes = File.ReadAllBytes("image.png")
+    };
+}
+```
+
+- **全局配置**
+
+```cs showLineNumbers {4-5}
+// 忽略名称和属性，支持单一配置或局部配置
+services.AddMonitorLogging(options =>
+{
+    options.IgnorePropertyNames = new[] { "Byte" };
+    options.IgnorePropertyTypes = new[] { typeof(byte[]) };
+});
+```
+
+<img src={useBaseUrl("img/hl1.png")} />
+
 ## 18.7 打印日志到 `Swagger` 中
 
 在 `Furion` 框架中默认集成了 `MiniProfiler` 组件并与 `Swagger` 进行了结合，如需打印日志或调试代码，只需调用以下方法即可：
@@ -1168,55 +1235,13 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
 App.PrintToMiniProfiler("分类", "状态", "要打印的消息");
 ```
 
-## 18.8 在后台任务中使用
-
-由于 `DbContext` 默认注册为 `Scoped` 生存周期，所以在后台任务中使用 `IServiceScopeFactory` 获取所有服务，如：
+## 18.8 静态 `Default()` 方式构建
 
 ```cs showLineNumbers
-public class JobService : BackgroundService
-{
-    // 日志对象
-    private readonly ILogger<JobService> _logger;
-
-    // 服务工厂
-    private readonly IServiceScopeFactory _scopeFactory;
-    public JobService(ILogger<JobService> logger
-        , IServiceScopeFactory scopeFactory)
-    {
-        _logger = logger;
-        _scopeFactory = scopeFactory;
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("写日志~~");
-
-        using (var scope = _scopeFactory.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-
-            // 获取数据库上下文
-            var dbContext = Db.GetDbContext(services);
-
-            // 获取仓储
-            var respository = Db.GetRepository<Person>(services);
-
-            // 解析其他服务
-            var otherService = services.GetService<XXX>();
-        }
-
-        return Task.CompletedTask;
-    }
-}
+StringLoggingPart.Default().SetMessage("这是一个日志").LogInformation();
 ```
 
-## 18.9 静态 `Default` 方式构建
-
-```cs showLineNumbers
-StringLoggingPart.Default.SetMessage("这是一个日志").LogInformation();
-```
-
-## 18.10 规范日志模板
+## 18.9 规范日志模板
 
 在 `Furion v3.5.3+` 新增了 `TP.Wrapper(...)` 规范模板，使用如下：
 
@@ -1253,31 +1278,47 @@ Console.WriteLine(template);
 
 :::
 
-## 18.11 日志上下文
+## 18.10 日志上下文
 
 :::important 版本说明
 
-以下内容仅限 `Furion 4.1.3 +` 版本使用。
+以下内容仅限 `Furion 4.6.0 +` 版本使用。
 
 :::
 
 有时候我们希望为日志提供额外数据，这时候可通过 `.ScopeContext()` 配置，如：
 
-```cs showLineNumbers {2,6,12}
+```cs showLineNumbers {2,8,15,21,25,28}
 // 写法一
-_logger.ScopeContext(ctx => ctx.Set("Name", "Furion").Set("UserId", 10))
-       .LogInformation("我是一个日志 {id}", 20);
+using (var scope = _logger.ScopeContext(ctx => ctx.Set("Name", "Furion").Set("UserId", 10)))
+{
+  _logger.LogInformation("我是一个日志 {id}", 20);
+}
 
 // 写法二
-_logger.ScopeContext(new Dictionary<object, object> {
+using var scope = _logger.ScopeContext(new Dictionary<object, object> {
     { "Name", "Furion" },
     { "UserId", 10 }
-}).LogInformation("我是一个日志 {id}", 20);
+});
+_logger.LogInformation("我是一个日志 {id}", 20);
 
 // 写法三
-_logger.ScopeContext(new LogContext {
+using var scope = _logger.ScopeContext(new LogContext {
     // ....
-}).LogInformation("我是一个日志 {id}", 20)
+});
+_logger.LogInformation("我是一个日志 {id}", 20);
+
+// 写法四
+var (logger, scoped) = Log.ScopeContext(new LogContext {
+    // ...
+});
+logger.LogInformation("我是一个日志 {id}", 20);
+scope?.Dispose();
+
+// 写法五
+"我是一个日志 {id}".ScopeContext(new LogContext {
+    // ...
+}).LogInformation();
 ```
 
 在 `LogMessage` 对象中使用：
@@ -1304,34 +1345,45 @@ public void Write(LogMessage logMsg, bool flush)
 
 还可以实现共享日志上下文，如：
 
-```cs showLineNumbers {7,13,21}
-private readonly ILogger<TestAppService> _logger;
-public TestAppService(ILogger<TestAppService> logger)
+```cs showLineNumbers{1,4,11,25,33}
+public TestAppService: ITestAppService, IDisposable
 {
-    _logger = logger;
+    private readonly ILogger<TestAppService> _logger;
+    private IDisposable _scopeProvider;
 
-     // 添加全局用户信息上下文数据
-    _logger.ScopeContext(ctx => ctx.Set("uid", "100").Set("uname", "百小僧"));
-}
+    public TestAppService(ILogger<TestAppService> logger)
+    {
+        _logger = logger;
 
-public string GetName(int id)
-{
-    // 共享全局上下文数据
-    _logger.LogInformation("写入新的日志");
+        // 添加全局用户信息上下文数据
+        _scopeProvider = _logger.ScopeContext(ctx => ctx.Set("uid", "100").Set("uname", "百小僧"));
+    }
 
-    return "Furion";
-}
+    public string GetName(int id)
+    {
+        // 共享全局上下文数据
+        _logger.LogInformation("写入新的日志");
 
-public string GetTags(int id)
-{
-    // 额外新增上下文数据
-    _logger.ScopeContext(ctx => ctx.Set("key", "value")).LogInformation("设置额外的上上下文日志");
+        return "Furion";
+    }
 
-    return "百小僧";
+    public string GetTags(int id)
+    {
+        // 额外新增上下文数据
+        using var scope = _logger.ScopeContext(ctx => ctx.Set("key", "value"));
+        _logger.LogInformation("设置额外的上上下文日志");
+
+        return "百小僧";
+    }
+
+    public void Dispose()
+    {
+        _scopeProvider.Dispose();
+    }
 }
 ```
 
-## 18.12 反馈与建议
+## 18.11 反馈与建议
 
 :::note 与我们交流
 

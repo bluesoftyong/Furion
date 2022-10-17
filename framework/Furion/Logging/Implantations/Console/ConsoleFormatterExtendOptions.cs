@@ -32,6 +32,16 @@ namespace Furion.Logging;
 public sealed class ConsoleFormatterExtendOptions : ConsoleFormatterOptions
 {
     /// <summary>
+    /// 构造函数
+    /// </summary>
+    public ConsoleFormatterExtendOptions()
+        : base()
+    {
+        // 默认启用控制台日志上下文功能
+        IncludeScopes = true;
+    }
+
+    /// <summary>
     /// 控制是否启用颜色
     /// </summary>
     public LoggerColorBehavior ColorBehavior { get; set; }
@@ -44,7 +54,7 @@ public sealed class ConsoleFormatterExtendOptions : ConsoleFormatterOptions
     /// <summary>
     /// 日期格式化
     /// </summary>
-    public string DateFormat { get; set; } = "yyyy-MM-dd hh:mm:ss(zzz) dddd";
+    public string DateFormat { get; set; } = "yyyy-MM-dd HH:mm:ss(zzz) dddd";
 
     /// <summary>
     /// 自定义格式化日志处理程序
